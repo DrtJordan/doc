@@ -21,12 +21,17 @@ echo "# document" >> README.md
 git init
 git add *
 git commit -m "first commit"
-git remote add origin https://github.com/wzy25/doc.git
+git remote add origin https://github.com/wzy25/doc.git    (git remote remove origin)
 git push -u origin master  (µÚÒ»´ÎĞèÒª´øÉÏ -u ±£´æÃÜÂëºó¾Í²»ĞèÒªÁË)
 
 cloneÔ¶³Ì´úÂë
 Ö±½Ó´Ó²Ö¿âclone   git clone git://github.com/schacon/grit.git
  
+»Ö¸´ÎÄ¼ş
+ÒÑĞŞ¸Ä£¬Î´Ìá½»   git checkout filename
+ĞèÒª»ØÍËµ½Ö®Ç°Ìá½»µÄ°æ±¾ 
+
+
 
 Git Ä¿Ç°Ö§³ÖµÄÈıÖÖĞ­Òé git://¡¢ssh:// ºÍ http://£¬Æä´úÀíÅäÖÃ¸÷²»ÏàÍ¬£ºcore.gitproxy ÓÃÓÚ git:// Ğ­Òé£¬http.proxy ÓÃÓÚ http:// Ğ­Òé£¬ssh:// Ğ­ÒéµÄ´úÀíĞèÒªÅäÖÃ ssh µÄ ProxyCommand ²ÎÊı¡£
 
@@ -111,10 +116,18 @@ $ git commit -m 'initial commit'
 $ git add forgotten_file
 $ git commit --amend
 ÉÏÃæµÄÈıÌõÃüÁî×îÖÕÖ»ÊÇ²úÉúÒ»¸öÌá½»£¬µÚ¶ş¸öÌá½»ÃüÁîĞŞÕıÁËµÚÒ»¸öµÄÌá½»ÄÚÈİ¡£
-È¡ÏûÒÑ¾­Ôİ´æµÄÎÄ¼ş
-git reset HEAD benchmarks.rb
-È¡Ïû¶ÔÎÄ¼şµÄĞŞ¸Ä  ¸ÃÎÄ¼şÒÑ¾­»Ö¸´µ½ĞŞ¸ÄÇ°µÄ°æ±¾¡£Äã¿ÉÄÜÒÑ¾­ÒâÊ¶µ½ÁË£¬ÕâÌõÃüÁîÓĞĞ©Î£ÏÕ£¬ËùÓĞ¶ÔÎÄ¼şµÄĞŞ¸Ä¶¼Ã»ÓĞÁË
-git checkout -- benchmarks.rb 
+»ØÍË£ºÎÄ¼şÒÑ¾­ĞŞ¸Ä£¬»¹Î´Ìá½»
+git checkout  benchmarks.rb
+ÒÑĞŞ¸Ä£¬ÒÑÌá½» ,»ØÍËÒ»¸öÌá½»
+  git reset --hard HEAD~1 test.txt    (commit log ºÍÀúÊ· »á¶ªÊ§)
+»òÕß
+git checkout HEAD~1 -b newbracnch 
+
+git reset Ä³¸ö¾ßÌåµÄÎÄ¼ş£¬²»»áĞŞ¸ÄworkspaceµÄÎÄ¼ş£¬stageµÄ»áĞŞ¸Ä
+git checkout  Ä³¸ö¾ßÌåµÄÎÄ¼ş£¬»áĞŞ¸ÄworkspaceµÄÎÄ¼ş ²»»áĞŞ¸ÄstageµÄÎÄ¼ş
+
+ 
+
  ²é¿´Ô¶³Ì²Ö¿â
  git remote -v
  Ìí¼ÓÔ¶³Ì²Ö¿â
@@ -145,11 +158,13 @@ git merge tmp
   
    git push origin master
   ÁĞ³öÏÖÓĞ±êÇ©µÄÃüÁî
-  git tag 
+  git tag  /git tag -l  
   ´ò±êÇ©
   git tag -a v1.4 -m 'my version 1.4'
   Ä¬ÈÏÇé¿öÏÂ£¬git push ²¢²»»á°Ñ±êÇ©´«ËÍµ½Ô¶¶Ë·şÎñÆ÷ÉÏ£¬Ö»ÓĞÍ¨¹ıÏÔÊ½ÃüÁî²ÅÄÜ·ÖÏí±êÇ©µ½Ô¶¶Ë²Ö¿â
   git push origin v1.5 »òÕßÍÆËÍÈ«²¿  git push origin --tags
+  »ñµÃÖ¸¶¨±êÇ©µÄ´úÂë
+  git checkout tags/<tag_name> -b <branch_name>
   
  
  
@@ -160,6 +175,7 @@ git checkout -b 'hotfix'
 git checkout master
 ±È½Ï·ÖÖ§ 
 git diff  hotfix master README.md
+git diff  hotfix origin/master README.md(ÏÈÖ´ĞĞ git fetch origin master °Ñ±¾µØÔ¶³Ì¸üĞÂµ½×îĞÂ)
 »òÕß git diff hotfix  master
 »òÕß    git log --oneline
 ºÏ²¢hotfix·ÖÖ§µ½ master
@@ -228,3 +244,139 @@ HTTP Ğ­ÒéµÄÏû¼«ÃæÔÚÓÚ£¬Ïà¶ÔÀ´Ëµ¿Í»§¶ËĞ§ÂÊ¸üµÍ¡£¿ËÂ¡»òÕßÏÂÔØ²Ö¿âÄÚÈİ¿ÉÄÜ»á»¨·Ñ¸ü¶
 Ë¾Áî¹Ù£¨dictator£©½«¼¯³ÉºóµÄ master ·ÖÖ§ÍÆËÍµ½¹²Ïí²Ö¿â blessed repository ÖĞ£¬ÒÔ±ãËùÓĞÆäËû¿ª·¢ÕßÒÔ´ËÎª»ù´¡½øĞĞÑÜºÏ¡£
 
 ÒÔÉÏ¾ÍÊÇ×î¼òµ¥µÄĞ­×÷·½Ê½Ö®Ò»£ºÏÈÔÚ×Ô¼ºµÄÌØĞÔ·ÖÖ§ÖĞ¹¤×÷Ò»¶ÎÊ±¼ä£¬Íê³ÉºóºÏ²¢µ½×Ô¼ºµÄ master ·ÖÖ§£»È»ºóÏÂÔØºÏ²¢ origin/master ÉÏµÄ¸üĞÂ£¨Èç¹ûÓĞµÄ»°£©£¬ÔÙÍÆ»ØÔ¶³Ì·şÎñÆ÷
+
+³£ÓÃÃüÁî
+Creating a new repository
+From a tarball:
+
+$ tar xzf project.tar.gz
+$ cd project
+$ git init
+Initialized empty Git repository in .git/
+$ git add .
+$ git commit
+
+From a remote repository:
+$ git clone git://example.com/pub/project.git
+$ cd project
+Managing branches
+$ git branch         # list all local branches in this repo
+$ git checkout test  # switch working directory to branch "test"
+$ git branch new     # create branch "new" starting at current HEAD
+$ git branch -d new  # delete branch "new"
+
+Instead of basing a new branch on current HEAD (the default), use:
+$ git branch new test    # branch named "test"
+$ git branch new v2.6.15 # tag named v2.6.15
+$ git branch new HEAD^   # commit before the most recent
+$ git branch new HEAD^^  # commit before that
+$ git branch new test~10 # ten commits before tip of branch "test"
+
+Create and switch to a new branch at the same time:
+$ git checkout -b new v2.6.15
+
+Update and examine branches from the repository you cloned from:
+$ git fetch             # update
+$ git branch -r         # list
+  origin/master
+  origin/next
+  ...
+$ git checkout -b masterwork origin/master
+Fetch a branch from a different repository, and give it a new name in your repository:
+
+$ git fetch git://example.com/project.git theirbranch:mybranch
+$ git fetch git://example.com/project.git v2.6.15:mybranch
+Keep a list of repositories you work with regularly:
+
+$ git remote add example git://example.com/project.git
+$ git remote                    # list remote repositories
+example
+origin
+$ git remote show example       # get details
+* remote example
+  URL: git://example.com/project.git
+  Tracked remote branches
+    master
+    next
+    ...
+$ git fetch example             # update branches from example
+$ git branch -r                 # list all remote branches
+Exploring history
+$ gitk                      # visualize and browse history
+$ git log                   # list all commits
+$ git log src/              # ...modifying src/
+$ git log v2.6.15..v2.6.16  # ...in v2.6.16, not in v2.6.15
+$ git log master..test      # ...in branch test, not in branch master
+$ git log test..master      # ...in branch master, but not in test
+$ git log test...master     # ...in one branch, not in both
+$ git log -S'foo()'         # ...where difference contain "foo()"
+$ git log --since="2 weeks ago"
+$ git log -p                # show patches as well
+$ git show                  # most recent commit
+$ git diff v2.6.15..v2.6.16 # diff between two tagged versions
+$ git diff v2.6.15..HEAD    # diff with current head
+$ git grep "foo()"          # search working directory for "foo()"
+$ git grep v2.6.15 "foo()"  # search old tree for "foo()"
+$ git show v2.6.15:a.txt    # look at old version of a.txt
+Search for regressions:
+
+$ git bisect start
+$ git bisect bad                # current version is bad
+$ git bisect good v2.6.13-rc2   # last known good revision
+Bisecting: 675 revisions left to test after this
+                                # test here, then:
+$ git bisect good               # if this revision is good, or
+$ git bisect bad                # if this revision is bad.
+                                # repeat until done.
+Making changes
+Make sure Git knows who to blame:
+
+$ cat >>~/.gitconfig <<\EOF
+[user]
+        name = Your Name Comes Here
+        email = you@yourdomain.example.com
+EOF
+Select file contents to include in the next commit, then make the commit:
+
+$ git add a.txt    # updated file
+$ git add b.txt    # new file
+$ git rm c.txt     # old file
+$ git commit
+Or, prepare and create the commit in one step:
+
+$ git commit d.txt # use latest content only of d.txt
+$ git commit -a    # use latest content of all tracked files
+Merging
+$ git merge test   # merge branch "test" into the current branch
+$ git pull git://example.com/project.git master
+                   # fetch and merge in remote branch
+$ git pull . test  # equivalent to git merge test
+Sharing your changes
+Importing or exporting patches:
+
+$ git format-patch origin..HEAD # format a patch for each commit
+                                # in HEAD but not in origin
+$ git am mbox # import patches from the mailbox "mbox"
+Fetch a branch in a different Git repository, then merge into the current branch:
+
+$ git pull git://example.com/project.git theirbranch
+Store the fetched branch into a local branch before merging into the current branch:
+
+$ git pull git://example.com/project.git theirbranch:mybranch
+After creating commits on a local branch, update the remote branch with your commits:
+
+$ git push ssh://example.com/project.git mybranch:theirbranch
+When remote and local branch are both named "test":
+
+$ git push ssh://example.com/project.git test
+Shortcut version for a frequently used remote repository:
+
+$ git remote add example ssh://example.com/project.git
+$ git push example test
+Repository maintenance
+Check for corruption:
+
+$ git fsck
+Recompress, remove unused cruft:
+
+$ git gc
