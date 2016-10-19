@@ -6,8 +6,9 @@ git config --global user.email "wzy964@gmaill.com"
 git config --global credential.helper 'store --file /d/wzy/wzy/.my-git_credentials'
 
 git config --list （~/.gitconfig ）
+测试
 
-测试方式成功
+测试是否成功
 ssh -T git@github.com
 设置全局代理
 git config --global https.proxy http://127.0.0.1:1080
@@ -23,13 +24,9 @@ git commit -m "first commit"
 git remote add origin https://github.com/wzy25/doc.git
 git push -u origin master
 
-
-
-git配置代理
-conf\gitconfig
-[http]
-	sslCAinfo = /bin/curl-ca-bundle.crt
-	 proxy = http://192.168.8.26:8080
+clone远程代码
+直接从仓库clone   git clone git://github.com/schacon/grit.git
+ 
 
 Git 带来的其他好处：离线提交，快速分支与合并等等  许多开发小组改用 Git 就是因为它允许多个小组间并行工作，而在稍后恰当时机再行合并。
 一般最简单的情形，是在 master 分支中维护稳定代码，然后在特性分支上开发新功能，或是审核测试别人贡献的代码，接着将它并入主干，最后删除这个特性分支，如此反复
@@ -82,8 +79,7 @@ github
 https://github.com/msysgit/msysgit/releases/tag/Git-1.9.2-preview20140411
 然后在github注册一个账户
 
-初始化目录 
-git init  或者直接从仓库clone   git clone git://github.com/schacon/grit.git
+
 
 添加文件并提交   git add 的潜台词就是把目标文件快照放入暂存区域，也就是 add file into staged area，同时未曾跟踪过的文件标记为需要跟踪  
 git add 命令（这是个多功能命令，根据目标文件的状态不同，此命令的效果也不同：可以用它开始跟踪新文件，或者把已跟踪的文件放到暂存区，还能用于合并时把有冲突的文件标记为已解决状态等）
