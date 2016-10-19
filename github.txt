@@ -157,6 +157,10 @@ git merge tmp
 git checkout -b 'hotfix'
 回到主分支
 git checkout master
+比较分支 
+git diff  hotfix master README.md
+或者 git diff hotfix  master
+或者    git log --oneline
 合并hotfix分支到 master
 $ git merge hotfix
 删除分支
