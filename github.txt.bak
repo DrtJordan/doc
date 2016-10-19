@@ -6,7 +6,7 @@ git config --global user.email "wzy964@gmaill.com"
 git config --global credential.helper 'store --file /d/wzy/wzy/.my-git_credentials'
 
 git config --list £®~/.gitconfig £©
-
+≤‚ ‘
 
 ≤‚ ‘ «∑Ò≥…π¶
 ssh -T git@github.com

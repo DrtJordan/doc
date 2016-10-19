@@ -28,6 +28,9 @@ clone远程代码
 直接从仓库clone   git clone git://github.com/schacon/grit.git
  
 
+Git 目前支持的三种协议 git://、ssh:// 和 http://，其代理配置各不相同：core.gitproxy 用于 git:// 协议，http.proxy 用于 http:// 协议，ssh:// 协议的代理需要配置 ssh 的 ProxyCommand 参数。
+
+
 Git 带来的其他好处：离线提交，快速分支与合并等等  许多开发小组改用 Git 就是因为它允许多个小组间并行工作，而在稍后恰当时机再行合并。
 一般最简单的情形，是在 master 分支中维护稳定代码，然后在特性分支上开发新功能，或是审核测试别人贡献的代码，接着将它并入主干，最后删除这个特性分支，如此反复
 对于大型项目，至少需要维护两个长期分支 master 和 develop
