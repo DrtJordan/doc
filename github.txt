@@ -22,7 +22,7 @@ git init
 git add *
 git commit -m "first commit"
 git remote add origin https://github.com/wzy25/doc.git
-git push -u origin master
+git push -u origin master  (第一次需要带上 -u 保存密码后就不需要了)
 
 clone远程代码
 直接从仓库clone   git clone git://github.com/schacon/grit.git
@@ -150,6 +150,8 @@ git merge tmp
   git tag -a v1.4 -m 'my version 1.4'
   默认情况下，git push 并不会把标签传送到远端服务器上，只有通过显式命令才能分享标签到远端仓库
   git push origin v1.5 或者推送全部  git push origin --tags
+ 
+ 
  
 拉分支并且同时切换到当前分支
 git checkout -b 'hotfix'
