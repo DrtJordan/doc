@@ -2,6 +2,10 @@ github账户配置
  ssh-keygen -t rsa -C "wzy964@gmaill.com"
 git config --global user.name "wzy25"
 git config --global user.email "wzy964@gmaill.com"
+存储用户名密码
+git config --global credential.helper 'store --file /d/wzy/wzy/.my-git_credentials'
+
+git config --list （~/.gitconfig ）
 
 测试方式成功
 ssh -T git@github.com
@@ -11,13 +15,15 @@ git config --global https.proxy https://127.0.0.1:1080
 git config --global --unset http.proxy
 git config --global --unset https.proxy
 
-创建本地仓库并且上传
+创建本地仓库并且上传(先在github上 创建项目)
 echo "# document" >> README.md
 git init
 git add *
 git commit -m "first commit"
 git remote add origin https://github.com/wzy25/doc.git
 git push -u origin master
+
+
 
 git配置代理
 conf\gitconfig
