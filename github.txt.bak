@@ -151,6 +151,8 @@ git merge tmp
   默认情况下，git push 并不会把标签传送到远端服务器上，只有通过显式命令才能分享标签到远端仓库
   git push origin v1.5 或者推送全部  git push origin --tags
  
+ 
+ 
 拉分支并且同时切换到当前分支
 git checkout -b 'hotfix'
 回到主分支
