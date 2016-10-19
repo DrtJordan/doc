@@ -1,0 +1,98 @@
+当日委托 combine 
+
+grep 24=1 RawData.txt  |wc -l  10329731
+grep "|4=712|"  /home/mdf/idcmdf/output/20150901/RawData.txt    |wc -l   26009169
+grep "|4=712|" RawData.txt |grep  24=1    |wc -l  4426760
+grep "|4=938|" /home/mdf/idcmdf/output/20150901/RawData.txt |grep  -v "|308="  | wc -l  168
+
+
+
+
+ -Denv.name=/home/mdf/MDFReplay/conf/uat   等比例的  134:61618  8168 
+ /home/mdf/MDFReplay/conf/local       没有间隔播放    134:61616   8161
+ 
+ 
+ 
+
+ 6G g1 出错的时候histo   330 万 9:44 
+  num     #instances         #bytes  class name
+----------------------------------------------
+   1:      42856670     1371413440  java.util.HashMap$Node
+   2:      42339944     1225677456  [C
+   3:      42339773     1016154552  java.lang.String
+   4:      42263841     1014332184  csp.Token
+  
+  6G g1 出错的时候histo  优化后   only L1 ,log 1万输出一次 10:44  L1  847933
+  num     #instances         #bytes  class name
+----------------------------------------------
+   1:      27861704     1436756904  [C
+   2:      22248532      711953024  java.util.HashMap$Node
+   3:      28021289      672510936  java.lang.String
+   4:      21656154      519747696  csp.Token
+   5:           486      420291136  [B
+ 
+   32G 1.8JDK  g1  histo     开始 16:44:02 结束 16:48:45   280S  -XX:+UseG1GC  L1消息 36589422   过程很平稳  经常gc ,gc一般耗时 0.4-0.7s 
+-- num     #instances         #bytes  class name
+----------------------------------------------
+   1:      85601589     6392415680  [C
+   2:      12878046     4792375608  [B
+   3:      48712471     1558799072  java.lang.String
+   4:       3679309     1059640992  org.apache.activemq.command.ActiveMQTextMessage
+   5:      26378862     1055154480  com.cicc.mdf.dataserver.data.Quote
+   6:      29652743      948887776  java.util.concurrent.LinkedBlockingQueue$Node
+   7:         25014      726267984  [I
+   8:      29780901      714741624  java.lang.Double
+   9:      26494915      635877960  java.lang.Long
+  10:      13180285      527211400  com.cicc.mdf.dataserver.data.LevelOneAsk
+  11:      13180275      527211000  com.cicc.mdf.dataserver.data.LevelOneBid
+ 
+ 
+ 
+  32G 1.6 JDK  parallel GC 出错的时候 histo       15:58:47 开始  16:10:31 结束  L1  1977729   播放到 11:20的时候做FGC   
+
+  32G 1.8 JDK  -XX:+UseConcMarkSweepGC    histo          经常出现GC  一般0.2S左右 开始  17:12:50- 17:16:27  210S
+
+  32G 1.8 JDK  parallel GC   histo       16:32:17 开始  16:35:50 210S 结束  L1    经常出现FGC  开始 17:06:30- 17:10:03  210S FGC一般2S左右
+   num     #instances         #bytes  class name
+----------------------------------------------
+   1:      65443102     4416306984  [C
+   2:       7158210     2851063952  [B
+   3:      43496952     1391902464  java.lang.String
+   4:      29883724     1195348960  com.cicc.mdf.dataserver.data.Quote
+   5:      33593411     1074989152  java.util.concurrent.LinkedBlockingQueue$Node
+   6:      33580669      805936056  java.lang.Double
+   7:      29926481      718235544  java.lang.Long
+   8:      14928539      597141560  com.cicc.mdf.dataserver.data.LevelOneAsk
+   9:      14928528      597141120  com.cicc.mdf.dataserver.data.LevelOneBid
+ 
+
+ 
+ 
+  num     #instances         #bytes  class name
+----------------------------------------------
+   1:      27293859      858107600  [C
+   2:      26412089      845186848  java.util.HashMap$Node
+   3:      26746390      641913360  java.lang.String
+   4:      25793772      619050528  csp.Token
+   5:          4358      600452472  [I
+   6:         87938      449298480  [B
+   7:      17194255      275108080  java.lang.Integer
+   8:       3101970      259912496  [Ljava.util.HashMap$Node;
+   9:       3133656      150415488  java.util.HashMap
+  10:       3117178       74812272  java.util.concurrent.LinkedBlockingQueue$Node
+ 
+ 
+  num     #instances         #bytes  class name
+----------------------------------------------
+   1:      35136977     1116047904  [C
+   2:      33840937     1082909984  java.util.HashMap$Node
+   3:      34389297      825343128  java.lang.String
+   4:      33214959      797159016  csp.Token
+   5:        114624      458201768  [B
+   6:      21710806      347372896  java.lang.Integer
+   7:       4033389      334733600  [Ljava.util.HashMap$Node;
+   8:       4039262      193884576  java.util.HashMap
+   9:       4049894       97197456  java.util.concurrent.LinkedBlockingQueue$Node
+ 
+ 271 w 
+ org.apache.commons.io.LineIterator@5b5c0603

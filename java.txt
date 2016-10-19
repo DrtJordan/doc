@@ -1,0 +1,2851 @@
+20160414 
+用itext操作 pdf 可编辑域，如果要处理中文 用  itext-2.1.7.jar和 iTextAsian.jar，然后加上 对应的字体即可.
+public class PDF implements PdfPCellEvent{
+public void manipulatePdf2(String src, String dest) throws IOException, DocumentException {
+PDF pdf=new PDF();
+		pdf.manipulatePdf2("D://odts_template/gaf_confirm.pdf", "d:/test10.pdf");
+  PdfReader reader = new PdfReader(src);
+        PdfStamper stamper = new PdfStamper(reader, new FileOutputStream(dest));
+        AcroFields form = stamper.getAcroFields();
+        BaseFont bf = BaseFont.createFont("D://workspace_odts/pdf/lib/楷体_GB2312.TTF", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+           form.setFieldProperty("cn_client", "textfont", bf, null);
+         form.setField("cn_client", "你好");
+        form.setFieldProperty("cn_client", "setfflags", PdfFormField.FF_READ_ONLY, null);
+         stamper.close();
+        reader.close();
+        }
+    public static void main(String[] args) throws Exception{
+		// TODO Auto-generated method stub
+		PDF pdf=new PDF();
+		pdf.manipulatePdf2("D://odts_template/gaf_confirm.pdf", "d:/test10.pdf");
+
+	}
+
+}
+
+
+    
+从maven下载 jar
+http://mvnrepository.com/
+
+20160113 序列化
+pb 文件
+package protobuf;  
+option java_package = "protobuf";  
+option java_outer_classname = "UserProto";  
+message User  {  
+  required string name= 1;  
+  required int32 age = 2;  
+  required string sex = 3;  
+  required int64 time=4;
+} 
+生成 protoc.exe --java_out=./ ./User.proto
+生成 UserProto.java  保护 inner class User
+使用
+import   protobuf.UserProto.User;  
+import  protobuf.UserProto.User.Builder;
+Builder builder=User.newBuilder();
+builder.setAge(i);
+		builder.setSex("m"+i);
+		builder.setName("name"+i);
+		builder.setTime(new Date().getTime());
+		byte[] bt=	builder.build().toByteArray();
+
+thrift性能：
+每次生成新的tcp连接  1线程    1123 request/s
+每次生成新的tcp连接  8线程    1123 request/s
+远程：
+我在客户端开启8个线程，每个线程进行10000次服务端函数的调用，平均用时4315ms；8个线程加起来的话，1s内可进行18539次函数调用。
+每个线程进行20000次服务端函数的调用，平均用时9610ms；8个线程加起来的话，1s内可进行16649次函数调用。
+（单线程时耗时6232ms，1s可进行1604次函数调用）
+
+
+thrift 文件
+namespace java thrift
+struct User {
+       1: required string name,
+       2: required string sex,
+       3: required i32 age,
+       4: required i64 dt
+}
+生成thrift-0.9.3.exe  -gen java User.thrift
+生成 thrift.User对象
+使用
+thrift.User ur=new thrif.User()
+TSerializer thrift=new TSerializer();
+		ur.setAge(i);
+		ur.setName("name"+i);
+		ur.setDt(new Date().getTime());
+		ur.setSex("m"+i);
+		bt1=thrift.serialize(ur);
+		
+
+性能 ，序列化100万个简单对象，耗时 ms
+
+kyro time consumed 452
+java time consumed 1599
+pb time consumed 341
+thrift time consumed 525
+jackson time consumed 494
+fastjson time consumed 508
+
+
+package pta_zk;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutput;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.util.Date;
+
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.io.Input;
+import com.esotericsoftware.kryo.io.Output;
+import   protobuf.UserProto.User;  
+import  protobuf.UserProto.User.Builder;
+import org.apache.thrift.protocol.TProtocol;
+import org.apache.thrift.transport.TMemoryBuffer;
+import org.apache.thrift.TDeserializer;
+import org.apache.thrift.TSerializer;
+import org.apache.thrift.protocol.TBinaryProtocol;
+   
+import org.codehaus.jackson.map.ObjectMapper;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+
+public class TestSerializer implements Serializable {
+	public TestSerializer()
+	{
+		
+	}
+	public TestSerializer(String name,String sex,int age)
+	{
+		this.name=name;
+		this.age=age;
+		this.sex=sex;
+		this.dt=new Date().getTime();
+		
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public int getAge() {
+		return age;
+	}
+	public void setAge(int age) {
+		this.age = age;
+	}
+	public String getSex() {
+		return sex;
+	}
+	public void setSex(String sex) {
+		this.sex = sex;
+	}
+	public long getDt() {
+		return dt;
+	}
+	public void setDt(long dt) {
+		this.dt = dt;
+	}
+	String name ;
+	int age;
+	String sex;
+	long dt;
+public static void main(String args[]) throws java.lang.Exception
+{
+	Kryo kryo = new Kryo();
+	Builder builder=User.newBuilder();
+	thrift.User ur=new thrift.User();
+	ObjectMapper  mapper=new ObjectMapper ();
+	TSerializer thrift=new TSerializer();
+	byte[] bt1=null;
+	int byteSize=0;
+	Date beginTime=new Date();
+	TestSerializer test=new TestSerializer("name"+1,"m"+1,1);
+	
+	for(int i=0;i<1000000;i++)
+	{
+	TestSerializer tt=new TestSerializer("name"+i,"m"+i,i);
+	Output out=new Output(100);
+	kryo.writeObject(out, tt);
+	bt1=out.getBuffer();
+	int size=bt1.length;
+    out.close();
+	}
+	
+	
+		
+	Date endTime=new Date();
+	long diff=endTime.getTime()-beginTime.getTime();
+	System.out.println("kyro time consumed "+diff);
+	
+	TestSerializer t1=kryo.readObject(new Input(bt1), TestSerializer.class);
+	System.out.println("kyro "+t1.getName());
+
+	
+	beginTime=new Date();
+	
+	for(int i=0;i<1000000;i++)
+	{
+	TestSerializer tt=new TestSerializer("name"+i,"m"+i,i);
+	ByteArrayOutputStream bos = new ByteArrayOutputStream();
+	ObjectOutput out =new ObjectOutputStream(bos);   
+	int size=bos.size();
+	out.writeObject(tt);
+	bt1=bos.toByteArray();
+	out.close();
+	}
+	  endTime=new Date();
+	  diff=endTime.getTime()-beginTime.getTime();
+	  
+	System.out.println("java time consumed "+diff);
+	
+	ObjectInputStream in=new ObjectInputStream(new ByteArrayInputStream(bt1));
+	TestSerializer tjava=(TestSerializer)in.readObject();
+	System.out.println("java name  "+tjava.getName());
+	
+	beginTime=new Date();
+	
+	for(int i=0;i<1000000;i++)
+	{
+		builder.setAge(i);
+		builder.setSex("m"+i);
+		builder.setName("name"+i);
+		builder.setTime(new Date().getTime());
+		
+		bt1=	builder.build().toByteArray();
+	
+	}
+	  endTime=new Date();
+	  diff=endTime.getTime()-beginTime.getTime();
+	System.out.println("pb time consumed "+diff);
+	User upb=User.parseFrom(bt1);
+	System.out.println("pb name  "+upb.getName());
+
+	beginTime=new Date();
+	
+	for(int i=0;i<1000000;i++)
+	{
+		ur.setAge(i);
+		ur.setName("name"+i);
+		ur.setDt(new Date().getTime());
+		ur.setSex("m"+i);
+		bt1=thrift.serialize(ur);
+			
+	}
+	  endTime=new Date();
+	  diff=endTime.getTime()-beginTime.getTime();
+	System.out.println("thrift time consumed "+diff);
+	 TDeserializer deserializer = new TDeserializer();
+	 thrift.User thriftUser=new  thrift.User();
+	 deserializer.deserialize(thriftUser, bt1);
+	System.out.println("thrift name  "+thriftUser.getName());
+	
+	String jsonStr=null;
+	beginTime=new Date();
+	
+	for(int i=0;i<1000000;i++)
+	{
+		TestSerializer tt=new TestSerializer("name"+i,"m"+i,i);
+
+		jsonStr=mapper.writeValueAsString(tt); 
+		
+			
+	}
+	  endTime=new Date();
+	  diff=endTime.getTime()-beginTime.getTime();
+	 System.out.println("jackson time consumed "+diff);
+	 TestSerializer tuser=mapper.readValue(jsonStr, TestSerializer.class);
+	 System.out.println("jackson name  "+tuser.getName());
+
+		beginTime=new Date();
+		
+		for(int i=0;i<1000000;i++)
+		{
+			TestSerializer tt=new TestSerializer("name"+i,"m"+i,i);
+
+			jsonStr=JSON.toJSONString(tt);
+			
+				
+		}
+		  endTime=new Date();
+		  diff=endTime.getTime()-beginTime.getTime();
+		 System.out.println("fastjson time consumed "+diff);
+		 TestSerializer tuser2=JSON.parseObject(jsonStr,TestSerializer.class );
+		 System.out.println("fastjson name  "+tuser2.getName());
+
+
+ }
+}
+
+
+		
+		
+
+
+20151219
+jvm 每个线程使用自己的buffer来分配，避免冲突 Thread-Local Allocation Buffers
+CMS适合response time敏感的程序，不做compact 同时使用在old/eden上
+-XX:+UseParallelOldGC 适用于 Old gen ,
+-XX:+UseParallelGC 实用与 Eden
+Maximum Pause Time Goal  -XX:MaxGCPauseMillis=n
+-XX:GCTimeRatio=n  The ratio of garbage collection time to application time is 1 / (1 + n)
+
+G1虽然保留了CMS关于代的概念，但是代已经不是物理上连续区域，而是一个逻辑的概念。在标记过程中，每个区域的对象活性都被计算，在回收时候，就可以根据用户设置的停顿时间，选择活性较低的区域收集，这样既能保证垃圾回收，又能保证停顿时间，而且也不会降低太多的吞吐量。Remark阶段新算法的运用，以及收集过程中的压缩，都弥补了CMS不足
+
+实测 replay mdf data 1G左右，产生3000多万MQ消息
+用JDK 1.8 32G 内存
+ parallel GC   经常FGC,FGC一般耗时2S左右  耗时 210 S左右， 
+ 用UseConcMarkSweepGC 也经常GC，但是一般耗时0.2s左右，总时间也为210S
+  用G1，也经常GC，gc耗时0.4-0.7S左右， 总时间 280S
+  
+   或者JVM 那么
+   
+    ManagementFactory.getRuntimeMXBean().getName()
+
+
+20150623
+MaxPermSize(非堆内存)不能超过可用的物理内存，-Xmx可以超过(堆内存)
+
+20150226
+java实现fsync
+FileOutputStream s = new FileOutputStream(filename)
+Channel c = s.getChannel()
+while(xyz)
+    c.write(buffer)
+c.force(true)
+s.getFD().sync()
+c.close()
+
+或者 FileDescriptor.sync()
+20150210
+现在做profile都是通过JVMTI的接口，通过 Byte Code Insertion (BCI)的方式插入采集代码
+JVMI TI通过 JVMTI_EVENT_CLASS_FILE_LOAD_HOOK 提供机会让程序可以插入 新的代码来改变行为
+JVM TI has an event called JVMTI_EVENT_C LASS_FILE_LOAD_HOOK which gives HPROF access to the
+ class file image and an opportunity to modify that class file image before the VM actually loads it.
+ HPROF does depends on the options supplied, cpu=times triggers insertions into all method entries and exits, 
+ and the heap options trigger BCI on the <init> method of java.lang.object and any 'newarray' opcodes seen 
+ in any method. This BCI work is actually done through the shared library java_crw_demo, 
+ which accepts a set of options, a class file image, and returns a new class file image. 
+ The java_crw_demo library is part of the sources delivered with the J2SE 5.0 in the demo/jvmti directory.
+ 如果使用cpu=sample就不需要植入代码了，只是一个新的线程定期从jvmti来获取stack信息
+ 
+ java -agentlib:hprof=heap=sites javaclass 这个基本不影响
+ java -agentlib:hprof=cpu=times javaclass 这种方式性能下降一半  显示结果没有JFR准确好看
+ javac -J-agentlib:hprof=cpu=samples javaclass    这个只能编译出一些东西，但是不准确
+ 显示的是这样的东西 不是我们关心的
+ CPU TIME (ms) BEGIN (total = 32984) Tue Feb 10 11:23:26 2015
+rank   self  accum   count trace method
+   1 63.13% 63.13%    8014 304907 java.net.SocketInputStream.read
+   2  1.33% 64.46%    6000 306590 oracle.jdbc.driver.T4CMAREngine.marshalCLR
+   3  1.27% 65.73%   80033 305750 oracle.net.ns.NetOutputStream.write
+   4  1.24% 66.97%   78000 306587 oracle.net.ns.NetOutputStream.write
+   5  1.23% 68.21%   78000 306586 oracle.net.ns.NetOutputStream.write
+   6  1.18% 69.39%   70000 306589 oracle.net.ns.NetOutputStream.write
+   
+JFR运行  java -XX:+UnlockCommercialFeatures -XX:+FlightRecorder MyApp 然后通过JMC来启动jfr,通过图像界面查看
+java -XX:+UnlockCommercialFeatures -XX:+FlightRecorder -XX:StartFlightRecording=duration=120s,filename=myrecording.jfr MyApp
+java -XX:+UnlockCommercialFeatures -XX:+FlightRecorder -XX:FlightRecorderOptions=dumponexit=true,defaultrecording=true,disk=true,dumponexitpath=test.jfr 程序结束的时候生成,同时使用配置文件
+-XX:FlightRecorderOptions=loglevel=debug
+-XX:FlightRecorderOptions=settings=D:\jdk1.7.0_75\jre\lib\jfr\profile.jfc
+或者通过这种方式来传递命令给已经run的java jcmd 5368 JFR.start duration=60s filename=myrecording.jfr TestJDBC
+JFR不是通过jvmti和BCI来实现的，所以效率更高一点 ,基本不影响性能，从80降到78
+JFR如下 效果很好，还能看调用的tree 
+堆栈跟踪	样本计数	百分比(%) 这些都能到某个具体的方法
+oracle.sql.CharacterSet.convertJavaCharsToAL32UTF8Bytes(char[], int, byte[], int, int)	8	40
+oracle.jdbc.driver.OraclePreparedStatement.setupBindBuffers(int, int)	2	10
+oracle.net.ns.NetOutputStream.write(byte[], int, int)	2	10
+sun.net.www.protocol.jar.Handler.parseURL(URL, String, int, int)	1	5
+oracle.net.ns.NetOutputStream.write(int)	1	5
+oracle.jdbc.driver.OraclePreparedStatement.executeInternal()	1	5
+java.util.BitSet.initWords(int)	1	5
+oracle.jdbc.driver.T4C8Oall.marshal(boolean, boolean, boolean, boolean, byte, int, byte[], int, Accessor[], int, Accessor[], int, byte[], char[], short[], int, DBConversion, byte[], InputStream[][], byte[][][], OracleTypeADT[][], OracleStatement, byte[], char[], short[], T4CTTIoac[], int[], int[], int[])	1	5
+oracle.net.ns.DataPacket.putDataInBuffer(byte[], int, int)	1	5
+java.lang.ThreadLocal$ThreadLocalMap.getEntry(ThreadLocal)	1	5
+TestJDBC.incone()	1	5
+
+使用jprofiler 性能下降非常明显，大概只有原来的1/8
+
+jstat 主要用来观察GC情况 比如 jstat -gcutil 30199  5s
+HPROF 用来Profile java内存，线程，方法等  java -agentlib:hprof=cpu=times javaclass 
+jhat 用来分析内存,可以用来读取hprof的binary格式，或者core dump
+jmap也是用来分析内存 但是不能知道对象从哪里创建的，hprof 可以做到 ，加上 -finalizerinfo 可以看到有finalizer方法的类是否在等待回收(这中不通过普通的gc回收)
+javavisual vm和jmc的功能差不多，界面难看一点 ,比jmc多一个线程快照，能够看出那个地方和方法慢，而且更准确，可以远程监控，通过jstatd 
+JVM Monitor 不能发现local run的jvm，而且和tptp运行方式不一样
+jprofiler能够统计每个方法运行次数
+jstack -l 可以直接列出死锁的线程
+jps 可以远程查看(如果jstatd打开的话)但是必须使用名字而不是ip  jps bjnpdt01:2200      
+综合下来
+JMX远程监控
+java -Dcom.sun.management.jmxremote.port=9999   -Dcom.sun.management.jmxremote.authenticate=false     -Dcom.sun.management.jmxremote.ssl=false 
+     com.example.Main
+
+远程调试
+java  -agentlib:jdwp=transport=dt_socket,address=8787,server=y,suspend=y
+
+远程使用jvisual ，需要先启动 jstatd -p 2200 ，启动jstatd之前需要修改 $JAVA_HOME/jre/lib\securityjava.policy  加上 
+grant codebase "file:${java.home}/../lib/tools.jar" {
+   permission java.security.AllPermission;
+};
+或者直接产生一个新文件，然后用  下面指令执行 jstatd -J-Djava.security.policy=jstatd.all.policy
+
+虚拟机启动的时候用下面的选项
+-XX:+HeapDumpOnOutOfMemoryError -XX:+UnlockCommercialFeatures -XX:+FlightRecorder -XX:+UseConcMarkSweepGC  -XX:+PrintGCTimeStamp -XX:+PrintGCDetails  -verbose:gc  -XX:+PrintConcurrentLock
+
+
+通过 .\jcmd 4636 Thread.print 打印thread
+20141204
+java数组排序
+String namesToSortBy[]  = { "sn", "uid", "cn"  };
+            boolean sortAscending[] = { true, false, true };
+            LDAPCompareAttrNames myComparator = new LDAPCompareAttrNames(
+                    namesToSortBy, sortAscending);
+            Object sortedSpecial[] = sortedResults.toArray();
+            Arrays.sort(sortedSpecial, myComparator);
+            
+
+
+
+20141121
+监控工具 
+jvisualvm 
+Oracle Java Mission Control   命令行参数 -XX:+UnlockCommercialFeatures -XX:+FlightRecorder 
+Java class dependency analyzer.  jdeps 
+20141029
+没有人推荐solr吗？基于lucence的企业级搜索，虽然也是java，但提高xml，json等http服务，php操作也很方便的。
+lucene功能强大，和消息队列结合会很好，唯一的缺点就是索引难维护，特别是多个索引的情况下。
+sphinx不需要太注重索引维护，但是它的缺点就是不太能实时的更新索引，支持的功能没有LUCENE强大，但是足够一个中小型网站使用。
+sphinx相比lucence，配置简单，易用，功能没有lucencename完善和强大。
+sphinx虽然简陋，但性能好几倍
+lucene可以实时增删索引，而sphinx只能通过定时任务实现，我不知道现在新版的实现没。反正这个是硬伤，速度再快也决定了它与实时性要求较高的web应用相去甚远
+大型网站除非有自己的搜索研发团队,否则不会使用sphinx,sphinx的扩展性很差,分词就是一难题,要么使用sphxin_for_chinese,但是这个玩意N年不更新了
+
+结论: lucene+sphinx协同使用。。来得到更好的搜索结果。
+
+GIN索引是超级强悍的，速度倒不是最强悍的
+关键是它能组合数据库其他的表，字段，甚至进行关联查询
+这个是lucene无法做到的，叫做搜索业务有关性，lucene集中在二维表格的属性过滤
+Lucene,Sphinx都是全文搜索，它们共同的弱点就是无法进行结构化查询
+用数据库，可以通过业务规则，迅速缩小搜索范围
+这个特点，bbs或者社区不一定需要
+在一个子集进行搜索，速度极其快，而且数据更新马上生效
+备份，管理都极其简单
+但是建立索引速度很慢，以大量的计算作为基础的
+myisam支持FTS，innodb不支持
+
+20140923
+jvm 优化
+对吞吐量敏感用   -XX:+UseParallelGC  -XX:+UseParallelOldGC
+对pause time敏感，用 XX:+UseConcMarkSweepGC ，如果cpu比较少 加上 -XX:+CMSIncrementalMode
+  ACTIVEMQ_OPTS="-Xms2024m -Xmx2024m    -XX:+PrintGCDetails -XX:+PrintGCDateStamps -Xloggc:gc.log -XX:+UseConcMarkSweepGC  -Dorg.apache.activemq.UseDedicatedTaskRunner=true -Djava.util.logging.config.file=logging.properties"
+查看gc及内存状态
+jstat -gcutil 30199  5s
+
+ S0  — Heap上的 Survivor space 0 区已使用空间的百分比
+ S1  — Heap上的 Survivor space 1 区已使用空间的百分比
+ E   — Heap上的 Eden space 区已使用空间的百分比
+ O   — Heap上的 Old space 区已使用空间的百分比
+ P   — Perm space 区已使用空间的百分比
+ YGC — 从应用程序启动到采样时发生 Young GC 的次数
+ YGCT– 从应用程序启动到采样时 Young GC 所用的时间(单位秒)
+ FGC — 从应用程序启动到采样时发生 Full GC 的次数
+ FGCT– 从应用程序启动到采样时 Full GC 所用的时间(单位秒)
+ GCT — 从应用程序启动到采样时用于垃圾回收的总时间(单位秒)
+ 
+ 建的对象都是用新生代分配内存，Eden空间不足的时候，会把存活的对象转移到Survivor中，新生代大小可以由-Xmn来控制，也可以用-XX:SurvivorRatio来控制Eden和Survivor的比例。旧生代用于存放新生代中经过多次垃圾回收(也即Minor GC)仍然存活的对象
+ 
+
+20140922
+内部的工程用到了spring的注解，例如@Service、@Controller等，在打成jar包之前，是可以扫描到的，但是打成jar包之后，就扫描不到了，报NoSuchBeanException 
+eclipse 打包的时候勾选 add directory entries 之后打出的jar包，多了路径的信息，可能这就是区别 
+maven下，打包时需要指定添加 <addDefaultImplementationEntries>true</addDefaultImplementationEntries> 
+<addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>     
+
+20140916
+web里面启动新程序
+实现  ServletContextListener 
+或者通过servlet实现，加上  <load-on-startup>9</load-on-startup>  
+ JVM中存在两种线程：用户线程和守护线程。
+
+        所谓的守护线程，是指用户程序在运行的时候后台提供的一种通用服务的线程，比如用于垃圾回收的
+
+垃圾回收线程。这类线程并不是用户线程不可或缺的部分，只是用于提供服务的"服务线程"。
+
+        基于这个特点，当虚拟机中的用户线程全部退出运行时，守护线程没有服务的对象后，JVM也就退出了。
+        
+20140811
+Consistent hashing 的基本思想就是将对象和 cache 都映射到同一个 hash 数值空间中，并且使用相同的hash 算法。
+现在 cache 和对象都已经通过同一个 hash 算法映射到 hash 数值空间中了，接下来要考虑的就是如何将对象映射到 cache 上面了。
+在这个环形空间中，如果沿着顺时针方向从对象的 key 值出发，直到遇见一个 cache ，那么就将该对象存储在这个 cache 上，因为对象和 cache 的 hash 值是固定的，因此这个 cache 必然是唯一和确定的。这样不就找到了对象和 cache 的映射方法了吗？！
+平衡性是指哈希的结果能够尽可能分布到所有的缓冲中去，这样可以使得所有的缓冲空间都得到利用。
+hash 算法并不是保证绝对的平衡，如果 cache 较少的话，对象并不能被均匀的映射到 cache 上，比如在上面的例子中，仅部署 cache A 和 cache C 的情况下，在 4 个对象中， cache A 仅存储了 object1 ，而 cache C 则存储了 object2 、 object3 和 object4 ；分布是很不均衡的。
+为了解决这种情况， consistent hashing 引入了“虚拟节点”的概念，它可以如下定义：
+“虚拟节点”（ virtual node ）是实际节点在 hash 空间的复制品（ replica ），一实际个节点对应了若干个“虚拟节点”，这个对应个数也成为“复制个数”，“虚拟节点”在 hash 空间中以 hash 值排列。
+仍以仅部署 cache A 和 cache C 的情况为例，在图 4 中我们已经看到， cache 分布并不均匀。现在我们引入虚拟节点，并设置“复制个数”为 2 ，这就意味着一共会存在 4 个“虚拟节点”， cache A1, cache A2 代表了 cache A ； cache C1, cache C2 代表了 cache C ；
+Consistent Hashing原理示意图
+1. 新增一个节点：只有在圆环上新增节点到逆时针方向的第一个节点之间的数据会受到影响(增加节点顺时针的第一个节点的信息需要迁移到增加节点上)。
+2. 删除一个节点：只有在圆环上原来删除节点到 逆时针 方向的第一个节点之间的数据会受到影响(删除节点的信息需要迁移到顺时针的第一个节点上) ，因此通过Consistent Hashing很好地解决了负载均衡中由于新增节点、删除节点引起的hash值颠簸问题。
+一致性hash算法：cache不能命中的问题仍然存在，但是只存在于2个节点之间的位置。相对于取模的算法，
+一致性hash算法除了计算key的hash值外，还会计算每个server对应的hash值，然后将这些hash值映射到一个有限的值域上
+（比如0~2^32）。通过寻找hash值等于大于hash(key)的最小server作为存储该key数据的目标server。
+如果找不到，则直接把具有最小hash值的server作为目标server
+
+
+C++能够实现函数重载是因为编译的时候函数符号名字会改变得和函数名不一样，所以可以重载
+但是返回类型不同不会改变函数符号名，但是c语言函数符号名和函数名一样，所以就不能重载
+20140606 
+mkdir demoCA
+mkdir demoCA/newcerts
+mkdir demoCA/private
+touch demoCA/index.txt
+echo "01" >> demoCA/serial
+
+产生CA private key 
+openssl genrsa -des3 -out cakey.key 2048    
+去除private key 密码
+openssl rsa -in cakey.key -out cakey.key              
+生成自签名根证书请求
+openssl req -new -x509 -key cakey.key -out cacert.pem -days 36500 -config /etc/ssl/openssl.cnf
+
+
+查看证书信息
+
+[hksso@HKSSO02 cert]$ openssl s_client -connect  s.cicc.group:443
+CONNECTED(00000003)
+depth=0 C = CN, ST = Beijing, L = Beijing, O = CICC, OU = IT, CN = s.cicc.com.cn, emailAddress = sso@cicc.com.cn
+verify error:num=20:unable to get local issuer certificate
+verify return:1
+depth=0 C = CN, ST = Beijing, L = Beijing, O = CICC, OU = IT, CN = s.cicc.com.cn, emailAddress = sso@cicc.com.cn
+verify error:num=27:certificate not trusted
+verify return:1
+depth=0 C = CN, ST = Beijing, L = Beijing, O = CICC, OU = IT, CN = s.cicc.com.cn, emailAddress = sso@cicc.com.cn
+verify error:num=21:unable to verify the first certificate
+verify return:1
+---
+Certificate chain
+ 0 s:/C=CN/ST=Beijing/L=Beijing/O=CICC/OU=IT/CN=s.cicc.com.cn/emailAddress=sso@cicc.com.cn
+   i:/C=CN/ST=Beijing/L=Beijing/O=CICC/OU=IT/CN=CICC Root CA/emailAddress=rootca@cicc.com.cn
+---
+Server certificate
+-----BEGIN CERTIFICATE-----
+MIID1DCCArygAwIBAgIJAKI9fjj3ZND0MA0GCSqGSIb3DQEBBQUAMIGHMQswCQYD
+VQQGEwJDTjEQMA4GA1UECAwHQmVpamluZzEQMA4GA1UEBwwHQmVpamluZzENMAsG
+A1UECgwEQ0lDQzELMAkGA1UECwwCSVQxFTATBgNVBAMMDENJQ0MgUm9vdCBDQTEh
+MB8GCSqGSIb3DQEJARYScm9vdGNhQGNpY2MuY29tLmNuMCAXDTE0MTEwNzAxMjI1
+MFoYDzIxMTQxMDE0MDEyMjUwWjCBhTELMAkGA1UEBhMCQ04xEDAOBgNVBAgMB0Jl
+aWppbmcxEDAOBgNVBAcMB0JlaWppbmcxDTALBgNVBAoMBENJQ0MxCzAJBgNVBAsM
+AklUMRYwFAYDVQQDDA1zLmNpY2MuY29tLmNuMR4wHAYJKoZIhvcNAQkBFg9zc29A
+Y2ljYy5jb20uY24wggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQC+XeqN
+CIfnegL1gW0qumg3JELZUOpwmuCdYgti5Fvc6wgIUqJoTk+y/qGR87uNnKdR7ueY
+etOchztIH4joDZHCEsR1gTWQUyl8MRigTuwu8qA9CCd6hqQfu88GDDah/Dy94S/P
+DTKc1ytiKONonqU6IJsdb1ZePMzJDOIfwTU7UQok5E185J9L8PPGNz0Z/0VbF89S
+2Rgki6IIAL6ZjweTd0Rs6NZOujuaTl9mUuAs6gEBgXapLAs7Q9Z32ELFYdVtfwvh
+VQEkmJ4uEjSVWRpqcstb5vxglH5DBucMP6YJWf0rugxQuKn2o4KGUnAjuyOH+Xc6
+Dtqif4AkcvN6Eh5vAgMBAAGjQTA/MD0GA1UdEQQ2MDSHBMCoCsaCD3Nzby5jaWNj
+LmNvbS5jboINcy5jaWNjLmNvbS5jboIMcy5jaWNjLmdyb3VwMA0GCSqGSIb3DQEB
+BQUAA4IBAQB/jU64Cx7zVx6DftrzlNfLhYaCE88/nRmDOcvU5GCXqTAO7vHg5AVZ
+akLh0s86plWNK7/CXMJ43Hl1p58SFVmAkQX/vuHuLBAK4nViKcsZHhPCKsSiSX+/
+C1MXNMTC7iKPZJBd+iB5x7vBEnlL3fr14dXZGAAASwsqALUXbDdsDUXv87peHHAF
+LaFqSEt+ouSIScDLCYQzbZOHuA/AZ4f4ZdLiZiD+4YOBrPj3LNc9q8VdmBnedTAq
+udVEb4heh5ne9N8Tm9gxLNnYpqGZC81G2kBlSZop/ydbczabJm+ZCa2rqn6ZVowG
+4F1sQr85SAisYghC4OPx9/Nht+GcDfIy
+-----END CERTIFICATE-----
+subject=/C=CN/ST=Beijing/L=Beijing/O=CICC/OU=IT/CN=s.cicc.com.cn/emailAddress=sso@cicc.com.cn
+issuer=/C=CN/ST=Beijing/L=Beijing/O=CICC/OU=IT/CN=CICC Root CA/emailAddress=rootca@cicc.com.cn
+---
+No client certificate CA names sent
+Server Temp Key: ECDH, prime256v1, 256 bits
+---
+SSL handshake has read 1643 bytes and written 375 bytes
+---
+New, TLSv1/SSLv3, Cipher is ECDHE-RSA-AES256-GCM-SHA384
+Server public key is 2048 bit
+Secure Renegotiation IS supported
+Compression: NONE
+Expansion: NONE
+SSL-Session:
+    Protocol  : TLSv1.2
+    Cipher    : ECDHE-RSA-AES256-GCM-SHA384
+    Session-ID: A39858739161337AA09FD2405E55D731B6F8244676BF43C1146230EA54BE29D3
+    Session-ID-ctx: 
+    Master-Key: 9C061849F019C0E13582C119E77F2F9A1E83FBA0CA0232EAA562A15B33857544674950680F5F9C31C3B3AC68BF006D3A
+    Key-Arg   : None
+    Krb5 Principal: None
+    PSK identity: None
+    PSK identity hint: None
+    TLS session ticket lifetime hint: 300 (seconds)
+    TLS session ticket:
+    0000 - d1 8a 33 33 bf 15 c8 39-0d 0f 39 85 05 f3 50 2b   ..33...9..9...P+
+    0010 - 8e 26 80 01 09 fd b7 7a-fa c7 a5 b9 33 ad a2 ae   .&.....z....3...
+    0020 - 20 9a 37 11 a0 57 49 b0-5f 4c 84 16 58 79 1c 18    .7..WI._L..Xy..
+    0030 - e5 e2 01 5e bb 40 33 1d-bf 8e ac 6d 30 54 13 62   ...^.@3....m0T.b
+    0040 - 69 a2 16 06 9d d0 82 33-cc 52 7f 9a e9 be b4 c5   i......3.R......
+    0050 - 43 0e bd 16 c6 79 e0 8d-cd 46 03 50 2d 4c 87 91   C....y...F.P-L..
+    0060 - f8 46 95 72 11 01 f3 92-59 ad 28 10 7c 29 d7 dd   .F.r....Y.(.|)..
+    0070 - ba c9 60 95 b6 7c 51 b0-dd 34 11 d0 b5 69 f8 43   ..`..|Q..4...i.C
+    0080 - e7 c2 c6 12 6b 64 ec a6-bd f3 8c 59 81 07 be 0f   ....kd.....Y....
+    0090 - 0a a5 3c 4d 21 6c a4 e6-d9 22 1b 16 a9 3b 6a dc   ..<M!l..."...;j.
+
+    Start Time: 1419991812
+    Timeout   : 300 (sec)
+    Verify return code: 21 (unable to verify the first certificate)
+---
+
+^C
+[hksso@HKSSO02 cert]$ openssl s_client -connect  192.168.193.136:8443
+CONNECTED(00000003)
+depth=0 C = cn, ST = bj, L = bj, O = cicc, OU = cicc, CN = cas
+verify error:num=18:self signed certificate
+verify return:1
+depth=0 C = cn, ST = bj, L = bj, O = cicc, OU = cicc, CN = cas
+verify error:num=10:certificate has expired
+notAfter=Jul 22 05:45:16 2014 GMT
+verify return:1
+depth=0 C = cn, ST = bj, L = bj, O = cicc, OU = cicc, CN = cas
+notAfter=Jul 22 05:45:16 2014 GMT
+verify return:1
+---
+Certificate chain
+ 0 s:/C=cn/ST=bj/L=bj/O=cicc/OU=cicc/CN=cas
+   i:/C=cn/ST=bj/L=bj/O=cicc/OU=cicc/CN=cas
+---
+Server certificate
+-----BEGIN CERTIFICATE-----
+MIIDVjCCAj6gAwIBAgIEJoNdCDANBgkqhkiG9w0BAQsFADBTMQswCQYDVQQGEwJj
+bjELMAkGA1UECBMCYmoxCzAJBgNVBAcTAmJqMQ0wCwYDVQQKEwRjaWNjMQ0wCwYD
+VQQLEwRjaWNjMQwwCgYDVQQDEwNjYXMwHhcNMTQwNDIzMDU0NTE2WhcNMTQwNzIy
+MDU0NTE2WjBTMQswCQYDVQQGEwJjbjELMAkGA1UECBMCYmoxCzAJBgNVBAcTAmJq
+MQ0wCwYDVQQKEwRjaWNjMQ0wCwYDVQQLEwRjaWNjMQwwCgYDVQQDEwNjYXMwggEi
+MA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQClZwxEC5zg/HFw3y1CPU7zzcS2
+yZvmUeLw1ncA8ItsWBWoACHrqfbs3aFcS0y6g1ppYc6Sv6bQBNxVzr2Lei5/WV1+
+w3j7rnHRHAftWlc7ybrVHGp1HFq6bkLp5TZzB8r4NWt+iCYeesTh0zWq1+YGobfV
+T4wySCtvuk8+raZPN3mPyM8mu3AfkKMFPEg0JUQ0fBBzxL1bnT2DjiWgMAm7lmco
+0ofO7hFWXFquAztHBfN/ZswyFFtZmFMG0vjKn55b22r0urJSI8vKJKSAtCvLCbin
+1Us0aJdMlZZSMPRxogbDRt0pOFbDXyNFQHAVjdZLlP5XhrzUo/mBZu85p41nAgMB
+AAGjMjAwMA8GA1UdEQQIMAaHBMCowYgwHQYDVR0OBBYEFH3ANeBPRIkRed0gcaoQ
+Xi71i2RSMA0GCSqGSIb3DQEBCwUAA4IBAQAps5cXiyVZ3o5/2L1sSc5ZSscUqCq/
+X2LDdeA6+ZnCLkJJ+16ukZC6EHjiQfRjw+3JuOlVR/YlirHXHhTG6RNvm2G/TwX1
+wEwwU6Y4JFXYaJngFf7Rn2H95sKeE3YGRit204fQlFpRcd4+DCAPUIvPt1zmXk6y
+ZehLW08XhZsx5PkigT4RprSTTOiWz7SYzgOl41G2dn+SwHM/DZ4cXqsFpdZOd8CK
+lnLcSoJnoDDBg/cZaD8JNJlqpR420eA3Lyd9FLAsgpIkjoLsPEokEyS3RfA+/PRp
+vIvk01IF8S0zkof96wWtqsHYDGdtzhJ/Zs7sFnhwej16cOPBAPCb3hZY
+-----END CERTIFICATE-----
+subject=/C=cn/ST=bj/L=bj/O=cicc/OU=cicc/CN=cas
+issuer=/C=cn/ST=bj/L=bj/O=cicc/OU=cicc/CN=cas
+---
+No client certificate CA names sent
+Server Temp Key: ECDH, secp521r1, 521 bits
+---
+SSL handshake has read 1450 bytes and written 483 bytes
+---
+New, TLSv1/SSLv3, Cipher is ECDHE-RSA-AES128-SHA256
+Server public key is 2048 bit
+Secure Renegotiation IS supported
+Compression: NONE
+Expansion: NONE
+SSL-Session:
+    Protocol  : TLSv1.2
+    Cipher    : ECDHE-RSA-AES128-SHA256
+    Session-ID: 54A35A93F2131C46AC4032EC9A709AB4D5FA4F46DFCD0EE1B86FE5D91143DD67
+    Session-ID-ctx: 
+    Master-Key: 3B841D7866972AA2808D4FC5C9E2B3A8C945B7D601E44FC30578D0F654B32971CC504C7AB8B845C807314C3BAAC65131
+    Key-Arg   : None
+    Krb5 Principal: None
+    PSK identity: None
+    PSK identity hint: None
+    Start Time: 1419991846
+    Timeout   : 300 (sec)
+    Verify return code: 10 (certificate has expired)
+---
+
+
+迪菲－赫尔曼密钥交换（英语：Diffie–Hellman key exchange，简称“D-H”） 是一种安全协议。它可以让双方在完全没有对方任何预先信息的条件下通过不安全信道创建起一个密钥。这个密钥可以在后续的通讯中作为对称密钥来加密通讯内容。
+该算法不能用于加密或解密，而是用于密钥的传输和分配
+
+生成tomcat用的证书
+创建私钥  
+openssl genrsa -out tomcat2.key 2048
+创建 request (CN需要设置为域名或者IP地址)
+openssl req -new -key tomcat2.key -out tomcat2.csr
+用CA证书签名
+openssl x509 -req -in tomcat2.csr -out tomcat2.crt -CA cacert.pem -CAkey  ca-key.pem -days 36500 -CAserial  cacert.srl
+
+openssl创建支持多域名/ip的证书
+openssl x509 -req -in sso.csr -out sso.crt -CA cacert.pem -CAkey  ca-key.pem -days 36500 -CAserial  cacert.srl  -extfile sso.conf -extensions v3_ca 
+sso.conf (所有dns都要列进去,证书重新发布后，会有一段时间的浏览器生效时间)
+[v3_ca]
+subjectAltName =IP:192.168.10.198,DNS:sso.cicc.com.cn,DNS:s.cicc.com.cn
+
+
+导出private key and public key 为 pkcs12(pem格式) 格式
+openssl pkcs12 -export -in tomcat2.crt -inkey tomcat2.key  -out tomcat2.p12
+这种方式会把ca的证书也一起导进去
+openssl pkcs12 -export -in tomcat2.crt -inkey tomcat2.key  -out tomcat3.p12 -name tomcat -CAfile cacert.pem -caname root -chain
+
+                        
+转换成java jks
+keytool -importkeystore -srckeystore tomcat2.p12 -srcstoretype pkcs12 -destkeystore tomcat2.jks  -deststoretype jks -deststorepass  123456  
+
+
+
+显示证书（Certificate chain length: 1）
+keytool -list -v  -keystore tomcatnewkey.jks
+Enter keystore password:  
+
+Keystore type: JKS
+Keystore provider: SUN
+
+Your keystore contains 1 entry
+
+Alias name: 1
+Creation date: Jun 9, 2014
+Entry type: PrivateKeyEntry
+Certificate chain length: 1
+Certificate[1]:
+Owner: EMAILADDRESS=tomcat@cicc.com.cn, CN=192.168.193.132, OU=IT, O=CICC Company, L=BJ, ST=BJ, C=CN
+Issuer: EMAILADDRESS=ca@cicc.com, CN=CA, OU=IT, O=CICC, L=BJ, ST=BJ, C=CN
+Serial number: d40d1c88799013bd
+Valid from: Mon Jun 09 17:03:47 CST 2014 until: Thu Jun 06 17:03:47 CST 2024
+Certificate fingerprints:
+         MD5:  ED:C9:8A:06:8C:11:3E:5C:DA:F6:FF:59:53:F6:AE:8B
+         SHA1: 35:88:0D:8D:6C:C7:3B:75:BB:44:A9:46:83:75:7C:48:8C:9B:27:11
+         Signature algorithm name: SHA1withRSA
+         Version: 1
+
+
+把CA证书导入到IE里面的受信任根证书即可实现没有警告(选项->内容->证书)
+如果导入中级证书颁发机构也会有警告
+域控服务器主动推送证书到 workstation http://technet.microsoft.com/zh-cn/library/cc731253%28v=ws.10%29.aspx
+
+startssl可以免试申请，但是只能使用1年
+
+这种方式不行，浏览器还是显示证书是自己发放的
+keytool生产证书 如果使用IP那么要用cn=ip 地址
+keytool -genkey -keyalg RSA -keysize 2048 -dname "CN=192.168.193.132, OU=IT, O=CICC, L=SH, ST=SH, C=CN" -alias tomcat -keypass 123451 -keystore tomcat_keytool.jks -storepass 123451 -validity 365
+生成证书请求
+keytool -certreq -alias tomcat  -keyalg RSA  -file tomcatcertreq.pem -keypass 123451 -keystore tomcat_keytool.jks -storepass 123451
+签名
+用openssl和CA证书签名
+openssl ca -verbose -in tomcatcertreq.pem -out tomcatserver.pem  -cert cacert.pem  -keyfile ca-key.pem  -days 365  -config /etc/ssl/openssl.cnf -policy policy_anything 
+证书格式转换
+openssl x509 -in tomcatserver.pem -out tomcatservernew.cer
+
+
+
+导入信任的CA根证书到keystore
+keytool -import -v -trustcacerts  -alias my_ca_root -file cacert.pem  -storepass 123451 -keystore tomcat_keytool.jks
+把CA签名后的server端证书导入keystore
+keytool -import -v -alias tomcat_server -file tomcatservernew.cer -storepass 123451 -keystore tomcat_keytool.jks
+查看
+keytool -list -v    -storepass 123451 -keystore tomcat_keytool.jks
+查看证书
+openssl x509  -text -in  tomcatserver.crt   
+用这种方式制作的证书显示如下 一共三个，自己的private,自己的public ,ca的public 
+Alias name: tomcat_server
+Creation date: Jun 9, 2014
+Entry type: trustedCertEntry
+
+Owner: CN=192.168.193.132, OU=IT, O=CICC, L=SH, ST=SH, C=CN
+Issuer: EMAILADDRESS=ca@cicc.com, CN=CA, OU=IT, O=CICC, L=BJ, ST=BJ, C=CN
+Serial number: d40d1c88799013be
+Valid from: Mon Jun 09 17:29:56 CST 2014 until: Tue Jun 09 17:29:56 CST 2015
+Certificate fingerprints:
+         MD5:  D1:BD:ED:3E:86:A8:14:27:6B:BE:C7:20:AF:3A:35:12
+         SHA1: E6:76:F4:BF:DF:91:27:BC:6A:46:B3:C5:3B:7D:7C:17:2D:20:83:66
+         Signature algorithm name: SHA1withRSA
+         Version: 3
+         
+         
+         
+         
+
+
+20140116
+多线程环境下，如果变量被一个线程 修改，不能保证其他线程能及时读到最新的值，除非读也是 synchronize
+当写的方法是 synchronize的时候，保证在方法结束时，变量会同步到主内存。而如果是 synchronize 的读取，那么thread的缓存失效，必须从主内存读 ,voltaile是一直用主内存读写
+
+大部分时候，不加synchronize也能在多线程情况下正常工作，但是不安全
+
+JSR 133  重新修订了 volatile 定义，保证happen before原则生效，效率降低了
+Happen before原则
+    线程中的每一个操作 happens-before这个线程中在程序顺序中后面出现的每一个操作
+    对监视器的解锁 happens-before同一监视器上的所有后续锁定
+    对 volatile 字段的写 happens-before同一 volatile 的每一个后续读
+    对一个线程的 Thread.start() 调用 happens-before在启动的线程中的所有操作
+    线程中的所有操作 happens-before 从这个线程的 Thread.join() 成功返回的所有其他线程 
+
+20131204
+The Tomcat JDBC Connection Pool 
+ validationInterval 这个值比较关键，如果在获取连接的时候，需要test但是在这个间隔内已经测试过，就不用测试了，但是在
+ 极端情况下会出问题
+
+jdbc timeout issue       cs.setQueryTimeout(1) ; 能够work
+
+QueryTimeout for Oracle JDBC Statement
+    Creates a statement by calling Connection.createStatement().
+    Calls Statement.executeQuery().
+    The statement transmits the Query to Oracle DBMS by using its own connection.
+    The statement registers a statement to OracleTimeoutPollingThread (1 for each classloader) for timeout process.
+    Timeout occurs.
+    OracleTimeoutPollingThread calls OracleStatement.cancel().
+    Sends a cancel message through the connection and cancels the query being executed.
+    
+QueryTimeout for MySQL JDBC Statement (5.0.8)
+Creates a statement by calling Connection.createStatement().
+    Calls Statement.executeQuery().
+    The statement transmits the Query to MySqlServer by using the internal connection.
+    The statement creates a new timeout-execution thread for timeout process.
+    For version 5.1.x, it changes to assign 1 thread for each connection.
+    Registers the timeout execution to the thread.
+    Timeout occurs.
+    The timeout-execution thread creates a connection that has the same configurations as the statement.
+    Transmits the cancel Query (KILL QUERY "connectionId“) by using the connection.
+        
+Socket timeout has 2 options listed below, and their configurations vary by driver.
+
+    Timeout at socket connection: Time limit for Socket.connect(SocketAddress endpoint, int timeout)
+    Timeout at socket reading/writing: Time limit for Socket.setSoTimeout(int timeout)
+    
+    jdbc:mysql://xxx.xx.xxx.xxx:3306/database?connectTimeout=60000&socketTimeout=60000
+    
+    OracleDatasource.setConnectionProperties()
+    oracle.net.CONNECT_TIMEOUT/oracle.jdbc.ReadTimeout
+    
+    Properties prop = new Properties (); 
+   prop.put ("user", "SCOTT"); 
+   prop.put ("password", "TIGER"); 
+// 3 minutes, 3 * 60 * 1000 
+
+
+
+
+prop.put ("oracle.jdbc.ReadTimeout", "180000"); 
+conn = DriverManager.getConnection (url, prop); 
+
+Linux下 tcp_keepalive_time=7200s 两个小时
+
+net.ipv4.tcp_keepalive_time 3000  the interval to wait before probing the idle connection (on most platforms the default is 2 hours) 
+net.ipv4.tcp_retries 5
+net.tcp_keepalive_intvl 50  the interval to wait before retrying the probe after an initial failure to respond  
+net.tcp_keepalive_probes 5 the maximum number of times to retry the probe
+
+net.ipv4.tcp_syn_retries 1
+the timeout period was reduced to about 20 seconds.
+
+
+oracle.net.READ_TIMEOUT
+- is working for jdbc driver versions <=10.2
+- is not working for jdbc driver versions >= 11.1
+
+oracle.jdbc.ReadTimeout
+- is working for jdbc driver versions >= 10.1.0.5
+- is not working for jdbc driver versions <10.1.0.5
+
+
+
+
+AIX下 
+tcp_keepidle 参数作用：  14400=2小时
+对一个连接进行有效性探测之前运行的最大非活跃时间间隔，也就是保持TCP/IP连接的时间。在AIX操作系统中，其默认值为 14400，单位为0.5秒，也就是2 个小时。如果其值设置的比防火墙timeout时间的值大，就会出现间歇性的网络断链。为了避免这种网络错误，我们需要调整其值。当然，如果我们无法确定防火墙的timeout值，不知道把tcp_keepidle该设置为多少，我们不妨将其调整为2分钟（tcp_keepidle=240），这样就比较稳妥了。
+与tcp_keepidle相关的其他几个网络参数：
+tcp_keepcnt ：关闭一个非活跃连接之前进行探测的最大次数，默认为 8 次；
+tcp_keepintvl ：两次探测的时间间隔，默认值为 150 即 75 秒
+
+
+    
+ 使用   jdbc         String url="jdbc:oracle:thin:@(DESCRIPTION =(ENABLE=BROKEN)(ADDRESS=(PROTOCOL=TCP)(HOST=192.168.193.136)(PORT=1521))(CONNECT_DATA=(SERVER = DEDICATED)(SERVICE_NAME = nptest01)))";
+
+jnettrace可以用来做为jdbc client的proxy到db 然后生成 trace文件
+
+http://www.oracle.com/technetwork/database/enterprise-edition/jnettrace.jar
+
+
+
+20131109
+新的servlet可以使用注解来配置
+
+@WebServlet("/report")
+public class MoodServlet extends HttpServlet {
+也可以用@WebFilter来定义filter
+可以用@MultipartConfig 来支持文件上传，非常方便  @MultipartConfig(location="/tmp", fileSizeThreshold=1024*1024,
+    maxFileSize=1024*1024*5, maxRequestSize=1024*1024*5*5)
+接着就可以用 request.getParts() getPart(String name) 来获取上传的文件
+
+
+新的方法支持 Get ,Delete,Options,Post,Put,Trace 
+
+20131108
+servlet是每个请求一个线程，所以AJAX环境下，会很多线程
+如果使用jetty 的6 Continuations，则可以释放当前线程到线程池，当条件满足后，在重新恢复 request请求，可以支持更多并发
+
+final 关键字修饰的类 不能再被继承 
+final 关键字修饰的方法 不能被重载
+final 关键字修饰的基础数据类型 不能被修改，只能在定义的时候，或者初始化的设置
+  
+final 关键字修饰的对象类型属性 不能被重新指向新的对象，只能在定义的时候，或者初始化的设置，但是对象里面的值可以修改
+
+
+
+20131103
+voltaile 不是线程安全的 ，必须是Atomic的才能安全
+
+package com.cicc.it.os;
+
+import java.util.Date;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.CyclicBarrier;
+import java.util.concurrent.atomic.AtomicInteger;
+
+public class TestVoltaile {
+ 	private   AtomicInteger counter=new AtomicInteger();
+//	public   int  counter=0;
+
+	public TestVoltaile()
+	{
+		 counter.set(0);
+	}
+	public void increase()
+	{//counter++;
+		counter.incrementAndGet();
+	}
+	public static void main(String[] args)throws java.lang.Exception {
+		// TODO Auto-generated method stub
+		TestVoltaile counter=new TestVoltaile();
+		int number=1000;
+        CyclicBarrier barrier = new CyclicBarrier(number);
+        CountDownLatch latch=new CountDownLatch(number);
+        System.out.println("begin create thread ");  
+
+        for (int k=0;k<number;k++)
+        {	
+        	CounterThread th=new CounterThread(counter,barrier,latch);
+        Thread t=new Thread(th);
+        t.start();
+        	
+        }
+        System.out.println(" created thread ");  
+
+        latch.await();
+        System.out.println("all work done at "+counter.counter);  
+
+	}
+
+
+}
+
+package com.cicc.it.os;
+
+import java.util.Random;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.CyclicBarrier;
+
+public class CounterThread implements Runnable 
+{   TestVoltaile counter;
+CyclicBarrier barrier;
+CountDownLatch latch;
+Random  rm=new java.util.Random();
+int  sleeptime;
+	public CounterThread(TestVoltaile counter,CyclicBarrier barrier, CountDownLatch latch)
+{
+	this.counter=counter;
+	this.barrier=barrier;
+	this.latch=latch;
+	sleeptime=rm.nextInt(1000);
+}
+	public void run()
+	{  try
+		 {barrier.await();
+	Thread.currentThread().sleep(sleeptime);
+}
+	catch(java.lang.Exception e)
+	{
+		e.printStackTrace();
+	}
+	 	counter.increase();
+	 	latch.countDown();
+	}
+}
+
+
+20131101
+ByteBuffer 如果不做flip则位置不对就不能从写状态直接到读状态
+ByteBuffer.mark标记当前位置，可以进行读写操作，然后调用reset，则位置回到mark的时候。
+
+Jmock可以对任意接口实现一个类，然后就可以提前进行测试
+
+20131025
+ young generation ->minor collection   young generation= eden plus two survivor spaces
+  tenured generation->major collection
+  permanent generation->stored objects describing classes and methods  
+  [GC 325407K->83000K(776768K), 0.2300771 secs]  (776768K)=total heap minus one of the survivor spaces,不包含  permanent 
+  -XX:+UseConcMarkSweepGC for 低延迟的application
+  -XX:+UseParallelGC  for 吞吐量的application
+  如果线程很多可以减少 stack size -server -Xss64k 缺省是  As of Java SE 6, this value is 320k in the 32-bit VM and 1024k in the 64-bit VM.
+  在windows上用 ctrl+break 做threaddump
+  
+  用jetty来做嵌入式web container 或者替换 tomcat 
+  
+  Jetty适合大量的长连接，tomcat适合大量的短连接
+  
+  
+  final 数据：
+可以在编译时执行的计算，减轻了一些运行时的负担。基本数据类型在定义时，final修饰则必须赋值。对于基本
+数据类型，final使数值恒定不变，而对于对象引用，则使得该引用不能指向其他对象，但对象本身可以修改！
+
+空白final：
+空白final是指被声明为final但为给定初值的域。 无论什么情况，编译器都确保空白final在使用前必须被初始化。一个类的final域就可以做到根据对象而有所不同，却又保持其恒定不变的特性。
+
+final参数：
+ java允许在参数列表中以声明的方式将参数声明为final。这意味着 你无法在方法中更改引用所指向的对象！
+
+final方法：原因：1.把方法锁定，以防止任何继承类修改它的定义。想确保在继承中使方法行为保持不变，并且不会
+被覆盖。
+final类：当讲某个类整体定义成final ，就表明你不打算继承该类，而且也不允许别人这么做。换句话说，你对该类的设计永远不需要做任何变动，不希望它有子类。final类中的方法 被隐式的指定为final。方法不能被覆盖。 private方法被默认的声明为final。不能被覆盖。
+
+
+  locked <0x00007f3b40f7f638
+  thread状态
+  BLOCKED: The thread is waiting for a different thread to release its lock in order to get the monitor lock.
+WAITING: The thread is waiting by using a wait, join or park method.
+TIMED_WAITING: The thread is waiting by using a sleep, wait, join or park method. 
+(The difference from WAITING is that the maximum waiting time is specified by the method parameter, and WAITING 
+can be relieved by time as well as external changes.) 
+
+"waiting to lock" in the thread dump when using intrinsic locks 
+"parking to wait for" when using locks from java.util.concurrent.
+
+Waiting for monitor entry 和 in Object.wait()：
+Monitor是 Java中用以实现线程之间的互斥与协作的主要手段，它可以看成是对象或者 Class的锁。每一个对象都有，
+也仅有一个 monitor。从下图1中可以看出，每个 Monitor在某个时刻，只能被一个线程拥有，
+该线程就是 “Active Thread”，而其它线程都是 “Waiting Thread”，分别在两个队列 “ Entry Set”和 “Wait Set”里面等候。
+在 “Entry Set”中等待的线程状态是 “Waiting for monitor entry"(还没有拿到锁)
+而在 “Wait Set”中等待的线程状态是 “in Object.wait()(已经拿到锁，到需要另外一个锁的不满足，所以放弃)
+aiting on condition：等待资源，或等待某个条件的发生。
+
+  jmap -histo 29929
+
+    num     #instances         #bytes  class name  
+    ----------------------------------------------  
+       1:       1906383      196495280  [B  
+       2:        282651       29711200  [I  
+       3:        192538       19054440  [C  
+       4:        281124       16844392  [[B  
+       5:        561353       14572936  [Z  
+       6:        280667       13426416  [Ljava.io.InputStream;  
+       7:        278108       11124320  com.mysql.jdbc.PreparedStatement$BatchParams  
+       8:          1242        5313728  [Ljava.lang.Object;  
+       9:        102633        4926384  java.nio.HeapCharBuffer  
+      10:        102632        4926336  java.nio.HeapByteBuffer  
+      11:        151942        4862144  java.lang.String  
+解释如下：
+[B  == byte[]
+[I  == int[]
+[[B == byte[][]
+[C  == char[]
+[Z  == boolean[]
+
+
+20131024
+jinfo 	Experimental - Configuration Info for Java - Prints configuration information for for a given process or core file or a remote debug server.
+jmap 	Experimental - Memory Map for Java - Prints shared object memory maps or heap memory details of a given process or core file or a remote debug server.
+jsadebugd 	Experimental - Serviceability Agent Debug Daemon for Java - Attaches to a process or core file and acts as a debug server.
+jstack 	Experimental - Stack Trace for Java - Prints a stack trace of threads for a given process or core file or remote debug server. 
+
+
+
+在Java中，如果只是需要一个简单的thread pool，ExecuteService可能更为合适，这是一个Interface。可以通过调用 Executor 的静态方法来获得一些简单的threadpool，如：
+However, programmers are urged to use the more convenient Executors factory methods 
+Executors.newCachedThreadPool() (unbounded thread pool, with automatic thread reclamation), 
+Executors.newFixedThreadPool(int) (fixed size thread pool) and
+ Executors.newSingleThreadExecutor() (single background thread), 
+ 
+ 固定时间执行的线程
+ 	long delay= System.currentTimeMillis()-cleanTime.getTime();
+	System.out.println("begin to running delay="+delay);
+   ScheduledThreadPoolExecutor cleanTaskExecutor=new ScheduledThreadPoolExecutor(1);
+			final ScheduledFuture cleanTask  =
+				   cleanTaskExecutor.scheduleAtFixedRate(new MDFScheduleCleanTask(), delay, 10, TimeUnit.SECONDS);
+		
+			   
+
+20131022
+
+接口里定义的成员变量都自动是final static  在interface中一般不定义数据成员
+接口侧重在类的复用，而抽象类侧重在方法的复用
+ 
+抽象类在实现接口的时候可以部分或者全部实现接口中的方法。但是当抽象类只是实 
+       现了接口中的部分方法的时候，抽象类的子类必须要实现抽象类中未实现的接口的方
+       法。
+       抽象类和接口最大的区别
+       就是抽象类提供了方法的具体实现，供其子类来调用；而接口只是提供了对方法的声明，其方
+        法的实现要由其具体实现类来做。在Java中一个子类只能有一个父类，但是却能实现多个接口。
+       个人认为接口和抽象类各有特色，接口的使用比较灵活，不同的接口可以让其子类扮演不同的角
+       色，侧重于类的复用，在很大程度上解决了代码复用的问题；抽象类更侧重的是方法的复用，某
+       种意义上讲，抽象类的使用对于程序来说使用起来更加轻松，但是是使用抽象类还是接口要根据
+       具体的情况而定。
+       定义抽象方法 abstract void f();
+       
+       IOFilter更接近物理层，IoHandler更接近业务层
+       （1）IoService读取数据时个组件的执行顺序是：IoProcessor-->IoFilter-->IoHandler。
+（2）IoService发送数据时的执行数顺序：IoHandler-->IoFilter-->IoProcessor。
+
+图中的IoFilter比IoHandler中多出的一个最重要的方法就是filterWriter()，该方法会在程序调用session.write()的时候触发，该方法的重要之处就在于它表明了IoFilter和IoHandler的重要区别，即进行IoFilter是数据的收发层，也可以说是一个数据的收发器，而IoHandler则是逻辑层，并不负责数据的收发，如果把IoProcessor说成是底层的数据收发层，则IoFilter则是一个上层的数据收发层
+
+在Mina的NIO模式中有三种I/O工作线程（这三种线程模型只在NIO Socket中有效，在NIO数据包和虚拟管道中没有，也不需要配置）：
+Acceptor thread
+该线程的作用是接收客户端的连接，并将客户端的连接导入到I/O processor线程模型中。所谓的I/O processor线程模型就是Mina的I/O processor thread。Acceptor thread在调用了Acceptor.bind()方法后启动。每个Acceptor只能创建一个Acceptor thread，该线程模型不能配置，它由Mina自身提供。
+Connector thread
+该线程模型是客户端的连接线程模型，它的作用和Acceptor thread类似，它将客户端与服务器的连接导入到I/O processor线程模型中。同样地，该线程模型也是由Mina的客户端自动创建，该线程模型也不能进行配置。
+I/O processor thread
+该线程模型的主要作用就行接收和发送数据，所有的IO操作在服务器与客户端的连接建立后，所有的数据的接收和发送都是有该线程模型来负责的，知道客户端与服务器的连接关闭，该线程模型才停止工作。该线程模型可以由程序员根据需要进行配置。该线程模型默认的线程的数量为cpu的核数+1。若你的cpu为双核的，则你的I/O processor 线程的最大数量为3，同理若你的若你的cpu为四核的，那么你的I/O processor 线程的最大数量为5。
+
+
+  * 配置SocketAcceptor监听器的I/O Processor的线程的数量, 
+         * 此处的I/O Processor的线程数量由CPU的核数决定，但Acceptor 
+         * 的线程数量只有一个，也就是接收客户端连接的线程数只有一个， 
+         * Acceptor的线程数量不能配置。 
+         * */  
+        SocketAcceptor acceptor = new SocketAcceptor(Runtime.getRuntime()  
+                .availableProcessors() + 1, Executors.newCachedThreadPool());  
+                
+               2.0的 IOProcessor 缺省就是cpu+1，可以人工指定
+                1.7的 IOProcessor 缺省只有一个?
+                
+                
+                图中清晰的显示了IO Processor就是位于IoService和IoFilter之间，IoService负责和外部建立连接，而IoFilter则负责处理接收到的数据，IoProcessor则负责数据的收发工作。
+  
+  
+  在Mina的API中提供了一个 ExecutorFilter ，该线程池实现了IoFilter接口，它可以作为一个IoFilter添加到IoFilterChain中，它的作用就是将I/O Processor中的事件通过其自身封装的一个线程池来转发到下一个过滤器中。在没有添加该线程模型时，I/O Processor的事件是通过方法来触发的，然后转发给IoHandler。在没有添加该线程池的时候，所有的事件都是在单线程模式下运行的，也就是说有的事件和处理(IO Processor，IoHandler，IoFilter)都是运行在同一个线程上，这个线程就是IO Processor的线程，但是这个线程的数量受到CPU核数的影响，因此系统的性能也直接受CPU核数的影响。
+  
+  // 和CPU绑定的操作配置在过滤器的前面  
+filterChainBuilder.addLast("codec", new ProtocolCodecFactory(...));    
+// 添加线程池    
+filterChainBuilder.addLast("threadPool", new ExecutorFilter(Executors.newCachedThreadPool()); 
+
+我们可以通过这样的代码进行设置 MINA 2.0已经默认把直接内存分配改成堆，为了提供最好的性能和稳定性。
+   ByteBuffer.setUseDirectBuffers(false);   
+ 
+ ExecutorFilter 内部默认使用的是OrderedThreadPoolExecutor 作为线程池的实现
+ 
+
+ DefaultIoFilterChainBuilder chain = service.getFilterChain();
+  chain.addLast("codec", new ProtocolCodecFilter(...));
+ // Use one thread pool for most events.
+ chain.addLast("executor1", new ExecutorFilter());
+ // and another dedicated thread pool for 'filterWrite' events.
+ chain.addLast("executor2", new ExecutorFilter(IoEventType.WRITE));
+ 缺省情况下 By default, all event types but sessionCreated, filterWrite, filterClose and filterSetTrafficMask are submitted to the underlying executor, which is most common setting. 
+ 
+
+    
+    
+    mina1.X中的ThreadModel使用有两种方式，一种为采用手动方式设置连接池：
+SocketAcceptorConfig acceptorConfig = acceptor.getDefaultConfig();
+acceptorConfig.setThreadModel(ThreadModel.MANUAL);
+另外一种为使用默认ThreadModel设置连接池：
+((ExecutorThreadModel)acceptorConfig.cfg.getThreadModel()).setExecutor(executor);
+正常情况下，第二种情况没什么问题，但是如果你的程序中启动两个或两个以上的server，并且连接池的设置都使用第二种方式，那就悲剧了。(静态变量的问题)
+
+    
+这里再次提及IoFitler的顺序问题，一般情况下，我们会将ExecutorFilter放在ProtocolCodecFilter之后，因为我们不需要多线程地执行ProtocolCodec操作，用单一线程来进行ProtocolCodec性能会比较高，而具体的业务逻辑可能还设计数据库操作，因此更适合放在不同的线程中运行。
+
+    Interface :ProtocolCodecFactory<-DemuxingProtocolCodecFactory 
+             MessageDecoder 里面包含decodeable方法 ，如果返回ok，就能decode 
+             org.apache.mina.filter.codec.demux.DemuxingProtocolDecoder 会内部来选择那个decoder能够用来decode
+             
+              
+    
+MINA保证同一个时刻只有一个thread来处理decode，但是不保证下一个消息还是同一个线程处理
+ExecutorFilter  实现多线程处理
+
+MINA Multipurpose Infrastructure for Network Applications
+
+
+ 1.SocketAcceptor对应IoService。SocketIoProcessor对应IoProcessor。
+
+    2.SocketAcceptor有一个thread：该线程的作用是接收客户端的连接，并将客户端的连接导入到I/O processor线程模型中。SocketIoProcessor也有一个thread：该线程模型的主要作用就行接收和发送数据，所有的IO操作在服务器与客户端的连接建立后，所有的数据的接收和发送都是有该线程模型来负责的，直到客户端与服务器的连接关闭，该线程模型才停止工作。
+
+    3.SocketAcceptor中有多个SocketIoProcessor，SocketIoProcessor的数量是由CPU的核数+1来决定。
+    
+      在Mina的API中提供了一个ExecutorFilter，该线程池实现了IoFilter接口，它可以作为一个IoFilter添加到IoFilterChain中，它的作用就是将I/O Processor中的事件通过其自身封装的一个线程池来转发到下一个过滤器中。在没有添加该线程模型时，I/O Processor的事件是通过方法来触发的，然后转发给IoHandler。在没有添加该线程池的时候，所有的事件都是在单线程模式下运行的，也就是说有的事件和处理(IO Processor，IoHandler，IoFilter)都是运行在同一个线程上，这个线程就是IO Processor的线程，但是这个线程的数量受到CPU核数的影响，因此系统的性能也直接受CPU核数的影响。
+ 
+ 
+
+    
+启动apache的 ftp server
+/bin/sh bin/ftpd.sh res/conf/myftp.xml
+
+
+添加用户和密码
+java -classpath :/home/oracle/apache-ftpserver-1.0.6/bin/../common/classes:/home/oracle/apache-ftpserver-1.0.6/bin/../common/lib/aopalliance-1.0.jar:/home/oracle/apache-ftpserver-1.0.6/bin/../common/lib/ftplet-api-1.0.6.jar:/home/oracle/apache-ftpserver-1.0.6/bin/../common/lib/ftpserver-core-1.0.6.jar:/home/oracle/apache-ftpserver-1.0.6/bin/../common/lib/jcl-over-slf4j-1.5.2.jar:/home/oracle/apache-ftpserver-1.0.6/bin/../common/lib/log4j-1.2.14.jar:/home/oracle/apache-ftpserver-1.0.6/bin/../common/lib/mina-core-2.0.4.jar:/home/oracle/apache-ftpserver-1.0.6/bin/../common/lib/slf4j-api-1.5.2.jar:/home/oracle/apache-ftpserver-1.0.6/bin/../common/lib/slf4j-log4j12-1.5.2.jar:/home/oracle/apache-ftpserver-1.0.6/bin/../common/lib/spring-beans-2.5.5.jar:/home/oracle/apache-ftpserver-1.0.6/bin/../common/lib/spring-context-2.5.5.jar:/home/oracle/apache-ftpserver-1.0.6/bin/../common/lib/spring-core-2.5.5.jar  org.apache.ftpserver.main.AddUser res/conf/myftp.xml
+
+
+
+异步IO
+java.nio.channels 包中增加四个异步通道，从而增强了 Java 1.4 中的 New I/O APIs（NIO）：
+
+    AsynchronousSocketChannel
+    AsynchronousServerSocketChannel
+    AsynchronousFileChannel
+    AsynchronousDatagramChannel
+    
+    
+在java NIO中，有两种不同的buffer：direct buffer和non-direct buffer。所谓direct buffer，就是指直接在底层分配的缓存（比如操作系统内核缓存），而non-direct buffer就是在java堆中分配的缓存，即heap buffer。
+
+1、 劣势：创建和释放Direct Buffer的代价比Heap Buffer得要高
+2、 区别：Direct Buffer不是分配在堆上的，它不被GC直接管理（但Direct Buffer的JAVA对象是归GC管理的，只要GC回收了它的JAVA对象，操作系统才会释放Direct Buffer所申请的空间），它似乎给人感觉是“内核缓冲区（buffer in kernel）”。Heap Buffer则是分配在堆上的，或者我们可以简单理解为Heap Buffer就是byte[]数组的一种封装形式，查看JAVA源代码实现，Heap Buffer也的确是这样。
+3、 优势：当我们把一个Direct Buffer写入Channel的时候，就好比是“内核缓冲区”的内容直接写入了Channel，这样显然快了，减少了数据拷贝（因为我们平时的read/write都是需要在I/O设备与应用程序空间之间的“内核缓冲区”中转一下的）。而当我们把一个Heap Buffer写入Channel的时候，实际上底层实现会先构建一个临时的Direct Buffer，然后把Heap Buffer的内容复制到这个临时的Direct Buffer上，再把这个Direct Buffer写出去。当然，如果我们多次调用write方法，把一个Heap Buffer写入Channel，底层实现可以重复使用临时的Direct Buffer，这样不至于因为频繁地创建和销毁Direct Buffer影响性能。
+
+如果我们构造一个ByteBuffer仅仅使用一次，不复用它，那么Direct Buffer和Heap Buffer没有明显的区别。两个地方我们可能通过Direct Buffer来提高性能：
+1、 大文件，尽管我们Direct Buffer只用一次，但是如果内容很大，Heap Buffer的复制代价会很高，此时用Direct Buffer能提高性能。这就是为什么，当我们下载一个大文件时，服务端除了用SendFile机制，也可以用“内存映射”，把大文件映射到内存，也就是MappedByteBuffer，是一种Direct Buffer，然后把这个MappedByteBuffer直接写入SocketChannel，这样减少了数据复制，从而提高了性能。
+2、 重复使用的数据，比如HTTP的错误信息，例如404呀，这些信息是每次请求，响应数据都一样的，那么我们可以把这些固定的信息预先存放在Direct Buffer中（当然部分修改Direct Buffer中的信息也可以，重要的是Direct Buffer要能被重复使用），这样把Direct Buffer直接写入SocketChannel就比写入Heap Buffer要快了。
+
+简单的说，我们需要牢记三点：
+（1） 平时的read/write，都会在I/O设备与应用程序空间之间经历一个“内核缓冲区”。
+（2） Direct Buffer就好比是“内核缓冲区”上的缓存，不直接受GC管理；而Heap Buffer就仅仅是byte[]字节数组的包装形式。因此把一个Direct Buffer写入一个Channel的速度要比把一个Heap Buffer写入一个Channel的速度要快。
+（3） Direct Buffer创建和销毁的代价很高，所以要用在尽可能重用的地方。
+
+IO操作中涉及的2个主要对象为程序进程、系统内核。以读操作为例，当一个IO读操作发生时，通常经历两个步骤：
+
+    等待数据准备 (blocking or nonblocking)
+    将数据从系统内核拷贝到操作进程中(sync or async)
+
+例如，在socket上的读操作，步骤1会等到网络数据包到达，到达后会拷贝到系统内核的缓冲区；
+步骤2会将数据包从内核缓冲区拷贝到程序进程的缓冲区中。
+
+阻塞（blocking）与非阻塞（non-blocking）IO
+
+IO的阻塞、非阻塞主要表现在一个IO操作过程中，如果有些操作很慢，比如读操作时需要准备数据，
+那么当前IO进程是否等待操作完成，还是得知暂时不能操作后先去做别的事情？
+
+一直等待下去，什么事也不做直到完成，这就是阻塞。抽空做些别的事情，这是非阻塞。
+
+非阻塞IO会在发出IO请求后立即得到回应，即使数据包没有准备好，也会返回一个错误标识，
+使得操作进程不会阻塞在那里。操作进程会通过多次请求的方式直到数据准备好，返回成功的标识。
+
+想象一下下面两种场景：
+
+    A 小明和小刚两个人都很耿直内向，一天小明来找小刚借书：“小刚啊，你那本XXX借我看看”。 
+    于是小刚就去找书，小明就等着，找了半天找到了，把书给了小明。
+    B 小明和小刚两个人都很活泼外向，一天小明来找小刚借书：“嘿小刚，你那本XXX借我看看”。
+     小刚说：“我得找一会”，小明就去打球去了。过会又来，这次书找到了，把书给了小明。
+
+结论：A是阻塞的，B是非阻塞的。
+
+从CPU角度可以看出非阻塞明显提高了CPU的利用率，进程不会一直在那等待。但是同样也带来了线程切换的增加。
+增加的 CPU 使用时间能不能补偿系统的切换成本需要好好评估。
+可以看出，判断同步和异步的标准在于：一个IO操作直到完成，是否导致程序进程的阻塞。如果阻塞就是同步的，
+没有阻塞就是异步的。这里的IO操作指的是真实的IO操作，也就是数据从内核拷贝到系统进程（读）的过程。
+继续前面借书的例子，异步借书是这样的：
+
+    C 小明很懒，一天小明来找小刚借书：“嘿小刚，你那本XXX借我看看”。 
+    小刚说：“我得找一会”，小明就出去打球了并且让小刚如果找到了就把书拿给他。小刚是个负责任的人，找到了书送到了小明手上。
+
+前面说了IO操作的2个步骤：准备数据和把数据从内核中拷贝到程序进程。映射到这个例子，书即是准备的数据，
+小刚是内核，小明是程序进程，小刚把书给小明这是拷贝数据。
+在B方式中，小刚找书这段时间小明的确是没闲着，该干嘛干嘛，但是小刚找到书把书给小明的这个过程也就是拷贝数据这个步骤，
+小明还是得乖乖的回来候着小刚把书递手上。所以这里就阻塞了，根据上面的定义，所以是同步。
+Java NIO提供的非阻塞IO并不是单纯的非阻塞IO模式，而是建立在Reactor模式上的IO复用模型；在IO multiplexing Model中，
+对于每一个socket，一般都设置成为non-blocking，但是整个用户进程其实是一直被阻塞的。
+只不过进程是被select这个函数阻塞，而不是被socket IO给阻塞，所以还是属于非阻塞的IO。
+Java1.7中提供了异步IO的支持
+    sync+blocking IO      一直等到数据从io设备ready同时copy到用户进程
+    sync+nonblocking IO  发出io请求后立即返回，不需要等待，但是需要用户进程主动去查询是否数据已经ready,如果ready,发起读写操作，则copy到用户进程,在copy完成之前阻塞
+    IO multiplexing  一个代理进程来完成对多个io的 nonblocking的轮询查询，那个io ready，就回调起进程的方法，在数据中kernel到user的时候也阻塞 也是sync+nonblocking方式
+    signal driven IO   先注册一个数据ready信号，数据ready后,kernel回调，然后用户发出读操作，在等待数据从kernel到user space时阻塞
+    blocking+async IO   linux没有这个组合
+    nonblocking+ asynchronous IO  完全异步，用户进程发出io请求后不用等待，kernel会直接在io完成后把数据copy到用户进程，然后回调用户进程方法
+     
+ blocking IO
+    当用户进程调用了recvfrom这个系统调用，kernel就开始了IO的第一个阶段：准备数据。对于network io来说，
+    很多时候数据在一开始还没有到达（比如，还没有收到一个完整的UDP包），这个时候kernel就要等待足够的数据到来。
+    而在用户进程这边，整个进程会被阻塞。当kernel一直等到数据准备好了，它就会将数据从kernel中拷贝到用户内存，
+    然后kernel返回结果，用户进程才解除block的状态，重新运行起来。
+所以，blocking IO的特点就是在IO执行的两个阶段都被block了。
+non-blocking IO
+从图中可以看出，当用户进程发出read操作时，如果kernel中的数据还没有准备好，那么它并不会block用户进程，
+而是立刻返回一个error。
+从用户进程角度讲 ，它发起一个read操作后，并不需要等待，而是马上就得到了一个结果。用户进程判断结果是一个error时，
+它就知道数据还没有准备好，于是它可以再次发送read操作。一旦kernel中的数据准备好了，
+并且又再次收到了用户进程的system call，那么它马上就将数据拷贝到了用户内存，然后返回。
+所以，用户进程其实是需要不断的主动询问kernel数据好了没有。
+
+IO multiplexing
+IO multiplexing这个词可能有点陌生，但是如果我说select，epoll，大概就都能明白了。
+有些地方也称这种IO方式为event driven IO。我们都知道，select/epoll的好处就在于单个process就可以同时处理多个网络连接的IO。
+它的基本原理就是select/epoll这个function会不断的轮询所负责的所有socket，当某个socket有数据到达了，
+就通知用户进程。它的流程如图：
+当用户进程调用了select，那么整个进程会被block，而同时，kernel会“监视”所有select负责的socket，
+当任何一个socket中的数据准备好了，select就会返回。这个时候用户进程再调用read操作，将数据从kernel拷贝到用户进程。
+这个图和blocking IO的图其实并没有太大的不同，事实上，还更差一些。因为这里需要使用两个system call (select 和 recvfrom)，而blocking IO只调用了一个system call (recvfrom)。但是，用select的优势在于它可以同时处理多个connection。（多说一句。所以，如果处理的连接数不是很高的话，使用select/epoll的web server不一定比使用multi-threading + blocking IO的web server性能更好，可能延迟还更大。select/epoll的优势并不是对于单个连接能处理得更快，而是在于能处理更多的连接。）
+在IO multiplexing Model中，实际中，对于每一个socket，一般都设置成为non-blocking，但是，如上图所示，整个用户的process其实是一直被block的。只不过process是被select这个函数block，而不是被socket IO给block。
+
+
+
+阻塞或者非阻塞I/O主要是指I/O操作第一阶段的完成方式(比如发起读操作)即数据还未准备好的时候，应用进程的表现，
+如果这里进程挂起，则为阻塞I/O，否则为非阻塞I/O。
+同步或者异步I/O主要是指实际I/O操作的完成方式(数据此时已经ready),同步意味着由应用进程发起并完成I/O操作，I/O操作未完成前，
+会导致应用进程挂起；异步意味着应用进程只发出I/O请求，并接收完成通知，实际I/O操作由系统完成，
+I/O操作进行时，应用进程可以继续工作。
+
+
+同步IO和异步IO的区别就在于：数据拷贝的时候进程是否阻塞！
+阻塞IO和非阻塞IO的区别就在于：应用程序的调用是否立即返回！
+
+Linux下的五种I/O模型
+1)阻塞I/O（blocking I/O）
+2)非阻塞I/O （nonblocking I/O）
+3) I/O复用(select 和poll) （I/O multiplexing）
+4)信号驱动I/O （signal driven I/O (SIGIO)） 
+5)异步I/O （asynchronous I/O (the POSIX aio_functions)）
+
+前四种都是同步，只有最后一种才是异步IO。
+
+
+Reactor中的具体步骤：
+
+    应用程序注册读就绪事件和相关联的事件处理器
+    事件分离器等待事件的发生
+    当发生读就绪事件的时候，事件分离器调用第一步注册的事件处理器
+    事件处理器首先执行实际的读取操作，然后根据读取到的内容进行进一步的处理
+
+写入操作类似于读取操作，只不过第一步注册的是写就绪事件。
+
+下面我们来看看Proactor模式中读取操作和写入操作的过程：
+
+    应用程序初始化一个异步读取操作，然后注册相应的事件处理器，此时事件处理器不关注读取就绪事件，而是关注读取完成事件，这是区别于Reactor的关键。
+    事件分离器等待读取操作完成事件
+    在事件分离器等待读取操作完成的时候，操作系统调用内核线程完成读取操作（异步IO都是操作系统负责将数据读写到应用传递进来的缓冲区供应用程序操作，操作系统扮演了重要角色），并将读取的内容放入用户传递过来的缓存区中。这也是区别于Reactor的一点，Proactor中，应用程序需要传递缓存区。
+    事件分离器捕获到读取完成事件后，激活应用程序注册的事件处理器，事件处理器直接从缓存区读取数据，而不需要进行实际的读取操作。
+
+从上面可以看出，Reactor和Proactor模式的主要区别就是真正的读取和写入操作是有谁来完成的，
+Reactor中需要应用程序自己读取或者写入数据，而Proactor模式中，应用程序不需要进行实际的读写过程，
+它只需要从缓存区读取或者写入即可，操作系统会读取缓存区或者写入缓存区到真正的IO设备.
+
+Epoll不仅会告诉应用程序有I/0事件到来，还会告诉应用程序相关的信息，这些信息是应用程序填充的，因此根据这些信息应用程序就能直接定位到事件，而不必遍历整个FD集合。
+
+
+20131018
+xlightweb  支持 websocket
+
+quickfix.mina.message.FIXMessageDecoder 是quickfix用来解析包的程序
+
+
+对于C\C++\C#应用而言，使用SQLite是更好的选择。对于Java应用，H2是不错的选择。
+
+
+
+任意长度参数
+public static void main(String[] args) {
+    callMe1(new String[] {"a", "b", "c"});
+    callMe2("a", "b", "c");
+    // You can also do this
+    // callMe2(new String[] {"a", "b", "c"});
+}
+public static void callMe1(String[] args) {
+    System.out.println(args.getClass() == String[].class);
+    for (String s : args) {
+    	System.out.println(s);
+    }
+}
+public static void callMe2(String... args) {
+    System.out.println(args.getClass() == String[].class);
+    for (String s : args) {
+    	System.out.println(s);
+    }
+}
+
+
+ 
+
+从这段文字表述中我们不难发现， getResourceAsStream ()在查找资源时跟JVM所用的OS毫无关系，甚至跟资源所在文件系统的路径也是无关的，它是基于类路径进行查找的！也就是说，当jar包或*.class文件加载之后，JVM会根据jar包或*.class文件所在的classpath属性去查找指定的资源，而这个classpath是在jar包的MANIFEST.MF文件中指定的，如下所示：
+Manifest-Version: 1.0
+Class-Path: .
+Main-Class: com.webex.app.Main
+这里的“.”代表当前路径，是一个相对路径，但是它相对的是一个“虚拟路径”，也就是jar或*.class文件加载到JVM后的“路径”！
+
+URL  fileName=lg.getClass().getClassLoader().getResource("conf/log4j.properties");
+PropertyConfigurator.configure(fileName);
+
+修改 Manifest
+
+Manifest-Version: 1.0
+Main-Class: test.LogTest
+Class-Path: lib/log4j-1.2.15.jar
+
+
+Note: The Class-Path header points to classes or JAR files on the local network, not JAR files within the JAR file or classes accessible over internet protocols. 
+
+
+jar cvfm log3.jar META-INF\MANIFEST.MF .
+
+也可以在eclipse里面直接打包
+
+	
+20130306
+Java异常分为两大类:checked 异常和unChecked 异常。所有继承java.lang.Exception 的异常都属于checked异常。所有继承java.lang.RuntimeException的异常都属于unChecked异常。
+当一个方法去调用一个可能抛出checked异常的方法，必须通过try…catch块对异常进行捕获进行处理或者重新抛出。
+我们看看Connection接口的createStatement()方法的声明。
+
+unChecked异常也称为运行时异常，通常RuntimeException都表示用户无法恢复的异常，如无法获得数据库连接，不能打开文件等。虽然用户也可以像处理checked异常一样捕获unChecked异常。但是如果调用者并没有去捕获unChecked异常时，编译器并不会强制你那么做。
+
+当传入的参数不能转换成相应的整数时，将会抛出NumberFormatException。因为NumberFormatException扩展于RuntimeException，是unChecked异常。所以调用parseInt方法时无需要try…catch
+ 
+因为java不强制调用者对unChecked异常进行捕获或往上抛出。所以程序员总是喜欢抛出unChecked异常。或者当需要一个新的异常类时，总是习惯的从RuntimeException扩展。当你去调用它些方法时，如果没有相应的catch块，编译器也总是让你通过,同时你也根本无需要去了解这个方法倒底会抛出什么异常。看起来这似乎倒是一个很好的办法，但是这样做却是远离了java异常处理的真实意图。并且对调用你这个类的程序员带来误导，因为调用者根本不知道需要在什么情况下处理异常。而checked异常可以明确的告诉调用者，调用这个类需要处理什么异常。如果调用者不去处理，编译器都会提示并且是无法编译通过的。当然怎么处理是由调用者自己去决定的。
+
+甚至连大名鼎鼎的《thinking in java》的作者Bruce Eckel也改变了他曾经的想法。Bruce Eckel甚至主张把unChecked异常作为标准用法。并发表文章，以试验checked异常是否应该从java中去掉。Bruce Eckel语：“当少量代码时，checked异常无疑是十分优雅的构思，并有助于避免了许多潜在的错误。但是经验表明，对大量代码来说结果正好相反”
+
+使用checked异常会带来许多的问题。
+       checked异常导致了太多的try…catch 代码
+              可能有很多checked异常对开发人员来说是无法合理地进行处理的，比如SQLException。而开发人员却不得不去进行try…catch。当开发人员对一个checked异常无法正确的处理时，通常是简单的把异常打印出来或者是干脆什么也不干。特别是对于新手来说，过多的checked异常让他感到无所适从。
+  当开发人员必须去捕获一个自己无法正确处理的checked异常，通常的是重新封装成一个新的异常后再抛出。这样做并没有为程序带来任何好处。反而使代码晚难以理解。
+就像我们使用JDBC代码那样，需要处理非常多的try…catch.，真正有用的代码被包含在try…catch之内。使得理解这个方法变理困难起来
+checked异常导致破坏接口方法
+   一个接口上的一个方法已被多个类使用，当为这个方法额外添加一个checked异常时，那么所有调用此方法的代码都需要修改。
+   可见上面这些问题都是因为调用者无法正确的处理checked异常时而被迫去捕获和处理，被迫封装后再重新抛出。这样十分不方便，并不能带来任何好处。在这种情况下通常使用unChecked异常。
+chekced异常并不是无一是处，checked异常比传统编程的错误返回值要好用得多。通过编译器来确保正确的处理异常比通过返回值判断要好得多。
+如果一个异常是致命的，不可恢复的。或者调用者去捕获它没有任何益处，使用unChecked异常。
+如果一个异常是可以恢复的，可以被调用者正确处理的，使用checked异常。
+在使用unChecked异常时，必须在在方法声明中详细的说明该方法可能会抛出的unChekced异常。由调用者自己去决定是否捕获unChecked异常
+
+http://www.iteye.com/topic/72170
+              
+泛型 
+泛型的好处是在编译的时候检查类型安全，并且所有的强制转换都是自动和隐式的，提高代码的重用率
+正确理解泛型概念的首要前提是理解类型擦除（type erasure）。
+ Java中的泛型基本上都是在编译器这个层次来实现的。在生成的Java字节代码中是不包含泛型中的类型信息的。使用泛型的时候加上的类型参数，会被编译器在编译的时候去掉。这个过程就称为类型擦除。如在代码中定义的List<Object>和List<String>等类型，在编译之后都会变成List。JVM看到的只是List，而由泛型附加的类型信息对JVM来说是不可见的
+
+
+jdbc 
+java.sql.Connection.isClosed() 一直会返回false除非你用java.sql.Connection.close()，所以会出问题
+用tomcat jdbc pool配置如下：
+
+<Resource type="javax.sql.DataSource"
+            name="jdbc/TestDB"
+            factory="org.apache.tomcat.jdbc.pool.DataSourceFactory"
+            driverClassName="com.mysql.jdbc.Driver"
+            url="jdbc:mysql://localhost:3306/mysql"
+            username="mysql_user"
+            password="mypassword123"
+            testOnBorrow="true"
+            validationQuery="SELECT 1 from dual"
+            maxActive="20" 
+            maxIdle="10"
+            maxWait="5000"
+            defaultAutoCommit="false"
+            testWhileIdle="true" 
+            timeBetweenEvictionRunsMillis="5000" 
+            removeAbandoned="true"  
+            removeAbandonedTimeout="60" 
+            logAbandoned="true" 
+            factory="org.apache.tomcat.jdbc.pool.DataSourceFactory"
+            />
+            
+  
+关闭方式
+Connection conn = null;
+  Statement stmt = null;  // Or PreparedStatement if needed
+  ResultSet rs = null;
+  try {
+    conn = ... get connection from connection pool ...
+    stmt = conn.createStatement("select ...");
+    rs = stmt.executeQuery();
+    ... iterate through the result set ...
+    rs.close();
+    rs = null;
+    stmt.close();
+    stmt = null;
+    conn.close(); // Return to connection pool
+    conn = null;  // Make sure we don't close it twice
+  } catch (SQLException e) {
+    ... deal with errors ...
+  } finally {
+    // Always make sure result sets and statements are closed,
+    // and the connection is returned to the pool
+    if (rs != null) {
+      try { rs.close(); } catch (SQLException e) { ; }
+      rs = null;
+    }
+    if (stmt != null) {
+      try { stmt.close(); } catch (SQLException e) { ; }
+      stmt = null;
+    }
+    if (conn != null) {
+      try { conn.close(); } catch (SQLException e) { ; }
+      conn = null;
+    }
+  }
+            
+
+20120416
+
+NIO采用面向块的技术
+一个 面向块 的 I/O 系统以块的形式处理数据。每一个操作都在一步中产生或者消费一个数据块。按块处理数据比按(流式的)字节处理数据要快得多。但是面向块的 I/O 缺少一些面向流的 I/O 所具有的优雅性和简单性
+
+正如前面提到的，所有数据都通过 Buffer 对象来处理。您永远不会将字节直接写入通道中，相反，您是将数据写入包含一个或者多个字节的缓冲区。同样，您不会直接从通道中读取字节，而是将数据从通道读入缓冲区，再从缓冲区获取这个字节
+
+通道与流的不同之处在于通道是双向的。而流只是在一个方向上移动(一个流必须是 InputStream 或者 OutputStream 的子类)， 而 通道 可以用于读、写或者同时用于读写。 
+ clear() 方法重设缓冲区，使它可以接受读入的数据。 flip() 方法让缓冲区可以将新读入的数据写入另一个通道。 
+ 
+ 另一种有用的 ByteBuffer 是直接缓冲区。 直接缓冲区 是为加快 I/O 速度，而以一种特殊的方式分配其内存的缓冲区。 
+ 还可以用内存映射文件创建直接缓冲区。 
+ 内存映射文件 I/O 是一种读和写文件数据的方法，它可以比常规的基于流或者基于通道的 I/O 快得多。 
+ 
+ MappedByteBuffer mbb = fc.map( FileChannel.MapMode.READ_WRITE,
+     0, 1024 );
+     
+     您可以锁定整个文件或者文件的一部分。如果您获取一个排它锁，那么其他人就不能获得同一个文件或者文件的一部分上的锁。如果您获得一个共享锁，那么其他人可以获得同一个文件或者文件一部分上的共享锁，但是不能获得排它锁。文件锁定并不总是出于保护数据的目的。例如，您可能临时锁定一个文件以保证特定的写操作成为原子的，而不会有其他程序的干扰。 
+     
+     
+每次返回主循环，我们都要调用 select 的 Selector()方法，并取得一组 SelectionKey。每个键代表一个 I/O 事件。我们处理事件，从选定的键集中删除 SelectionKey，然后返回主循环的顶部。 
+
+ The flip() method switches a Buffer from writing mode to reading mode. Calling flip() sets the position back to 0, and sets the limit to where position just was. 
+ buffer.clear(清除整个buffer) ，buffer.compact没读的字节保留，移动到buffer最前面
+ NIO支持读写到多个buffer里面
+ 
+
+ public void selector() throws IOException {
+        ByteBuffer buffer = ByteBuffer.allocate(1024);
+        Selector selector = Selector.open();
+        ServerSocketChannel ssc = ServerSocketChannel.open();
+        ssc.configureBlocking(false);//设置为非阻塞方式
+        ssc.socket().bind(new InetSocketAddress(8080));
+        ssc.register(selector, SelectionKey.OP_ACCEPT);//注册监听的事件
+        while (true) {
+            Set selectedKeys = selector.selectedKeys();//取得所有key集合
+            Iterator it = selectedKeys.iterator();
+            while (it.hasNext()) {
+                SelectionKey key = (SelectionKey) it.next();
+                if ((key.readyOps() & SelectionKey.OP_ACCEPT) == SelectionKey.OP_ACCEPT) {
+                    ServerSocketChannel ssChannel = (ServerSocketChannel) key.channel();
+                 SocketChannel sc = ssChannel.accept();//接受到服务端的请求
+                    sc.configureBlocking(false);
+                    sc.register(selector, SelectionKey.OP_READ);
+                    it.remove();
+                } else if 
+                ((key.readyOps() & SelectionKey.OP_READ) == SelectionKey.OP_READ) {
+                    SocketChannel sc = (SocketChannel) key.channel();
+                    while (true) {
+                        buffer.clear();
+                        int n = sc.read(buffer);//读取数据
+                        if (n <= 0) {
+                            break;
+                        }
+                        buffer.flip();
+                    }
+                    it.remove();
+                }
+            }
+        }
+}
+
+NIO 的选择器采用了多路复用（Multiplexing）技术，可在一个选择器上处理多个套接字，通过获取读写通道来进行 IO 操作。由于网络带宽等原因，在通道的读、写操作中是容易出现等待的，所以在读、写操作中引入多线程，对性能提高明显，而且可以提高客户端的感知服务质量。所以本文的模型将主要通过使用读、写线程池来提高与客户端的数据交换能力。
+
+
+Java　NIO非堵塞应用通常适用用在I/O读写等方面，我们知道，系统运行的性能瓶颈通常在I/O读写，包括对端口和文件的操作上，过去，在打开一个I/O通道后，read()将一直等待在端口一边读取字节内容，如果没有内容进来，read()也是傻傻的等，这会影响我们程序继续做其他事情，那么改进做法就是开设线程，让线程去等待，但是这样做也是相当耗费资源的。
+
+
+NIO 将最耗时的 I/O 操作(即填充和提取缓冲区)转移回操作系统，因而可以极大地提高速度。
+NIO可以大幅提高对AJAX push的支持
+
+原来的设计每个IO一个线程会导致大量的context切换，导致性能下降，但是单个select也会导致性能瓶颈
+Java IO was rewritten to use NIO under-the-covers
+os读取数据到到内核然后push到application 内存，然后application在push回去os kernerl
+The transferTo() method transfers data from the file channel to the given writable byte channel. Internally, it depends on the underlying operating system's support for zero copy  latency 能降到原来的1/3
+http://www.ibm.com/developerworks/java/library/j-zerocopy/  
+
+交换机延迟10g ether 382 nanoseconds gb 4 microseconds
+
+使用多个 select 来解决性能瓶颈，MINA2.0缺省就是cpu+1个 selector (IO Processor)
+多个Selector的情况下，处理OP_READ和OP_WRITE的Selector要与处理OP_ACCEPT的Selector分离，也就是说处理接入应该要一个单独的Selector对象来处理，避免IO读写事件影响接入速度。
+
+
+对于熟悉于系统调用的C/C++程序员来说，一个阻塞在select上的线程有以下三种方式可以被唤醒：
+1） 有数据可读/写，或出现异常。
+2） 阻塞时间到，即time out。
+3） 收到一个non-block的信号。可由kill或pthread_kill发出。
+所以，Selector.wakeup()要唤醒阻塞的select，那么也只能通过这三种方法，其中：
+1）第二种方法可以排除，因为select一旦阻塞，应无法修改其time out时间。
+2）而第三种看来只能在Linux上实现，Windows上没有这种信号通知的机制。
+所 以，看来只有第一种方法了。再回想到为什么每个Selector.open()，在Windows会建立一对自己和自己的loopback的TCP连接； 在Linux上会开一对pipe（pipe在Linux下一般都是成对打开），估计我们能够猜得出来——那就是如果想要唤醒select，只需要朝着自己 的这个loopback连接发点数据过去，于是，就可以唤醒阻塞在select上的线程了。 
+
+UDP性能大概能提高3-5倍，NIO读文件5倍， mapfile方式读文件10倍
+
+java.nio.file.Path 与 java.nio.file.WatchService 允许 “ 注册 ” 来监视特定目录。如果在目录中发生了文件创建、修改或者删除操作，监视目录的应用程序将收到通知。
+
+在 JDK 1.4 之前，自由地使用线程是处理阻塞问题最典型的办法。但这个解决办法会产生它自己的问题 ― 即线程开销，线程开销同时影响性能和可伸缩性。不过，随着 Merlin 和 java.nio 包的到来，一切都变了。
+
+而 NIO 的处理方式是只有一个线程在等待所有连接的数据的到来，而当某个连接数据到来时 Jetty 会把它分配给这个连接对应的处理线程去处理，所以不同连接的处理线程仍然是独立的。
+
+
+单纯比较 Tomcat 与 Jetty 的性能意义不是很大，只能说在某种使用场景下，它表现的各有差异。因为它们面向的使用场景不尽相同。从架构上来看 Tomcat 在处理少数非常繁忙的连接上更有优势，也就是说连接的生命周期如果短的话，Tomcat 的总体性能更高。
+
+而 Jetty 刚好相反，Jetty 可以同时处理大量连接而且可以长时间保持这些连接。例如像一些 web 聊天应用非常适合用 Jetty 做服务器，像淘宝的 web 旺旺就是用 Jetty 作为 Servlet 引擎。
+
+另外由于 Jetty 的架构非常简单，作为服务器它可以按需加载组件，这样不需要的组件可以去掉，这样无形可以减少服务器本身的内存开销，处理一次请求也是可以减少产生的临时对象，这样性能也会提高。另外 Jetty 默认使用的是 NIO 技术在处理 I/O 请求上更占优势，Tomcat 默认使用的是 BIO，在处理静态资源时，Tomcat 的性能不如 Jetty。
+
+
+如下图所示，服务端接受客户端请求后，控制线程将该请求的读通道交给读线程池，由读线程池分配线程完成对客户端数据的读取操作；当读线程完成读操作后，将数据返回控制线程，进行服务端的业务处理；完成业务处理后，将需回应给客户端的数据和写通道提交给写线程池，由写线程完成向客户端发送回应数据的操作。
+
+
+强烈建议程序员使用较为方便的 Executors 工厂方法 Executors.newCachedThreadPool()（无界线程池，可以进行自动线程回收）、Executors.newFixedThreadPool(int)（固定大小线程池）和 Executors.newSingleThreadExecutor()（单个后台线程），它们均为大多数使用场景预定义了设置。
+
+创建线程池
+import java.io.Serializable;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+
+public class TestThreadPool {
+private static int produceTaskSleepTime = 2;
+private static int consumeTaskSleepTime = 2000;
+private static int produceTaskMaxNumber = 10;
+
+public static void main(String[] args) {
+
+//构造一个线程池
+ThreadPoolExecutor threadPool = new ThreadPoolExecutor(2, 4, 3,
+TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(3),
+new ThreadPoolExecutor.DiscardOldestPolicy());
+for(int i=1;i<=produceTaskMaxNumber;i++){
+try {
+//产生一个任务，并将其加入到线程池
+String task = "task@ " + i;
+System.out.println("put " + task);
+threadPool.execute(new ThreadPoolTask(task));
+//便于观察，等待一段时间
+Thread.sleep(produceTaskSleepTime);
+} catch (Exception e) {
+e.printStackTrace();
+}}}
+
+/**
+* 线程池执行的任务
+* @author hdpan
+*/
+public static class ThreadPoolTask implements Runnable,Serializable{
+private static final long serialVersionUID = 0;
+//保存任务所需要的数据
+private Object threadPoolTaskData;
+ThreadPoolTask(Object tasks){
+this.threadPoolTaskData = tasks;
+}
+public void run(){
+//处理一个任务，这里的处理方式太简单了，仅仅是一个打印语句
+System.out.println("start .."+threadPoolTaskData);
+try {
+////便于观察，等待一段时间
+Thread.sleep(consumeTaskSleepTime);
+} catch (Exception e) {
+e.printStackTrace();
+}
+threadPoolTaskData = null;
+}
+public Object getTask(){
+return this.threadPoolTaskData;
+}}} 
+
+任何一个BlockingQueue都可以做为threadpool中的队列，又可以分为三种：
+排队有三种通用策略：
+
+    直接提交。工作队列的默认选项是  SynchronousQueue ，它将任务直接提交给线程而不保持它们。在此，如果不存在可用于立即运行任务的线程，则试图把任务加入队列将失败，因此会构造一个新的线程。此策略可以避免在处理可能具有内部依赖性的请求集时出现锁。直接提交通常要求无界 maximumPoolSizes 以避免拒绝新提交的任务。当命令以超过队列所能处理的平均数连续到达时，此策略允许无界线程具有增长的可能性。
+    无界队列。使用无界队列（例如，不具有预定义容量的 LinkedBlockingQueue）将导致在所有 corePoolSize 线程都忙时新任务在队列中等待。这样，创建的线程就不会超过 corePoolSize。（因此，maximumPoolSize 的值也就无效了。）当每个任务完全独立于其他任务，即任务执行互不影响时，适合于使用无界队列；例如，在 Web 页服务器中。这种排队可用于处理瞬态突发请求，当命令以超过队列所能处理的平均数连续到达时，此策略允许无界线程具有增长的可能性。
+    有界队列。当使用有限的 maximumPoolSizes 时，有界队列（如 ArrayBlockingQueue）有助于防止资源耗尽，但是可能较难调整和控制。队列大小和最大池大小可能需要相互折衷：使用大型队列和小型池可以最大限度地降低 CPU 使用率、操作系统资源和上下文切换开销，但是可能导致人工降低吞吐量。如果任务频繁阻塞（例如，如果它们是 I/O 边界），则系统可能为超过您许可的更多线程安排时间。使用小型队列通常要求较大的池大小，CPU 使用率较高，但是可能遇到不可接受的调度开销，这样也会降低吞吐量。
+
+
+对于使用SynchronousQueue的作用jdk中写的很清楚：此策略可以避免在处理可能具有内部依赖性的请求集时出现锁。
+什么意思？如果你的任务A1，A2有内部关联，A1需要先运行，那么先提交A1，再提交A2，当使用SynchronousQueue我们可以保证，A1必定先被执行，在A1么有被执行前，A2不可能添加入queue中
+DelayQueue       一个无界阻塞队列，只有在延时期满时才能从中提取元素。如果没有元素到达延时期，则没有头元素。、
+BlockingQueue关键方法 	offer(E e)
+          将指定元素插入此队列中（如果立即可行且不会违反容量限制），成功时返回 true，如果当前没有可用的空间，则返回 false。
+          poll(long timeout, TimeUnit unit)
+          获取并移除此队列的头部，在指定的等待时间前等待可用的元素（如果有必要）。
+ take()
+          获取并移除此队列的头部，在元素变得可用之前一直等待（如果有必要）。
+          
+          优先级对列PriorityBlockingQueu 规则是：当前和其他对象比较，如果compare方法返回负数，那么在队列里面的优先级就比较搞。
+          
+
+一个任务通过 execute(Runnable)方法被添加到线程池，任务就是一个 Runnable类型的对象，任务的执行方法就是 Runnable类型对象的run()方法。
+当一个任务通过execute(Runnable)方法欲添加到线程池时：
+如果此时线程池中的数量小于corePoolSize，即使线程池中的线程都处于空闲状态，也要创建新的线程来处理被添加的任务。
+如果此时线程池中的数量等于 corePoolSize，但是缓冲队列 workQueue未满，那么任务被放入缓冲队列。
+如果此时线程池中的数量大于corePoolSize，缓冲队列workQueue满，并且线程池中的数量小于maximumPoolSize，建新的线程来处理被添加的任务。
+如果此时线程池中的数量大于corePoolSize，缓冲队列workQueue满，并且线程池中的数量等于maximumPoolSize，那么通过 handler所指定的策略来处理此任务。
+也就是：处理任务的优先级为：
+核心线程corePoolSize、任务队列workQueue、最大线程maximumPoolSize，如果三者都满了，使用handler处理被拒绝的任务。
+
+当线程池中的线程数量大于 corePoolSize时，如果某线程空闲时间超过keepAliveTime，线程将被终止。这样，线程池可以动态的调整池中的线程数。
+unit可选的参数为java.util.concurrent.TimeUnit中的几个静态属性：
+NANOSECONDS、MICROSECONDS、MILLISECONDS、SECONDS。
+workQueue我常用的是：java.util.concurrent.ArrayBlockingQueue
+handler有四个选择：
+ThreadPoolExecutor.AbortPolicy()  抛出java.util.concurrent.RejectedExecutionException异常
+ThreadPoolExecutor.CallerRunsPolicy()  当前调用线程直接执行
+ThreadPoolExecutor.DiscardOldestPolicy() 抛弃旧的任务
+ThreadPoolExecutor.DiscardPolicy()     抛弃当前的任务 
+
+
+要了解Java并发，首先需要了解JVM内存模型。JVM内存模型分为两个部分，Main Memory和Working Memory. Main Memory为线程共享，Working Memory为线程自己所有，存放的是线程所需要的变量的拷贝（线程要对main memory中的内容进行操作的话，首先需要拷贝到自己的workingmemory，一般为了速度，working memory一般是在cpu的cache中的）。
+    在这里Java引入了关键字 volatile ，volatile的变量在被操作的时候不会产生working memory的拷贝，而是直接操作main memory，当然volatile虽然解决了变量的可见性问题，但没有解决变量操作的原子性的问题，这个还需要synchronized或者CAS相关 操作配合进行。
+
+    在多线程中的几个比较重要的概念：
+    可见性
+
+    也就说假设一个对象中有一个变量i，那么i是保存在main memory中的，当某一个线程要操作i的时候，首先需要从main memory中将i 加载到这个线程的working memory中，这个时候working memory中就有了一个i的拷贝，这个时候此线程对i的修改都在其working memory中，直到其将i从working memory写回到mainmemory中，新的i的值才能被其他线程所读取。从某个意义上说，可见性保证了各个线程的working memory的数据的一致性。
+    可见性遵循下面一些规则：
+        当一个线程运行结束的时候，所有写的变量都会被flush回main memory中。
+        当一个线程第一次读取某个变量的时候，会从main memory中读取最新的。
+        volatile的变量会被立刻写到main memory中的，在jsr133中，对volatile的语义进行增强，后面会提到
+        当一个线程释放锁后，所有的变量的变化都会flush到main memory中，然后一个使用了这个相同的同步锁的进程，将会重新加载所有的使用到的变量，这样就保证了可见性。
+
+    原子性
+    还拿上面的例子来说，原子性就是当某一个线程修改i的值的时候，从取出i到将新的i的值写给i之间不能有其他线程对i进行任何操作。也就是说保证某个线程对i的操作是原子性的，这样就可以避免数据脏读。
+    通过锁机制或者CAS（Compare And Set 需要硬件CPU的支持）操作可以保证操作的原子性。
+
+    在线程同步上，通常使用到的几个方法为Synchronized,ReentrantLock
+
+    其性能&区别如下：
+    synchronized：
+    在资源竞争不是很激烈的情况下，偶尔会有同步的情形下，synchronized是很合适的。原因在于，编译程序通常会尽可能的进行优化synchronize，另外可读性非常好，不管用没用过5.0多线程包的程序员都能理解。
+
+    ReentrantLock:
+    ReentrantLock提供了多样化的同步，比如有时间限制的同步，可以被Interrupt的同步（synchronized的同步是不能Interrupt的）等。在资源竞争不激烈的情形下，性能稍微比synchronized差点点。但是当同步非常激烈的时候，synchronized的性能一下子能下降好几十倍。而ReentrantLock确还能维持常态。
+
+JDK5.0加入显式锁后, 开发者发现显式锁相比内置锁具有明显的性能优势, 再加上显式锁的诸多新特性, 很多文章和书籍都推荐使用显式锁代替内置锁. 然而JDK6.0对内置锁做了大量优化, 显式锁已经不具备明显的性能优势. 所以如果使用的是JDK6.0及之后的版本, 且没有使用到显式锁提供的新特性, 则没有必要刻意使用显式锁, 原因如下:
+
+1. 内置锁是JVM的内置特性, 更容易进行优化.
+2. 监控程序(如thread dump)对内置锁具有更好的支持. 
+3. 大多数开发者更熟悉内置锁.
+
+JDK6.0对内置锁所做的优化措施可以参见"深入理解java虚拟机"13.3节.
+
+显示锁的优点
+1. 可中断申请
+如果使用synchronized申请一个内置锁时锁被其他线程持有, 那么当前线程将被挂起, 等待锁重新可用, 而且等待期间无法中断. 而显式锁提供了可中断申请:   
+2. 尝试型申请
+Lock.tryLock和Lock.tryLock(long time, TimeUnit unit)方法用于尝试获取锁. 如果尝试没有成功, 则返回false, 否则返回true. 而内置锁则不提供这种特性, 一旦开始申请内置锁, 在申请成功之前, 线程无法中断, 申请也无法取消. Lock的尝试型申请通常用于实现时间限定的task:
+3. 锁的释放 可以做到精确唤醒某个特定的等待线程
+
+对于内置锁, 只要代码运行到同步代码块之外, 就会自动释放锁, 开发者无需担心抛出异常, 方法返回等情况发生时锁会没有被释放的问题. 然而对于显式锁, 必须调用unlock方法才能释放锁. 此时需要开发者自己处理抛出异常, 方法返回等情况. 通常会在finally代码块中进行锁的释放, 还需注意只有申请到锁之后才需要释放锁, 释放未持有的锁可能会抛出未检查异常.
+
+所以使用内置锁更容易一些, 而显式锁则繁琐很多. 但是显式锁释放方式的繁琐也带来一个方便的地方: 锁的申请和释放不必在同一个代码块中.
+4. 公平锁
+通过ReentrantLock(boolean fair)构造函数创建ReentranLock锁时可以为其指定公平策略,
+5. 唤醒和等待
+线程可以wait在内置锁上, 也可以通过调用内置锁的notify或notifyAll方法唤醒在其上等待的线程. 但是如果有多个线程在内置锁上wait, 我们无法精确唤醒其中某个特定的线程.
+
+显式锁也可以用于唤醒和等待. 调用Lock.newCondition方法可以获得Condition对象, 调用Condition.await方法将使得线程等待, 调用Condition.singal或Condition.singalAll方法可以唤醒在该Condition对象上等待的线程. 由于同一个显式锁可以派生出多个Condition对象, 因此我们可以实现精确唤醒. 具体的应用请参考我早期的一篇博文:http://coolxing.iteye.com/blog/1236696
+
+
+20120413
+使用 java.util.concurrent.concurrentHashmap合适多线程并发读写(有32个独立的锁来保护不同的hash bucket)
+copyonwritelist可以用来解决读多写少的场景，在写入的时候，会先copy出来，不影响之前已经拿到数据读取
+读取和写入的地方都要用 synchronize(如果使用notify来通知线程的话) ，这样能保住读的是最新值，写的也能马上被别的线程看到，否则由于jvm在不同平台的特性会不能保证这个结果
+
+Thread.yield()  放 弃当前执行，进入等待队列，可能马上就再次执行，不释放锁
+Thread.suspend()马上暂停，不释放锁，等待 object.resume()唤醒 ,可能导致死锁
+Thread.sleep() 不释放锁和线程资源，直接昏睡
+
+Object.wait()使当前线程进入停滞状态时，还会释放当前线程所占有的“锁标志”，
+从而使线程对象中的synchronized资源可被对象中别的线程使用；
+而suspend()和sleep()使当前线程进入停滞状态时不会释放当前线程所占有的“锁标志”
+
+thread.join()让当前调用线程暂停，等thread结束后，当前线程继续
+
+ThreadLocalRadom 是多线程安全的生成随机数的新类
+
+Object.wait(); Object.notify(); 必须在该对象的同步块内执行 (否则会抛IllegalMonitorStateException), 并且一个对象只能wait/notify一个状态. j.u.c 类通过让一个Lock可以建多个Condition去wait/notify增强了灵活性. 
+wait的线程被唤醒之后，也必须要活的当前锁对象，如果不能活的就不能执行，所以如果多个线程在wait，则Notifiall之后，也只能一个个执行
+
+reentrant 锁意味着什么呢？简单来说，它有一个与锁相关的获取计数器，如果拥有锁的某个线程再次得到锁，那么获取计数器就加1，然后锁需要被释放两次才能获得真正释放
+
+使用这个比 synchronize 性能更好 lock 必须在 finally 块中释放
+Lock lock = new ReentrantLock();
+lock.lock();
+try { 
+  // update object state
+  
+}
+finally {
+  lock.unlock(); 
+}
+
+
+
+
+ private ReentrantLock lock = new ReentrantLock();  
+    // 获得lock锁的3个分支条件  
+    private Condition c1 = lock.newCondition();  
+    private Condition c2 = lock.newCondition();  
+    private Condition c3 = lock.newCondition();  
+    
+    c1.await();
+    c1.signal();
+    
+        class BoundedBuffer {  
+       final Lock lock = new ReentrantLock();//锁对象  
+       final Condition notFull  = lock.newCondition();//写线程条件   
+       final Condition notEmpty = lock.newCondition();//读线程条件   
+      
+       final Object[] items = new Object[100];//缓存队列  
+       int putptr/*写索引*/, takeptr/*读索引*/, count/*队列中存在的数据个数*/;  
+      
+       public void put(Object x) throws InterruptedException {  
+         lock.lock();  
+         try {  
+           while (count == items.length)//如果队列满了   
+             notFull.await();//阻塞写线程  
+           items[putptr] = x;//赋值   
+           if (++putptr == items.length) putptr = 0;//如果写索引写到队列的最后一个位置了，那么置为0  
+           ++count;//个数++  
+           notEmpty.signal();//唤醒读线程  
+         } finally {  
+           lock.unlock();  
+         }  
+       }  
+      
+       public Object take() throws InterruptedException {  
+         lock.lock();  
+         try {  
+           while (count == 0)//如果队列为空  
+             notEmpty.await();//阻塞读线程  
+           Object x = items[takeptr];//取值   
+           if (++takeptr == items.length) takeptr = 0;//如果读索引读到队列的最后一个位置了，那么置为0  
+           --count;//个数--  
+           notFull.signal();//唤醒写线程  
+           return x;  
+         } finally {  
+           lock.unlock();  
+         }  
+       }   
+     }  
+     
+
+把synchronized当作函数修饰符时，示例代码如下：
+Public synchronized void methodAAA()
+{
+
+}
+这也就是同步方法，那这时synchronized锁定的是哪个对象呢？它锁定的是调用这个同步方法对象。也就是说，当一个对象P1在不同的线程中执行这个同步方法时，它们之间会形成互斥，达到同步的效果。但是这个对象所属的Class所产生的另一对象P2却可以任意调用这个被加了synchronized关键字的方法。
+如果是静态的同步方法，则在class一级实现，不管是那个instance,相当于全局变量
+public  synchronized static void  IncreaseMe(ThreadLocak th) 
+和用这个一样的
+public   void  IncreaseMe(ThreadLocak th) 
+	{ synchronized(LockMe.class){ 
+		k=k+1;
+	
+		System.out.println("thread "+th.threadno+" increase "+k);
+		try {
+			Thread.currentThread().sleep(5000);
+			}
+			catch (java.lang.Exception e)
+			{
+				e.printStackTrace();
+			}
+	}
+	
+	消费者，生产者模式
+	class M {
+	String name = "Hamberger";
+	String proper = "吃的";
+	boolean flag = false;
+
+	public synchronized void set(String name, String prop) {
+		while (flag) {
+			try {
+				wait();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+		}
+		}
+
+		System.out.println("about to set ");
+		this.name = name;
+		this.proper = prop;
+		flag = true;
+		notifyAll();
+	}
+
+	public synchronized void get() {
+		while (!flag) {
+			try {
+				wait();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		System.out.println(this.name + "----->" + this.proper);
+		flag = false;
+		notifyAll();
+	}
+}
+
+class Pro implements Runnable {
+	M m = null;
+	int no;
+
+	public Pro(M m, int no) {
+		this.m = m;
+		this.no = no;
+	}
+
+	public void run() {
+		int i = 0;
+		while (true) {
+			if (i == 0) {
+				m.set("Hamberger", "吃的");
+				i = 1;
+			} else {
+				m.set("cofe", "喝的");
+				i = 0;
+			}
+		}
+	}
+}
+
+class Cus implements Runnable {
+	M m = null;
+	int no;
+	public Cus(M m, int no) {
+		this.m = m;
+		this.no = no;
+	}
+public void run() {
+		while (true) {
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			m.get();
+		}
+	}
+}
+public class ThreadDemo {
+	public static void main(String[] args) {
+		M m = new M();
+		Pro p = new Pro(m, 1);
+		Cus c = new Cus(m, 2);
+		new Thread(p).start();
+		new Thread(c).start();
+	}
+}
+
+
+
+既然如此，我们什么时候才应该使用 ReentrantLock 呢？答案非常简单 —— 在确实需要一些 synchronized 所没有的特性的时候，比如时间锁等候、可中断锁等候、无块结构锁、多个条件变量或者锁投票。 ReentrantLock 还具有可伸缩性的好处，应当在高度争用的情况下使用它，但是请记住，大多数 synchronized 块几乎从来没有出现过争用，所以可以把高度争用放在一边。我建议用 synchronized 开发，直到确实证明 synchronized 不合适，而不要仅仅是假设如果使用 ReentrantLock “性能会更好”。请记住，这些是供高级用户使用的高级工具。（而且，真正的高级用户喜欢选择能够找到的最简单工具，直到他们认为简单的工具不适用为止。）。一如既往，首先要把事情做好，然后再考虑是不是有必要做得更快。       
+    
+    
+ArrayList和HashMap是异步的，Vector和HashTable是同步的，所以Vector和HashTable是线程安全的，而 ArrayList和HashMap并不是线程安全的。因为同步需要花费机器时间，所以Vector和HashTable的执行效率要低于 ArrayList和HashMap。
++Collection 这个接口extends自 --java.lang.Iterable接口
+ ├+List(接口 代表有序按插入顺序组织，可重复的集合 列表）
+ │├ ArreyList     (Class 数组，随机访问，没有同步，线程不安全数据按插进去的顺序排列) 用的最多
+ │├ Vector        (Class  数组                   同步        线程安全)
+ │├ LinkedList    (Class  链表   插入删除   没有同步   线程不安全)
+ │└ Stack          (Class)
+    └ CoryOnWriteArrayList
+ └+Set（接口 不能含重复的元素。仅接收一次并做内部排序）
+ │├ HashSet            (Class） 用的最多
+ │├ LinkedHashSet   (Class） 按进入顺序排列，但是有hash值，所以效率较set好，又能像set一样操作
+    ├ CoryOnWriteArraySet 有修改的时候复制一份出来修改，不影响正在读的操作，适合大并发的写少读多的情况
+   --SortedSet(接口) 有序set ，升序排列
+      └ TreeSet       (Class）
+  +Queue(接口)
+   --LinkedList  用的最多
+   --PriorityQueue
+      BlockingQueue(接口)
+   ├  LinkedBlockingQueue          optionally-bounded blocking queue based on linked nodes 可以有界或者无界
+   ├  ArrayBlockingQueue  FIFO  bounded blocking queue backed by an array
+   ├ 	PriorityBlockingQueue 
+   ├ 	DelayQueue  放入的数据必须到一定时间后才能取出 
+   ├ 	SynchronousQueue  必须有一个线程取得时候才能放入
+   ├   ConcurrentLinkedQueue<E>
+ TransferQueue(接口) 可以选择放入元素时一直等到有进程取走
+   ├ 	LinkedTransferQueue 
++ Deque  (接口) 双向queue
+    --ArrayDeque  用的最多
+    LinkedBlockingDeque<E>
+    
+         
+    +Map(接口)
+ │ ├ HashMap            (Class 不同步，线程不安全。除了不同和允许使用null 键值之外，与Hashtable大致相同)用的最多
+ │ ├ Hashtable           (Class 同步   ，线程安全    。不允许实施null 键值)
+     ├ LinkedHashMap
+ │ ├ +SortedMap 接口
+ │ │   ├ TreeMap         (Class)
+ │ ├ WeakHashMap     (Class)
+    ConcurrentMap(接口)
+     ├ ConcurrentHashMap
+
+现在用 for (Object o : collection)
+    System.out.println(o);
+ 的方式比较多
+ 以前用iterator
+   for (Iterator<?> it = c.iterator(); it.hasNext(); )
+        if (!cond(it.next()))
+            it.remove();
+
+
+List是有序的Collection，使用此接口能够精确的控制每个元素插入的位置。用户能够使用索引（元素在List中的位置，类似于数组下标）来访问List中的元素，这类似于Java的数组。 
+
+    缺省的初始大小是16，可以自行指定
+
+
+AtomicReference  
+private static volatile Integer num1 = 0;
+private static AtomicReference<Integer> ar=new AtomicReference<Integer>(num1);
+    
+AtomicReferenceFieldUpdater, AtomicIntegerFieldUpdater, and AtomicLongFieldUpdater are reflection-based utilities that provide access to the associated field types
+The AtomicIntegerArray, AtomicLongArray, and AtomicReferenceArray classes further extend atomic operation support to arrays of these types. These classes are also notable in providing volatile access semantics for their array elements, which is not supported for ordinary arrays.
+
+ Collections包含一些wrapper方法，比如  Collections. public static <T> Set<T> synchronizedSet(Set<T> s);
+public static <T> List<T> synchronizedList(List<T> list);
+public static <K,V> Map<K,V> synchronizedMap(Map<K,V> m);
+public static <T> SortedSet<T> synchronizedSortedSet(SortedSet<T> s);
+public static <K,V> SortedMap<K,V> synchronizedSortedMap(SortedMap<K,V> m);
+等等
+public static <T> Collection<T> unmodifiableCollection(Collection<? extends T> c);
+
+ 
+
+
+
+BlockingQueue
+BlockingQueue 接口表示它是一个 Queue，意思是它的项以先入先出（FIFO）顺序存储。在特定顺序插入的项以相同的顺序检索 — 但是需要附加保证，从空队列检索一个项的任何尝试都会阻塞调用线程，直到这个项准备好被检索。同理，想要将一个项插入到满队列的尝试也会导致阻塞调用线程，直到队列的存储空间可用。
+ConcurrentMap
+根据 Javadoc，SynchronousQueue 是个有趣的东西：
+
+    这是一个阻塞队列，其中，每个插入操作必须等待另一个线程的对应移除操作，反之亦然。一个同步队列不具有任何内部容量，甚至不具有 1 的容量。 
+
+    CopyOnWriteArrayList 很适合处理 ArrayList 经常让我们失败的这种场景：读取频繁，但很少有写操作的集合
+
+
+
+    
+    CountDownLatch
+    我们先来学习一下JDK1.5 API中关于这个类的详细介绍：
+“一个同步辅助类，在完成一组正在其他线程中执行的操作之前，它允许一个或多个线程一直等待。 用给定的计数 初始化 CountDownLatch。由于调用了 countDown() 方法，所以在当前计数到达零之前，await 方法会一直受阻塞。之后，会释放所有等待的线程，await 的所有后续调用都将立即返回。这种现象只出现一次——计数无法被重置。如果需要重置计数，请考虑使用 CyclicBarrier。” 
+应用场合：需要等待某个条件达到要求后才能做后面的事情；同时当线程都完成后也会触发事件，以便进行后面的操作。
+
+ExecutorService 
+
+
+CyclicBarrier
+    我们先来学习一下JDK1.5 API中关于这个类的详细介绍：
+    “一个同步辅助类，它允许一组线程互相等待，直到到达某个公共屏障点 (common barrier point)。在涉及一组固定大小的线程的程序中，这些线程必须不时地互相等待，此时 CyclicBarrier 很有用。因为该 barrier 在释放等待线程后可以重用，所以称它为循环 的 barrier。 
+    
+
+    
+20120406
+clone ，影子clone是指需要clone的对象里面包含另外的对象属性，但该对象属性没有实现 Cloneable接口
+clone对基本对象都支持
+
+实质上，在clone的时候c1.str与c2.str仍然是引用，而且都指向了同一个String对象。但在执行c2.str = c2.str.substring(0,5)的时候，它作用相当于生成了一个新的String类型，然后又赋回给c2.str。这是因为String被Sun公司的工程师写成了一个不可更改的类（immutable class），在所有String类中的函数都不能更改自身的值。下面给出很简单的一个例子：
+
+应该知道的是在Java中所有的基本数据类型都有一个相对应的类，象Integer类对应int类型，Double类对应double类型等等，这些类也与String类相同，都是不可以改变的类。也就是说，这些的类中的所有方法都是不能改变其自身的值的。这也让我们在编clone类的时候有了一个更多的选择。同时我们也可以把自己的类编成不可更改的类。
+
+实现clone 
+public class Trade implements java.io.Serializable ,Cloneable{
+	public Trade clone(){
+		Trade o = null;
+        try{
+            o = (Trade)super.clone();
+        }catch(CloneNotSupportedException e){
+            e.printStackTrace();
+        }
+        return o;
+    }
+    }
+    
+ 
+使用Serializable同样可以做到对象的clone。但是：
+Cloneable本身就是为clone设计的，虽然有一些缺点，但是如果它可以clone的话无疑用它来做clone比较合适。如果不行的话用原型构造函数，或者静态copy方法也可以。
+Serializable制作clone的话，添加了太多其它的东西，增加了复杂性。 
+
+
+20120320
+java 5新特性
+泛型 ，就是 参数化类型 ，也就是说所操作的数据类型被指定为一个参数 这种参数类型可以用在类、接口和方法的创建中，分别称为泛型类、泛型接口、泛型方法。 Java语言引入泛型的好处是安全简单。
+public class GenericsFoo<T> {
+　　private T x;
+　　public GenericsFoo(T x) {
+　　this.x = x;
+　　}
+　　public T getX() {
+　　return x;
+　　}
+　　public void setX(T x) {
+　　this.x = x;
+　　}
+}
+定义一个泛型参数后，就可以在属性，返回传入参数中使用
+　　GenericsFoo<String> strFoo=new GenericsFoo<String>("Hello Generics!"); 
+　class GenericsFoo<T extends Collection>，这样类中的泛型T只能是Collection接口的实现类，传入非Collection接口编译会出错。 
+为了解决类型被限制死了不能动态根据实例来确定的缺点，引入了“通配符泛型”，针对上面的例子，使用通配泛型格式为<? extends Collection>，“？”代表未知类型，这个类型是实现Collection接口。那么上面实现的方式可以写为： 
+public class TypeTest {
+     public static void main(String[] args) {
+         GenericsFoo<String>i= new GenericsFoo<String>();
+         i.setVar( "like" );
+          fun(i); //这里出现错误，无法传递
+     }
+     
+    public static void fun(GenericsFoo temp){
+         System. out .println("内容" +temp.getVar());
+     }
+}
+
+改成就ok public static void fun(GenericsFoo<?> temp){//这里使用了统配符
+          System. out .println("内容" +temp.getVar());
+     }
+     
+
+
+　是否拥有泛型方法，与其所在的类是否泛型没有关系。要定义泛型方法，只需将泛型参数列表置于返回值前。如: 
+　　public class ExampleA { 
+　　public <T> void f(T x) { 
+　　System.out.println(x.getClass().getName()); 
+　　} 
+　　public static void main(String[] args) { 
+　　ExampleA ea = new ExampleA(); 
+　　ea.f(" "); 
+　　ea.f(10); 
+
+public enum EnuTest {
+RED,GREEN
+}
+System.out.println(EnuTest.GREEN);
+
+annotation能被用来为某个程序元素（类、方法、成员变量等）关联任何的信息。需要注意的是，这里存在着一个基本的潜规则：annotaion不能影响程序代码的执行，无论增加、删除 annotation，代码都始终如一的执行。
+annotation可被用于packages、 types（类、接口、枚举、annotation类型）、类型成员（方法、构造方法、成员变量、枚举值）、方法参数和本地变量（如循环变量、catch 参数）。在annotation类型的声明中使用了target可更加明晰其修饰的目标
+annotation 的retention定义了该annotation被保留的时间长短：某些annotation仅出现在源代码中，而被编译器丢弃；而另一些却被编译在 class文件中；编译在class文件中的annotation可能会被虚拟机忽略，而另一些在class被装载时将被读取（请注意并不影响class 的执行，因为annotation与class在使用上是被分离的）。使用这个meta-annotation可以对annotation的“生命周期” 限制。
+
+定义 annotation
+public @interface NewAnnotation {
+    String value();  方法名为变量名，变量类型为方法返回值
+}
+使用
+@NewAnnotation("Just a Test.")
+    public static void main(String[] args) {
+        sayHello();
+    }
+target来先定使用的范围
+@Target( { ElementType.METHOD, ElementType.CONSTRUCTOR })
+public @interface NewAnnotation {
+    String value();  方法名为变量名，变量类型为方法返回值
+}
+
+@Target(ElementType.METHOD)
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+public @interface ValueBind {
+        enum fieldType {
+                  STRING, INT
+        };
+        fieldType type();
+        String value();
+}
+
+读取annotation
+   Object c = Class.forName("com.cts.elt.annotation.Student").newInstance();
+                          Method[] methodArray = c.getClass().getDeclaredMethods();
+                           for (int i = 0; i < methodArray.length; i++) {
+                                    if (methodArray[i].isAnnotationPresent(ValueBind.class)) {
+                            ValueBind annotation = methodArray[i].getAnnotation(ValueBind.class);
+                            String type = String.valueOf(annotation.type());
+                            String value = annotation.value();
+                                             
+                                              
+20101213
+load all data via hibernate ,different query fetch_size 
+
+1.hibernate.jdbc.fetch_size default 
+	时间15秒
+2.hibernate.jdbc.fetch_size=50
+	时间8秒
+3.hibernate.jdbc.fetch_size=100
+	时间6秒
+4.hibernate.jdbc.fetch_size=200
+	时间6秒
+5.hibernate.jdbc.fetch_size=500
+	时间6秒
+6.hibernate.jdbc.fetch_size=1000
+	时间5秒
+
+The Oracle JDBC Drivers use implicit statement caching to
+support statement pooling.
+
+
+Implicit and explicit Statement caching can be differentiated on the following points:
+■ Retrieving statements
+In the case of implicit Statement caching, you take no special action to retrieve
+statements from a cache. Instead, whenever you call prepareStatement or
+prepareCall, JDBC automatically checks the cache for a matching statement and
+returns it if found. However, in the case of explicit Statement caching, you use
+specialized Oracle WithKey methods to cache and retrieve statement objects.
+■ Providing key
+Implicit Statement caching uses the SQL string of a prepared or callable statement
+as the key, requiring no action on your part. In contrast, explicit Statement caching
+requires you to provide a Java String, which it uses as the key.
+■ Returning statements
+During implicit Statement caching, if the JDBC driver cannot find a statement in
+cache, then it will automatically create one. However, during explicit Statement
+caching, if the JDBC driver cannot find a matching statement in cache, then it will
+return a null value.
+
+使用 statmentcache 性能比较
+无statement cache 1010 insert/s
+  statement cache 1610 insert/s
+
+no cache(1010 rows/second) :
+	statement oracle.jdbc.driver.OraclePreparedStatementWrapper@1d6776d
+	statement oracle.jdbc.driver.OraclePreparedStatementWrapper@10a2d64
+cache(1610 rows/second) :
+  statement oracle.jdbc.driver.OraclePreparedStatementWrapper@13ad085
+  statement oracle.jdbc.driver.OraclePreparedStatementWrapper@13ad085
+
+
+public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		try
+		{
+		 String  url = "jdbc:oracle:thin:@192.168.193.177:1521:test";
+		 OracleConnection con=(OracleConnection)java.sql.DriverManager.getConnection(url,"wzy","wzy");
+		 con.setAutoCommit(false);
+		// con.setImplicitCachingEnabled(true);
+		 //con.setStatementCacheSize(10);
+		 
+		 
+
+		System.out.println( "DataSource getImplicitCachingEnabled: " +
+		con.getImplicitCachingEnabled());
+		System.out.println( "Connection getStatementCacheSize:" +
+				con.getStatementCacheSize() );
+	  int loop_count=100000;		
+	  int second=1000000000;
+	 long  begintime=System.nanoTime();
+		for ( int i = 0; i <loop_count ; i++ )
+		{
+			
+			java.sql.PreparedStatement ps=con.prepareStatement("insert into emp(id) values(?)");
+		
+			ps.setInt(1,i);
+			ps.executeUpdate();
+		
+			ps.close();
+			
+		}
+		con.commit();
+		long  endtime=System.nanoTime();
+		long insert_ps=loop_count/((endtime-begintime)/second);
+		 System.out.println("insert per second="+insert_ps);    
+		}
+		 
+		
+		catch ( Exception ex )
+		{
+		ex.printStackTrace();
+		}
+		
+		
+Both the JDBC Thin and JDBC Oracle Call Interface (OCI) drivers support the
+implicit connection cache.
+
+还可以直接使用jdbc oci的connection pool
+
+
+		
+20100914
+connection pool
+
+c3p0.properties  kill session,kill process都工作
+
+c3p0.testConnectionOnCheckout=true
+c3p0.minPoolSize=3
+c3p0.maxPoolSize=20
+c3p0.checkoutTimeout=2000
+c3p0.idleConnectionTestPeriod=5
+c3p0.numHelperThreads=10
+c3p0.maxStatements=30
+c3p0.maxStatementsPerConnection=10
+c3p0.preferredTestQuery=SELECT 1 from dual
+c3p0.acquireIncrement=5
+c3p0.acquireRetryDelay=10000
+c3p0.acquireRetryAttempts=30
+c3p0.initialPoolSize=10
+
+
+package wzy;
+import oracle.jdbc.pool.*;
+import javax.naming.*;
+import javax.sql.*;
+import java.util.Properties;
+import com.mchange.v2.c3p0.DataSources;
+import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
+import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.DailyRollingFileAppender;
+
+public class TestConnectionPool {
+	static Logger logger = Logger.getLogger(TestConnectionPool.class.getName());
+
+	public static void main(String args[]) throws java.lang.Exception  
+	{
+		
+		PropertyConfigurator.configure("d:/log4j.properties");
+	String  url = "jdbc:oracle:thin:@192.168.193.177:1521:test";
+	String user="wzy";
+	String password="wzy";
+//	//Context ctx = new InitialContext();
+//	OracleDataSource ods = new OracleDataSource();
+//	ods.setURL(url);
+//    ods.setUser(user);
+//    ods.setPassword(password);
+//   ods.setConnectionCachingEnabled(true);
+//   ods.setConnectionCacheName("CPOOL");
+//
+//   java.util.Properties prop = new Properties ();
+//   prop.setProperty("MaxLimit", ""+10);
+//   prop.setProperty("MinLimit", "" +2);
+//   prop.setProperty("InitialLimit", ""+5);
+//   prop.setProperty("ConnectionWaitTimeout", "5");
+//
+//   prop.setProperty("ValidateConnection", "true");
+//   ods.setConnectionCacheProperties(prop);
+//	// Set DataSource properties
+//	
+////	ods.setConnectionProperties(arg0)
+//	
+//	//ctx.bind("MyDS", ods);
+//	// ...
+//	// Retrieve DataSource from the InitialContext
+//	//ods =(OracleDataSource) ctx. lookup("MyDS");
+//	// Transparently create cache and retrieve connection
+DataSource unpooled = DataSources.unpooledDataSource(url,user,password);
+DataSource pooled = DataSources.pooledDataSource(unpooled,"c3p0.properties");
+
+
+
+	java.sql.Connection con = pooled.getConnection();
+	java.sql.Statement st =con.createStatement();
+	java.sql.ResultSet rs;
+		String sql="select 'kill -9 ' || s.SPID as killprocess ,'alter system kill session '''||t.SID||','||t.SERIAL#||''';' as killsession  from v$session t, v$process s where t.username = 'WZY'and t.PROGRAM = 'JDBC Thin Client'   and s.ADDR = t.PADDR"; 
+		java.sql.ResultSet rs2=st.executeQuery(sql);
+		while(rs2.next())
+		{
+			System.out.println(rs2.getString("killsession"));
+		}
+   rs2.close();
+	st.close();
+	con.close();
+	Thread.sleep(30*1000);
+	System.out.println("start to get new connection");
+	con = pooled.getConnection();
+	st =con.createStatement();
+	rs=st.executeQuery("select * from tab");
+	while(rs.next())
+	{
+		String t_name=rs.getString("tname");
+		
+			System.out.println("table name:"+t_name);
+		
+	}
+	
+	Thread.sleep(30*1000);
+	System.out.println("start to get new connection again");
+	con = pooled.getConnection();
+	rs=st.executeQuery("select * from tab");
+	while(rs.next())
+	{
+		String t_name=rs.getString("tname");
+		
+			System.out.println("table name:"+t_name);
+		
+	}
+	
+	
+	// ...
+	con.close(); // return connection to the cache
+	// ...
+	// close datasource and clean up the cache
+	}
+
+}
+
+
+
+
+DBCP
+	
+	import javax.sql.DataSource;
+	import java.sql.Connection;
+	import java.sql.Statement;
+	import java.sql.ResultSet;
+	import java.sql.SQLException;
+	
+	//
+	// Here are the dbcp-specific classes.
+	// Note that they are only used in the setupDataSource
+	// method. In normal use, your classes interact
+	// only with the standard JDBC API
+	//
+import org.apache.commons.dbcp.BasicDataSource;
+
+
+import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
+import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.DailyRollingFileAppender;
+
+import wzy.TestConnectionPool;
+	
+	public class TestDBCP {
+	static Logger logger = Logger.getLogger(TestDBCP.class.getName());
+	static 	String  url = "jdbc:oracle:thin:@192.168.193.177:1521:test";
+	static	   String user="wzy";
+	static	   String password="wzy";
+	public static void main(String[] args) throws java.lang.Exception {
+		PropertyConfigurator.configure("d:/log4j.properties");	
+   
+	logger.info("Loading underlying JDBC driver.");
+	try {
+	Class.forName("oracle.jdbc.driver.OracleDriver");
+	} catch (ClassNotFoundException e) {
+	e.printStackTrace();
+	}
+	logger.info("Done.");
+	
+	//
+	// Then, we set up the PoolingDataSource.
+	// Normally this would be handled auto-magically by
+	// an external configuration, but in this example we'll
+	// do it manually.
+ 	//
+	logger.info("Setting up data source.");
+ 	DataSource dataSource = setupDataSource(url);
+ 	logger.info("Done.");
+ 	
+ 	//
+ 	// Now, we can use JDBC DataSource as we normally would.
+ 	//
+ 	Connection conn = null;
+ 	Statement stmt = null;
+ 	ResultSet rset = null;
+ 	java.sql.Connection con = dataSource.getConnection();
+	java.sql.Statement st =con.createStatement();
+	java.sql.ResultSet rs;
+	String sql="select 'kill -9 ' || s.SPID as killprocess ,'alter system kill session '''||t.SID||','||t.SERIAL#||''';' as killsession  from v$session t, v$process s where t.username = 'WZY'and t.PROGRAM = 'JDBC Thin Client'   and s.ADDR = t.PADDR"; 
+		java.sql.ResultSet rs2=st.executeQuery(sql);
+		while(rs2.next())
+		{
+			System.out.println(rs2.getString("killsession"));
+		}
+
+	rs2.close();
+	st.close();
+	con.close();
+	TestDBCP.printDataSourceStats(dataSource);
+	Thread.sleep(30*1000);
+	logger.info("start to get new connection");
+	con = dataSource.getConnection();
+	TestDBCP.printDataSourceStats(dataSource);
+	st =con.createStatement();
+	rs=st.executeQuery("select * from tab");
+	while(rs.next())
+	{
+		String t_name=rs.getString("tname");
+		
+		logger.info("table name:"+t_name);
+		
+	}
+	
+	
+	rs.close();
+	st.close();
+	con.close();
+ 	
+ 	}
+	 public static DataSource setupDataSource(String connectURI) {
+		 	BasicDataSource ds = new BasicDataSource();
+		 	ds.setDriverClassName("oracle.jdbc.driver.OracleDriver"); 
+		 	ds.setTestOnBorrow(true);
+		 ds.setInitialSize(5);
+		 ds.setTestWhileIdle(true);
+		 	ds.setValidationQuery("select 1 from dual");
+		  	ds.setDriverClassName("oracle.jdbc.driver.OracleDriver");
+		 	ds.setUsername(user);
+		  	ds.setPassword(password);
+			ds.setUrl(connectURI);
+		  	return ds;
+		  	} 
+	 
+// 	public static DataSource setupDataSource(String connectURI) {
+// 	//
+// 	// First, we'll need a ObjectPool that serves as the
+// 	// actual pool of connections.
+// 	//
+// 	// We'll use a GenericObjectPool instance, although
+// 	// any ObjectPool implementation will suffice.
+// 	//
+// 	ObjectPool connectionPool = new GenericObjectPool(null);
+// 	
+// 	//
+// 	// Next, we'll create a ConnectionFactory that the
+// 	// pool will use to create Connections.
+// 	// We'll use the DriverManagerConnectionFactory,
+// 	// using the connect string passed in the command line
+// 	// arguments.
+// 	//
+// 	ConnectionFactory connectionFactory = new DriverManagerConnectionFactory(connectURI,user,password);
+// 	
+// 	//
+// 	// Now we'll create the PoolableConnectionFactory, which wraps
+// 	// the "real" Connections created by the ConnectionFactory with
+// 	// the classes that implement the pooling functionality.
+// 	//
+// 	PoolableConnectionFactory poolableConnectionFactory = new PoolableConnectionFactory(connectionFactory,connectionPool,null,null,false,true);
+// 	
+// 	//
+// 	// Finally, we create the PoolingDriver itself,
+// 	// passing in the object pool we created.
+// 	//
+// 	PoolingDataSource dataSource = new PoolingDataSource(connectionPool);
+// 	return dataSource;
+// 	}
+	 public static void printDataSourceStats(DataSource ds) {
+		  	BasicDataSource bds = (BasicDataSource) ds;
+		  	System.out.println("NumActive: " + bds.getNumActive());
+		  	System.out.println("NumIdle: " + bds.getNumIdle());
+		 	}
+			
+			public static void shutdownDataSource(DataSource ds) throws SQLException {
+		 	BasicDataSource bds = (BasicDataSource) ds;
+		 	bds.close();
+		 	} 
+ 	} 
+ 	
+
+
+反射
+通过proxy类可以实现对接口的类方法进行修改，通过动态生成接口实现的方式，然后调用目标对象的实现的方式，织入自己特定的代码
+ 
+  我们看到目标对象的方法调用被Proxy拦截，在 InvocationHandler 中的回调方法中通过反射
+	调用。这种动态代理的方式实现了对类的方法的运行时修改。
+	JDK 的动态代理有个缺点，那就是不能对类进行代理，只能对接口进行代理，想象一下我们的Monkey如果没有实现任何接口，那么将无法使用这种方式进行动态代理（实际上是因
+	为$Proxy0 这个类继承了Proxy，JAVA 的继承不允许出现多个父类）
+	
+
+通过CGLIB和ASM可以实现对非final的类方法进行织入，通过动态生成子类的方法实现织入自己特定的代码
+
+CGLIB包是在ASM之上的一个高级别的层。对代理那些没有实现接口的类非常有用。本质上，它是通过动态的生成一个子类去覆盖所要代理类的不是final的方法，并设置好callback，则原有类的每个方法调用就会转变成调用用户定义的拦截方法（interceptors），这比 JDK动态代理方法快多了
+
+CGLIB被Hibernate、Spring等很多开源框架在内部使用，用于完成对类的动态代理，Spring
+中的很多XML 配置属性的proxy-target-class，默认都为false，其含义就是默认不启用对目
+标类的动态代理，而是对接口进行动态代理
+
+
+Proxy 毕竟是通过反射实现的，必须在效率上付出代价：有实验数据表明，调用反射比一般的函数开销至少要大 10 倍。
+
+ASM 能够通过改造既有类，直接生成需要的代码。增强的代码是硬编码在新生成的类文件内部的，没有反射带来性能上的付出。同时，ASM 与 Proxy 编程不同，不需要为增强代码而新定义一个接口，生成的代码可以覆盖原来的类，或者是原始类的子类。它是一个普通的 Java 类而不是 proxy 类，甚至可以在应用程序的类框架中拥有自己的位置，派生自己的子类。
+
+
+相比于其他流行的 Java 字节码操纵工具，ASM 更小更快。ASM 具有类似于 BCEL 或者 SERP 的功能，而只有 33k 大小，而后者分别有 350k 和 150k。同时，同样类转换的负载，如果 ASM 是 60% 的话，BCEL 需要 700%，而 SERP 需要 1100% 或者更多。
+
+ASM 已经被广泛应用于一系列 Java 项目：AspectWerkz、AspectJ、BEA WebLogic、IBM AUS、OracleBerkleyDB、Oracle TopLink、Terracotta、RIFE、EclipseME、Proactive、Speedo、Fractal、EasyBeans、 BeanShell、Groovy、Jamaica、CGLIB、dynaop、Cobertura、JDBCPersistence、JiP、 SonarJ、Substance L&F、Retrotranslator 等。Hibernate 和 Spring 也通过 cglib，另一个更高层一些的自动代码生成工具使用了 ASM。
+
+所谓Dynamic Proxy是这样一种class：它是在运行时生成的class，在生成它时你必须提供一组interface给它，然后该class就宣称它实现了这些 interface。你当然可以把该class的实例当作这些interface中的任何一个来用。当然啦，这个Dynamic Proxy其实就是一个Proxy，它不会替你作实质性的工作，在生成它的实例时你必须提供一个handler，由它接管实际的工作
+
+ CGLIB 包的底层是通过使用一个小而快的字节码处理框架ASM，来转换字节码并生成新的类。除了CGLIB包，脚本语言例如 Groovy 和 BeanShell，也是使用ASM来生成java的字节码。当不鼓励直接使用ASM，因为它要求你必须对JVM内部结构包括class文件的格式和指令集都很熟悉。
+ 
+ 图一显示了和CGLIB包和一些框架和语言的关系图。需要注意的是一些框架例如Spring AOP和Hibernate，它们为了满足需要经常同时使用JDK的动态代理和CGLIB包。Hiberater使用JDK的动态代理实现一个专门为 WebShere应用服务器的事务管理适配器；Spring AOP，如果不强制使用CGLIB包，默认情况是使用JDK的动态代理来代理接口。
+ 
+ 
+public interface Interface1 {
+	void eat(String food);
+	String type();
+	void think();
+	
+
+}
+
+public class MyRef implements Interface1{
+	public String type() {
+		String type = "哺乳动物";
+		System.out.println(type);
+		return type;
+		}
+		@Override
+		public void eat(String food) {
+		System.out.println("The food is " + food + " !");
+		}
+		@Override
+		public void think() {
+		System.out.println("思考！");
+		}
+}
+
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+
+public class MyRefInvoker implements InvocationHandler {
+	private Object obj;
+	public MyRefInvoker(Object obj) {
+	this.obj = obj;
+	}
+	@Override
+	public Object invoke(Object proxy, Method method, Object[] args)
+	throws Throwable {
+	System.out.println("Invoke method Before!");
+	Object returnObject = method.invoke(obj, args);
+	System.out.println("Invoke method After!");
+	return returnObject;
+	}
+	public static void main(String args[]) throws java.lang.Exception 
+	{
+		Interface1 myref = (Interface1) Proxy.newProxyInstance(MyRef.class.getClassLoader(),MyRef.class.getInterfaces(), new MyRefInvoker(new MyRef()));
+		//也可以用这个方法直接从interface生成类
+		Interface1 myref = (Interface1) Proxy.newProxyInstance(Interface1.class.getClassLoader(),new Class[] { Interface1.class } , new MyRefInvoker());
+		myref.think();
+	  
+		myref.think();
+	}
+}
+
+
+
+
+public class MyCGLIB {
+		public String type() {
+			String type = "哺乳动物";
+			System.out.println(type);
+			return type;
+			}
+		
+			public final void eat(String food) {
+			System.out.println("The food is " + food + " !");
+			}
+		
+			public void think() {
+			System.out.println("思考！");
+			}
+	
+
+}
+
+
+import java.lang.reflect.Method;
+import net.sf.cglib.proxy.MethodInterceptor;
+import net.sf.cglib.proxy.MethodProxy;
+import net.sf.cglib.proxy.Enhancer;
+public class MyCGLIBImpl implements MethodInterceptor {
+	public Object intercept(Object obj, Method method, Object[] args,
+			MethodProxy proxy) throws Throwable {
+			System.out.println("******************");
+			Object o = proxy.invokeSuper(obj, args);
+			System.out.println("++++++++++++++++++");
+			return o;
+			}
+	
+	public static void main(String[] args) {
+		MyCGLIB monkey = (MyCGLIB) Enhancer.create(MyCGLIB.class,
+		new MyCGLIBImpl());
+		monkey.eat("香蕉");
+		monkey.type();
+		monkey.think();
+		}
+}
+
+
+性能测试
+创建10万次 CGLIB 对象，执行其中的三个方法 ，耗时 1488 微妙
+创建10万次  动态 proxy 接口 对象，执行其中的三个方法 ，耗时 506  微妙
+创建10万次  静态接口对象 ，执行其中的三个方法 ，耗时 8  微妙
+创建10万次  对象，执行其中的三个方法 ，耗时 4  微妙
+
+创建一次 CGLIB 对象，执行100000 次其中的三个方法   耗时 150 微妙
+创建一次 动态 proxy 接口 对象，执行100000 次其中的三个方法   耗时 68 微妙
+创建一次 静态接口对象，执行100000 次其中的三个方法   耗时 4  微妙
+创建一次  对象，执行100000 次其中的三个方法   耗时 2  微妙
+
+
+
+
+public abstract class MyCGLIBParent {
+	public String type() {
+		String type = "哺乳动物";
+		System.out.println(type);
+		return type;
+		}
+	
+		public abstract void eat(String food);
+	
+		public void think() {
+		System.out.println("思考！");
+		}
+
+
+}
+public class MyCGLIB extends MyCGLIBParent {
+ 	public  void eat(String food) {
+		System.out.println("The food is " + food + " !");
+		}
+		public  void sendZip(String food) {
+			 type();
+			}
+}
+
+import java.lang.reflect.Method;
+import net.sf.cglib.proxy.MethodInterceptor;
+import net.sf.cglib.proxy.MethodProxy;
+import net.sf.cglib.proxy.Enhancer;
+public class MyCGLIBImpl   implements MethodInterceptor {
+
+	
+			public Object intercept(Object obj, Method method, Object[] args,
+					MethodProxy proxy) throws Throwable {
+					System.out.println("Proxy begin " +method);
+					Object o;
+					if(method.toString().equals("public java.lang.String aop.MyCGLIBParent.type()"))
+					{
+					o=	type();
+					}
+					else 
+					o = proxy.invokeSuper(obj, args);
+					System.out.println("++++Proxy end+++++++++++++");
+					return o;
+					}
+			
+			
+			public  String type() {
+				System.out.println("new type");	
+				return "hi";
+			}
+			public static void main(String[] args) {
+				MyCGLIB monkey = (MyCGLIB) Enhancer.create(MyCGLIB.class,
+				new MyCGLIBImpl());
+				monkey.sendZip("hi");
+				}
+		}
+		
+	调用sendZip的时候，因为会调用父类的type方法，所以会被拦截两次 ，但是如果使用super.type()的方式调用，type方法就不会被拦截
+	Proxy begin public void aop.MyCGLIB.sendZip(java.lang.String)
+Proxy begin public java.lang.String aop.MyCGLIBParent.type()
+new type
+++++Proxy end+++++++++++++
+++++Proxy end+++++++++++++
+
+
+带有构造函数的动态代理
+Enhancer enhancer = new Enhancer();
+    enhancer.setSuperclass(MyCGLIB.class);
+    ThriftClientProxy tp=new ThriftClientProxy();
+    enhancer.setCallback(tp);
+     Object client=enhancer.create(new Class[] {String.class}, new String[] {name});  //参数的对象类型和参数对象
+ 
+ 
+
+静态代理，自己实现公共接口，然后修改方法，在调用原来的目标苦的方法
+public interface Animal {
+void eat(String food);
+String type();
+}
+public class Monkey implements Animal {
+@Override
+public String type() {
+String type = "哺乳动物";
+System.out.println(type);
+return type;
+}
+public void eat(String food) {
+System.out.println("The food is " + food + " !");
+}
+}
+
+包装类：AnimalWrapper
+public class AnimalWrapper implements Animal {
+private Animal animal;
+// 使用构造方法包装Animal的接口，这样所有的Animal实现类都可以被这个Wrapper
+包装。
+public AnimalWrapper(Animal animal) {
+this.animal = animal;
+}
+@Override
+public void eat(String food) {
+System.out.println("+++Wrapped Before!+++");
+animal.eat(food);
+System.out.println("+++Wrapped After!+++");
+}
+@Override
+public String type() {
+System.out.println("---Wrapped Before!---");
+String type = animal.type();
+System.out.println("---Wrapped After!---");
+return type;
+}
+}
+
+运行程序：
+AnimalWrapper aw = new AnimalWrapper(new Monkey());
+aw.eat("香蕉");
+aw.type();
+
+
+这里我们完成了对Animal 所有子类的代理，在代理方法中，你可以加入一些自己的额外的
+处理逻辑，就像上面的+++、---输出语句一样。那么Spring的前置、后置、环绕方法通知，
+通过这种方式可以有限的模拟出来，以Spring 的声明式事务为例，无非就是在调用包装的
+目标方法之前处开启事务，在之后提交事务，这样原有的业务逻辑没有受到任何事务管理代
+码的侵入。
+这种方式的静态代理，缺点就是当Animal 接口中增加了新的方法，那么包装类中也必须增
+加这些新的方法。
+
+
+继承的模式进行静态代理：
+继承类：MyMonkey
+public class MyMonkey extends Monkey {
+@Override
+public void eat(String food) {
+System.out.println("+++Wrapped Before!+++");
+super.eat(food);
+System.out.println("+++Wrapped After!+++");
+}
+@Override
+public String type() {
+System.out.println("---Wrapped Before!---");
+String type = super.type();
+System.out.println("---Wrapped After!---");
+return type;
+}
+}
+这个例子很容易看懂，我们采用继承的方式对MyMonkey 中的方法进行代理，运行效果与
+包装的模式效果是一样的。
+但这种方式的缺点更明显，那就是不能实现对Animal 所有子类的代理，与包装的模式相比，
+大大缩小了代理范围。
+
+
+
+JDK 的动态代理会动态的创建一个$Proxy0的类，这个类继承了Proxy并且实现了要代理的
+目标对象的接口，但你不要试图在JDK 中查找这个类，因为它是动态生成的。$Proxy0 的结
+构大致如下所示：
+public final class $Proxy0 extends Proxy implements 目标对象的接口1,接口2,…{
+//构造方法
+Public $Proxy0(InvocationHandler h){
+……
+}
+}
+
+JDK 的动态代理有个缺点，那就是不能对类进行代理，只能对接口进行代理，想象一下我
+们的Monkey如果没有实现任何接口，那么将无法使用这种方式进行动态代理（实际上是因
+为$Proxy0 这个类继承了Proxy，JAVA 的继承不允许出现多个父类）
+
+这是因为CGLIB 动态代理的原理是使用ASM 动态生成目标对象的子类，final 方法不能被
+子类覆盖，自然也就不能被动态代理，这也是CGLIB的一个缺点
+
+Struts用配置的方式来简化程序开发，实现MVC

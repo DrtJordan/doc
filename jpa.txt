@@ -1,0 +1,572 @@
+20160408
+如果对象有onetoone map关系
+public class Product  extends BaseModel{
+	// input
+	private String symbol;
+	 
+@OneToOne
+    @JoinColumn(name="business_Entity_Id")
+	public BusinessEntity getBusinessEntityId() {
+		return businessEntityId;
+	}
+spring mvc binding的时候，能够自动把BusinessEntity初始化出来，但是save的时候，会出错误，因为我们的对象有version_number做version control
+object references an unsaved transient instance - save the transient instance before flushing : com.cicc.wms.product.model.Product.businessEntityId 
+
+如果把该对象的version number设置上，就没有问题了，也不会自动帮你存
+Product pd =new Product();
+		BusinessEntity bu=new BusinessEntity();
+		bu.setEntityId(1L);
+		bu.setVersionNumber(1L);
+		pd.setBusinessEntityId(bu);
+		genericDao.save(pd);
+		
+		
+20160411 queryByExample如何处理嵌套对象
+比如 product里面有 BusinessEntity（而且只有id) ，用下面这个方法 ，必须先load该嵌入的对象
+
+Product pd2 =new Product();
+BusinessEntity bu=new BusinessEntity();
+bu.setEntityId(2L);
+BusinessEntity bu2=genericDao.get(BusinessEntity.class, bu.getEntityId());	//如果BusinessEntity只有id属性，则必须要load一次，否则查询条件带不上去
+		pd2.setBusinessEntityId(bu2);
+		
+		Session session = em.unwrap(Session.class);
+		Example example = Example.create(pd2);
+		 
+		Criteria criteria = session.createCriteria(Product.class).add(example);
+		criteria.createCriteria("businessEntityId").add(Example.create(bu2));
+		List<Product> results = criteria.list();
+		
+queryByexample如果有内嵌对象，如果该对象只有id,则必须先load一次，才能正常查询，如果内嵌对象还有其他属性，就不需要先load一次，直接能work
+BusinessEntity bu=new BusinessEntity();
+bu.setBusinessEntityName("ML");
+Product pd2 =new Product();
+pd2.setBusinessEntityId(bu);
+		Session session = em.unwrap(Session.class);
+		Example example = Example.create(pd2);
+		Criteria criteria = session.createCriteria(Product.class).add(example);
+ 	criteria.createCriteria("businessEntityId").add(Example.create(bu));
+		List<Product> results = criteria.list();
+		
+		
+
+GenerationType.AUTO 如果是oracle/pg会自动使用 HIBERNATE_SEQUENCE 这个sequence,如果是mysql/sql server之类的，则使用自增长类型
+
+jpa
+
+性能测试
+jdbctemplate tps =950  685(如果使用AOP的事物)
+hibernate   (都使用AOP的事物)  get tps =645  load=2000   通过获取connection然后执行sql的方式查询 650
+hibernateTemplate  都使用AOP的事物  tps =626
+jpa hibernate实现   都使用AOP的事物  tps =675 加上消息转换 629
+
+DML SQL执行顺序，和service里面出现的顺序无关
+
+insert、update、delete的顺序。
+但是 select 的执行顺序和出现一致
+
+JPA的执行顺序是先JPA的find方法，然后是他的persistent,merge,remove方法，如果出现native方法，
+则提交之前出现的标准的JPA方法，然后接着执行其后的jpa标准方法
+
+比如
+	 User user3=em.find(User.class,9);
+  	 em.remove(user3);
+  	user3=em.find(User.class,2);
+ 	user3.setName("test446");
+ 	em.merge(user3);
+  em.persist(user);
+    Query qe= em.createNativeQuery("select name from v_test where pk=:id");
+    qe.setParameter("id",user.getID() );
+    String name=(String) qe.getSingleResult();
+    VTest user4=em.find(VTest.class,user.getID());
+
+执行顺序是
+Hibernate: select user0_.pk as pk1_0_0_, user0_.insert_time as insert_time2_0_0_, user0_.gender2 as gender3_0_0_, user0_.name as name4_0_0_, user0_.version as version5_0_0_ from t_user user0_ where user0_.pk=?
+Hibernate: select user0_.pk as pk1_0_0_, user0_.insert_time as insert_time2_0_0_, user0_.gender2 as gender3_0_0_, user0_.name as name4_0_0_, user0_.version as version5_0_0_ from t_user user0_ where user0_.pk=?
+Hibernate: select SEQ_USER.nextval from dual
+Hibernate: insert into t_user (insert_time, gender2, name, version, pk) values (?, ?, ?, ?, ?)
+Hibernate: update t_user set insert_time=?, gender2=?, name=?, version=? where pk=? and version=?
+Hibernate: delete from t_user where pk=? and version=?
+Hibernate: select name from v_test where pk=?
+Hibernate: select vtest0_.pk as pk1_2_0_, vtest0_.insert_time as insert_time2_2_0_, vtest0_.gender2 as gender3_2_0_, vtest0_.name as name4_2_0_, vtest0_.version as version5_2_0_ from v_test vtest0_ where vtest0_.pk=?
+
+如果换成
+
+	 User user3=em.find(User.class,9);
+  	 em.remove(user3);
+  	user3=em.find(User.class,2);
+ 	user3.setName("test446");
+ 	em.merge(user3);
+  em.persist(user);
+      VTest user4=em.find(VTest.class,user.getID());
+
+  Query qe= em.createNativeQuery("select name from v_test where pk=:id");
+    qe.setParameter("id",user.getID() );
+    String name=(String) qe.getSingleResult();
+
+
+
+
+
+Query qu3=em.createNativeQuery("SELECT id,name,code,type from category a where  type =? ",Dictionary.class);
+ qu3.setParameter(1,"UnderlyApprovalStatus");
+  List<Dictionary> ld3=  qu3.getResultList();
+  package com.cicc.odts.model.apply;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+
+
+@Entity
+public class Dictionary   {
+	 @Id
+	    Long id ;
+
+	    public Long getId() {
+	        return id;
+	    }
+
+	    public void setId(Long id) {
+	        this.id = id;
+	    }
+	public String getCode() {
+		return code;
+	}
+	public void setCode(String code) {
+		this.code = code;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public String getType() {
+		return type;
+	}
+	public void setType(String type) {
+		this.type = type;
+	}
+	   
+	String code ;
+	  
+	String name;
+	 
+	String type;
+
+}
+
+
+
+则执行顺序是
+Hibernate: select user0_.pk as pk1_0_0_, user0_.insert_time as insert_time2_0_0_, user0_.gender2 as gender3_0_0_, user0_.name as name4_0_0_, user0_.version as version5_0_0_ from t_user user0_ where user0_.pk=?
+Hibernate: select user0_.pk as pk1_0_0_, user0_.insert_time as insert_time2_0_0_, user0_.gender2 as gender3_0_0_, user0_.name as name4_0_0_, user0_.version as version5_0_0_ from t_user user0_ where user0_.pk=?
+Hibernate: select SEQ_USER.nextval from dual
+Hibernate: select vtest0_.pk as pk1_2_0_, vtest0_.insert_time as insert_time2_2_0_, vtest0_.gender2 as gender3_2_0_, vtest0_.name as name4_2_0_, vtest0_.version as version5_2_0_ from v_test vtest0_ where vtest0_.pk=?
+Hibernate: insert into t_user (insert_time, gender2, name, version, pk) values (?, ?, ?, ?, ?)
+Hibernate: update t_user set insert_time=?, gender2=?, name=?, version=? where pk=? and version=?
+Hibernate: delete from t_user where pk=? and version=?
+Hibernate: select name from v_test where pk=?
+
+
+@MappedSuperclass 父类用，可以传递到子类做继承用
+public class BaseMode {
+int ID;
+java.util.Date insertTime;
+public java.util.Date getInsertTime() {
+	return insertTime;
+}
+@Transient 表明当前类不做O/R mapping,子类会覆盖
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+
+public void setInsertTime(java.util.Date insertTime) {
+	this.insertTime = insertTime;
+}
+}
+@Entity
+@Table(name = "t_user")
+
+public class User extends BaseMode {
+
+
+
+private String name;
+protected int version2;
+protected Gender  gender;
+
+
+
+
+@Enumerated(EnumType.STRING)
+@Column(name = "gender2")
+public Gender getGender() {
+	return gender;
+}
+public void setGender(Gender gender) {
+	this.gender = gender;
+}
+
+
+@Version
+@Column(name = "version")
+public int getVersion() {
+	return version2;
+}
+public void setVersion(int version) {
+	this.version2 = version;
+}
+@Id
+@GeneratedValue( strategy=GenerationType.SEQUENCE,  generator="SEQ_USER_ID")
+@SequenceGenerator(name = "SEQ_USER_ID",sequenceName = "SEQ_USER",allocationSize=1)
+@Column(name = "pk")
+public int getID() {
+	return ID;
+}
+public void setID(int iD) {
+	ID = iD;
+}
+@Column(name = "name")
+public String getName() {
+	return name;
+}
+public void setName(String name) {
+	this.name = name;
+}
+
+
+
+
+
+}
+
+ 
+
+参数配置
+
+<bean id="emf" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+      <property name="dataSource" ref="dataSource" />
+      <property name="packagesToScan" value="com.cicc" />
+       <property name="jpaVendorAdapter">
+         <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter" />
+      </property>
+      <property name="jpaProperties">
+         <props>
+            <prop key="hibernate.dialect">org.hibernate.dialect.Oracle10gDialect</prop>
+            <prop key="hibernate.show_sql">true</prop>
+            <prop key="hibernate.ejb.naming_strategy">org.hibernate.cfg.ImprovedNamingStrategy</prop> 这个可以自动实现java的attribute转换到数据库的下划线命名方式
+         </props>
+      </property>
+   </bean>
+   
+ 
+ 	@Column(name="audit_Type")  要么全大写要么全小写 要么带下划线 和 as后的名字一样 ，不然就报错  select name as audit_type
+	private String auditType;   
+persist:
+    Insert a new register to the database
+    Attach the object to the entity manager.
+merge:
+    Find an attached object with the same id and update it.
+    If exists update and return the already attached object.
+    If doesn't exist insert the new register to the database.
+
+persist() efficiency:
+    It could be more efficient for inserting a new register to a database than merge().
+    It doesn't duplicates the original object.
+persist() semantics:
+
+    It makes sure that you are inserting and not updating by mistake.
+
+
+	@Access(AccessType.FIELD) 会自动用驼峰命名规则对变量做分解成数据库字段名不需用用column来做注解了
+	比如testId就会变成 test_id
+
+
+     User user2=new User();
+		 user2.setID(20003); 已经存在的id
+		 user2.setName("4688");
+		 user2.setVersion(7); version准确
+		User user3=em.merge(user2);    Ok 返回一个新的对象和context关联，会找到已经存在的对象，然后update
+		user3!=user2
+		
+		
+		如果有version,则update的时候会带上version
+		
+		
+		
+ 	  User user2=new User(); 
+		user2.setName("4677");
+	 	User user3=em.merge(user2);   ok 返回一个新的对象和context关联
+	 	
+	 	
+	 	 User user2=em.find(User.class,id);
+		user2.setName("4677");
+	 	User user3=em.merge(user2);  ok，user3和user2一样
+	 	
+	 	find对象后，直接对其进行操作,如果修改的值和原来的值一样，version不修改
+	 	find对象后，直接对其进行操作,如果修改的值和原来的值不一样，version+1
+	 	
+	 	如果find对象后，对其操作后通过merge方式处理,如果修改的值和原来的值一样，version不修改
+	 	如果find对象后，对其操作后通过merge方式处理,如果修改的值和原来的值不一样，version+1
+	 	
+	 	结论:version之后再对象的值真正改变之后才能+1,不管这个对象是怎么和context关联的
+	 	
+	 	
+通过entitymanager获取hibernate session
+Session session = entityManager.unwrap( Session.class );
+SessionImplementor sessionImplementor = entityManager.unwrap( SessionImplementor.class );
+
+
+直接通过 jdbcTemplate.getDataSource().getConnection() 获取connection 977(无AOp事物) 658(有AOp事物)
+      conn.close();
+
+直接通过 DataSourceUtils.getConnection(jdbcTemplate.getDataSource()); 获取connection 977(无AOp事物) 580(有AOp事物)
+ 	  DataSourceUtils.doReleaseConnection(conn, jdbcTemplate.getDataSource());
+直接通过  dataSource.getConnection()    914(无AOp事物) 587 (有AOp事物)
+
+拿到connection后一直做1万次循环然后才换回connection 1957
+使用 tomcat connection pool 无事物 1020 有AOP事物 565
+
+container maanged  EntityManagers能够自动做传递，实现事物的统一管理，spring也能实现
+Application-managed entity managers don’t automatically propagate the JTA transaction context
+
+
+@PersistenceContext
+EntityManager em;
+public void enterOrder(int custID, Order newOrder) {
+Customer cust = em.find(Customer.class, custID);
+cust.getOrders().add(newOrder);
+newOrder.setCustomer(cust);
+}
+
+removed entity能够重新persist，但是 detach 的entity不能重新persist
+detached entity不能够在remove  ,而hibernate可以删除deatched的entity
+flush能够立即执行
+remove的对象需要先和context关联，比如find进来。
+
+时间字段不用做特别处理，java.util.date能够正确的插入到 oracle 里面的 date
+
+JPA里面访问hibernate session     
+Session session = em.unwrap( Session.class );
+List<User> userL=session.createCriteria(User.class).add( Example.create(user2) )
+        .list();
+     
+数据类型映射
+
+Java type																													    	   Database type
+String (char, char[])																									      VARCHAR (CHAR, VARCHAR2, CLOB, TEXT)
+Number (BigDecimal, BigInteger, Integer, Double, Long, Float, Short, Byte)	NUMERIC (NUMBER, INT, LONG, FLOAT, DOUBLE)
+int, long, float, double, short, byte																        NUMERIC (NUMBER, INT, LONG, FLOAT, DOUBLE)
+byte[]	                                                                    VARBINARY (BINARY, BLOB)
+boolean (Boolean)	                                                          BOOLEAN (BIT, SMALLINT, INT, NUMBER)
+java.util.Date	                                                        TIMESTAMP (DATE, DATETIME)
+java.sql.Date	                                                    DATE (TIMESTAMP, DATETIME)
+java.sql.Time																											TIME (TIMESTAMP, DATETIME)
+java.sql.Timestamp																								TIMESTAMP (DATETIME, DATE)
+java.util.Calendar																									TIMESTAMP (DATETIME, DATE)
+java.lang.Enum																											NUMERIC (VARCHAR, CHAR)
+java.util.Serializable																						VARBINARY (BINARY, BLOB)
+
+
+     The java.sql.Date and java.sql.Time 不支持 milliseconds. 
+     The java.sql.Timestamp class  支持 nanoseconds.
+     
+     对于Enum类型，缺省处理是 用integer来代表
+     可以用如下注解更好处理,直接存为String
+     
+public enum Gender {
+    MALE,
+   FEMALE，
+   MIX}
+
+@Enumerated(EnumType.STRING)
+private Gender gender;
+
+可以对某个字段做lazy load 
+@Basic(fetch=FetchType.LAZY)
+    @Lob
+privateImage picture
+
+通过这种方式来定义生成的ddl
+@Column(name="SALARY", scale=10, precision=2)
+private BigDecimal salary;
+
+
+
+persistence unit定义了能够被EntityManage管理的所有entity class
+
+JPQL类型不安全，性能差一点(每次都要parse)，但是和SQL很像(像HQL,对象的sql写法，比较别扭)，Criteria queries类型安全，性能好，
+使用表的记录来生成pk
+@TableGenerator(
+name="vendorPartGen",
+table="PERSISTENCE_ORDER_SEQUENCE_GENERATOR",
+pkColumnName="GEN_KEY",
+valueColumnName="GEN_VALUE",
+pkColumnValue="VENDOR_PART_ID",
+allocationSize=10)
+@Id
+@GeneratedValue(strategy=GenerationType.TABLE,
+generator="vendorPartGen")
+public Long getVendorPartNumber() {
+return vendorPartNumber;
+}
+
+@GeneratedValue(strategy=GenerationType.ENTITY表示用自增长的column,比如mysql支持	,
+
+定义在entity中
+@Entity
+@Table(name="t_user")
+@NamedQuery(
+name="findTotalVendorPartPricePerVendor",
+query="SELECT SUM(vp.price) " +
+"FROM VendorPart vp " +
+"WHERE vp.vendor.vendorId = :id"
+)
+
+em.createNamedQuery(
+"findTotalVendorPartPricePerVendor")
+.setParameter("id", vendorId)
+.getSingleResult();
+
+
+Order order = em.find(Order.class, orderId);
+em.remove(order);
+
+
+@Id
+@GeneratedValue( strategy=GenerationType.SEQUENCE,  generator="SEQ_USER_ID")
+@SequenceGenerator(name = "SEQ_USER_ID",sequenceName = "SEQ_USER",allocationSize=1)
+
+@Column(name = "id")
+
+先执行一个sql获取sequence的值，然后执行insert,对象直接获取主键
+
+public List findWithName(String name) {
+return em.createQuery(
+"SELECT c FROM Customer c WHERE c.name LIKE :custName")
+.setParameter("custName", name)
+.setMaxResults(10)
+.getResultList();
+}
+这个是动态的 query ,NamedQuery 是静态的
+使用postion定位
+em.createQuery(
+“SELECT c FROM Customer c WHERE c.name LIKE ?1”)
+.setParameter(1, name)
+.getResultList();
+
+使用name定位
+em.createQuery(
+"SELECT c FROM Customer c WHERE c.name LIKE :custName")
+.setParameter("custName", name)
+.getResultList();
+
+支持 o.country IN (’UK’, ’US’, ’France’)
+支持case UPDATE Customer c
+SET c.discount =
+CASE c.level
+WHEN ’Gold’ THEN 20
+WHEN ’SILVER’ THEN 15
+WHEN ’Bronze’ THEN 10
+ELSE 5
+END
+
+SELECT c.country, COUNT(c)
+FROM Customer c GROUP BY c.country
+
+
+EntityManager em = ...;
+CriteriaBuilder cb = em.getCriteriaBuilder();  
+CriteriaQuery cq = cb.createQuery(Pet.class); 
+Root<Pet> pet = cq.from(Pet.class);   设置查询的from 
+cq.where(pet.get(Pet_.color).isNull());
+cq.where(pet.get(Pet_.color).in("brown", "black"));
+cq.where(cb.equal(pet.get(Pet_.name), "Fido"));
+cq.where(cb.between(pet.get(Pet_.birthday), firstDate, secondDate));
+cq.select(pet); 设置返回结果
+
+cq.where(cb.equal(pet.get(Pet_.name), "Fido")
+.and(cb.equal(pet.get(Pet_.color), "brown")));
+cq.orderBy(cb.desc(pet.get(Pet_.birthday)));
+
+cq.groupBy(pet.get(Pet_.color));
+cq.having(cb.in(pet.get(Pet_.color)).value("brown").value("blonde"));
+
+或者 cq.where(cb.equal(pet.get("name"), "Fido")); 直接使用class的attriubte就行了，不用Pet_.name
+
+缺省方式下是 乐观锁
+OPTIMISTIC ，只检查，version不加1
+OPTIMISTIC_FORCE_INCREMENT ,检查，同时在commit的时候自动+1
+
+通过 query. setFirstResult和setMaxResults来实现分页
+
+TypedQuery<Pet> q = em.createQuery(cq);   
+List<Pet> allPets = q.getResultList();
+
+■New entity instances have no persistent identity and are not yet associated with a persistence
+context.
+■ Managed entity instances have a persistent identity and are associated with a persistence
+context.
+■ Detached entity instances have a persistent identity and are not currently associated with a
+persistence context.
+■ Removed entity instances have a persistent identity, are associated with a persistent context,
+and are scheduled for removal from the data store.
+
+loadTimeWeaver hibernate的实现不需要
+
+jdbcTemplate
+	// TODO Auto-generated method stub
+		User user = this.jdbcTemplate.queryForObject(
+				"select id, name from t_user where id = ?",
+				new Object[]{UserID},
+				new RowMapper<User>() {
+				public User mapRow(ResultSet rs, int rowNum) throws SQLException {
+					User user = new User();
+				user.setID(rs.getInt("id"));
+				user.setName(rs.getString("name"));
+				return user;
+				}
+				});
+		//  System.out.println("about to run query in DaoJDBCTemplateImple");
+		 // System.out.println(user.getID()+" "+user.getName());
+		return user;
+		
+		 
+		调用存储过程
+		
+		 StoredProcedureQuery storedProcedure = em.createStoredProcedureQuery("p_test");
+		 storedProcedure.registerStoredProcedureParameter("p1", String.class, ParameterMode.IN);
+		 storedProcedure.registerStoredProcedureParameter("p2", Float.class, ParameterMode.IN);
+		 storedProcedure.registerStoredProcedureParameter("p3", Float.class, ParameterMode.IN);
+		 storedProcedure.registerStoredProcedureParameter("po1", String.class, ParameterMode.OUT);
+		 storedProcedure.registerStoredProcedureParameter("po2", Float.class, ParameterMode.OUT);
+		 storedProcedure.registerStoredProcedureParameter("po3", Float.class, ParameterMode.OUT);
+         storedProcedure.setParameter("p1", "test");
+         storedProcedure.setParameter("p2", 1f);
+         storedProcedure.setParameter("p3", 2f);
+
+	        // execute SP
+	        storedProcedure.execute();
+	        // get result
+	        String po1 = (String)storedProcedure.getOutputParameterValue("po1");
+	        Float po2 = (Float)storedProcedure.getOutputParameterValue("po2");
+	        Float po3 = (Float)storedProcedure.getOutputParameterValue("po3");
+
+
+调用function 
+
+ BigDecimal sum = (BigDecimal)em.createNativeQuery("SELECT p_test_f(:p1,:p2) FROM DUAL")
+                 .setParameter("p1", "p1")
+                 .setParameter("p2", 1123)
+                 .getSingleResult(); 
+                 
+                 
+                 
+ 

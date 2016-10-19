@@ -1,0 +1,418 @@
+rabbitmq 2007开发，2010被spring收购，spring被vmware收购(2009),vmware被emc收购2004年
+
+persistent是batch做的，但是一定是batch做完之后写道disk才会ack给procedure
+如果消息发送的时候没有consumer(queue模式)，消息也会保留到consumer来位置,而且能做roundbin对消费者做循环
+使用fanout交换机来实现pub/sub 没有消费者消息丢弃广播模式
+可以做流量控制,mirrored queue
+能够做 cluster,federation
+
+当前RabbitMQ在开启confirm，ack和持久化的情况下，单个队列QPS为7k -8k，打开Hipe能达到10k。
+消息队列持久化包括3个部分：
+（1）exchange持久化，在声明时指定durable => 1
+（2）queue持久化，在声明时指定durable => 1
+（3）消息持久化，在投递时指定delivery_mode => 2（1是非持久化）
+
+使用 direct 交换机的时候，可以做  binding key/match routing key 的消息过滤 ，也可以多个queue用同样的 binding key，
+就和fanout一样了
+
+交换机共有4种类型：direct(完全匹配，单播) outingKey与队列名完全匹配，如果一个队列绑定到交换机要求路由键为“dog”，则只转发routingkey标记为dog的消息，不会转发dog.puppy，也不会转发dog.guard等。，
+
+topic(模式匹配分配消息的routing-key属性，可以模糊匹配)，Topic类型交换机通过模式匹配分配消息的routing-key属性。将路由键和某个模式进行匹配，此时队列需要绑定到一个模式上。
+它将routing-key和binding-key的字符串切分成单词。这些单词之间用点隔开。它同样也会识别两个通配符：符号“#”和符号“*”。#匹配0个或多个单词，*匹配不多不少一个单词。
+例如，binding key:*.stock.#匹配routing key: usd.stock和eur.stock.db，但是不匹配stock.nana。
+
+fanout(fanout交换机不处理路由键，简单的将队列绑定到交换机上，每个发送到交换机的消息都会被转发到与该交换机绑定的所有队列上如果没有队列绑定在交换机上，则发送到该交换机上的消息会丢失
+
+
+可以通过 channel.basicQos(prefetchCount); 来让每个消费者必须消费完当前消息才能接受新的消息，避免积压
+
+使用exchange的时候，producer不需要bind交换机，他只管往exchange发送消息,exchange根据consumer的bind转发到不同的queue
+这个可以用来做mdf的选择性分发
+
+当使用 topic类型的exchange的时候，可以做到多个筛选条件同时工作 *代表一个 word #代表任意 word 
+比如 								Q1 bind *.orange.*       Q2 bind  *.*.rabbit and  lazy.# 
+lazy.pink.rabbit           N                               Y
+lazy.orange.male.rabbit    N                               Y
+
+cluster要求erlang版本一致，并且 rabbitmq版本一致，任何一个节点都能看到同样的信息,erlang会自动复制相关信息到所有集群节点
+Virtual hosts, exchanges, users, and permissions are automatically mirrored across all nodes in a cluster. Queues may be located on a single node, or mirrored across multiple nodes. A client connecting to any node in a cluster can see all queues in the cluster, even if they are not located on that node.
+
+
+federation(主要用于广域网转发) 和 shovel(主要用于局域网转发，比如转发exchange的消息到另外一个queue) 属于分布式的部署方式
+Federation allows an exchange or queue on one broker to receive messages published to an exchange or queue on another (the brokers may be individual machines, or clusters). Communication is via AMQP (with optional SSL), so for two exchanges or queues to federate they must be granted appropriate users and permissions.
+
+
+install
+先安装erlang
+下载src https://www.erlang-solutions.com/downloads/download-erlang-otp
+./configure --prefix=/ciccdev/mysql/erlang
+
+make 
+make install
+安装 rabbitmq ，直接解压文件即可
+
+启动
+rabbitmq-server -detached 
+停止 rabbitmqctl stop
+
+配置文件在 $RABBIT_HOME/etc/rabbitmq/rabbitmq.config
+
+
+配置 cluster
+找到一台机器的 ~/.erlang.cookie，copy内容到其他机器的 .erlang.cookie
+首先停止 节点2 
+rabbitmqctl stop_app
+然后把节点2 加入到 节点1的cluster
+rabbitmqctl join_cluster --ram rabbit@kvm
+启动之后检查集群状态 节点2 
+rabbitmqctl cluster_status
+
+Cluster status of node rabbit@kvm4 ...
+[{nodes,[{disc,[rabbit@kvm]},{ram,[rabbit@kvm4]}]},
+ {running_nodes,[rabbit@kvm,rabbit@kvm4]},
+ {cluster_name,<<"rabbit@kvm">>},
+ {partitions,[]}]
+ 
+ 
+集群至少需要一个类型为disk的node存在已做持久化
+客户端连接的时候，最好在前面加一个 load balancer 已做高可用
+queue的消息只在一个节点上，如果这个节点crash，丢失消息，所以需要设置mirrored queue 
+集群环境下，如果最后一个节点也down，那么起来的事后，这个最后down的node必须先起来，如果这个节点起不来，就要把它移除集群
+消息发送到mirrored queue 同时发送到所有master和slave
+配置 Mirrored queue
+
+Policy where queues whose names begin with "two." are mirrored to any two nodes in the cluster, with automatic synchronisation:
+rabbitmqctl set_policy ha-two "^two\."     '{"ha-mode":"exactly","ha-params":2,"ha-sync-mode":"automatic"}'
+Policy where queues whose names begin with "ha." are mirrored to all nodes in the cluster
+rabbitmqctl set_policy ha-all "^ha\." '{"ha-mode":"all"}'
+
+
+Exclusive：排他队列，如果一个队列被声明为排他队列，该队列仅对首次声明它的连接可见，并在连接断开时自动删除。
+这里需要注意三点：其一，排他队列是基于连接可见的，同一连接的不同信道是可以同时访问同一个连接创建的排他队列的。
+其二，“首次”，如果一个连接已经声明了一个排他队列，其他连接是不允许建立同名的排他队列的，这个与普通队列不同。
+其三，即使该队列是持久化的，一旦连接关闭或者客户端退出，该排他队列都会被自动删除的。
+这种队列适用于只限于一个客户端发送读取消息的应用场景。
+
+一种是通过basic.consume命令，订阅某一个队列中的消息,channel会自动在处理完上一条消息之后，接收下一条消息。（同一个channel消息处理是串行的）。
+除非关闭channel或者取消订阅，否则客户端将会一直接收队列的消息。
+另外一种方式是通过basic.get命令主动获取队列中的消息，但是绝对不可以通过循环调用basic.get来代替basic.consume，这是因为basic.get RabbitMQ在实际执行的时候，是首先consume某一个队列，然后检索第一条消息，然后再取消订阅。如果是高吞吐率的消费者，最好还是建议使用basic.consum
+
+  Rabbit MQ默认是不持久队列、Exchange、Binding以及队列中的消息的，这意味着一旦消息服务器重启，
+  所有已声明的队列，Exchange，Binding以及队列中的消息都会丢失。
+  通过设置Exchange和MessageQueue的durable属性为true，可以使得队列和Exchange持久化，
+  但是这还不能使得队列中的消息持久化，这需要生产者在发送消息的时候，将delivery mode设置为2，
+  只有这3个全部设置完成后，才能保证服务器重启不会对现有的队列造成影响。这里需要注意的是，
+  只有durable为true的Exchange和durable为ture的Queues才能绑定，否则在绑定时，RabbitMQ都会抛错的。
+  持久化会对RabbitMQ的性能造成比较大的影响，可能会下降10倍不止。
+  
+  对事务的支持是AMQP协议的一个重要特性。假设当生产者将一个持久化消息发送给服务器时，
+  因为consume命令本身没有任何Response返回，所以即使服务器崩溃，没有持久化该消息，
+  生产者也无法获知该消息已经丢失。如果此时使用事务，即通过txSelect()开启一个事务，然后发送消息给服务器，
+  然后通过txCommit()提交该事务，即可以保证，如果txCommit()提交了，则该消息一定会持久化，如果txCommit()还未提交即服务器崩溃，
+  则该消息不会服务器就收。当然Rabbit MQ也提供了txRollback()命令用于回滚某一个事务。
+  
+，该Confirm包含该消息的ID，这样生产者就会知道该消息已被正确分发。对于持久化消息，只有该消息被持久化后
+，才会返回Confirm。Confirm机制的最大优点在于异步，生产者在发送消息以后，即可继续执行其他任务。
+而服务器返回Confirm后，会触发生产者的回调函数，生产者在回调函数中处理Confirm信息。
+如果消息服务器发生异常，导致该消息丢失，会返回给生产者一个nack，表示消息已经丢失，
+这样生产者就可以通过重发消息，保证消息不丢失。Confirm机制在性能上要比事务优越很多。
+但是Confirm机制，无法进行回滚，就是一旦服务器崩溃，生产者无法得到Confirm信息，
+生产者其实本身也不知道该消息吃否已经被持久化，只有继续重发来保证消息不丢失，
+但是如果原先已经持久化的消息，并不会被回滚，这样队列中就会存在两条相同的消息，系统需要支持去重。
+
+
+Broker：简单来说就是消息队列服务器实体。
+Exchange：消息交换机，它指定消息按什么规则，路由到哪个队列。
+Queue：消息队列载体，每个消息都会被投入到一个或多个队列。
+Binding：绑定，它的作用就是把exchange和queue按照路由规则绑定起来。
+Routing Key：路由关键字，exchange根据这个关键字进行消息投递。
+vhost：虚拟主机，一个broker里可以开设多个vhost，用作不同用户的权限分离。
+producer：消息生产者，就是投递消息的程序。
+consumer：消息消费者，就是接受消息的程序。
+channel：消息通道，在客户端的每个连接里，可建立多个channel，每个channel代表一个会话任务
+
+
+
+解除集群关系
+rabbitmqctl stop_app  停止rabbitmq  如果是 stop 就是连 erlang也停止
+rabbitmqctl reset
+rabbitmqctl start_app
+
+
+
+或者通过配置文件配置   [{cluster_nodes, {['rabbit@rabbit1', 'rabbit@rabbit2', 'rabbit@rabbit3'], disc}}]}].
+
+All data/state required for the operation of a RabbitMQ broker is replicated across all nodes, 
+for reliability and scaling, with full ACID properties. 
+An exception to this are message queues, which by default reside on the node that created them, 
+though they are visible and reachable from all nodes.
+
+
+如果需要在一个机器启动多个rabbit
+RABBITMQ_NODE_PORT=5672 RABBITMQ_NODENAME=rabbit rabbitmq-server -detached
+RABBITMQ_NODE_PORT=5673 RABBITMQ_NODENAME=hare rabbitmq-server -detached
+rabbitmqctl -n hare stop_app
+rabbitmqctl -n hare join_cluster rabbit@`hostname -s`
+rabbitmqctl -n hare start_app
+
+
+
+rabbitmq-client-tests.jar 里面有测试工具，比如 com.rabbitmq.examples.PerfTes 做压力测试
+consumer自动就是多线程的使用 ExecutorService pool 也可以使用自己的线程池
+ConnectionFactory cf = new ConnectionFactory();
+cf.setThreadFactory(ThreadManager.backgroundThreadFactory());
+
+连接的时候多地址
+
+Address[] addrArr = new Address[]{ new Address(hostname1, portnumber1)
+                                 , new Address(hostname2, portnumber2)};
+Connection conn = factory.newConnection(addrArr);
+自动重连，如果连接中断
+factory.setAutomaticRecovery(true)
+factory.setNetworkRecoveryInterval(10000);
+
+The automatic recovery process for many applications follows the following steps:
+
+Reconnect
+Restore connection listeners
+Re-open channels
+Restore channel listeners
+Restore channel basic.qos setting, publisher confirms and transaction settings
+
+Topology recovery includes the following actions, performed for every channel
+
+Re-declare exchanges (except for predefined ones)
+Re-declare queues
+Recover all bindings
+Recover all consumers
+
+
+String queueName = channel.queueDeclare().getQueue(); 创建一个   non-durable, exclusive, autodelete queue with a generated name
+channel.queueDeclare(queueName, true, false, false, null); a durable, non-exclusive, non-autodelete queue with a well-known name
+
+channel.basicPublish(exchangeName, routingKey,
+                     new AMQP.BasicProperties.Builder()
+                       .contentType("text/plain").deliveryMode(2)
+                       .priority(1).userId("bob")
+                       .build()),
+                     messageBodyBytes);
+                     
+ Channel is thread-safety 还是建议每个线程使用自己的channel
+ connection.addShutdownListener(new ShutdownListener() {
+
+
+如果不指定exchange，就用default的exchange,为direct类型
+
+
+
+监听端口 5672(client 通信)  25672(集群)
+单个broker同步方式发送时间(100000条连续发送 queue)
+如果选择 no persistent,no transaction,1 consumer  								 41220 messages/S
+如果选择 no persistent,no transaction,2 consumer  								 41237 messages/S
+
+
+单个broker同步方式发送时间(100000条连续发送 fanout exchange)
+如果选择 no persistent,no transaction,1 consumer  								 65573 messages/S
+如果选择 no persistent,no transaction,2 consumer  								 56022 messages/S
+如果选择 no persistent,no transaction,4 consumer  								workstation 不行了
+如果选择 no persistent,no transaction,0 consumer  								 90252 messages/S
+
+持久化的情况下消息1k 
+单服务器 1 queue 4-5k/s  3 queue 6-8k 5 queue 9-10k 
+两服务器 5 queue 15-16k 
+
+1、消费者线程数为两个时接收速度最快（此处建议一般的业务逻辑设置两个消费者线程），如果处理比较复杂的逻辑或数据，建议多开启消费者线程数
+2、 生产者线程数为二到三个时，发送速度最快，超过这个数后也不能提高发送速度
+
+
+如果出现connection 断了，客户端会有回调函数
+如果消息从exchange重传，则会设置重发标志
+
+
+RabbitMQ,遵循 AMQP 协议，由内在高并发的erlanng语言开发，用在实时的对可靠性要求比较高的消息传递上。
+kafka是Linkedin于2010年12月份开源的消息发布订阅系统,它主要用于处理活跃的流式数据,大数据量的数据处理上。
+
+1)在架构模型方面，
+RabbitMQ遵循AMQP协议，RabbitMQ的broker由Exchange,Binding,queue组成，其中exchange和binding组成了消息的路由键；客户端Producer通过连接channel和server进行通信，Consumer从queue获取消息进行消费（长连接，queue有消息会推送到consumer端，consumer循环从输入流读取数据）。rabbitMQ以broker为中心；有消息的确认机制。
+kafka遵从一般的MQ结构，producer，broker，consumer，以consumer为中心，消息的消费信息保存的客户端consumer上，consumer根据消费的点，从broker上批量pull数据；无消息确认机制。
+
+2)在吞吐量，
+kafka具有高的吞吐量，内部采用消息的批量处理，zero-copy机制，数据的存储和获取是本地磁盘顺序批量操作，具有O(1)的复杂度，消息处理的效率很高。
+rabbitMQ在吞吐量方面稍逊于kafka，他们的出发点不一样，rabbitMQ支持对消息的可靠的传递，支持事务，不支持批量的操作；基于存储的可靠性的要求存储可以采用内存或者硬盘。
+3)在可用性方面，
+rabbitMQ支持miror的queue，主queue失效，miror queue接管。
+kafka的broker支持主备模式。
+4)在集群负载均衡方面，
+kafka采用zookeeper对集群中的broker、consumer进行管理，可以注册topic到zookeeper上；通过zookeeper的协调机制，producer保存对应topic的broker信息，可以随机或者轮询发送到broker上；并且producer可以基于语义指定分片，消息发送到broker的某分片上。
+rabbitMQ的负载均衡需要单独的loadbalancer进行支持。
+
+对于RabbitMQ和Redis的入队和出队操作，各执行100万次，每10万次记录一次执行时间。测试数据分为128Bytes、512Bytes、1K和10K四个不同大小的数据。实验表明：入队时，当数据比较小时Redis的性能要高于RabbitMQ，而如果数据大小超过了10K，
+Redis则慢的无法忍受；出队时，无论数据大小，Redis都表现出非常好的性能，而RabbitMQ的出队性能则远低于Redis。
+Kafka是Apache下的一个子项目，是一个高性能跨语言分布式Publish/Subscribe消息队列系统，而Jafka是在Kafka之上孵化而来的，即Kafka的一个升级版。具有以下特性：快速持久化，可以在O(1)的系统开销下进行消息持久化；高吞吐，在一台普通的服务器上既可以达到10W/s的吞吐速率；完全的分布式系统，Broker、Producer、Consumer都原生自动支持分布式，自动实现复杂均衡；支持Hadoop数据并行加载，对于像Hadoop的一样的日志数据和离线分析系统，但又要求实时处理的限制，这是一个可行的解决方案。Kafka通过Hadoop的并行加载机制来统一了在线和离线的消息处理，这一点也是本课题所研究系统所看重的。Apache Kafka相对于ActiveMQ是一个非常轻量级的消息系统，除了性能非常好之外，还是一个工作良好的分布式系统。
+kafka遵从一般的MQ结构，producer，broker，consumer，以consumer为中心，消息的消费信息保存的客户端consumer上，consumer根据消费的点，从broker上批量pull数据；无消息确认机制。
+
+添加用户
+sbin/rabbitmqctl -n rabbit@kvm add_user wzy wzy
+设置权限
+rabbitmqctl set_permissions  -p / wzy ".*" ".*" ".*" 
+
+1.添加用户
+# rabbitmqctl add_user username password
+2.删除用户
+# rabbitmqctl delete_user username
+3.修改密码
+# rabbitmqctl change_password username newpassword
+4.列出所有用户
+# rabbitmqctl list_users
+权限控制1.创建虚拟主机
+# rabbitmqctl add_vhost vhostpath
+2.删除虚拟主机
+# rabbitmqctl delete_vhost vhostpath
+3.列出所有虚拟主机
+# rabbitmqctl list_vhosts
+4.设置用户权限
+# rabbitmqctl set_permissions -p "/" wzy ".*" ".*" ".*"
+
+5.清除用户权限
+# rabbitmqctl clear_permissions [-p vhostpath] username
+6.列出虚拟主机上的所有权限
+# rabbitmqctl list_permissions [-p vhostpath]
+7.列出用户权限
+
+# rabbitmqctl list_user_permissions username
+
+
+package rabbitmq;
+import com.rabbitmq.client.ConnectionFactory;
+import com.rabbitmq.client.Connection;
+import com.rabbitmq.client.Channel;
+public class Sender {
+	 private final static String QUEUE_NAME = "hello2";
+
+	  public static void main(String[] argv)
+	      throws java.io.IOException {
+		  ConnectionFactory factory = new ConnectionFactory();
+		    factory.setHost("192.168.73.147");
+		    factory.setUsername("wzy");
+		    factory.setPassword("wzy");
+		    Connection connection = factory.newConnection();
+		    Channel channel = connection.createChannel();
+		    channel.queueDeclare(QUEUE_NAME, false, false, false, null);
+		    String message = "Hello World 2!";
+		    channel.basicPublish("", QUEUE_NAME, null, message.getBytes());
+		    System.out.println(" [x] Sent '" + message + "'");
+		    channel.close();
+		    connection.close();
+	  }
+}
+
+
+
+package rabbitmq;
+import com.rabbitmq.client.ConnectionFactory;
+
+import com.rabbitmq.client.Connection;
+import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.QueueingConsumer;
+
+public class Receive {
+	 private final static String QUEUE_NAME = "hello2";
+
+	  public static void main(String[] argv)throws java.lang.Exception
+	     {
+		  ConnectionFactory factory = new ConnectionFactory();
+		    factory.setHost("192.168.73.147");
+		    factory.setUsername("wzy");
+		    factory.setPassword("wzy");
+		    Connection connection = factory.newConnection();
+		    Channel channel = connection.createChannel();
+		    channel.queueDeclare(QUEUE_NAME, false, false, false, null);
+		    System.out.println(" [*] Waiting for messages. To exit press CTRL+C");
+		    QueueingConsumer consumer = new QueueingConsumer(channel);
+		    channel.basicConsume(QUEUE_NAME, true, consumer);
+		    while (true) {
+		      QueueingConsumer.Delivery delivery = consumer.nextDelivery();
+		      String message = new String(delivery.getBody());
+		      System.out.println(" [x] Received '" + message + "'");
+		    }
+	  }
+}
+
+
+
+
+package rabbitmq;
+import com.rabbitmq.client.ConnectionFactory;
+import com.rabbitmq.client.Connection;
+import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.QueueingConsumer;
+public class ReceiveLogsTopic {
+private static final String EXCHANGE_NAME = "topic_logs";
+
+public static void main(String[] argv)
+              throws Exception {
+
+    ConnectionFactory factory = new ConnectionFactory();
+    factory.setHost("192.168.73.147");
+    factory.setUsername("wzy");
+    factory.setPassword("wzy");
+    Connection connection = factory.newConnection();
+    Channel channel = connection.createChannel();
+
+    channel.exchangeDeclare(EXCHANGE_NAME, "topic");
+    String queueName = channel.queueDeclare().getQueue();
+
+    if (argv.length < 1){
+        System.err.println("Usage: ReceiveLogsTopic [binding_key]...");
+        System.exit(1);
+    }
+
+    for(String bindingKey : argv){
+        channel.queueBind(queueName, EXCHANGE_NAME, bindingKey);
+    }
+
+    System.out.println(" [*] Waiting for messages. To exit press CTRL+C");
+
+    QueueingConsumer consumer = new QueueingConsumer(channel);
+    channel.basicConsume(queueName, true, consumer);
+
+    while (true) {
+        QueueingConsumer.Delivery delivery = consumer.nextDelivery();
+        String message = new String(delivery.getBody());
+        String routingKey = delivery.getEnvelope().getRoutingKey();
+
+        System.out.println(" [x] Received '" + routingKey + "':'" + message + "'");
+    }
+}
+}
+
+package rabbitmq;
+import com.rabbitmq.client.ConnectionFactory;
+import com.rabbitmq.client.Connection;
+import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.QueueingConsumer;
+public class EmitLogTopic {
+private static final String EXCHANGE_NAME = "topic_logs";
+
+public static void main(String[] argv)
+              throws Exception {
+
+    ConnectionFactory factory = new ConnectionFactory();
+    factory.setHost("192.168.73.147");
+    factory.setUsername("wzy");
+    factory.setPassword("wzy");
+    Connection connection = factory.newConnection();
+    Channel channel = connection.createChannel();
+
+    channel.exchangeDeclare(EXCHANGE_NAME, "topic");
+
+    String routingKey =  argv[0];
+    String message =  argv[1];
+
+    channel.basicPublish(EXCHANGE_NAME, routingKey, null, message.getBytes());
+    System.out.println(" [x] Sent '" + routingKey + "':'" + message + "'");
+
+    connection.close();
+}
+//...
+}

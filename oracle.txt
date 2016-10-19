@@ -1,0 +1,1900 @@
+20150613快速处理失效同义词
+select 'select * from '||owner||'.' ||object_name||' where rownum<=1;' From dba_objects  where STATUS='INVALID' and  object_type ='SYNONYM'
+
+
+2015211
+A 'log file sync' operation is performed every time the redo logs switch to the next log 
+用户commit 处于 log file sync 状态，然后lgwr被唤醒，发生 log file parallel write ，完成真正的物理io后，唤醒提交的sesion，就完成提交
+如果 log file sync>> log file parallel write 说明cpu是瓶颈，lgwr没有被调度到
+redo不建议放在raid5/6上，ssd如果不做优化，也可能会有问题
+10.2支持 commit async,也支持commit batch
+ALTER [SYSTEM | SESSION] SET COMMIT_WRITE='IMMEDIATE,NOWAIT';
+ The IMMEDIATE and BATCH options control how redo is batched by Log Writer. The WAIT and NOWAIT options control when the redo for a commit is flushed to the redo logs.
+ 
+The log file sync wait may be broken down into the following components:
+1. Wakeup LGWR if idle 
+2. LGWR gathers the redo to be written and issue the I/O
+3. Time for the log write I/O to complete
+4. LGWR I/O post processing
+5. LGWR posting the foreground/user session that the write has completed
+6. Foreground/user session wakeup
+
+
+Tuning advice based on log file sync component breakdown above:
+Steps 2 and 3 are accumulated in the "redo write time" statistic. (i.e. as found under STATISICS section of Statspack and AWR)
+Step 3 is the "log file parallel write" wait event. (Document:34583.1 "log file parallel write" Reference Note)
+Steps 5 and 6 may become very significant as the system load increases. This is because even after the foreground has been posted it may take a some time for the OS to schedule it to run. May require monitoring from O/S level
+可以使用 COMMIT NOWAIT 
+Work with the system administrator to examine the filesystems where the redologs are located with a view to improving the performance of IO.
+Do not place redo logfiles on a RAID configuration which requires the calculation of parity, such as RAID-5 or RAID-6.
+Do not put redo logs on Solid State Disk (SSD)
+Although generally, Solid State Disks write performance is good on average, they may endure write peaks which will highly increase waits on 'log file sync'.
+(Exception to this would be for Engineered Systems (Exadata, SuperCluster and Oracle Database Appliance) which have been optimized to use SSDs for REDO)
+Look for other processes that may be writing to that same location and ensure that the disks have sufficient bandwidth to cope with the required capacity. If they don't then move the activity or the redo.
+Ensure that the log_buffer is not too big. A very large log_buffer can have an adverse affect  as waits will be longer when flushes occur. When the buffer fills up, it has to write all the data into the redo log file and the LGWR will wait until the last I/O is completed.
+
+20141125
+oracle check constraint 不能调用用户自己的function,只能引用当前行的列
+
+20141121
+length和lengthb看到的长度不一样,lengthb是统计真正的字节数，而length是数字符数
+
+20141015
+oracle动态执行超长sql
+  l_stmt dbms_sql.varchar2a;
+    l_stmt(1) := 'select 1 c1';
+    for i in 2 .. 15000 loop
+        l_stmt(i) := ', 1 c' || i;
+    end loop;
+    l_stmt(15000) := 'from dual';
+        dbms_sql.parse( c => l_cursor,
+    statement => l_stmt,
+    lb => l_stmt.first,
+    ub => l_stmt.last,
+    lfflg => TRUE,
+    language_flag => dbms_sql.native );
+    l_rows := dbms_sql.execute(l_cursor);
+    dbms_sql.close_cursor( l_cursor );
+    动态创建trigger，需要单独给予 create trigger 权限
+    
+20140910
+获取当前的transaction id 
+DBMS_TRANSACTION.local_transaction_id(false);
+
+
+
+20140826
+lag是指根据over的key，延后一列或者多列显示
+lead正好相反
+select id,name,salary ,lag(salary,1) over( partition by name order by salary ) from test_lag 
+
+20140109
+decode(market,'HKG',to_number(symbol),symbol) 如果market!='HKG'会出现数据不一致的问题，原因是decode要求返回的类型
+必须和第一个result类型一直，就是必须是number 
+
+
+20130828
+top level join hint on Nonmergeable Views 有效
+top level  join hint on mergeable Views 无效
+
+20130709
+sort merge join  used in :
+large data set join ,an inequality condition (not a nonequality ) like <, <=(less than or equal to)
+, >, or >=(large than or equal to).
+Both the inputs are sorted on the join key.
+
+Hash Join must be equality condition
+
+
+NESTED LOOPS COST = (OUTER TABLE IO COST) +   
+                    (OUTER TABLE CARDINALITY) * (INNER TABLE IO COST) + TOTAL CPU COST  
+                    
+                    
+20130702 
+
+
+MERGE INTO bonuses D
+USING (SELECT employee_id, salary, department_id FROM employees
+WHERE department_id = 80) S
+ON (D.employee_id = S.employee_id)
+WHEN MATCHED THEN UPDATE SET D.bonus = D.bonus + S.salary 
+WHEN NOT MATCHED THEN INSERT (D.employee_id, D.bonus)
+VALUES (S.employee_id, S.salary*0.1);
+
+如果on条件满足，用source表的值做update ，如果不满足，做insert
+
+You cannot update a column that is referenced in the ON condition clause.
+
+plsql exception
+declare
+e_already_processed EXCEPTION;
+existed_exception exception;
+pragma exception_init(existed_exception, -20010);
+begin
+raise e_already_processed ;
+raise_application_error(-20010, 'trade aready existed and processed!');
+
+eception 
+when e_already_processed then
+null;
+when existed_exception then
+null;
+when others then
+null;
+end;
+
+
+20130508 utl_smtp实现抄送
+ type split_type IS TABLE OF VARCHAR2(4000);
+
+真正实现发件的是
+  UTL_SMTP.RCPT(v_smtp_con, i_cc);
+下面这个只是客户端显示的时候用
+utl_smtp.write_data(v_smtp_con, 'Cc:  ' || i_cc || utl_tcp.CRLF);
+   
+function split(p_str in varchar2, p_delimiter in varchar2 default (','))
+    return split_type IS
+    j        INT := 0;
+    i        INT := 1;
+    len      INT := 0;
+    len1     INT := 0;
+    str      VARCHAR2(4000);
+    my_split split_type := split_type();
+  BEGIN
+    len  := LENGTH(p_str);
+    len1 := LENGTH(p_delimiter);
+  
+    WHILE j < len LOOP
+      j := INSTR(p_str, p_delimiter, i);
+    
+      IF j = 0 THEN
+        j   := len;
+        str := SUBSTR(p_str, i);
+        my_split.EXTEND;
+        my_split(my_split.COUNT) := str;
+      
+        IF i >= len THEN
+          EXIT;
+        END IF;
+      ELSE
+        str := SUBSTR(p_str, i, j - i);
+        i   := j + len1;
+        my_split.EXTEND;
+        my_split(my_split.COUNT) := str;
+      END IF;
+    END LOOP;
+  
+    RETURN my_split;
+  END split;
+  
+  
+ procedure p_send_mail_new(i_from    varchar2,
+                           i_to      varchar2,
+                           i_cc      varchar2,
+                           i_bcc     varchar2,
+                           i_subject varchar2,
+                           i_content varchar2) is
+    v_smtp_con      utl_smtp.connection := utl_smtp.open_connection(g_smtp_host);
+    v_from          varchar2(100);
+    v_mail_body     varchar2(32767);
+    v_offset        number := 1;
+    v_amount        number := 32767;
+    v_subject       varchar2(1000);
+    v_content       varchar2(5000);
+    v_email_addrees split_type;
+  begin
+    UTL_SMTP.HELO(v_smtp_con, g_smtp_host);
+  
+    if i_from is not null and length(i_from) > 0 then
+      v_from := i_from;
+    else
+      v_from := g_smtp_from;
+    end if;
+    UTL_SMTP.MAIL(v_smtp_con, v_from);
+  
+    v_email_addrees := split(i_to, ';');
+    for i in v_email_addrees.FIRST .. v_email_addrees.last loop
+      dbms_output.put_line(v_email_addrees(i));
+      UTL_SMTP.RCPT(v_smtp_con, v_email_addrees(i));
+    end loop;
+    --    UTL_SMTP.RCPT(v_smtp_con, i_to);
+  
+    if i_cc is not null and length(i_cc) > 0 then
+      v_email_addrees := split(i_cc, ';');
+       for i in v_email_addrees.FIRST .. v_email_addrees.last loop
+       dbms_output.put_line(v_email_addrees(i));
+       UTL_SMTP.RCPT(v_smtp_con, v_email_addrees(i));
+       end loop;
+    end if;
+    if i_bcc is not null and length(i_bcc) > 0 then
+      
+     v_email_addrees := split(i_bcc, ';');
+       for i in v_email_addrees.FIRST .. v_email_addrees.last loop
+       dbms_output.put_line(v_email_addrees(i));
+       UTL_SMTP.RCPT(v_smtp_con, v_email_addrees(i));
+       end loop;  
+    
+    end if;
+    UTL_SMTP.OPEN_DATA(v_smtp_con);
+      utl_smtp.write_data(v_smtp_con, 'MIME-version: 1.0' || utl_tcp.CRLF);
+    utl_smtp.write_data(v_smtp_con,
+                        'Content-Type: text/html; charset=utf-8' ||
+                        utl_tcp.CRLF);
+    utl_smtp.write_data(v_smtp_con,
+                        'Content-Transfer-Encoding: 8bit' || utl_tcp.CRLF); 
+  
+    utl_smtp.write_data(v_smtp_con, 'From: ' || v_from || utl_tcp.CRLF);
+    utl_smtp.write_data(v_smtp_con, 'To: ' || i_to || utl_tcp.CRLF);
+    -- utl_smtp.write_data(v_smtp_con, utl_tcp.crlf);
+    if i_cc is not null and length(i_cc) > 0 then
+      utl_smtp.write_data(v_smtp_con, 'Cc:  ' || i_cc || utl_tcp.CRLF);
+      -- utl_smtp.write_data(v_smtp_con, utl_tcp.crlf);
+    end if;
+  
+    if i_bcc is not null and length(i_bcc) > 0 then
+      utl_smtp.write_data(v_smtp_con, 'BCc:  ' || i_bcc || utl_tcp.CRLF);
+      --   utl_smtp.write_data(v_smtp_con, utl_tcp.crlf);
+    end if;
+    --v_subject := '=?utf-8?Q?' ||
+    --             utl_raw.cast_to_varchar2(utl_encode.quoted_printable_encode(utl_raw.cast_to_raw(i_subject))) || '?=';
+    --  utl_smtp.write_data(v_smtp_con, utl_tcp.crlf);
+    v_subject := 'Subject:' || i_subject  ;
+    --v_subject:=i_subject;
+    /*  utl_smtp.WRITE_RAW_DATA(v_smtp_con,
+    UTL_RAW.CAST_TO_RAW( v_subject ));*/
+  
+   -- utl_smtp.write_data(v_smtp_con, v_subject);
+   utl_smtp.WRITE_raw_DATA(v_smtp_con,
+                         utl_raw.cast_to_raw(v_subject));
+   
+    utl_smtp.write_data(v_smtp_con, utl_tcp.crlf);
+  
+    UTL_SMTP.WRITE_raw_DATA(v_smtp_con, utl_raw.cast_to_raw(i_content)); 
+   -- UTL_SMTP.write_data(v_smtp_con, i_content);
+    UTL_SMTP.CLOSE_DATA(v_smtp_con);
+    UTL_SMTP.QUIT(v_smtp_con);
+  
+  EXCEPTION
+    WHEN utl_smtp.transient_error OR utl_smtp.permanent_error THEN
+      BEGIN
+        UTL_SMTP.QUIT(v_smtp_con);
+      EXCEPTION
+        WHEN UTL_SMTP.TRANSIENT_ERROR OR UTL_SMTP.PERMANENT_ERROR THEN
+          NULL; -- When the SMTP server is down or unavailable, we don't have
+        -- a connection to the server. The QUIT call will raise an
+        -- exception that we can ignore.
+      END;
+      raise_application_error(-20000,
+                              'Failed to send mail due to the following error: ' ||
+                              sqlerrm);
+  end p_send_mail_new;
+  
+  
+20130321
+远程调用procedure 里面有commit，出现 ORA-02064  distributed operation not supported 
+把相应的procedure变成 PRAGMA AUTONOMOUS_TRANSACTION 即可
+
+orakill instance name spid   在windows下面work
+
+where后面有 and or的时候，以or为单位分开，先and，然后or
+select case
+         when substr(id, 1, 2) = 'ID' then
+          'ID*'
+         when id = '2ID1' then
+          'ID2'
+         else
+          ID
+       end
+  from test_temp;
+
+select case substr(id, 1, 2)  
+         when 'ID' then
+          'ID*'
+         when  '2I' then
+          'ID2'
+         else
+          ID
+       end
+  from test_temp;
+
+20120903
+如果表字段为2000，则substr只能到1996
+length函数最多只能到3984长度,pl/sql 传入varchar2的参数最大为3985(不要超过3900，否则会出现implement error和invalid cursor错误),否则可能会出错
+
+表A
+
+ID   NAME  
+1       A1
+2       A2
+3       A3
+表B
+ID   AID   NAME
+1       1       B1
+2       2       B2  
+3       2       B3
+
+表A和表B是１对多的关系   A.ID   =>   B.AID 
+exists       （sql       返回结果集，为真）  
+not       exists       (sql       不返回结果集，为真） 
+SELECT   ID,NAME   FROM   A   WHERE   EXIST   (SELECT   *   FROM   B   WHERE   A.ID=B.AID) 
+SELECT   ID,NAME   FROM   A   WHERE   EXISTS   (SELECT   *   FROM   B   WHERE   B.AID=１)
+---> SELECT   *   FROM   B   WHERE   B.AID=１有值，返回真，所以有数据
+SELECT   ID,NAME   FROM   A   WHERE   EXISTS   (SELECT   *   FROM   B   WHERE   B.AID=2)
+---> SELECT   *   FROM   B   WHERE   B.AID=２有值，返回真，所以有数据
+SELECT   ID,NAME   FROM   A   WHERE   EXISTS   (SELECT   *   FROM   B   WHERE   B.AID=3)
+---> SELECT   *   FROM   B   WHERE   B.AID=３无值，返回假，所以没有数据
+NOT   EXISTS   就是反过来
+SELECT   ID,NAME   FROM   A   WHERE　NOT   EXIST   (SELECT   *   FROM   B   WHERE   A.ID=B.AID)
+执行结果为
+3       A3 
+
+关联更新 
+update t1 set (name,age)=(select name,age from  t2 where t1.id=t2.id) where exists (select * from t2 where t2.id=t1.id);
+ 如果不加exists会出现不等的记录也更新的情况 
+ 
+ 
+SQL> select *From t1;
+ID        AGE
+-- ----------
+ 2          3
+ 1          2
+ 3          4
+SQL> select *From t2;
+ 
+        ID        AGE
+---------- ----------
+         1          2
+         4          5
+  
+select t1.id ,t2.id  from t1,t2 where t1.id=t2.id(+) and t2.age=2;
+ID         ID
+-- ----------
+ 1          1
+ select t1.id ,t2.id  from t1,t2 where t1.id=t2.id(+) ;
+ ID         ID
+-- ----------
+ 1          1
+ 3 
+ 2 
+ 
+select t1.id,t2.id   from t1 left  join t2 on t1.id=t2.id and t2.age=3;
+ 
+ID         ID
+-- ----------
+ 3 
+ 1 
+ 2 
+ 
+SQL> select t1.id,t2.id   from t1 left  join t2 on t1.id=t2.id and t2.age=2;
+ 
+ID         ID
+-- ----------
+ 1          1
+ 3 
+ 2 
+ 结论 left join不管右边的表有啥条件，左边的都出现
+  (+) 必须要符合右边表的条件
+   
+
+20120628
+
+datapump 
+CREATE DIRECTORY datapump AS '/ciccdev/oracle/datapump';
+CREATE DIRECTORY datapump AS '/npprod/oracle/product/backup';
+
+grant all on DIRECTORY datapump to ppm_prod ;
+expdp ppm_prod/ppm_prod_518 directory=datapump DUMPFILE=ppm_exp%U.dmp parallel=4
+export first :
+耗时:36s  (exp 3分钟)
+expdp ppm_prod_pre/ppm_prod_pre directory=datapump DUMPFILE=exp%U.dmp PARALLEL=4 TABLES=T_CASH_BANK_BALANCE,T_CASH_BANK_BALANCE_JOURNAL,T_IMPORT_TRADE_LV1,T_IMPORT_TRADE_LV2,T_TRADE,T_TRADE_EXECUTIONS,T_TRADE_FEES,T_TRADE_REBATE,T_INSTRUMENT_VOUCHER
+耗时:44   (imp 30分钟)
+impdp ppm_prod/ppm_prod_518 directory=datapump DUMPFILE=exp01.dmp,exp02.dmp,exp03.dmp,exp04.dmp PARALLEL=4 TABLES=T_CASH_BANK_BALANCE,T_CASH_BANK_BALANCE_JOURNAL,T_IMPORT_TRADE_LV1,T_IMPORT_TRADE_LV2,T_TRADE,T_TRADE_EXECUTIONS,T_TRADE_FEES,T_TRADE_REBATE,T_INSTRUMENT_VOUCHER  CONTENT=DATA_ONLY REMAP_SCHEMA=ppm_prod_pre:ppm_prod
+
+impdp ppm_prod/ppm_prod_518 directory=datapump DUMPFILE=exp01.dmp,exp02.dmp,exp03.dmp,exp04.dmp PARALLEL=1 TABLES=T_TRADE_FEES CONTENT=DATA_ONLY REMAP_SCHEMA=ppm_prod_pre:ppm_prod
+
+
+
+ expdp GMO_UAT_NEW/GMO_UAT_NEW SCHEMAS=GMO_UAT_NEW directory=datapump DUMPFILE=gmo_uat_exp.dmp 
+impdp gmo_uat_usa/gmo_uat_usa directory=datapump DUMPFILE=gmo_uat_exp.dmp REMAP_SCHEMA=GMO_UAT_NEW:gmo_uat_usa
+
+
+ 
+20120322
+ORA-20000: ORU-10027: buffer overflow, limit of 2000 bytes问题的解决
+
+方法1：set serveroutput on size 10000000
+方法2：exec dbms_output.enable(999999999999999999999); 这个号是
+
+
+20120123
+
+ORA-30036 not logged in alert log when generated. [ID 444106.1]
+ The decision as to whether to write an error to the alert log is totally subjective and up to the code owner.
+
+
+guranteed undo rentetion 可能会导致expired undo很大，而不释放到free
+
+disable automatic tuning of undo by setting _undo_autotune=false.
+
+
+undo 处理
+select tablespace_name, status,sum(bytes)/1024/1024/1024  from dba_undo_extents tr group by tablespace_name,status order by tablespace_name;
+select tablespace_name,sum(bytes)/1024/1024/1024  From dba_free_space fs where tablespace_name like 'UNDOTBS%' group by fs.tablespace_name order by tablespace_name;
+ 
+  
+1. If the current extent has more free blocks then the next free block is allocated.
+2. Otherwise, if the next extent expired then wrap in the next extent and return the first block.
+3. If the next extent does not expired then get space from the UNDO tablespace. If a free extent is available then allocate it to the transaction table and return the first block in the new extent.
+4. If there is no free extent available then steal from an offline transaction table. Deallocate the extent from the offline transaction table and add it to the current transaction table. Return the first free block of the extent.
+5. Steal from online transaction table. Deallocate the extent from the online transaction table and add it to the current transaction table. Return the first free block of the extent.
+6. Extend the file in the UNDO tablespace. If the file can be extended then add an extent to the current transaction table then return the block.
+7. Otherwise try to reuse unexpired extents from own transaction table. If all extents are currently busy(they contains uncommitted information) go to the step 8. Otherwise wrap into the next extent.
+8. Steal unexpired extents from offline transaction tables. If this fails then try on online transaction tables.
+9. If all the above fails then return ORA-30036 unable to extend segment by %s in undo tablespace '%s'
+
+20101129
+hash算法加密password
+select dbms_crypto.Hash(UTL_I18N.STRING_TO_RAW ('wzy中文', 'AL32UTF8'),3) from dual;
+
+ select RAWtoHEX('W') from dual; 
+ RAWTOHEX('W')
+-------------
+57
+直接转换成 hex
+
+string_to_raw也是转换成ascii码
+
+alter system set "_allow_resetlogs_corruption"=true scope=spfile;
+20120201
+Tablespace size values differ when checked from DBA_DATA_FILES and DBA_TABLESPACE_USAGE_METRICS /V$FILESPACE_USAGE
+DBA_TABLESPACE_USAGE_METRICS使用 Tablespace_size in DBA_TABLESPACE_USAGE_METRICS takes the maximum file size for autoextensible tablespace which corresponds to maxblocks in dba_data_files
+2011227
+如果是''字符串,trim之后是null 
+
+group by cube(a1,a2,a3)对任意维度进行组合汇总
+group by rollup(a1,a2,a3)先对a1,a2,a3分别汇总，然后对a1,a2汇总，最后对a1汇总，最后出所有的汇总
+group by a1,rollup(a2,a3) 和 rollup(a1,a2,a3)一样，出了没有所有的汇总之外
+
+group by grouping sets(a,b,c) =group by a union all group by b union all group by c
+group by grouping sets(a,b),grouping sets(c,d) =group by a,c union all by a,d union all b,c union all b,d
+group by rollup(a,b),rollup(c,d) =a,b,c,d union all a ,b,c  unionall all a,c union all a union all a,b union all c,d union all c union all
+rank() over(order by sum(qty) desc)  根据 qty进行降序 rank
+rank() over(partition by market  order by sum(qty) desc)  对 market 进行分区，然后根据 market里面的 qty进行降序 
+cume_dist over(order by sum(qty) desc)  根据记录的条数来计算占比
+ row_number () over 生成一个数字顺序号码
+  ratio_to_report (sum(qty)) over( partition by market   ) rank_no 计算占比
+  
+  select st.*
+    From t_ca_statement st,
+         (select account_id,
+                 statement_id,
+                 row_number() over(partition by account_id order by last_update_time desc) row_number
+            from t_ca_statement st
+           where statement_type = 'MAILING'
+             and status = 1
+             and active = 'Y') st_latest
+   where st.account_id = st_latest.account_id
+     and st.statement_id = st_latest.statement_id
+     and st_latest.row_number = 1
+     and statement_type = 'MAILING'
+     and status = 1
+     and active = 'Y'
+
+PIVOT  进行行列转行
+
+20111107
+查询library cache pin的柱塞程序 
+
+select /*+rule +*/ * from dba_kgllock where kgllkreq > 0;
+select /*+rule +*/ * from dba_kgllock where KGLLKHDL='182FE780'
+dba_kgllock.KGLLKHDL =v$session_wait.P1RAW
+dba_kgllock.KGLLKHDL.KGLLKUSE =v$session.saddr
+x$kglob  显示被锁住的对象名称
+
+select /*+rule +*/ sid, serial#, sql_text from dba_kgllock w, v$session s, v$sqlarea a
+where w.kgllkuse = s.saddr 
+and w.kgllkhdl='182FE780'
+and s.sql_address = a.address
+and s.sql_hash_value = a.hash_value
+--and w.kgllkreq > 0;
+and  KGLLKMOD>0
+
+
+
+
+
+select dump(username,16) From t_test
+select dump(username,1016) From t_test
+你好 utf-8编码为
+Typ=1 Len=6 CharacterSet=AL32UTF8: e4,bd,a0,e5,a5,bd
+ ffffff81 30 ffffff8a 31 ffffff81 30 ffffff86 35 ffffff81 30 ffffff84 32 ffffff81 30 ffffff8a 32 ffffff81 30 ffffff84 36 ffffff81 30 ffffff86 35
+
+
+20110922
+pl/sql developer 安装subversion 客户端
+http://www.allroundautomations.nl/plsqldevaddons.html
+
+The installation routine is simple:
+
+    Install the latest TortoiseSVN client.
+    Install the latest CollabNet Subversion Command-Line Client from http://www.collab.net/downloads/subversion , if you going to use the rename function.
+    Download the setup file from Documents & files （http://plsqldev-svn-plugin.tigris.org/servlets/ProjectDocumentList）
+    Run this setup file and follow the instructions
+    Restart PL/SQL Developer.
+
+
+
+20110906
+oracle 10.2.0.4 run AIX 6.1 db link to oracle 9.2.0.7 run Solaris 10 ,
+当代码里面出现loop远程表的时候，然后删除的时候，导致
+
+Local Site  : last wait for 'SQL*Net break/reset to dblink'
+Remote Site : last wait for 'SQL*Net break/reset to client'
+
+If the parameter DISABLE_OOB is set to OFF then it enables Oracle Net to send and receive "break"
+messages using urgent data provided by the underlying protocol. 
+DISABLE_OOB=ON
+
+ 
+ 使用bind变量的方式远程执行，远程sql已经失效，也可能导致这个问题
+ 
+ select *From gv$session_wait w where event not like '%message%' and event not like '%idle%'
+and event not like '%timer%'
+
+select *From dba_jobs_running
+查询 v$sql
+
+select sq.sql_text, prc.spid osprocess, w.*, ses.username, ses.*
+  From v$session ses, v$session_wait w, v$sqlarea sq,v$process prc
+ where ses.sid = w.sid
+   and sq.sql_id = ses.sql_id
+   and ses.paddr=prc.addr 
+   and ses.sid in (1004)
+
+oradebug hanganalyze 3
+
+select 'alter system kill session '''||sid||','||serial#||''';' from v$session where sid iN(1034,843,708) 
+
+
+
+DELETE FROM HMS_CONFIRMATION@SYNC_NEOHAS C WHERE C.ACCOUNT_ID = :B1 
+DELETE FROM HMS_ACCT_COMMISSIONRATE@SYNC_NEOHAS C WHERE C.ACCOUNT_ID = :B1 
+DELETE FROM HAS_CREDITLIMIT_AMEND@SYNC_HAS G WHERE ACCOUNTID = :B1 
+
+DELETE FROM HMS_ACCT_COMMISSIONRATE@SYNC_NEOHAS C WHERE C.ACCOUNT_ID = :B1 
+UPDATE HAS_CLIENT_CUSTOM_CONF@SYNC_HAS SET PARAVALUE = :B2 WHERE CLIENTID = :B1 AND PARAID = 'AVGPRICE_DECIMAL_DIGITS'
+
+ UPDATE HAS_CREDIT@SYNC_HAS G SET ACCOUNTNAME = :B4 , SALES = :B3 , ACCOUNTTYPE = DECODE(:B2 , 'CUST', 'T', 'C') WHERE ACCOUNTID = :B1 
+ 
+20110829
+The default number of virtual circuits reserved is min ( CIRCUITS , SESSIONS, SHARED_SERVER_SESSIONS ). 
+
+ALTER SYSTEM SET DISPATCHERS='(PROTOCOL=TCP )(DISPATCHERS=10) ';
+alter system set max_dispatchers=100;
+alter system set max_shared_servers=100;
+alter system set max_shared_servers=100;
+alter system set SHARED_SERVER_SESSIONS=2000;
+
+
+20 or 30 Shared Servers per 500 sessions and then tune from there.
+1 dispatcher for every 50-100 sessions
+
+
+加密
+	DBMS_CRYPTO.hash(UTL_I18N.STRING_TO_RAW(v_PASSWORD,'AL32UTF8'),3)
+
+20110517
+ntpd -x 
+The Oracle Clusterware requires the use of "-x" flag to the ntpd daemon to prevent the clock from going backwards (Enterprise Linux: see /etc/sysconfig/ntpd; Solaris: set "slewalways yes" in /etc/inet/ntp.conf) 
+
+20110429 
+通过job 运行的 程序不能通过db-link work,但是手工可以，原因如下：
+
+Problem Description
+-------------------
+A job that is scheduled via the DBMS_JOB system fails with a general error
+returned from the network layer. The job makes use of distributed transactions
+(i.e a Database Lin)..
+
+You wish to determine the underlying cause by activating Oracle Net tracing
+on the Data Server, where the job was executed. However, no Oracle Net trace
+files are created upon job failure.
+
+
+Solution Description
+--------------------
+
+DBMS_JOBs are executed by the SNP background processes which are automatically
+started  when the database is started. No new client process/session is 
+created to serve the communication over the database link. Instead, the SNP
+process acts as a client on behalf of the database link session.
+
+Therefore, you must trace the SNP background process/es by enabling Oracle Net
+server-side tracing for the database where the job is executed.
+
+
+Solution Explanation
+--------------------
+
+1. Enable server-side sqlnet tracing where the job is executed as follows:
+
+   # Data Server SQLNET.ORA file:
+   SQLNET_LEVEL_SERVER=16
+   SQLNET_FILE_SERVER=server
+   SQLNET_DIRECTORY_SERVER=/tmp/tns_trace
+         
+
+2. Restart the Listener and Database for the Oracle Net tracing parameters to
+   take effect.
+
+3. Determine the process id's (PID) for the SNP background process/es as
+   follows:
+  
+  SQL> select spid from v$process where program like '%SNP%';
+ 
+  SPID
+  ----------
+  4894
+  4896
+
+4. Verify the trace files are created.
+   Note that the file location and format depends on the Oracle Net trace
+   parammeters defined in the SQLNET.ORA file.
+
+   Based on the above configuration, trace files would have the following
+   format:
+
+   /tmp/tns_trace/server_<spid>.trc
+
+
+5. Either execute the job manually using 'dbms_job.run(jobno)' or wait until
+   the job is next executed automatically. Then, determine which of the above
+   trace files represents your job for further analysis.
+
+
+
+20101129
+hash算法加密password
+select dbms_crypto.Hash(UTL_I18N.STRING_TO_RAW ('wzy中文', 'AL32UTF8'),3) from dual;
+
+ select RAWtoHEX('W') from dual; 
+ RAWTOHEX('W')
+-------------
+57
+直接转换成 hex
+
+string_to_raw 也是转换成ascii码
+20101117
+powerdesigner把name赋值给comment
+Tools -- Execute Commands -- Run Script
+
+Option Explicit                           
+ValidationMode = True            
+InteractiveMode = im_Batch   
+                                                    
+Dim mdl 'the current model    
+                                                    
+'get the current active model  
+Set mdl = ActiveModel            
+If (mdl Is Nothing) Then           
+MsgBox "There is no current Model"                                                                                            
+ElseIf Not mdl.IsKindOf(PdPDM.cls_Model) Then                                                                       
+MsgBox "The current model is not an Physical Data model."                                                    
+Else                                                                                                                                                   
+ProcessFolder mdl                                                                                                                          
+End If                                                                                                                                                
+                                                                                                                                                          
+'This routine copy name into code for each table, each column and each view                      
+'of the current folder                                                                                                                      
+Private sub ProcessFolder(folder)                                                                                                 
+Dim Tab 'running table                                                                                                                  
+for each Tab in folder.tables                                                                                                          
+if not tab.isShortcut then   
+   if   len(tab.comment)=0  then  
+                                                                                                           
+   tab.comment = tab.name   
+   end if                                                                                                            
+Dim col 'running column                                                                                                               
+for each col in tab.columns 
+ if   len(col.comment)=0     then  
+ col.comment= col.name      
+ end if                                                                                                           
+next                                                                                                                                                   
+end if                                                                                                                                                
+next                                                                                                                                                   
+                                                                                                                                                          
+Dim view 'running view                                                                                                                 
+for each view in folder.Views                                                                                                         
+if not view.isShortcut then                                                                                                             
+view.comment = view.name                                                                                                          
+end if                                                                                                                                                
+next                                                                                                                                                   
+                                                                                                                                                          
+'go into the sub-packages                                                                                                              
+Dim f 'running folder                                                                                                                      
+For Each f In folder.Packages                                                                                                         
+if not f.IsShortcut then                                                                                                                    
+ProcessFolder f                                                                                                                                
+end if                                                                                                                                                
+Next                                                                                                                                                  
+end sub  
+                     
+
+20100830
+database检测脚本
+
+#! /bin/bash
+. ~/.bash_profile
+cd /ciccdev/scripts/oracle
+LOGFILE=/ciccdev/scripts/oracle/monitor_db.log
+echo  "start to monitor db npdev01 ="`date` >> $LOGFILE
+v_process_count=$(ps -ef |grep ora_ |wc -l)
+v_listener_count=$(lsnrctl status  |grep TNS-12541| wc -l)
+
+  if [ $v_listener_count -gt 1 ]
+      then
+
+   echo "check npdev01 listener failed" >> $LOGFILE
+   java -classpath /fmnp/soft/sms/mailandsms.jar com.cicc.data.SendMessage   roger "database npdev01 che
+ck failed ,start listener " >> $LOGFILE
+   java -classpath /fmnp/soft/sms/mailandsms.jar com.cicc.data.SendMessage   yuzq "database npdev01 chec
+k failed ,start listener " >> $LOGFILE
+   lsnrctl start
+   fi
+     if [ $v_process_count -lt 2 ]
+      then
+    echo "check npdev01 failed ,start db" >> $LOGFILE
+   sqlplus '/ as sysdba' < startdb.sql
+  java -classpath /fmnp/soft/sms/mailandsms.jar com.cicc.data.SendMessage   roger "database npdev01 chec
+k failed ,start npdev01 " >> $LOGFILE
+java -classpath /fmnp/soft/sms/mailandsms.jar com.cicc.data.SendMessage   roger "database npdev01 check 
+failed ,start npdev01 " >> $LOGFILE
+fi
+  
+*/5 *  * * * sh /ciccdev/scripts/oracle/monitor_db.sh
+
+
+
+修改参数
+kernel.shmall =8388608  32G
+kernel.shmmax =17179869184  16G
+
+20100803
+NFS  mount option
+
+rw,bg,hard,rsize=32768,wsize=32768,vers=3,nointr,timeo=600,tcp,actime=0
+
+20100510
+BACKUP as compressed backupset  INCREMENTAL LEVEL 1 CUMULATIVE datafile 1;
+BACKUP as compressed backupset  INCREMENTAL LEVEL 0 CUMULATIVE datafile 1;
+压缩率大概在4.5X
+CONFIGURE DEVICE TYPE DISK BACKUP TYPE TO COMPRESSED BACKUPSET
+
+20100426
+nfs mount不能备份，加上如下选项，ok，对datafile也使用
+192.168.193.138:/localData /backup/backup2/ nfs rw,hard,nointr,tcp,noac,vers=3,timeo=600,rsize=32768,wsi
+ze=32768        0 0
+
+
+20100420
+oracle 8.1.6 不支持动态sql里面使用 utl_tcp.CRLF 换行方式
+而且使用sys也无法对其他用户的表进行授权
+
+20100121
+对于多处理器系统，比较流行的有3种模式，对称多处理(Symmetric Multiprocessing，SMP)模式、非均匀存储访问(Non Uniform. Memory Access，NUMA)模式、大规模并行处理(Massively Parallel Processing，MPP)模式。SMP模式即将2个或2个以上的同样的处理器连接到一个共享的主存上。在SMP系统中，所有的处理器可以同时访问同一个物理存储器，即运行同一个操作系统，因此也被称为均匀性存储访问系统。这种结构比较简单，但是由于其是共享存储器，容易在访存时产生系统瓶颈，可扩展性也比较差。MPP是分布式存储器模式，可扩展性好，但是需要并行编程和并行编译，在软件系统构建上比较复杂，使用不便。NUMA架构将若干个单元通过专门的互联设备联结在一起组成分布式和共享内存空间。每一个处理器可以访问自己的存储器，也可以访问其他处理器或者共享的存储器，所有访存有远近、时延长短之分，称为非均匀存储访问。在某个处理器访问空间上比较远的存储器时，会有很大的时延，为了缓解这个问题，通过高速缓存一致性使得处理器访问存储器的几率大大降低，在某种程度上提高了系统效率，这种架构称为CC—NUMA即一致性缓存非均匀存储访问模式。这种架构继承了SMP和MPP系统的一些优点，在处理器个数，内存大小、I／O连接能力和带宽上有很大的伸缩性，又保持了SMP系统单一操作系统、简单的应用程序编程模式和易于管理的优点。
+
+20091224
+
+RMAN configuration parameters are:
+CONFIGURE RETENTION POLICY TO RECOVERY WINDOW OF 7 DAYS;
+CONFIGURE BACKUP OPTIMIZATION ON;
+CONFIGURE DEFAULT DEVICE TYPE TO DISK;
+CONFIGURE CONTROLFILE AUTOBACKUP ON;
+CONFIGURE CONTROLFILE AUTOBACKUP FORMAT FOR DEVICE TYPE DISK TO '/ciccdev/backup/oracle/rman/npdev01_control_%F';
+CONFIGURE DEVICE TYPE DISK PARALLELISM 4 BACKUP TYPE TO BACKUPSET;
+CONFIGURE DATAFILE BACKUP COPIES FOR DEVICE TYPE DISK TO 1; # default
+CONFIGURE ARCHIVELOG BACKUP COPIES FOR DEVICE TYPE DISK TO 1; # default
+CONFIGURE CHANNEL DEVICE TYPE DISK FORMAT   '/ciccdev/backup/oracle/rman/rman_%U';
+CONFIGURE MAXSETSIZE TO UNLIMITED; # default
+CONFIGURE ENCRYPTION FOR DATABASE OFF; # default
+CONFIGURE ENCRYPTION ALGORITHM 'AES128'; # default
+CONFIGURE EXCLUDE FOR TABLESPACE 'HKBS';
+CONFIGURE EXCLUDE FOR TABLESPACE 'HKBSIDX';
+CONFIGURE EXCLUDE FOR TABLESPACE 'SHBS';
+CONFIGURE ARCHIVELOG DELETION POLICY TO NONE; # default
+CONFIGURE SNAPSHOT CONTROLFILE NAME TO '/ciccdev/backup/oracle/snapcf_npdev01.f';
+
+
+20091221
+ldap 用户 data出现 futex(0x41239198, FUTEX_WAIT, 2, NULL  错误，hang住
+原因是 nscd 出现问题，重启解决
+
+20091028
+测试场景一
+load bs 数据 local index 有效 常规 方式 
+sqlldr data/data@roger control=control.ctl data=..\hf_data\hk20090925.bs rows=100000 readsize=20971520
+10: 31.05
+load bs 数据 local index 有效 direct 方式
+sqlldr data/data@roger control=control.ctl data=..\hf_data\hk20090925.bs direct=y
+经过时间为: 00: 01: 15.88
+CPU 时间为: 00: 00: 30.69
+load bs 数据 local index 有效 direct  SKIP_INDEX_MAINTENANCE=true 方式
+sqlldr data/data@roger control=control.ctl data=..\hf_data\hk20090925.bs direct=y SKIP_INDEX_MAINTENANCE=true 
+经过时间为: 00: 00: 46.37
+CPU 时间为: 00: 00: 30.71
+load bs 数据 无 local index  direct   方式
+sqlldr data/data@roger control=control.ctl data=..\hf_data\hk20090925.bs direct=y  
+经过时间为: 00: 00: 42.85
+CPU 时间为: 00: 00: 31.53
+13.5s create index idx_xhkg_bs_l2_symbol on t_xhkg_bs_l2(symbol) local parallel  4; 
+14.2s create index idx_xhkg_bs_l2_date on t_xhkg_bs_l2(trans_date) local parallel 4;
+
+direct 方式会产生 archive log ，可以完全恢复
+
+load bs 数据  local index 有效 direct   DATE_CACHE=3000 方式
+sqlldr data/data@roger control=hkbs.ctl data=..\hf_data\hk20090925.bs direct=y DATE_CACHE=3000 
+
+经过时间为: 00: 01: 43.65
+CPU 时间为: 00: 00: 32.96
+
+load bs 数据  local index 有效 direct  DATE_CACHE=300000   方式
+sqlldr data/data@roger control=hkbs.ctl data=..\hf_data\hk20090925.bs direct=y DATE_CACHE=300000 
+经过时间为: 00: 01: 46.25
+CPU 时间为: 00: 00: 27.96
+
+
+load bs 数据 无 local index  direct  parallel 方式
+sqlldr data/data@roger control=hkbs.ctl data=..\hf_data\hk20090925.bs direct=y DATE_CACHE=300000 parallel=y
+
+使用 外部表方式
+53.9s create table tmpbs as select * from SYS_SQLLDR_X_EXT_TEMPBS;
+
+
+
+有索性的时候 parallel 会出错
+SQL*Loader-951:  调用一次/加载初始化错误
+ORA-26002: 表 DATA.T_XHKG_BS_L2 上有定义的索引。
+
+
+direct方式会 exclusive write access to the table and exclusive read/write access to any
+indexes.(并行方式下例外)
+direct 不支持cluster table
+load 少量数据，适合  常规方式
+All integrity constraints are enforced during direct path loads
+direct方式会消耗更多的空间，特别是处理index的时候，会大量使用temporary space
+Table insert triggers are also disabled when a direct path load begins.
+
+
+windows下面 timestamp 精度 毫秒 (1/1000) linux下面(微妙 1/1000000)
+20091027
+
+
+可以使用 sqlldr system/sys@roger control=control.ctl data=data.txt   EXTERNAL_TABLE=GENERATE_ONLY
+来生成外部表的ddl
+
+使用 sqlldr 
+跳过的逻辑记录总数:          0
+读取的逻辑记录总数:          5072
+拒绝的逻辑记录总数:         16
+废弃的逻辑记录总数:        0
+由 SQL*Loader 主线程加载的流缓冲区总数:        2
+由 SQL*Loader 加载线程加载的流缓冲区总数:        1
+
+从 星期四 10月 29 00:33:24 2009 开始运行
+在 星期四 10月 29 00:33:25 2009 处运行结束
+
+经过时间为: 00: 00: 00.97
+CPU 时间为: 00: 00: 00.20
+
+
+使用外部表   效率差不多
+0.797s  
+使用外部表 不使用　append 
+0.21s
+
+
+external 表可以通过  datapump进行Load和unload
+An external table cannot load data into a LONG column.
+只有查询到的column才被处理
+外部表通过nls_ parameter来确定数据编码格式
+
+外部表的access parameter中column可以比table column多或者少
+外部表或者sqlldr 的access parameter中column可以比data file里面的少
+TERMINATED BY ',' ENCLOSED BY "'"
+
+sqlldr 并行的时候不能有 index
+但是 external table可以有Index
+
+The advantages of using external table loads over conventional path and direct path
+loads are as follows:
+■ An external table load attempts to load datafiles in parallel. If a datafile is big
+enough, it will attempt to load that file in parallel.
+■ An external table load allows modification of the data being loaded by using SQL
+functions and PL/SQL functions as part of the INSERT statement that is used to
+create the external table.
+
+there is not a major performance difference for the same record format. However, due
+to the different architecture of external tables and SQL*Loader, there are situations in
+which one method is more appropriate than the other.
+In the following situations, use external tables for the best load performance:
+■ You want to transform the data as it is being loaded into the database.
+■ You want to use transparent parallel processing without having to split the external data first.
+However, in the following situations, use SQL*Loader for the best load performance:
+■ You want to load data remotely.
+■ Transformations are not required on the data, and the data does not need to be
+loaded in parallel.
+
+sql ldr支持字符集
+
+LOAD DATA
+CHARACTERSET ZHS16GBK
+INFILE ……
+
+
+
+用于外部表的 CREATE TABLE 语句:
+------------------------------------------------------------------------
+CREATE TABLE "SYS_SQLLDR_X_EXT_TEMPBS" 
+(
+  "TRANS_DATE" TIMESTAMP(6),
+  "SYMBOL" VARCHAR2(20),
+  "LASTPRICE" NUMBER(10,3),
+  "HIGHPRICE" NUMBER(10,3),
+  "LOWPRICE" NUMBER(10,3),
+  "TOTALVOLUME" NUMBER(20),
+  "TOTALTURNOVER" NUMBER(20),
+  "BIDPRICE01" NUMBER(10,3),
+  "BIDVOLUME01" NUMBER(20),
+  "BIDPRICE02" NUMBER(10,3),
+  "BIDVOLUME02" NUMBER(20),
+  "BIDPRICE03" NUMBER(10,3),
+  "BIDVOLUME03" NUMBER(20),
+  "BIDPRICE04" NUMBER(10,3),
+  "BIDVOLUME04" NUMBER(20),
+  "BIDPRICE05" NUMBER(10,3),
+  "BIDVOLUME05" NUMBER(20),
+  "ASKPRICE01" NUMBER(10,3),
+  "ASKVOLUME01" NUMBER(20),
+  "ASKPRICE02" NUMBER(10,3),
+  "ASKVOLUME02" NUMBER(20),
+  "ASKPRICE03" NUMBER(10,3),
+  "ASKVOLUME03" NUMBER(20),
+  "ASKPRICE04" NUMBER(10,3),
+  "ASKVOLUME04" NUMBER(20),
+  "ASKPRICE05" NUMBER(10,3),
+  "ASKVOLUME05" NUMBER(20)
+)
+ORGANIZATION external 
+(
+  TYPE oracle_loader
+  DEFAULT DIRECTORY SYS_SQLLDR_XT_TMPDIR_00000
+  ACCESS PARAMETERS 
+  (
+    RECORDS DELIMITED BY NEWLINE CHARACTERSET ZHS16GBK
+    BADFILE 'SYS_SQLLDR_XT_TMPDIR_00000':'data.bad'
+    LOGFILE 'control.log_xt'
+    READSIZE 1048576
+    FIELDS TERMINATED BY "," LDRTRIM 
+    REJECT ROWS WITH ALL NULL FIELDS 
+    (
+      "TRANS_DATE" CHAR(255)
+        TERMINATED BY ","
+        DATE_FORMAT DATE MASK "yyyy-mm-dd hh24:mi:ss",
+      "SYMBOL" CHAR(5)
+        TERMINATED BY ",",
+      "EXCHANGE" CHAR(255)
+        TERMINATED BY ",",
+      "LASTPRICE" CHAR(255)
+        TERMINATED BY ",",
+      "HIGHPRICE" CHAR(255)
+        TERMINATED BY ",",
+      "LOWPRICE" CHAR(255)
+        TERMINATED BY ",",
+      "TOTALVOLUME" CHAR(255)
+        TERMINATED BY ",",
+      "TOTALTURNOVER" CHAR(255)
+        TERMINATED BY ",",
+      "BIDPRICE01" CHAR(255)
+        TERMINATED BY ",",
+      "BIDVOLUME01" CHAR(255)
+        TERMINATED BY ",",
+      "BIDPRICE02" CHAR(255)
+        TERMINATED BY ",",
+      "BIDVOLUME02" CHAR(255)
+        TERMINATED BY ",",
+      "BIDPRICE03" CHAR(255)
+        TERMINATED BY ",",
+      "BIDVOLUME03" CHAR(255)
+        TERMINATED BY ",",
+      "BIDPRICE04" CHAR(255)
+        TERMINATED BY ",",
+      "BIDVOLUME04" CHAR(255)
+        TERMINATED BY ",",
+      "BIDPRICE05" CHAR(255)
+        TERMINATED BY ",",
+      "BIDVOLUME05" CHAR(255)
+        TERMINATED BY ",",
+      "BIDPRICE06" CHAR(255)
+        TERMINATED BY ",",
+      "BIDVOLUME06" CHAR(255)
+        TERMINATED BY ",",
+      "BIDPRICE07" CHAR(255)
+        TERMINATED BY ",",
+      "BIDVOLUME07" CHAR(255)
+        TERMINATED BY ",",
+      "BIDPRICE08" CHAR(255)
+        TERMINATED BY ",",
+      "BIDVOLUME08" CHAR(255)
+        TERMINATED BY ",",
+      "BIDPRICE09" CHAR(255)
+        TERMINATED BY ",",
+      "BIDVOLUME09" CHAR(255)
+        TERMINATED BY ",",
+      "BIDPRICE10" CHAR(255)
+        TERMINATED BY ",",
+      "BIDVOLUME10" CHAR(255)
+        TERMINATED BY ",",
+      "ASKPRICE01" CHAR(255)
+        TERMINATED BY ",",
+      "ASKVOLUME01" CHAR(255)
+        TERMINATED BY ",",
+      "ASKPRICE02" CHAR(255)
+        TERMINATED BY ",",
+      "ASKVOLUME02" CHAR(255)
+        TERMINATED BY ",",
+      "ASKPRICE03" CHAR(255)
+        TERMINATED BY ",",
+      "ASKVOLUME03" CHAR(255)
+        TERMINATED BY ",",
+      "ASKPRICE04" CHAR(255)
+        TERMINATED BY ",",
+      "ASKVOLUME04" CHAR(255)
+        TERMINATED BY ",",
+      "ASKPRICE05" CHAR(255)
+        TERMINATED BY ",",
+      "ASKVOLUME05" CHAR(255)
+        TERMINATED BY ",",
+      "ASKPRICE06" CHAR(255)
+        TERMINATED BY ",",
+      "ASKVOLUME06" CHAR(255)
+        TERMINATED BY ",",
+      "ASKPRICE07" CHAR(255)
+        TERMINATED BY ",",
+      "ASKVOLUME07" CHAR(255)
+        TERMINATED BY ",",
+      "ASKPRICE08" CHAR(255)
+        TERMINATED BY ",",
+      "ASKVOLUME08" CHAR(255)
+        TERMINATED BY ",",
+      "ASKPRICE09" CHAR(255)
+        TERMINATED BY ",",
+      "ASKVOLUME09" CHAR(255)
+        TERMINATED BY ",",
+      "ASKPRICE10" CHAR(255)
+        TERMINATED BY ",",
+      "ASKVOLUME10" CHAR(255)
+        TERMINATED BY ","
+    )
+  )
+  location 
+  (
+    'data.txt'
+  )
+)REJECT LIMIT UNLIMITED
+
+
+用于加载内部表的 INSERT 语句:
+------------------------------------------------------------------------
+INSERT /*+ append */ INTO TEMPBS 
+(
+  TRANS_DATE,
+  SYMBOL,
+  LASTPRICE,
+  HIGHPRICE,
+  LOWPRICE,
+  TOTALVOLUME,
+  TOTALTURNOVER,
+  BIDPRICE01,
+  BIDVOLUME01,
+  BIDPRICE02,
+  BIDVOLUME02,
+  BIDPRICE03,
+  BIDVOLUME03,
+  BIDPRICE04,
+  BIDVOLUME04,
+  BIDPRICE05,
+  BIDVOLUME05,
+  ASKPRICE01,
+  ASKVOLUME01,
+  ASKPRICE02,
+  ASKVOLUME02,
+  ASKPRICE03,
+  ASKVOLUME03,
+  ASKPRICE04,
+  ASKVOLUME04,
+  ASKPRICE05,
+  ASKVOLUME05
+)
+SELECT 
+  "TRANS_DATE",
+  "SYMBOL",
+  "LASTPRICE",
+  "HIGHPRICE",
+  "LOWPRICE",
+  "TOTALVOLUME",
+  "TOTALTURNOVER",
+  "BIDPRICE01",
+  "BIDVOLUME01",
+  "BIDPRICE02",
+  "BIDVOLUME02",
+  "BIDPRICE03",
+  "BIDVOLUME03",
+  "BIDPRICE04",
+  "BIDVOLUME04",
+  "BIDPRICE05",
+  "BIDVOLUME05",
+  "ASKPRICE01",
+  "ASKVOLUME01",
+  "ASKPRICE02",
+  "ASKVOLUME02",
+  "ASKPRICE03",
+  "ASKVOLUME03",
+  "ASKPRICE04",
+  "ASKVOLUME04",
+  "ASKPRICE05",
+  "ASKVOLUME05"
+FROM "SYS_SQLLDR_X_EXT_TEMPBS"
+
+
+
+tik 一个ticker  最多 150357 一年    
+测试number类型和char类型对性能和空间的影响
+结果  平均长度 差 7个字节  成本差 3142-2264=878/2264 性能差38%
+
+alter table shtik add ccid_code number(17);
+alter table shtik modify ccid_code number(17);
+
+create  table shtikchar as select *from  shtik;
+alter table shtikchar add ccid_code char(14);
+alter table shtikchar modify ccid_code char(17);
+
+
+ alter table shtik drop column ccid_code ;
+ 
+create or replace procedure p_udpate_code
+ as
+ v_ccid_code number(17):=10100100100000000;
+ v_ticker number(6);
+ begin
+ for c in (select rowid,TICKER ,ccid_code from shtik ) loop
+-- v_ccid_code:=v_ccid_code+c.TICKER;
+--v_ticker:=c.TICKER;
+ update shtik set ccid_code=10100100100000000+TICKER where rowid=c.rowid;
+ end loop;
+ commit;
+ end ;
+/
+
+764.906
+  
+ create or replace procedure p_udpate_code_char
+ as 
+ v_ccid_code char(30):='10100100100';
+ begin
+ for c in (select rowid,TICKER ,ccid_code from shtikchar ) loop
+ v_ccid_code:=v_ccid_code||c.TICKER;
+ update shtik set ccid_code=v_ccid_code where rowid=c.rowid;
+ end loop;
+ commit;
+ end ;
+/
+ 396.3s
+   
+create index idx_shtik_cicc_code on shtik(ccid_code) parallel 4;
+53s
+create index idx_shtikchar_cicc_code on shtikchar(ccid_code) parallel 4;
+68s
+
+execute dbms_stats.gather_schema_stats(ownname => 'DATA');
+
+SQL> select t.table_name , t.avg_row_len,t.num_rows  from dba_tables t where t.table_name in ('SHTIK','SHTIKCHAR');
+ 
+TABLE_NAME                     AVG_ROW_LEN   NUM_ROWS
+------------------------------ ----------- ----------
+SHTIK                                   36    5743117
+SHTIKCHAR                               43    5779006
+
+
+select *from shtikchar where ccid_code='10100100100600711';
+执行计划
+----------------------------------------------------------
+Plan hash value: 1323139051
+
+-------------------------------------------------------------------------------------------------------
+| Id  | Operation                   | Name                    | Rows  | Bytes | Cost (%CPU)| Time     |
+-------------------------------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT            |                         |  7716 |   324K|  3142   (1)| 00:00:38 |
+|   1 |  TABLE ACCESS BY INDEX ROWID| SHTIKCHAR               |  7716 |   324K|  3142   (1)| 00:00:38 |
+|*  2 |   INDEX RANGE SCAN          | IDX_SHTIKCHAR_CICC_CODE |  7815 |       |    34   (0)| 00:00:01 |
+-------------------------------------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   2 - access("CCID_CODE"='10100100100600711')
+
+
+统计信息
+----------------------------------------------------------
+          1  recursive calls
+          0  db block gets
+        668  consistent gets
+        331  physical reads
+          0  redo size
+      12841  bytes sent via SQL*Net to client
+        785  bytes received via SQL*Net from client
+         37  SQL*Net roundtrips to/from client
+          0  sorts (memory)
+          0  sorts (disk)
+        527  rows processed
+
+
+
+执行计划
+----------------------------------------------------------
+Plan hash value: 3956011157
+
+---------------------------------------------------------------------------------------------------
+| Id  | Operation                   | Name                | Rows  | Bytes | Cost (%CPU)| Time     |
+---------------------------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT            |                     |  5723 |   201K|  2264   (1)| 00:00:28 |
+|   1 |  TABLE ACCESS BY INDEX ROWID| SHTIK               |  5723 |   201K|  2264   (1)| 00:00:28 |
+|*  2 |   INDEX RANGE SCAN          | IDX_SHTIK_CICC_CODE |  5723 |       |    26   (0)| 00:00:01 |
+---------------------------------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   2 - access("CCID_CODE"=10100100100600711)
+
+
+统计信息
+----------------------------------------------------------
+        151  recursive calls
+          0  db block gets
+        622  consistent gets
+        239  physical reads
+       2292  redo size
+      12834  bytes sent via SQL*Net to client
+        785  bytes received via SQL*Net from client
+         37  SQL*Net roundtrips to/from client
+          5  sorts (memory)
+          0  sorts (disk)
+        527  rows processed
+
+
+
+
+xml 处理  select extract(inv_doc, '/Invoice/MailAddressTo')
+from invoiceXML_col
+where extractValue(inv_doc, '/Invoice/MailAddressTo/Person')='Joe Smith'
+
+load data
+infile "str '\n'"
+append into table tempbs
+fields terminated by ','
+(insert_time sysdate,
+trans_date    DATE  'yyyy-mm-dd hh24:mi:ss'      ,             
+symbol char(5)      ,            
+EXCHANGE  FILLER     ,            
+LASTPRICE    ,            
+HIGHPRICE    ,            
+LOWPRICE     ,            
+TOTALVOLUME  ,            
+TOTALTURNOVER,            
+BIDPRICE01   ,            
+BIDVOLUME01  ,            
+BIDPRICE02   ,            
+BIDVOLUME02  ,            
+BIDPRICE03   ,            
+BIDVOLUME03  ,            
+BIDPRICE04   ,            
+BIDVOLUME04  ,            
+BIDPRICE05   ,            
+BIDVOLUME05  ,            
+BIDPRICE06  FILLER ,            
+BIDVOLUME06 FILLER ,            
+BIDPRICE07  FILLER ,            
+BIDVOLUME07 FILLER  ,            
+BIDPRICE08  FILLER ,            
+BIDVOLUME08 FILLER ,            
+BIDPRICE09  FILLER ,            
+BIDVOLUME09 FILLER ,            
+BIDPRICE10  FILLER ,            
+BIDVOLUME10 FILLER ,            
+ASKPRICE01   ,            
+ASKVOLUME01  ,            
+ASKPRICE02   ,            
+ASKVOLUME02  ,            
+ASKPRICE03   ,            
+ASKVOLUME03  ,            
+ASKPRICE04   ,            
+ASKVOLUME04  ,            
+ASKPRICE05   ,            
+ASKVOLUME05  ,            
+ASKPRICE06  FILLER ,            
+ASKVOLUME06 FILLER ,            
+ASKPRICE07  filler ,            
+ASKVOLUME07 filler ,            
+ASKPRICE08  filler ,            
+ASKVOLUME08 filler ,            
+ASKPRICE09  filler ,            
+ASKVOLUME09 filler ,            
+ASKPRICE10  filler ,            
+ASKVOLUME10 filler,
+totaltrades constant 1
+)
+
+ROWS 参数所用的值已从 64 更改为 38
+记录 1: 被拒绝 - 表 TEMPBS 出现错误。
+ORA-00947: 没有足够的值
+
+当 insert_time 是timestamp的时候，会出现这样的问题，如果用date，则用sysdate赋值没有问题。
+有 SYSTIMESTAMP,sysdate,但是 SYSTIMESTAMP 不能在sqlldr中用
+
+SELECT TO_CHAR(SYSTIMESTAMP, 'SS.FF4') from dual;
+可以用这种格式 insert_time EXPRESSION "SYSTIMESTAMP", 解决
+这个效率比用 default systimestamp高。
+
+
+LOAD DATA
+    INFILE *
+   truncate INTO TABLE TRIMIT
+   fields terminated by ','
+    (        MYFIELD        ,
+       DT  EXPRESSION "SYSTIMESTAMP",
+      LAST_FIELD      
+   )
+
+    BEGINDATA
+A  ,4567891
+ B ,4567891
+  C,4567891
+
+
+bfile_name FILLER char(12), 指定该column不导入数据库
+
+INSERT INTO TABLE T PARTITION (P) VALUES ...
+
+During a direct path load, data conversion occurs on the client side rather than on the
+server side
+
+
+Conventional path load (the default) uses the SQL INSERT statement and a bind array
+buffer to load data into database tables. This method is used by all Oracle tools and
+applications.
+
+SQL*Loader does not contain datatype specifications for
+Oracle internal datatypes such as NUMBER or VARCHAR2.
+TERMINATED BY ',' a data string,
+ENCLOSED BY '"'  "a data string"
+TERMINATED BY ',' ENCLOSED BY '"' "a data string",
+ENCLOSED BY '(' AND ')' (a data string)
+如果可能，制定最大的字符长度，性能更好
+
+
+A good policy is to
+specify the smallest possible maximum value if the fields are shorter than 255 bytes. If
+the fields are longer than 255 bytes, then you must specify a maximum length for the
+field, either with a length specifier or with the POSITION clause.
+
+如果指定 name char(200) TERMINATED BY ',' 则200为最大长度
+
+c1 INTEGER EXTERNAL(10) PRESERVE BLANKS DEFAULTIF c1=BLANKS
+
+Field 1 TERMINATED BY ", "ENCLOSED BY ' " '  Field 2 TERMINATED BY ","
+" a a a a " , b b b b ,
+
+
+LOAD DATA
+INFILE *
+APPEND INTO TABLE XXX
+( "Last" position(1:7) char "UPPER(:\"Last\")"
+first position(8:15) char "UPPER(:first || :FIRST || :\"FIRST\")"
+)
+BEGINDATA
+Phil Grant
+Jason Taylor
+
+
+field1 CHAR TERMINATED BY "," "SUBSTR(:field1, 1, 10)"
+
+field1 POSITION(*+3) INTEGER EXTERNAL
+"TRUNC(RPAD(:field1,6,'0'), -2)"
+When a field is specified with both enclosure delimiters and a termination delimiter,
+then the next field starts after the termination delimiter, as shown in Figure 9–4. If a
+nonwhitespace character is found after the enclosure delimiter, but before the
+terminator, then SQL*Loader generates an error.
+
+
+
+外部表会自动并行处理
+sqlldr 人工控制并行
+如果需要在导入的时候做一定的转换，那么外部表最合适
+discard 是指不符合 sqlldr格式的数据(control file含有when)
+bad是指被sqlldr或者database拒绝的数据
+
+缺省的datafile charset 是由 NLS_LANG 指定的
+
+
+跳过的逻辑记录总数:          0
+读取的逻辑记录总数:       2705132
+拒绝的逻辑记录总数:          1
+废弃的逻辑记录总数:        0
+由 SQL*Loader 主线程加载的流缓冲区总数:      814
+由 SQL*Loader 加载线程加载的流缓冲区总数:        0
+
+从 星期二 10月 27 19:57:02 2009 开始运行
+在 星期二 10月 27 19:57:57 2009 处运行结束
+
+经过时间为: 00: 00: 55.53
+CPU 时间为: 00: 00: 30.34
+
+
+
+load data
+infile "str '\n'"
+append into table temptik
+fields terminated by ',' 
+(trans_date    date(23)  "yyyy-mm-dd hh24:mi:ss", 
+TICKER        ,
+EXCHANGE    ,
+PRICE       ,
+VOLUME       
+)
+
+
+
+
+sqlldr  data/data@roger control=conctl.ctl  data=..\hf_data\hk20090925.tik  direct=y streamsize=1024000 MULTITHREADING=true PARALLEL=true
+
+direct load的时候
+
+通过使用 filler来让不要的column去掉 
+
+LOAD DATA
+   truncate INTO TABLE plfile
+   fields terminated by X'09'  TRAILING NULLCOLS
+    (ACC, 
+FILLER, 
+P_CPERSONG                    ,    
+P_FAX_NUMBER                  
+   )
+   
+   
+   
+SQL*Loader: Release 10.2.0.1.0 - Production on 星期二 10月 27 19:33:21 2009
+
+Copyright (c) 1982, 2005, Oracle.  All rights reserved.
+
+控制文件:      conctl.ctl
+数据文件:      ..\hf_data\hk20090925.tik
+  错误文件:    hk20090925.bad
+  废弃文件:    未作指定
+ 
+(可废弃所有记录)
+
+要加载的数: ALL
+要跳过的数: 0
+允许的错误: 50
+继续:    未作指定
+所用路径:       直接
+
+表 TEMPTIK,已加载从每个逻辑记录
+插入选项对此表 APPEND 生效
+
+   列名                        位置      长度  中止 包装数据类型
+------------------------------ ---------- ----- ---- ---- ---------------------
+TRANS_DATE                          FIRST    23   ,       DATE yyyy-mm-dd hh24:mi:ss
+TICKER                               NEXT     *   ,       CHARACTER            
+EXCHANGE                             NEXT     *   ,       CHARACTER            
+PRICE                                NEXT     *   ,       CHARACTER            
+VOLUME                               NEXT     *   ,       CHARACTER            
+
+记录 1: 被拒绝 - 表 TEMPTIK 的列 TRANS_DATE 出现错误。
+ORA-01841: (完整) 年份值必须介于 -4713 和 +9999 之间, 且不为 0
+
+
+表 TEMPTIK:
+  420931 行 加载成功。
+  由于数据错误, 1 行 没有加载。
+  由于所有 WHEN 子句失败, 0 行 没有加载。
+  由于所有字段都为空的, 0 行 没有加载。
+
+  日期高速缓存:
+   最大大小:      1000
+   条目数:       253
+   命中数    :    420678
+   未命中数  :         0
+
+在直接路径中没有使用绑定数组大小。
+列数组  行数:    5000
+流缓冲区字节数: 1024000
+读取   缓冲区字节数: 1048576
+
+跳过的逻辑记录总数:          0
+读取的逻辑记录总数:        420932
+拒绝的逻辑记录总数:          1
+废弃的逻辑记录总数:        0
+由 SQL*Loader 主线程加载的流缓冲区总数:       91
+由 SQL*Loader 加载线程加载的流缓冲区总数:        0
+
+从 星期二 10月 27 19:33:21 2009 开始运行
+在 星期二 10月 27 19:33:24 2009 处运行结束
+
+经过时间为: 00: 00: 02.99
+CPU 时间为: 00: 00: 00.83
+
+
+20091026
+tg4msql 导致机器网络无法连接？？？？msql有text类型的时候，会出问题
+如果两张表关联，也会有问题 导致一直出现HS message to agent
+
+
+ 
+dapeng.zhang@oracle.com
+zhangdapeng123
+
+
+20091010
+jdbc不支持 record,支持 array
+
+An Oracle collection, either a variable array (VARRAY) or a nested table in the
+database, maps to an array in Java.
+
+20091009
+
+Associative arrays are sets of key-value pairs 
+TYPE population_type IS TABLE OF NUMBER INDEX BY VARCHAR2(64);
+country_population population_type;
+country_population('Greenland') := 100000; -- Creates new entry
+
+
+Like a cursor, a cursor variable points to the current row in the result set of a multi-row
+query. A cursor variable is more flexible because it is not tied to a specific query. You
+can open a cursor variable for any query that returns the right set of columns.
+
+
+You use cursor variables to pass query result sets between PL/SQL stored
+subprograms and various clients. PL/SQL and its clients share a pointer to the query
+work area in which the result set is stored.
+
+TYPE Calendar IS VARRAY(366) OF DATE;
+
+■Arrays in other languages become varrays in PL/SQL.
+■ Sets and bags in other languages become nested tables in PL/SQL.
+■ Hash tables and other kinds of unordered
+
+nest table 适合大数据的处理能够存储在data column里面，系统自动生成临时表来存储
+varrays 都放在内存里面
+
+Example 5–8 VARRAY of Records
+DECLARE
+TYPE name_rec IS RECORD ( first_name VARCHAR2(20), last_name VARCHAR2(25) );
+TYPE names IS VARRAY(250) OF name_rec;
+BEGIN
+NULL;
+END;
+/
+
+DECLARE
+TYPE dnames_tab IS TABLE OF VARCHAR2(30);
+dept_names dnames_tab := dnames_tab('Shipping','Sales','Finance','Payroll');
+BEGIN
+for i in dept_names.FIRST .. dept_names.last loop
+dbms_output.put_line(dept_names(i));
+end loop;
+END;
+
+
+
+DECLARE
+	TYPE nested_type IS TABLE OF VARCHAR2(30);
+	TYPE varray_type IS VARRAY(5) OF INTEGER;
+	TYPE assoc_array_num_type IS TABLE OF NUMBER INDEX BY PLS_INTEGER;
+	TYPE assoc_array_str_type IS TABLE OF VARCHAR2(32) INDEX BY PLS_INTEGER;
+	TYPE assoc_array_str_type2 IS TABLE OF VARCHAR2(32) INDEX BY VARCHAR2(64);
+	v1 nested_type;
+	v2 varray_type;
+	v3 assoc_array_num_type;
+	v4 assoc_array_str_type;
+	v5 assoc_array_str_type2;
+	BEGIN
+	-- an arbitrary number of strings can be inserted v1
+	v1 := nested_type('Shipping','Sales','Finance','Payroll');
+	v2 := varray_type(1, 2, 3, 4, 5); -- Up to 5 integers
+	v3(99) := 10; -- Just start assigning to elements
+	v3(7) := 100; -- Subscripts can be any integer values
+	v4(42) := 'Smith'; -- Just start assigning to elements
+	v4(54) := 'Jones'; -- Subscripts can be any integer values
+	ba:=v5('Canada')
+	 := 'North America'; -- Just start assigning to elements
+	v5('Greece') := 'Europe'; -- Subscripts can be string values
+END;
+/
+
+loop of varchar indexed collection
+
+Declare
+TYPE assoc_array_str_type2 IS TABLE OF VARCHAR2(50) INDEX BY VARCHAR2(64);
+v5 assoc_array_str_type2;
+v1 varchar2(50);
+counter varchar2(50);
+BEGIN
+   V5('America'):= 'North America';
+   v5('Greece') := 'Europe';
+   v1:=v5('Greece');
+    counter := v5.FIRST;
+WHILE counter IS NOT NULL
+LOOP
+DBMS_OUTPUT.PUT_LINE('Counting up: Element #' || counter || ' = ' ||v5(counter));
+counter :=v5.NEXT(counter);
+END LOOP;
+END;
+
+
+■Varrays are a good choice when:
+■ The number of elements is known in advance
+The elements are usually all accessed in sequence.
+
+
+Nested table data is stored in a separate store table, a system-generated database table
+associated with the nested table. The database joins the tables for you when you access
+the nested table. This makes nested tables suitable for queries and updates that only
+affect some elements of the collection.
+
+ procedure p_test is
+   TYPE user_rec IS RECORD ( user_id number(10), last_name VARCHAR2(250));
+   TYPE all_user IS TABLE OF  user_rec index BY PLS_INTEGER;
+   myuser all_user;
+   one_user user_rec;
+
+  begin
+    for i in 1..10  loop
+      one_user.user_id:=i;
+      one_user.last_name:='user'||i;
+     myuser(i):= one_user;
+    end loop ;
+ FOR k IN myuser.FIRST .. myuser.LAST loop
+    dbms_output.put_line('user  '||k||' '||myuser(k).user_id);   
+ end loop;
+   
+
+
+  end ;
+  
+
+  procedure p_test(p_input in number) is
+    v_test_f number(10);
+   TYPE user_rec IS RECORD ( user_id number(10), last_name VARCHAR2(250) );
+   TYPE all_user IS TABLE OF  user_rec index BY PLS_INTEGER;
+   cursor c1 is select id ,name from t1;
+   myuser all_user;
+   one_user user_rec;
+
+  begin
+
+    SELECT id ,name BULK COLLECT INTO myuser FROM t1;
+    dbms_output.put_line('count is '||myuser.count);
+ FOR k IN myuser.first .. myuser.count loop
+    dbms_output.put_line('user  '||k||' '||myuser(k).user_id||' '||myuser(k).last_name);   
+ end loop;
+   
+
+
+  end ;
+  
+
+直接传递 结果集
+1. 建立 ref cursor 类型和过程
+
+CREATE OR REPLACE PACKAGE types
+AS
+    TYPE ref_cursor IS REF CURSOR;
+END;
+/
+
+CREATE TABLE STOCK_PRICES(
+    RIC VARCHAR(6) PRIMARY KEY,
+    PRICE NUMBER(7,2),
+    UPDATED DATE );
+/
+
+CREATE OR REPLACE FUNCTION sp_get_stocks(v_price IN NUMBER) 
+    RETURN types.ref_cursor
+AS
+    stock_cursor types.ref_cursor;
+BEGIN
+    OPEN stock_cursor FOR 
+    SELECT ric,price,updated FROM stock_prices WHERE price < v_price;
+
+    RETURN stock_cursor;
+END;
+
+2. 用 sqlplus 测试过程
+
+SQL> var results refcursor
+SQL> exec :results := sp_get_stocks(20.0)
+SQL> print results
+
+3. 从 Java 调用
+
+import java.sql.*;
+import java.io.*;
+import oracle.jdbc.driver.*;
+
+public class JDBCDemo {
+
+    /**
+    * Compile-time flag for deciding which query to use
+    */
+    private boolean useOracleQuery = true;
+
+    /**
+    * Class name of Oracle JDBC driver
+    */
+    private String driver = "oracle.jdbc.driver.OracleDriver";
+
+    /**
+    * Initial url fragment
+    */
+    private String url = "jdbc:oracle:thin:@";
+
+
+    /**
+    * Standard Oracle listener port
+    */
+    private String port = "1521";
+
+
+    /**
+    * Oracle style of calling a stored procedure
+    */
+    private String oracleQuery = "begin ? := sp_get_stocks(?); end;";
+
+
+    /**
+    * JDBC style of calling a stored procedure
+    */
+    private String genericQuery = "{ call ? := sp_get_stocks(?) }";
+
+
+    /**
+    * Connection to database
+    */
+    private Connection conn = null;
+
+
+    /**
+    * Constructor. Loads the JDBC driver and establishes a connection
+    *
+    * @param host the host the db is on
+    * @param db the database name
+    * @param user user's name
+    * @param password user's password
+    */
+    public JDBCDemo(String host, String db, String user, String password)
+    throws ClassNotFoundException, SQLException {
+
+        // construct the url
+        url = url + host + ":" + port + ":" + db;
+
+        // load the Oracle driver and establish a connection
+        try {
+            Class.forName(driver);
+            conn = DriverManager.getConnection(url, user, password);
+        }
+        catch (ClassNotFoundException ex) {
+            System.out.println("Failed to find driver class: " + driver);
+            throw ex;
+        }
+        catch (SQLException ex) {
+            System.out.println("Failed to establish a connection to: " + url);
+            throw ex;
+        }
+    }
+
+
+    /**
+    * Execute the stored procedure
+    *
+    * @param price price parameter for stored procedure
+    */
+    private void execute(float price)
+    throws SQLException {
+
+        String query = useOracleQuery ? oracleQuery : genericQuery;
+        System.out.println("Query: " + query + "n");
+        CallableStatement stmt = conn.prepareCall(query);
+
+        // register the type of the out param - an Oracle specific type
+        stmt.registerOutParameter(1, OracleTypes.CURSOR);
+
+        // set the in param
+        stmt.setFloat(2, price);
+
+        // execute and retrieve the result set
+        stmt.execute();
+        ResultSet rs = (ResultSet)stmt.getObject(1);
+
+        // print the results
+        while (rs.next()) {
+            System.out.println(rs.getString(1) + "t" +
+            rs.getFloat(2) + "t" +
+            rs.getDate(3).toString());
+        }
+
+        rs.close();
+        stmt.close();
+    }
+
+
+    /**
+    * Cleanup the connection
+    */
+    private void cleanup() throws SQLException {
+
+        if (conn != null)
+            conn.close();
+        }
+
+
+    /**
+    * Prints usage statement on stdout
+    */
+    static private void usage() {
+
+        System.out.println("java com.enterprisedt.demo.oracle.JDBCDemo " +
+        " host db user password price");
+    }
+
+
+    /**
+    * Runs the class
+    */
+    public static void main(String[] args) throws Exception {
+
+        if (args.length != 5) {
+            JDBCDemo.usage();
+            System.exit(1);
+        }
+        else {
+            try {
+                // assign the args to sensible variables for clarity
+                String host = args[0];
+                String db = args[1];
+                String user = args[2];
+                String password = args[3];
+                float price = Float.valueOf(args[4]).floatValue();
+
+                // and execute the stored proc
+                JDBCDemo jdbc = new JDBCDemo(host, db, user, password);
+                jdbc.execute(price);
+                jdbc.cleanup();
+            }
+            catch (ClassNotFoundException ex) {
+                System.out.println("Demo failed");
+            }
+            catch (SQLException ex) {
+                System.out.println("Demo failed: " + ex.getMessage());
+            }
+        }
+    }
+}
+
+
+
+
+oracle
+设置了two_task优先级最高，可以直接设置为export TWO_TASK=//192.168.20.128:1521/QADB 形式
+

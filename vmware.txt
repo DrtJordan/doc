@@ -1,0 +1,157 @@
+Vmware workstation 11 序列号
+1F04Z-6D111-7Z029-AV0Q4-3AEH8
+
+
+
+
+Licensing
+VMware Server for Windows  AAN8W-FY9DW-V3M33-4U1U8
+VMware Server for Linux 	     AA52X-FYT4D-U7MAK-49K95
+
+清除 vmware workstation  6.5.5  FT98T-TFWAP-M8HDU-4Y8QP  
+配置 /usr/bin/vmware-config.pl
+
+RedHat Enterprise Linux 5.2的Installation Number: 550dd56b51499bd5
+
+VMware Server's main database /etc/vmware/locations
+
+监听地址
+netstat -ptln |grep vmware-hostd
+
+tcp        0      0 0.0.0.0:8333            0.0.0.0:*               LISTEN      30192/vmware-hostd  
+tcp        0      0 127.0.0.1:8307        0.0.0.0:*               LISTEN      30192/vmware-hostd  
+tcp        0      0 0.0.0.0:8222            0.0.0.0:*               LISTEN      30192/vmware-hostd  
+
+
+Please specify a port for remote connections to use [902] 
+
+Please specify a port for standard http connections to use [8222] 
+
+Please specify a port for secure http (https) connections to use [8333] 
+
+
+https 8333
+
+Windows 2003 server 序列号: JK6JC-P7P7H-4HRFC-3XM7P-G33HM 
+MaXiaoHua
+
+* Red Hat Enterprise Linux (Server including virtualization):
+2515dd4e215225dd
++ Red Hat Enterprise Linux Virtualization Platform:
+49af89414d147589
+客户端:
+* Red Hat Enterprise Linux Desktop:
+660266e267419c67
++ Red Hat Enterprise Linux Desktop + Workstation Option:
+da3122afdb7edd23
++ Red Hat Enterprise Linux Desktop + Workstation + DualOS Option
+(Virtualization):
+7fcc43557e9bbc42
++ Red Hat Enterprise Linux Desktop + DualOS Option (Virtualization):
+fed67649ff918c77
+
+安装vmware tools
+界面上选择 vmware tools
+然后 
+mount /dev/cdrom-hdc  /media/
+rpm -ivh VMwareTools-7.7.6-203138.i386.rpm 
+vmware-config-tools.pl
+在图像界面下启动
+vmware-user
+启动control panel
+
+vmware-toolbox &
+
+
+redhat 5.2 问题 staring udev时间过长问题
+       Clocksource is the name of the new timekeeping subsystem introduced in the Linux 2.6.18 kernel. In this subsystem there are several clocksources that can be used to read the time. One of them is the tsc clocksource which uses the Time Stamp Counter that is present on each processor and can be used to track how much time has elapsed. The TSCs on the different processors are not necessarily perfectly in sync with each other, so time can appear to go backward if the TSC is read on one processor and then another processor. Early versions of the tsc clocksource did not handle this case, which can lead to the guest operating system not responding. Due to the different timing behavior of running in a virtual machine, this can be observed more frequently in a virtual machine.
+
+经验证确实如此：如果是单个vCPU,则Starting udev很快就能过去。
+具体解决方法：
+1、把虚拟机的电源关闭
+2、然后编辑配置,改为1个vCPU 
+3、启动系统
+4、编辑/etc/grub.conf，在kernel一行最后加上clocksource=acpi_pm
+5、重启虚拟机
+此方法为vmware官方说明：
+http://kb.vmware.com/selfservice/microsites/search.do?language=en_US&cmd=displayKC&externalId=1007020
+http://kb.vmware.com/selfservice/microsites/search.do?language=en_US&cmd=displayKC&externalId=1006427
+
+安装converter 4.0 需要重启服务器 
+
+
+
+
+http://support.microsoft.com/kb/891861
+
+windows 使用 vss copy ,linux直接使用ssh 远程去copy
+
+A Windows 2000 virtual machine created using P2V Assistant fails
+Details
+
+    *
+      A Windows 2000 virtual machine created using P2V Assistant fails
+    *
+      Unable to boot a Windows 2000 virtual machine created using P2V Assistant
+    *
+      You see the blue screen error message:
+
+      STOP: 0x0000001E (0xC0000005,0x804a6467,0x00000000,0x000000B0):
+
+Solution
+This is a known issue described on the Microsoft Help and Support site.
+To resolve this issue, see the Microsoft article Update Rollup 1 for Windows 2000 SP4 and known issues. 
+
+
+If you use any version of P2V prior to the current release, and, the Windows 2000 server is SP4, you will blue screen on startup as the SCSIPORT.SYS driver was replaced with SP4.  To resolve, mount the disk that is the system drive to another VM as another hard drive and bring it up.  Get a copy of the SCSIPORT.SYS file pre-SP4 and replace the file in %SYSTEMROOT%\system32\drivers directory.  It would probably have a date stamp of 12/29/2004.
+Shutdown the "helper" VM and p
+ower the P2V'd system up and you should be golden.  Apply VMTools after the system is restarted.
+
+A linked clone is a VMware virtual machine that shares the virtual disk of the source virtual machine or system
+image
+
+If you migrate an OEM Windows image, you must
+have a Windows Server Enterprise or Datacenter Edition license on the ESX host to run multiple virtual
+machines.
+Although Converter Standalone 4.0.1 supports only hot cloning, you can still perform cold cloning using the
+VMware Converter 3.0.3 Boot CD. Hot and cold cloning have different applications that depend on your virtual
+environment
+
+On source systems running MS Windows 2000, you must install a special driver and reboot the    system once
+
+windows 2000不支持复制后在同步data
+
+
+Conversion fails if there is not enough space on the source to take a VSS snapshot 
+
+With synchronization on, if any changes occur on the
+source machine during the conversion, Converter Standalone copies them to the destination machine after the
+conversion is complete. This process helps you to prevent downtime on important services.
+
+
+Today I converted my old Hungarian Windows 2000 SP4 SBS server into an ESXi 4.0.1.
+
+First of all the Windows 2000 is not compatible with WMware Converter 4.3 you can use VMware converter 4.0.1
+
+Another problem is the Language. Unfortunately the Windows Security groups and names are translated in localized version of windows, also the TEMP & TMP directories path has to be set to c:\tmp.
+
+ 
+
+So Installing and Virtualizing:
+
+1. Download WMware converter standalone 4.0.1
+
+2. Make a "Domain Admins" group under "Bultin" accounts
+
+3. Make "Rendszergazda" (or the name of the Adminstrator on your language) memeber of "Domain Admins" group.
+
+4. Put "Domain Admins" group into "Rendszergazdák" (or the name of the "Administrators" group in your language)
+
+5. Set TMP and TEMP directories to c:\tmp (make it if it is not available) "set TMP=c:\tmp, set TEMP=c:\TMP"
+
+6. Install VMware converter as an administrator
+
+7. Start the Converter on Windows 2000 server and set the ESXi is the target machine of the virtualization. Keep in mind of the Block Sizes of the datastore it can trick you.
+
+ 
+ 

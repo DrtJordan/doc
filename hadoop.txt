@@ -1,0 +1,741 @@
+20150924
+Mesos是一个双层调度器。在第一层中，Mesos将一定的资源提供（以容器的形式）给对应的框架。框架在第二层接收到资源后，会运行自己的调度算法来将任务分配到Mesos所提供的这些资源上。和Hadoop YARN的这种中央调度器相比，或许它在集群资源使用方面并不是那么高效。但是它带来了灵活性——比如说，多个框架实例可以运行在一个集群里。这是现有的这些调度器都无法实现的。
+
+
+hadoop 
+
+
+20140709
+native hadoop library 主要用来做   zlib   gzip
+
+
+
+Unified big data analytics pipeline for
+○ Batch / interactive (Spark Core vs MR / Tez)
+○ SQL (Shark / Spark SQL vs Hive)
+○ Streaming (Spark Streaming vs Storm)
+○ Machine learning (MLlib vs Mahout)
+○ Graph (GraphX vs Giraph)
+
+
+redis 支持事务，而且速度和memcached相媲美！
+mongodb 不支持事务。而且redis支持的数据类型比mongodb多
+redis 只是一个内存数据库，存储容量有限，适用于数据暂时、效率高的情况。而且redis支持的事务非常简单，也不适用于企业。 
+Mongodb 确实不适用于企业，只适合于互联网 
+
+
+这个问题的结果影响了我们怎么用Redis。如果你认为Redis是一个key value store, 那可能会用它来代替MySQL；
+如果认为它是一个可以持久化的cache, 可能只是它保存一些频繁访问的临时数据。
+Redis是REmote DIctionary Server的缩写，在Redis在官方网站的的副标题是
+A persistent key-value database with built-in net interface written in ANSI-C for Posix systems，这个定义偏向key value store。还有一些看法则认为Redis是一个memory database，因为它的高性能都是基于内存操作的基础。另外一些人则认为Redis是一个data structure server，因为Redis支持复杂的数据特性，比如List, Set等。对Redis的作用的不同解读决定了你对Redis的使用方式。
+
+互联网数据目前基本使用两种方式来存储，关系数据库或者key value。
+但是这些互联网业务本身并不属于这两种数据类型，比如用户在社会化平台中的关系，它是一个list，
+如果要用关系数据库存储就需要转换成一种多行记录的形式，这种形式存在很多冗余数据，每一行需要存储一些重复信息。
+如果用key value存储则修改和删除比较麻烦，需要将全部数据读出再写入。Redis在内存中设计了各种数据类型，
+让业务能够高速原子的访问这些数据结构，并且不需要关心持久存储的问题，从架构上解决了前面两种存储需要走一些弯路的问题。
+
+
+1、Mongodb，CouchDB为文档型数据库，可以理解为数据以JSON等文档格式存储；             读能力很强
+2、Cassandra，HBase为列簇型数据库，同时支持更加复杂的存储方式，是关系型数据库扩展； 写能力很强
+3、Redis：提供了一组hash，set等数据结构，更像一组开发包。而且查询更加灵活
+
+高写入、低读取。而面对这种问题情景，Cassandra则是最拿手
+Instagram：从Redis到Cassandra 成本节省1/4
+Hbase和Cassandra写都很快
+Mysql读取很快
+在我看来，这些不同的历史也导致Hbase更加适合于数据仓库、大型数据的处理和分析（如进行Web页面的索引等），
+而Cassandra则更适合于实时事务处理和提供交互型数据
+
+
+1G以下的数据是单机可以处理的，MySQL会非常好的完成查询任务。Hadoop只有在数据量大的情况下才能发挥出优势
+，当数据量到达10G时，MySQL的单表查询就显得就会性能不足。如果数据量到达了100G，MySQL就已经解决不了了，
+要通过各种优化的程序才能完成查询。
+
+
+分布式处理框架
+Hadoop Distributed File System (HDFS?): A distributed file system that provides high-throughput access to application data. 
+Hadoop MapReduce: A software framework for distributed processing of large data sets on compute clusters. 
+Cassandra?: A scalable multi-master database with no single points of failure.
+HBase?: A scalable, distributed database that supports structured data storage for large tables. 
+Hive?: A data warehouse infrastructure that provides data summarization and ad hoc querying. 
+Pig?: A high-level data-flow language and execution framework for parallel computation.
+ZooKeeper?: A high-performance coordination service for distributed applications. 
+Zookeeper 是Google的Chubby一个开源的实现.是高有效和可靠的协同工作系统.Zookeeper能够用来leader选举,配置信息维护等.在一个分布式的环境中,我们需要一个Master实例或存储一些配置信息,确保文件写入的一致性等.Zookeeper能够保证如下3点:
+
+HBase
+HBase是一个开源的分布式存储系统。他可以看作是Google的Bigtable的开源实现。如同Google的Bigtable使用Google File System一样
+，HBase构建于和Google File System类似的Hadoop HDFS之上。
+Cassandra
+Cassandra可以看作是Amazon Dynamo的开源实现。和Dynamo不同之处在于，Cassandra结合了Google Bigtable的ColumnFamily的数据模型。可以简单地认为，Cassandra是一个P2P的，高可靠性并具有丰富的数据模型的分布式文件系统
+
+根据UC Berkeley的教授Eric Brewer于2000年提出猜测- CAP定理，一个分布式计算机系统，不可能同时满足以下三个指标：
+    Consistency 所有节点在同一时刻保持同一状态
+    Availability 某个节点失败，不会影响系统的正常运行
+    Partition tolerance 系统可以因为网络故障等原因被分裂成小的子系统，而不影响系统的运行
+Brewer教授推测，任何一个系统，同时只能满足以上两个指标。
+在2002年，MIT的Seth Gilbert和Nancy Lynch发表正式论文论证了CAP定理。
+而HBase和Cassandra两者都属于分布式计算机系统。但是其设计的侧重点则有所不同。
+HBase继承于Bigtable的设计，侧重于CA。而Cassandra则继承于Dynamo的设计，侧重于AP
+
+
+    HBase
+
+    HBase保证写入的一致性。当一份数据被要求复制N份的时候，只有N份数据都被真正复制到N台服务器上之后，客户端才会成功返回。如果在复制过程中出现失败，所有的复制都将失败。连接上任何一台服务器的客户端都无法看到被复制的数据。
+    HBase提供行锁，但是不提供多行锁和事务。
+    HBase基于HDFS，因此数据的多份复制功能和可靠性将由HDFS提供。
+    HBase和MapReduce天然集成。
+    hbase是bigtable的开源山寨版本。是建立的hdfs之上，提供高可靠性、高性能、列存储、可伸缩、实时读写的数据库系统。
+		它介于nosql和RDBMS之间，仅能通过主键(row key)和主键的range来检索数据或者全表扫描，
+		仅支持单行事务(可通过hive支持来实现多表join等复杂操作)。主要用来存储非结构化和半结构化的松散数据。
+
+    Cassandra
+
+    写入的时候，有多种模式可以选择。当一份数据模式被要求复制N份的时候，可以立即返回，可以成功复制到一个服务器之后返回，可以等到全部复制到N份服务器之后返回，还可以设定一个复制到quorum份服务器之后返回。Quorum后面会有具体解释。复制不会失败。最终所有节点数据都将被写入。而在未被完全写入的时间间隙，连接到不同服务器的客户端有可能读到不同的数据。
+    在集群里面，所有的服务器都是等价的。不存在任何一个单点故障。节点和节点之间通过Gossip协议互相通信。
+    写入顺序按照timestamp排序，不提供行锁。
+    新版本的Cassandra已经集成了MapReduce了。
+
+    数据迁移 Sqoop /Datax (datax主要是解决全量同步，通过select语句或者dump指令提取数据，然后同步到目标)
+    阿里开源的 otter (基于日志的解析同步)的第三个版本是基于SymmetricDS 2.x
+    这次开源的为otter的第四个版本，从2011年开始开发，和SymmetricDS几个不同点： 
+    1. 数据capture方式：otter4目前支持log-based，otter3和SymmetricDS一样，是基于trigger.
+    引入了并行化调度，提升同步tps. 
+    
+    基于log-based的方案，对于数据库的影响相对较少，同时可精确提取具体变更的字段，做到按需同步，而SymmetricDS基于trigger的方式，只能提取到变更的pk，每次同步时基于pk反查源库提取到行记录。从性能上来说，按字段同步传输量和数据库载入上都有很大的优势，从数据冲突上来说，冲突粒度更小了，有利于冲突处理方案的执行。
+可以说下，otter3和otter4的性能对比，基本上是一个数量级上的提升，otter3的基于trigger，然后根据pk反查的，
+处理tps基本只在500~1000tps，而基于log-based，基于字段同步的可以达到5000~10000tps.
+SymmetricDS 有一个比较大的优势就是支持的数据库的比较多，这也是基于log-based所无法超越的(只支持源头mysql，目标可以是mysql/oracle)
+SymmetricDS支持事物级别的复制，支持双向复制
+还有个rubyrep支持mysql/postgresql 基于trigger 
+    
+    
+    storm海量实时数据处理，spark 快速的内存迭代计算，hadoop 分布式存储 分布式计算的绝佳利器。
+    
+kafaka 分发消息 hbase存储 ,hadoop 分布式存储文件批处理 storm实时处理
+
+从以上的比较，我们可以看到，HBase相对Cassandra来说，模块更多。一个HBase的Instance，
+必须同时还是HDFS的某一个角色。通常，HBase的Master Server，也同时是HDFS的NameNode。
+而HBase的RegionServer，同时也是HDFS的DataNode。因为HBase是基于HDFS构建的，模块化显得更加清楚。
+
+而Cassandra每个节点并无特殊之处，不依赖其他任何一个模块，每个启动的节点都是一个java进程。所有的功能都集成在这一个进程里面了。
+
+
+
+
+Hive执行查询前无需导入数据，执行计划直接执行。Hive支持默认的多种文件格式，同时也可以通过实现MapReduce的InputFormat或OutputFormat类，由用户定制格式。因为公司的数据种类很多，存储于不同的数据源系统，可能是MySQL、HDFS或者Hypertable等，很多时候Hive的分析过程会用到各种数据源的数据。当然使用多个存储数据源，除了功能上要能够支持导入/导出之外，如何根据各种存储源的能力和执行流获得最优执行计划也是件麻烦事儿。
+
+
+除了Hive，近年来业界系统也诞生了其他各种类型的数据仓库，像Google的Tenzing、Dremel、微软的DryadLINQ、Hadapt的HadoopDB等。Tenzing和DryadLINQ在框架分层上类似于Hive，Dremel除了语言层还实现了计算执行层，而HadoopDB的目标是结合并行数据仓库和Hadoop的优点。
+
+Tenzing的目标是支持Google对数据的Ad-hoc分析，当然之前的分析都是基于传统的关系数据库的。Tenzing在性能方面做了大量优化，包括编译优化以及对MapReduce本身的增强等，这些都使得Tenzing的性能在很多方面接近甚至超过了并行数据仓库。另外，基于LLVM的Tenzing执行引擎可以将单点执行性能提升10倍左右。
+Dremel是Google用于满足交互式查询的系统，主要目标是执行一次性的、结果数据较小的聚合运算，不支持join、update等复杂算子。与
+
+当前，Hadoop之上的SQL引擎已经非常多了，概括起来有两类系统，分别是：
+
+（1）将SQL转化为MapReduce。典型代表是Apache Hive，这种系统的特点是扩展性和容错性好，但性能低下。为了弥补SQL on MapReduce的不足，google提出了Tenzing（见参考资料[3]），与Hive不同，Tenzing充分借鉴了MapReduce和DataBase的优势，首先，它对传统的MapReduce进行了优化（比如Map 可以不写磁盘，Reduce可不必排序等），使其性能更高，采用MapReduce一大优势是使Tenzing具有了很好的扩展性和容错性，Tenzing论文是这样表述的
+
+（2）借鉴分布式数据库思想。典型代表是Google Dremel、Apache Drill和Cloudera Impala，这类系统的特点是性能高（与Hive等系统比），但扩展性（包括集群规模扩展和SQL类型支持多样性）和容错性较差，Google在Dremel论文（见参考资料[4]）中这样描述Dremel的适用场景：
+
+Tez已被Hortonworks用于Hive引擎的优化，经测试，性能提升约100倍
+(Tez+Hive)与Impala、Dremel和Drill均可用于解决Hive/Pig延迟大、性能低效的问题，Impala、Dremel和Drill的出发点是抛弃MapReduce计算框架，不再将SQL或者PIG语句翻译成MR程序，而是采用传统数据数据库的方式，直接从DataNode上存取数据，而(Tez+Hive)则不同，(Tez+Hive)仍采用MapReduce计算框架，但对DAG的作业依赖关系进行了裁剪，并将多个小作业合并成一个大作业，这样，不仅计算量减少，而且写HDFS次数也会大大减少。
+
+
+相对于配置Cassandra，配置HBase是一个艰辛、复杂充满陷阱的工作。
+
+到这里，我们的结论就是，Cassandra的确也能提供和HBase一样的数据一致性功能。而且Quorum模式，能让Cassandra以更小的代价获得数据高一致性。
+
+所幸的是，Hadoop下面的另外一个项目，Zookeeper能够帮助提供全局锁。更进一步的，基于Zookeeper的项目Cages是一个专门为Cassandra提供锁的项目。可以帮助我们构建对重要数据操作时候的各种锁，就像SQL时代一样，功能又回来了。你可以说，这么做系统变复杂了，我也可以辩解说，这么做事情变得更加模块化了。Cassandra或者HBase只管存储，其他模块来提供全局锁。
+
+这就是存储大文件。虽然说，Cassandra的设计初衷就不是存储大文件，但是Amazon的S3实际上就是基于Dynamo构建的，总是会让人想入非非地让Cassandra去存储超大文件。而和Cassandra不同，HBase基于HDFS，HDFS的设计目的就是存储超大规模文件并且提供最大吞吐量和最可靠的可访问性。因此，从这一点来说，Cassandra由于背后不是一个类似HDFS的超大文件存储的文件系统，对于存储那种巨大的（几百T甚至P）的超大文件目前是无能为力的。而且就算由Client手工去分割，这实际上是非常不明智和消耗Client CPU的工作的。
+
+因此，如果我们要构建一个类似Google的搜索引擎，最少，HDFS是我们所必不可少的。虽然目前HDFS的NameNode还是一个单点故障点，但是相应的Hack可以让NameNode变得更皮实。基于HDFS的HBase，相应地，也更适合做搜索引擎的背后倒排索引数据库。事实上，Lucene和HBase的结合，远比Lucene结合Cassandra的项目Lucandra要顺畅和高效的多。（Lucandra要求Cassandra使用OrderPreservingPartitioner,这将可能导致Key的分布不均匀，而无法做负载均衡，产生访问热点机器）。
+所以我的结论是，在这个需求多样化的年代，没有赢者通吃的事情。而且我也越来越不相信在工程界存在一劳永逸和一成不变的解决方案。当你仅仅是存储海量增长的消息数据，存储海量增长的图片，小视频的时候，你要求数据不能丢失，你要求人工维护尽可能少，你要求能迅速通过添加机器扩充存储，那么毫无疑问，Cassandra现在是占据上风的。
+
+但是如果你希望构建一个超大规模的搜索引擎，产生超大规模的倒排索引文件（当然是逻辑上的文件，真实文件实际上被切分存储于不同的节点上），那么目前HDFS+HBase是你的首选。
+
+严格的说，Hbase 和它的支持系统源于著名的 Google BigTable 和 Google 文件系统设计（GFS 的论文发于 2003 年，BigTable 的论文发于 2006 年）。而 Cassandra 则是最近 Facebook 的数据库系统的开源分支，她在实现了 BigTable 的数据模型的同时，使用了基于 Amazon 的 Dynamo 的系统架构来存储数据（实际上，Cassandra 的最初开发工作就是由两位从 Amazon 跳槽到 Facebook 的 Dynamo 工程师完成的）。
+在我看来，这些不同的历史也导致Hbase更加适合于数据仓库、大型数据的处理和分析（如进行Web页面的索引等），而 Cassandra 则更适合于实时事务处理和提供交互型数据。要进行系统研究来证明这个观点超出了本文的范畴，但我相信你在考虑数据库的时候总能发现这个差异的存在
+
+这个理论说明，分布式（或共享数据）系统的设计中，至多只能够提供三个重要特性中的两个——一致性、可用性和容忍网络分区。简单的说，一致性指如果一个人向数据库写了一个值，那么其他用户能够立刻读取这个值，可用性意味着如果一些节点失效了，集群中的分布式系统仍然能继续工作，而容忍分区意味着，如果节点被分割成两组无法互相通信的节点，系统仍然能够继续工作。
+
+Cassandra 做的还不够好的一件事情就是 MapReduce！对于不精通此项技术同学简单的解释一句，这是一个用于并行处理大量数据的系统，比如从上百万从网络上抓取的页面提取统计信息。MapReduce 和相关系统，比如 Pig 和 Hive 可以和 HBase 一起良好协作，因为它使用 HDFS 来存储数据，这些系统也是设计用来使用 HDFS 的。如果你需要进行这样的数据处理和分析的话，HBase 可能是你目前的最佳选择。
+
+
+
+    查询语言。由于 SQL 被广泛的应用在数据仓库中，因此，专门针对 Hive 的特性设计了类 SQL 的查询语言 HQL。熟悉 SQL 开发的开发者可以很方便的使用 Hive 进行开发。
+    数据存储位置。Hive 是建立在 Hadoop 之上的，所有 Hive 的数据都是存储在 HDFS 中的。而数据库则可以将数据保存在块设备或者本地文件系统中。
+    数据格式。Hive 中没有定义专门的数据格式，数据格式可以由用户指定，用户定义数据格式需要指定三个属性：列分隔符（通常为空格、”\t”、”\x001″）、行分隔符（”\n”）以及读取文件数据的方法（Hive 中默认有三个文件格式 TextFile，SequenceFile 以及 RCFile）。由于在加载数据的过程中，不需要从用户数据格式到 Hive 定义的数据格式的转换，因此，Hive 在加载的过程中不会对数据本身进行任何修改，而只是将数据内容复制或者移动到相应的 HDFS 目录中。而在数据库中，不同的数据库有不同的存储引擎，定义了自己的数据格式。所有数据都会按照一定的组织存储，因此，数据库加载数据的过程会比较耗时。
+    数据更新。由于 Hive 是针对数据仓库应用设计的，而数据仓库的内容是读多写少的。因此，Hive 中不支持对数据的改写和添加，所有的数据都是在加载的时候中确定好的。而数据库中的数据通常是需要经常进行修改的，因此可以使用 INSERT INTO ...  VALUES 添加数据，使用 UPDATE ... SET 修改数据。
+    索引。之前已经说过，Hive 在加载数据的过程中不会对数据进行任何处理，甚至不会对数据进行扫描，因此也没有对数据中的某些 Key 建立索引。Hive 要访问数据中满足条件的特定值时，需要暴力扫描整个数据，因此访问延迟较高。由于 MapReduce 的引入， Hive 可以并行访问数据，因此即使没有索引，对于大数据量的访问，Hive 仍然可以体现出优势。数据库中，通常会针对一个或者几个列建立索引，因此对于少量的特定条件的数据的访问，数据库可以有很高的效率，较低的延迟。由于数据的访问延迟较高，决定了 Hive 不适合在线数据查询。
+    执行。Hive 中大多数查询的执行是通过 Hadoop 提供的 MapReduce 来实现的（类似 select * from tbl 的查询不需要 MapReduce）。而数据库通常有自己的执行引擎。
+    执行延迟。之前提到，Hive 在查询数据的时候，由于没有索引，需要扫描整个表，因此延迟较高。另外一个导致 Hive 执行延迟高的因素是 MapReduce 框架。由于 MapReduce 本身具有较高的延迟，因此在利用 MapReduce 执行 Hive 查询时，也会有较高的延迟。相对的，数据库的执行延迟较低。当然，这个低是有条件的，即数据规模较小，当数据规模大到超过数据库的处理能力的时候，Hive 的并行计算显然能体现出优势。
+    可扩展性。由于 Hive 是建立在 Hadoop 之上的，因此 Hive 的可扩展性是和 Hadoop 的可扩展性是一致的（世界上最大的 Hadoop 集群在 Yahoo!，2009年的规模在 4000 台节点左右）。而数据库由于 ACID 语义的严格限制，扩展行非常有限。目前最先进的并行数据库 Oracle 在理论上的扩展能力也只有 100 台左右。
+    数据规模。由于 Hive 建立在集群上并可以利用 MapReduce 进行并行计算，因此可以支持很大规模的数据；对应的，数据库可以支持的数据规模较小。
+
+淘宝自主研发的数据传输组件DataX、DbSync和Timetunnel准实时地传输到一个有1500个节点的Hadoop集群上
+在这一层，我们有基于MySQL的分布式关系型数据库集群MyFOX和基于HBase的NoSQL存储集群Prom
+
+
+Shark即Hive on Spark，本质上是通过Hive的HQL解析，把HQL翻译成Spark上的RDD操作，然后通过Hive的metadata获取数据库里的表信息，实际HDFS上的数据和文件，会由Shark获取并放到Spark上运算。Shark的特点就是快，完全兼容Hive，且可以在shell模式下使用rdd2sql()这样的API，把HQL得到的结果集，继续在scala环境下运算，支持自己编写简单的机器学习或简单分析处理函数，对HQL结果进一步分析计算。
+
+Shark为了实现Hive兼容，在HQL方面重用了Hive中HQL的解析、逻辑执行计划翻译、执行计划优化等逻辑，可以近似认为仅将物理执行计划从MR作业替换成了Spark作业（辅以内存列式存储等各种和Hive关系不大的优化）；同时还依赖Hive Metastore和Hive SerDe（用于兼容现有的各种Hive存储格式）。这一策略导致了两个问题，第一是执行计划优化完全依赖于Hive，不方便添加新的优化策略；二是因为MR是进程级并行，写代码的时候不是很注意线程安全问题，导致Shark不得不使用另外一套独立维护的打了补丁的Hive源码分支（至于为何相关修改没有合并到Hive主线，我也不太清楚）。
+Spark SQL解决了这两个问题。第一，Spark SQL在Hive兼容层面仅依赖HQL parser、Hive Metastore和Hive SerDe。也就是说，从HQL被解析成抽象语法树（AST）起，就全部由Spark SQL接管了。执行计划生成和优化都由Catalyst负责。借助Scala的模式匹配等函数式语言特性，利用Catalyst开发执行计划优化策略比Hive要简洁得多。。第二，相对于Shark，由于进一步削减了对Hive的依赖，Spark SQL不再需要自行维护打了patch的Hive分支。Shark后续将全面采用Spark SQL作为引擎，不仅仅是查询优化方面。
+Spark是一个高效的基于内存的分布式计算系统 也有Spark Streaming支持流式计算,storm是分布式流式计算
+
+
+HDFS中，任何block，文件或者目录在内存中均以对象的形式存储，每个对象约占150byte，如果有1000 0000个小文件，每个文件占用一个block，则namenode大约需要2G空间。如果存储1亿个文件，则namenode需要20G空间（见参考资料[1][4][5]）。这样namenode内存容量严重制约了集群的扩展。 其次，访问大量小文件速度远远小于访问几个大文件。HDFS最初是为流式访问大文件开发的，如果访问大量小文件，需要不断的从一个datanode跳到另一个datanode，严重影响性能。最后，处理大量小文件速度远远小于处理同等大小的大文件的速度。每一个小文件要占用一个slot，而task启动将耗费大量时间甚至大部分时间都耗费在启动task和释放task上。
+
+Apache Hadoop版本分为两代，我们将第一代Hadoop称为Hadoop 1.0，第二代Hadoop称为Hadoop 2.0。第一代Hadoop包含三个大版本，分别是0.20.x，0.21.x和0.22.x，其中，0.20.x最后演化成1.0.x，变成了稳定版，而0.21.x和0.22.x则NameNode HA等新的重大特性。第二代Hadoop包含两个版本，分别是0.23.x和2.x，它们完全不同于Hadoop 1.0，是一套全新的架构，均包含HDFS Federation和YARN两个系统，相比于0.23.x，2.x增加了NameNode HA和Wire-compatibility两个重大特
+
+glider以HTTP协议对外提供restful方式的接口。数据产品可以通过一个唯一的URL获取到它想要的数据。
+淘宝数据产品选择MySQL的MyISAM引擎作为底层的数据存储引擎。在此基础上，为了应对海量数据，我们设计了分布式MySQL集群的查询代理层——MyFOX，使得分区对前端应用透明
+
+安装
+分为 NameNode/ResourceManager(Master)
+和  DataNode/NodeManager(Slave)
+default configuration file:  core-default.xml,hdfs-default.xml, yarn-default.xml,mapred-default.xml
+nodeManager可以执行监控脚本，只要是 输出ERROR开头的就行
+
+启动一个mini cluster
+bin/hadoop jar ./share/hadoop/mapreduce/hadoop-mapreduce-client-jobclient-2.4.0-tests.jar minicluster -rmport RM_PORT -jhsport JHS_PORT
+
+HDFS来自  Apache Nutch web search engine project
+HDFS提供接口让map/redue到数据的节点以达到让计算移动而不是数据移动的目标，主要设计目标是大批量的高吞吐量的批处理，而不是低延迟
+DataNode 定期向NameNode发送心跳信息和本节点拥有的数据块的信息
+HDFS复制的时候带有 Rack Awareness ，缺省三个replica的情况下，两个都在同一 rack不同node,另外一个在另外一个rack
+当nameNode起来的时候属于Safemode(只读),只有等datanode把自己block信息发给NameNode之后，nameNode才能进入正常工作模式(读写)
+所有的metadata操作都记录在 Eidtlog(transaction log),file/block map关系在 FsImage ，启动的时候就apply EditLog到内存,修改fsImage，然后清空editlog,随后的操作会继续写到 editLog，但是不更新fsImage,所以有可能editLog会变得非常大，导致下次重启的时候会很慢，所以 Secondary NameNode可以用来定期apply editLog到一个新的fsImage file，下次 NameNode重启就可以使用这个新的fsImage，
+Checkpoint node  不但有 Secondary NameNode的功能，还能把FsImage重新传回到nameNode ,Backup Node 就是实时接收metadata操作，然后apply到内存，同时save到local file,目前只支持一个backup node(不能和 checkpoint node同时使用)
+
+DataNode每个block创建一个文件，会自动分布在不同目录或者子目录，每次启动的时候进行扫描，发送blockReport到NameNode
+
+NameNode不自动发起请求道DataNode,都是datanode自动发起通信请求
+client在存放文件的时候，会自动对每个block算一个checksum，读取数据的时候会校验这个checksum，如果不对，会重新从另外一个节点拿
+
+
+Eidtlog(transaction log)和FsImage可以写多份以保证安全
+
+client写数据的时候，是先写到自己的local tempfile,当 local累计的量大于等于一个chunk的时候，发送请求道nameNode，nameNode分配dataNode,然后client直接和data node通信，写local主要是为了性能考虑
+复制的时候是client先传输data到第一个data node,当第一个data node接收到4kb的数据，就往本地写，然后复制到第二个data节点,然后第二data node复制到第三个data node
+删除的文件先移到/trash目录一定时间后才真正删除
+
+支持 Secondary NameNode /Backup node/Checkpoint node
+HDFS支持 rebalacne data /snapshot
+HDFS一个recover mode，当 fsImage和EditLog都没有的时候可以恢复数据
+
+HA模式下   Quorum  Journal 模式下 meta data操作会发送到 Quorum  Journal node，然后 standby从 Quorum  Journal node拿到这些数据，apply到自己的内存，保持同步，同时 datanode会发送心跳和block report到两个namenode  Quorum  Journal node 保证任意时点只能有一个 namenode写入 meta data log 以保证任意时点只有一个nameNode是master
+
+Short-Circuit Local Reads 支持client直接读取hdfs data node数据，如果正好和data node在统一节点的话，能够提升性能
+HDFS 支持 Centralized Cache Management 可以控制那个data节点 cache哪些block
+HDFS支持通过 NFS gateway  方式 nfs mount到 本地
+
+对于任何一个HDFS文件，Namenode会在内存中维护两种meta data：1） HDFS文件和block的对应关系 ，2）block在data node上存放的位置。Namenode会在磁盘上保存第一种meta data （通过checkpoint 文件和write ahead log），第二种meta data则是DataNode通过block report 定时发送给NameNode。
+
+YARN 分为 resource manager和node manager,还有per-application ApplicationMaster(协调沟通RM/NM execute and monitor the tasks）
+ResourceManager主要由 Scheduler(分发job,不管监控) 和 ApplicationsManager(接受任务并且监控和重启任务) 组成
+CapacityScheduler 通过 Hierarchical Queues来达到ACL控制和资源使用比例的控制
+Fair scheduling 通过 hierarchical  queue 来达到任务间消耗的资源(ram/cpu)平均的目标 也支持某个queue消耗的资源大于等于某个阀值
+
+机器配置
+不要使用 RAID,一个核24G RAM,一台机器大概12个左右的硬盘 使用 XFS, ext4, or ext3 in that order of preference.
+data node mount格式为  /grid/[0-n]"
+
+Hortonworks全部开源，以apache为主，和商业数据库集成   Stinger(SQL) 
+Cloudera有点像传统的软件提供商，有收费产品，有自己独有的组件 Impala(SQL)
+MapR重写了HDFS解决了单点的问题，但是收费
+
+安装单节点集群
+环境变量
+export HADOOP_COMMON_HOME=/ciccdev/mysql/hadoop/hadoop-2.4.0
+export HADOOP_HDFS_HOME=/ciccdev/mysql/hadoop/hadoop-2.4.0
+export HADOOP_MAPRED_HOME=/ciccdev/mysql/hadoop/hadoop-2.4.0
+export HADOOP_YARN_HOME=/ciccdev/mysql/hadoop/hadoop-2.4.0
+export HADOOP_CONF_DIR=/ciccdev/mysql/hadoop/hadoop-2.4.0/etc/hadoop
+export YARN_CONF_DIR=/ciccdev/mysql/hadoop/hadoop-2.4.0/etc/hadoop
+export JAVA_HOME=/ciccdev/mysql/hadoop/jdk1.7.0_45
+export PATH=$HADOOP_HDFS_HOME/bin:$HADOOP_HDFS_HOME/sbin:$PATH
+export HADOOP_ROOT_LOGGER=INFO,console
+
+修改 
+cp    mapred-site.xml
+
+ 修改为
+ <configuration>
+ <property>
+    <name>mapreduce.cluster.temp.dir</name>
+    <value></value>
+    <description>No description</description>
+    <final>true</final>
+  </property>
+
+  <property>
+    <name>mapreduce.cluster.local.dir</name>
+    <value></value>
+    <description>No description</description>
+    <final>true</final>
+  </property>
+  
+</configuration>
+
+yarn-site.xml
+
+
+
+<configuration>
+
+<property>
+    <name>yarn.resourcemanager.resource-tracker.address</name>
+    <value>192.168.193.132:8022</value>
+    <description>host is the hostname of the resource manager and 
+    port is the port on which the NodeManagers contact the Resource Manager.
+    </description>
+  </property>
+
+  <property>
+    <name>yarn.resourcemanager.scheduler.address</name>
+    <value>192.168.193.132:8023</value>
+    <description>host is the hostname of the resourcemanager and port is the port
+    on which the Applications in the cluster talk to the Resource Manager.
+    </description>
+  </property>
+
+  <property>
+    <name>yarn.resourcemanager.scheduler.class</name>
+    <value>org.apache.hadoop.yarn.server.resourcemanager.scheduler.capacity.CapacityScheduler</value>
+    <description>In case you do not want to use the default scheduler</description>
+  </property>
+
+  <property>
+    <name>yarn.resourcemanager.address</name>
+    <value>192.168.193.132:8024</value>
+    <description>the host is the hostname of the ResourceManager and the port is the port on
+    which the clients can talk to the Resource Manager. </description>
+  </property>
+
+  <property>
+    <name>yarn.nodemanager.local-dirs</name>
+    <value></value>
+    <description>the local directories used by the nodemanager</description>
+  </property>
+
+  <property>
+    <name>yarn.nodemanager.address</name>
+    <value>0.0.0.0:8025</value>
+    <description>the nodemanagers bind to this port</description>
+  </property>  
+
+  <property>
+    <name>yarn.nodemanager.resource.memory-mb</name>
+    <value>10240</value>
+    <description>the amount of memory on the NodeManager in GB</description>
+  </property>
+ 
+  <property>
+    <name>yarn.nodemanager.remote-app-log-dir</name>
+    <value>/app-logs</value>
+    <description>directory on hdfs where the application logs are moved to </description>
+  </property>
+
+   <property>
+    <name>yarn.nodemanager.log-dirs</name>
+    <value></value>
+    <description>the directories used by Nodemanagers as log directories</description>
+  </property>
+
+  <property>
+    <name>yarn.nodemanager.aux-services</name>
+    <value>mapreduce_shuffle</value>
+    <description>shuffle service that needs to be set for Map Reduce to run </description>
+  </property>
+ <property>
+        <name>mapreduce.framework.name</name>
+        <value>yarn</value>
+    </property>
+    <property>
+        <name>yarn.nodemanager.aux-services</name>
+        <value>mapreduce_shuffle</value>
+    </property>
+                                                    
+</configuration>               
+
+
+
+
+
+etc/hadoop/core-site.xml
+
+<configuration>
+       <property>
+               <name>fs.defaultFS</name>
+               <value>hdfs://192.168.193.132:8020</value>
+               <description>The name of the defaultfile system. Either the literal string "local" or a host:port forNDFS.
+               </description>
+               <final>true</final>
+       </property>
+</configuration>
+
+hdfs-site.xml
+<configuration>
+     <property>
+         <name>dfs.namenode.name.dir</name>
+         <value>/ciccdev/mysql/hadoop/hadoop-2.4.0/name</value>
+     </property>
+     <property>                                                  
+         <name>dfs.datanode.data.dir</name>                      
+         <value>/ciccdev/mysql/hadoop/hadoop-2.4.0/data</value>
+     </property>                                                 
+</configuration>      
+
+capacity-scheduler.xml make sure following properties are in the configure file
+
+<property>
+    <name>yarn.scheduler.capacity.root.queues</name>
+    <value>unfunded,default</value>
+  </property>
+  
+  <property>
+    <name>yarn.scheduler.capacity.root.capacity</name>
+    <value>100</value>
+  </property>
+  
+  <property>
+    <name>yarn.scheduler.capacity.root.unfunded.capacity</name>
+    <value>50</value>
+  </property>
+  
+  <property>
+    <name>yarn.scheduler.capacity.root.default.capacity</name>
+    <value>50</value>
+  </property>
+  
+  
+  格式化 hdfs
+bin/hdfs namenode -format  hdfs2  
+  启动服务
+./sbin/hadoop-daemon.sh --config $HADOOP_CONF_DIR --script hdfs start namenode
+./sbin/hadoop-daemon.sh --config $HADOOP_CONF_DIR --script hdfs start datanode
+./sbin/yarn-daemon.sh  --config $HADOOP_CONF_DIR start resourcemanager
+./sbin/yarn-daemon.sh  --config $HADOOP_CONF_DIR start nodemanager
+
+停止 
+sbin/hadoop-daemon.sh --config $HADOOP_CONF_DIR --script hdfs stop namenode
+sbin/hadoop-daemon.sh --config $HADOOP_CONF_DIR --script hdfs stop datanode
+sbin/yarn-daemon.sh --config $HADOOP_CONF_DIR stop resourcemanager
+sbin/yarn-daemon.sh --config $HADOOP_CONF_DIR stop nodemanager
+
+
+
+检查hdfs工作
+hdfs dfs  -mkdir -p /test/wzy
+hdfs dfs  -ls / 
+HDFS      http://192.168.193.132:50070
+yarn信息  http://192.168.193.132:8088/cluster 
+MapReduce JobHistory http://192.168.193.132:19888
+
+
+测试，制作下面两个文件
+word1.txt
+hello   world
+hello   ray
+hello   Hadoop
+word2.txt
+hadoop  ok
+Hadoop  fail
+Hadoop  2.3
+
+hdfs dfs  -mkdir -p /data
+hdfs dfs  -put -f file/word1.txt file/word2.txt /data
+运行word count 
+hadoop jar ./share/hadoop/mapreduce/sources/hadoop-mapreduce-examples-2.4.0-sources.jar org.apache.hadoop.examples.WordCount /data /output
+
+查看结果
+hdfs dfs  -cat /output/part-r-00000
+
+测试程序2 
+hadoop jar ./share/hadoop/mapreduce/sources/hadoop-mapreduce-examples-2.4.0-sources.jar randomwriter out
+
+
+
+启动 minicluster
+export HADOOP_CLASSPATH=$HADOOP_COMMON_HOME/share/hadoop/yarn/test/hadoop-yarn-server-tests-2.4.0-tests.jar
+bin/hadoop jar ./share/hadoop/mapreduce/hadoop-mapreduce-client-jobclient-2.4.0-tests.jar minicluster -rmport 8050  -nnport 8020
+log NameNode RPC up at: localhost/127.0.0.1:8020
+检查 minicluster HDFS
+hdfs dfs -fs hdfs://127.0.0.1:8020 -ls /
+hdfs dfs -fs hdfs://127.0.0.1:8020  -mkdir -p /data
+hdfs dfs  -fs hdfs://127.0.0.1:8020 -put -f file/word1.txt file/word2.txt /data
+hadoop jar ./share/hadoop/mapreduce/sources/hadoop-mapreduce-examples-2.4.0-sources.jar org.apache.hadoop.examples.WordCount /data /output
+修改 core-site.xml <value>hdfs://127.0.0.1:8020</value>
+修改 yarn-site.xml       <name>yarn.resourcemanager.address</name>
+    <value>127.0.0.1:8050</value>
+    
+hadoop fs -fs hdfs://127.0.0.1:8020 -cat /output/part-r-00000
+
+配置多节点集群
+
+132 nameNode/resource Manager
+134/136/173/174  dataNode/nodeManager
+配置ssh 证书login 
+132上面
+ssh-keygen -t rsa 
+134/136/173/174 上面
+mkdir /home/hadoop/.ssh 
+132上面执行
+cd /home/hadoop/.ssh/
+scp id_rsa.pub hadoop@192.168.193.136:/home/hadoop/.ssh/
+scp id_rsa.pub hadoop@192.168.193.173:/home/hadoop/.ssh/
+scp id_rsa.pub hadoop@192.168.193.174:/home/hadoop/.ssh/
+scp id_rsa.pub hadoop@192.168.193.134:/home/hadoop/.ssh/
+
+134/136/173/174  上面
+cd /home/hadoop/.ssh/
+cat id_rsa.pub >> authorized_keys
+chmod 600 authorized_keys
+chmod 700 /home/hadoop/.ssh/
+
+134/136/173/174   上面 创建data dir
+mkdir -p /ciccdev/hadoop/dfs/data
+132上创建name dir
+mkdir -p /ciccdev/hadoop/dfs/name
+
+
+修改 hadoop-env.sh
+JAVA_HOME=/ciccdev/hadoop/jdk1.7.0_45
+
+core-site.xml
+<configuration>
+       <property>
+               <name>fs.defaultFS</name>
+               <value>hdfs://192.168.193.132:8020</value>
+               <description>The name of the defaultfile system. Either the literal string "local" or a h
+ost:port forNDFS.
+               </description>
+               <final>true</final>
+       </property>
+</configuration>
+
+hdfs-site.xml
+		nameNode and data node 
+		<configuration>
+     <property>
+         <name>dfs.namenode.name.dir</name>
+         <value>/ciccdev/hadoop/dfs/name</value>
+     </property>
+      <property>
+         <name>dfs.blocksize</name>
+         <value>16m</value>
+          <description>16M </description>
+     </property>
+        <property>
+         <name>dfs.namenode.handler.count</name>
+         <value>100</value>
+        </property>
+     <property>
+<name>dfs.replication</name> 
+<value>3</value>
+</property>   
+
+<property>
+         <name>dfs.datanode.data.dir</name>
+         <value>/ciccdev/hadoop/dfs/data</value>
+     </property>
+     
+
+</configuration>
+
+		dataNode  only if needed 
+		
+		<configuration>
+     <property>
+         <name>dfs.datanode.data.dir</name>
+         <value>/localWork/hadoop/dfs/data</value>
+     </property>
+    </configuration>
+
+~                     
+
+
+
+yarn-site.xml  
+<configuration>
+<property>
+<name>yarn.resourcemanager.address</name>
+<value>192.168.193.132:8032</value>
+</property>
+<property>
+<name>yarn.resourcemanager.scheduler.address</name>
+<value>192.168.193.132:8030</value>
+</property>
+<property>
+<name>yarn.resourcemanager.resource-tracker.address</name>
+<value>192.168.193.132:8031</value>
+</property>
+<property>
+<name>yarn.resourcemanager.admin.address</name>
+<value>192.168.193.132:8033</value>
+</property>
+<property>
+<name>yarn.resourcemanager.webapp.address</name>
+<value>192.168.193.132:8088</value>
+</property>
+<property>
+<name>yarn.nodemanager.aux-services</name>
+<value>mapreduce_shuffle</value>
+</property>
+<property>
+   <name>yarn.nodemanager.aux-services.mapreduce.shuffle.class</name>
+   <value>org.apache.hadoop.mapred.ShuffleHandler</value>
+</property>
+</configuration>
+
+mapred-site.xml 
+
+ <configuration>
+
+     <property>
+         <name>mapreduce.framework.name</name>
+         <value>yarn</value>
+     </property>
+     
+        <property>
+         <name>mapreduce.map.memory.mb</name>
+         <value>1536</value>
+     </property>
+       <property>
+         <name>mapreduce.map.java.opts</name>
+         <value>-Xmx1024M</value>
+     </property>
+           <property>
+         <name>mapreduce.reduce.memory.mb</name>
+         <value>3072</value>
+     </property>
+            <property>
+         <name>mapreduce.reduce.java.opts</name>
+         <value>-Xmx2560M</value>
+     </property>
+             <property>
+         <name>mapreduce.task.io.sort.mb</name>
+         <value>512</value>
+     </property>
+               <property>
+         <name>mapreduce.task.io.sort.factor</name>
+         <value>100</value>
+     </property>
+              <property>
+         <name>mapreduce.reduce.shuffle.parallelcopies</name>
+         <value>50</value>
+         
+     </property>
+     <property>
+<name>mapreduce.jobhistory.address</name>
+<value>192.168.193.132:10020</value>
+</property>
+<property>
+<name>mapreduce.jobhistory.webapp.address</name>
+<value>192.168.193.132:19888</value>
+</property>
+
+</configuration>
+
+132上
+cd etc/hadoop/ 
+scp 到所有节点
+scp jdk-7u45-linux-x64.tar.gz hadoop@192.168.193.134:/ciccdev/hadoop
+scp hadoop-2.4.0.tar.gz hadoop@192.168.193.134:/ciccdev/hadoop
+scp  mapred-site.xml hdfs-site.xml hadoop-env.sh yarn-site.xml  core-site.xml hadoop@192.168.193.134:/ciccdev/hadoop/hadoop-2.4.0/etc/hadoop
+
+
+
+配置所有节点环境变量
+export HADOOP_COMMON_HOME=/ciccdev/hadoop/hadoop-2.4.0
+export HADOOP_HDFS_HOME=/ciccdev/hadoop/hadoop-2.4.0
+export HADOOP_MAPRED_HOME=/ciccdev/hadoop/hadoop-2.4.0
+export HADOOP_YARN_HOME=/ciccdev/hadoop/hadoop-2.4.0
+export HADOOP_CONF_DIR=/ciccdev/hadoop/hadoop-2.4.0/etc/hadoop
+export YARN_CONF_DIR=/ciccdev/hadoop/hadoop-2.4.0/etc/hadoop
+export JAVA_HOME=/ciccdev/hadoop/jdk1.7.0_45
+export PATH=$JAVA_HOME/bin:$HADOOP_HDFS_HOME/bin:$HADOOP_HDFS_HOME/sbin:$PATH
+export HADOOP_ROOT_LOGGER=INFO,console
+cd  $HADOOP_COMMON_HOME
+
+所有节点添加 /etc/hosts
+192.168.193.132       bjnppb01.site bjnppb01
+
+192.168.193.136 bjnpdt01 bjnpdt01.site
+192.168.193.174 bjnptes2.bitest.np.cicc bjnptes2
+192.168.193.173 bjnptest1.np.cicc bjnptest1
+192.168.193.134 bjnpif01.site bjnpif01
+
+132上 格式化 hdfs
+hdfs namenode -format  cicchdfs  
+132  启动服务
+./sbin/hadoop-daemon.sh --config $HADOOP_CONF_DIR --script hdfs start namenode
+./sbin/yarn-daemon.sh  --config $HADOOP_CONF_DIR start resourcemanager
+./sbin/mr-jobhistory-daemon.sh start historyserver --config $HADOOP_CONF_DIR
+./sbin/yarn-daemon.sh start proxyserver --config $HADOOP_CONF_DIR
+
+134/136/173/174  启动服务
+./sbin/hadoop-daemon.sh --config $HADOOP_CONF_DIR --script hdfs start datanode
+./sbin/yarn-daemon.sh  --config $HADOOP_CONF_DIR start nodemanager
+检查 hdfs 状态
+hdfs dfsadmin -report  (dfs.hosts 设置允许的datanode,dfs.hosts.exclude设置禁止的datanode)
+检查 yarn 状态
+yarn node -list
+查看当前job
+yarn application -list
+查看job queue
+hadoop queue -list
+
+
+停止 
+sbin/hadoop-daemon.sh --config $HADOOP_CONF_DIR --script hdfs stop namenode
+sbin/hadoop-daemon.sh --config $HADOOP_CONF_DIR --script hdfs stop datanode
+sbin/yarn-daemon.sh --config $HADOOP_CONF_DIR stop resourcemanager
+sbin/yarn-daemon.sh --config $HADOOP_CONF_DIR stop nodemanager
+sbin/mr-jobhistory-daemon.sh stop historyserver --config $HADOOP_CONF_DIR
+sbin/yarn-daemon.sh stop proxyserver --config $HADOOP_CONF_DIR
+
+
+通常建议每个disk每个core 2个container 
+# of containers = min (2*CORES, 1.8*DISKS, (Total available RAM) /MIN_CONTAINER_SIZE)
+IN_CONTAINER_SIZE is 2048M if RAM>24G
+查看example
+ yarn jar hadoop-mapreduce-examples-2.4.0.jar 
+测试hdfs性能
+ yarn jar hadoop-mapreduce-client-jobclient-2.4.0-tests.jar  TestDFSIO -write -nrFiles 4 -fileSize 1000
+  yarn jar hadoop-mapreduce-client-jobclient-2.4.0-tests.ja  TestDFSIO -read -nrFiles 4 -fileSize 1000
+
+In Hadoop 1 the death of the Job Tracker would result in the loss of all jobs -- both
+running and queued. With a YARN MapReduce job, the equivalent to the Job Tracker
+is the Application Master
+
+优化内存使用
+In mapred-site.xml:
+mapreduce.map.memory.mb
+mapreduce.reduce.memory.mb
+
+These are the hard limits enforced by Hadoop on each mapper or reducer task.
+mapreduce.map.java.opts
+mapreduce.reduce.java.opt
+
+In yarn-site.xml:
+
+yarn.scheduler.minimum-allocation-mb
+The smallest container that YARN will allow.
+
+yarn.scheduler.maximum-allocation-mb
+The largest container that YARN will allow.
+
+yarn.nodemanager.resource.memory-mb
+The amount of physical memory (RAM) for Containers on the compute node.
+10%的资源能用给 Application Master Container
+每一个 input split  生成一个mapper程序，一般只有一个reduce程序
+reducer阶段主要做三个事情:1.Shuffle(combine same key to same reducer)2.Sort3.reduce
+
+Hadoop Pipes is the name of the C++ interface to Hadoop MR
+
+
+
+错误 时间未同步
+nauthorized request to start container. This token is expired. current time is 1638102190908 found 1404714419145

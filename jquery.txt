@@ -1,0 +1,2684 @@
+20160407
+$('#project\\.id') 可以选择带.的id  比如 project.id
+
+siteMesh 2.4使用
+
+在web.xml中
+<filter>
+        <filter-name>sitemesh</filter-name>
+        <filter-class>com.opensymphony.module.sitemesh.filter.PageFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>sitemesh</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    WEB-INF下新建decorators.xml文件：
+    
+    <?xml version="1.0" encoding="utf-8"?>
+<decorators defaultdir="/WEB-INF/layouts/">
+    <!-- 此处用来定义不需要过滤的页面 -->
+    <excludes>
+        <pattern>/static/*</pattern>
+    </excludes>
+
+    <!-- 用来定义装饰器要过滤的页面 -->
+    <decorator name="default" page="default.jsp">
+        <pattern>/*</pattern>
+    </decorator>
+</decorators>
+
+<%@ page contentType="text/html;charset=UTF-8"%>
+<%@ taglib prefix="sitemesh" uri="http://www.opensymphony.com/sitemesh/decorator" %>  
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+
+<c:set var="ctx" value="${pageContext.request.contextPath}" />
+
+default.jsp
+
+<!DOCTYPE html>
+<html>
+<head>
+<title>QuickStart示例:<sitemesh:title/></title>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta http-equiv="Cache-Control" content="no-store" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="0" />
+
+<link type="image/x-icon" href="${ctx}/static/images/favicon.ico" rel="shortcut icon">
+<link href="${ctx}/sc/bootstrap/2.3.0/css/bootstrap.min.css" type="text/css" rel="stylesheet" />
+<link href="${ctx}/sc/jquery-validation/1.11.0/validate.css" type="text/css" rel="stylesheet" />
+<link href="${ctx}/css/base/default.css" type="text/css" rel="stylesheet" />
+<script src="${ctx}/sc/jquery/jquery-1.9.1.min.js" type="text/javascript"></script>
+<script src="${ctx}/sc/jquery-validation/1.11.0/jquery.validate.min.js" type="text/javascript"></script>
+<script src="${ctx}/sc/jquery-validation/1.11.0/messages_bs_zh.js" type="text/javascript"></script>
+
+<sitemesh:head/>
+</head>
+
+<body>
+    <div class="container">
+        <%@ include file="/WEB-INF/layouts/header.jsp"%>
+        <div id="content">
+            <sitemesh:body/>
+        </div>
+        <%@ include file="/WEB-INF/layouts/footer.jsp"%>
+    </div>
+    <script src="${ctx}/sc/bootstrap/2.3.0/js/bootstrap.min.js" type="text/javascript"></script>
+</body>
+</html>
+
+
+<sitemesh:title/> 会自动替换为被过滤页面的title。
+<sitemesh:head/> 会把被过滤页面head里面的东西（除了title）放在这个地方。
+<sitemesh:body/> 被过滤的页面body里面的内容放在这里。
+在content的上下引入了header和footer。
+
+
+sitemesh3
+
+<web-app>
+
+  ...
+
+  <filter>
+    <filter-name>sitemesh</filter-name>
+    <filter-class>org.sitemesh.config.ConfigurableSiteMeshFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>sitemesh</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+  
+</web-app>
+
+sitemesh3.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<sitemesh>
+    <!-- 指明满足“/*”的页面，将被“/WEB-INF/views/decorators/decorator.html”所装饰 -->
+    <mapping path="/*" decorator="/WEB-INF/views/decorators/decorator.html" />
+
+    <!-- 指明满足“/exclude.jsp*”的页面，将被排除，不被装饰 -->
+    <mapping path="/exclude.jsp*" exclue="true" />
+</sitemesh>
+
+decorator.html
+
+<!DOCTYPE html>
+<html>
+<head>
+<title>
+    <sitemesh:write property='title' /> - ltcms
+</title>
+<sitemesh:write property='head' />
+</head>
+<body>
+    <header>header</header>
+    <hr />
+    demo.html的title将被填充到这儿：
+    <sitemesh:write property='title' /><br />
+    demo.html的body将被填充到这儿：
+    <sitemesh:write property='body' />
+    <hr />
+    <footer>footer</footer>
+</body>
+</html>
+
+
+
+20150709
+jqgrid celledit的时候，如果cell处于edit状态，则不能拿到值，只能拿到<input html之类的，
+可以在取值之前 调用   	$('#celltbl').jqGrid("editCell", 0, 0, false); 即可
+
+jquery validation对于input域，可以直接在 class里面加上required就行，但是select,必须用rule的方式添加
+$("#dividendTypeForm").validate({
+		ignore: '',
+		rules: {
+			security:  'validateSelect2',
+//			originalCurrency: {required:true},
+ 			currency:  {required:true}
+ 			}
+
+20150527
+select2 用法
+
+html  <div id="e1">  </div>
+后台传回数据格式 [{"id":"CON123","value":"合约1"},{"id":"CON1234","value":"合约2"}]
+
+ //初始化  后台的数据库通过 DataServiceController 获取 
+            $("#e1").select2({
+                placeholder: "Search for a deal",
+                 allowClear: true,
+                minimumInputLength: 2,
+                ajax: { // instead of writing the function to execute the request we use Select2's convenient helper
+                    url: "/odts-hk/data/autoComplete?dictType=CONTRACT&maxRow=50",
+                    dataType: 'json',
+                    quietMillis: 250,
+                   
+                    data: function (term, page) {
+                        return {
+                           term: term, // search term
+                        };
+                    },
+                    results: function (data) {
+                        return {
+                            results: $.map(data, function (item) {
+                                return {
+                                    text: item.value,
+                                    id: item.id
+                                }
+                            })
+                        }
+                    },
+                    cache: true
+                },
+              
+            });
+// 如果是edit页面,已经有值，就赋予一个初始化的值
+            $("#e1").select2("data",{id:"123",text:"test"});
+          
+//注册select change事件，可能把新的选择放到一个hidden的input域，方便form传递到后台
+  $("#e1")
+            .on("change", function(e) { 
+             alert("change selected "+$("#e1").select2("val")); })
+
+设置为readonly
+  	$("#e1").select2("readonly",true);
+
+20150317
+
+跨域访问资源 CORS ，避免使用jsonp  CORS支持post google的api支持CORS
+服务器端对于CORS的支持，主要就是通过设置Access-Control-Allow-Origin来控制
+tomcat启用CORS(7.0.41)之后
+
+<filter>
+  <filter-name>CorsFilter</filter-name>
+  <filter-class>org.apache.catalina.filters.CorsFilter</filter-class>
+</filter>
+<filter-mapping>
+  <filter-name>CorsFilter</filter-name>
+  <url-pattern>/*</url-pattern>
+</filter-mapping>
+
+nginx启用CORS
+map $http_origin $cors_header {
+    default "";
+    "~^https?://[^/]+\.example\.com(:[0-9]+)?$" "$http_origin";
+}
+
+server {
+    location / {
+        add_header Access-Control-Allow-Origin $cors_header;
+        try_files $uri $uri/ /index.php;
+    }
+  }
+  
+ ajax写法 带上 withCredentials，cookie就能发送到服务器
+ 
+   xhrFields: {
+    withCredentials : true
+    },
+    
+    
+
+html5
+在HTML5中，任何以data-开始的都是自定义属性，通常它用来实现一些HTML里没有明确定义的元素，把用户自定义的属性应用到代码中。
+新增加标签
+用于绘画的 canvas 元素
+用于媒介回放的 video 和 audio 元素
+对本地离线存储的更好的支持
+新的特殊内容元素，比如 article、footer、header、nav、section
+新的表单控件，比如 calendar、date、time、email、url、search
+HTML5 提供了两种在客户端存储数据的新方法：
+localStorage - 没有时间限制的数据存储  localStorage.lastname="Smith";
+sessionStorage - 针对一个 session 的数据存储 sessionStorage.lastname="Smith";
+可以使用application cache让浏览器缓存页面，提高离线性能
+支持通过webwork多线程运行js程序 web worker 是运行在后台的 JavaScript，独立于其他脚本  w=new Worker("demo_workers.js");
+新增加 form 域
+email url number range Date pickers (date, month, week, time, datetime, datetime-local) search color
+Autocomplete 只支持自动联想以前输入过的信息，不支持从后台抓取
+支持图像的lazy load,就是scroll到改图像的位置才ajax load
+
+
+F7 主页面link的其他页面不需要在引入js和css，主页面通过ajax的方式动态load其他链接的html 如果使用 <a href="somepage.html" class="external">就不用ajax load
+view包含page,每个page可以有不一样的navbar和toolbar 支持swipe切换tab,也支持swipe out view和swipe out list 
+f7的view就是相当于独立的app，有自己的nav/toolbar/history 需要导航的view需要初始化
+
+Ajax Pages - load pages from different files (default behavior)
+You may create and load Dynamic Pages using JavaScript API
+You may use Inline Pages where all your pages are already in DOM, and nothing additionaly loaded
+You may load pages from Template7 templates
+可以混合使用
+
+显示的内容放在 page-content里面，包含在page里面
+ <div class="views">
+    <!-- Your main view -->
+    <div class="view view-main">
+      <!-- Pages -->
+      <div class="pages">
+        <div class="page" data-page="home">
+          <div class="page-content">
+            ... page content goes here ...
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Another view -->
+    <div class="view another-view">
+      <!-- Pages -->
+      <div class="pages">
+        <div class="page" data-page="home-another">
+          <div class="page-content">
+            ... page content goes here ...
+          </div>
+        </div>
+      </div>
+    </div>          
+  </div>
+  ...
+
+phonegap开发native app也是先用eclipse新建一个android项目，然后修改一些继承啥的
+public class HelloGapActivity extends DroidGap {
+super.loadUrl("file:///android_asset/www/index.html");
+,把相应的html/js/css加到 assets/www ，最后再打包成apk
+
+Mac下需要 Xcode 4.5和iOS6 SDK、Xcode命令行工具、iOS设备。
+最新的cordova 3.0命令行下面支持在mac os下面同时build ios/android/windows等等所有的app
+
+20141125
+
+NPAPI netscape 插件，IE5.5以下，Firefox/Chrome都支持，现在要逐渐被取代了
+google 用 Native Client 来替代 
+
+http://todomvc.com/ 用各种js框架实现相同的功能
+
+20141112
+script可以移步加载，不影响页面的显示，否则会等到js都下载完成后再绘制页面
+ HTTP1.1中启用Cache-Control 来控制页面的缓存与否，这里介绍几个常用的参数：
+
+    no-cache，浏览器和缓存服务器都不应该缓存页面信息；
+    public，浏览器和缓存服务器都可以缓存页面信息；
+    no-store，请求和响应的信息都不应该被存储在对方的磁盘系统中；
+    must-revalidate，对于客户机的每次请求，代理服务器必须想服务器验证缓存是否过时；
+浏览器总是优先使用cache-control，如果没有cache-control才考虑Expires  
+ETag是实体标签（Entity Tag）的缩写， 根据实体内容生成的一段hash字符串（类似于MD5或者SHA1之后的结果），可以标识资源的状态。 当资源发送改变时，ETag也随之发生变化。
+
+ETag是Web服务端产生的，然后发给浏览器客户端。浏览器客户端是不用关心Etag是如何产生的。
+
+为什么使用ETag呢？ 主要是为了解决Last-Modified 无法解决的一些问题。
+1 某些服务器不能精确得到文件的最后修改时间， 这样就无法通过最后修改时间来判断文件是否更新了。
+2. 某些文件的修改非常频繁，在秒以下的时间内进行修改. Last-Modified只能精确到秒。
+3. 一些文件的最后修改时间改变了，但是内容并未改变。 我们不希望客户端认为这个文件修改了。
+CTRL+F5强制刷新浏览器，或者设置IE。  可以让浏览器不使用缓存。
+
+1. 浏览器发送Http request, 给Web 服务器， header中带有Cache-Control: no-cache.   明确告诉Web服务器，客户端不使用缓存。 
+2. Web服务器将把最新的文档发送给浏览器客户端. 
+Pragma: no-cache的作用和Cache-Control: no-cache一模一样。 都是不使用缓存。 
+Pragma: no-cache 是HTTP 1.0中定义的， 所以为了兼容HTTP 1.0. 所以会同时使用Pragma: no-cache和Cache-Control: no-cache
+
+按F5刷新浏览器， 浏览器会去Web服务器验证缓存。
+如果是在地址栏输入网址然后回车，浏览器会"直接使用有效的缓存", 而不会发http request 去服务器验证缓存，这种情况叫做缓存命中，如下图
+
+多用ajax get,因为用post会有两次通信，会先发送head
+js/css放在独立合并文件，可以cache，减少传送次数
+
+使用YUI Compressor 压缩，或者jsmin 压缩
+DOMContentLoaded  页面文档完全加载并解析完毕之后,会触发DOMContentLoaded事件，HTML文档不会等待样式文件,图片文件,子框架页面的加载(load事件可以用来检测HTML页面是否完全加载完毕(fully-loaded))。
+
+
+
+设置cookie的时候如果设置HttpOnly =true属性，则js脚本无法读取，只能浏览器发送出去，安全一点
+可以通过mac地址和session id绑定的方式来做到更安全
+20141112
+使用 angularjs ，业界公认的最好的移动 web app 框架。?
+http://www.zhihu.com/question/22284218
+Angular 更适合于CRUD的管理系统开发。  Angular.JS在页渲染方面是慢的，需要对DOM做额外一些工作，需要监察绑定数据的变化
+所以我认为，Angular的存在，基本上不是抢jQuery的饭碗，而是要抢ExtJS的。回忆一下用ExtJS时候遇到的问题，界面部分的代码繁杂，UI人员基本没法参与，现在换成Angular，是不是好得多了，只要认真封装几个控件，万事大吉。至于说性能，难道ExtJS的性能很好吗？
+
+2014年我们团队折腾了ionic一年，基本上实现了使用一套js代码支撑了Android Phone，pad，iPad，iPhone四个平台，80%的html和js代码复用，写了大量的Cordova插件实现原生功能，整体来看基于AngularJs的ionic框架还是比较给力，
+
+angular最大的贡献是定义了一个大型应用的基础结构。它的一切手段（依赖注入，Service等等）都是为这一目的而实现的。
+
+综上, 据说angularjs可以完成绝大部分以前jquery完成的工作, 而也有自己的模版引擎语法. 
+所以, 使用angularjs后, zepto.js 和dot.js这两个可能也可以省掉. 使用angularjs后, 是否需要requirejs也有待讨论. angularjs资料
+在Web开发中，我们总需要将变化的数据实时反应到UI上，这时就需要对DOM进行操作。而复杂或频繁的DOM操作通常是性能瓶颈产生的原因
+
+React是一个全新思路的前端UI框架，它完全接管了UI开发中最为复杂的局部更新部分，擅长在在复杂场景下保证高性能；同时，它引入了基于组件的开发思想，从另一个角度来重新审视UI的构成。通过这种方法，不仅能够提高开发效率，而且可以让代码更容易理解，维护和测试
+Asynchronous Module Definition (AMD) require js就是用来实现AMD的，可以实现js的依赖管理和异步加载
+RequireJS 和 SeaJS 则是模块加载器，倡导的是一种模块化开发理念，核心价值是让 JavaScript 的模块化开发变得更简单自然。
+
+angular 本身是一个经历了多年逐渐搭建起来的项目，使得 angular 的基础结构都很别扭，不如各种如 directive，service，filter 在创建的形式上都不一样，return 的东西各有各的规则，书写起来也挺费劲，虽然有各种的 generator，但你真正用的时候发现很多 generator 还要自己搞。
+所以2.0 是 angular 不可避免的，但有带来一个问题，2.0 不向前兼容，而且2.0 准备用 atscript 这个语言，这个真不一定是什么好事，另外1.0 只维护2年，后面1.0 的社区支持未来将完全都过时了，包括组件，库，问答，等等，这个是 angular 未来非常大的问题，个人感觉大于 python2 -> python所存在的问题
+
+Epoxy is an elegant and extensible data binding library for Backbone.js; 
+backbone+reactjs+
+（如何进行高性能的复杂DOM操作通常是衡量一个前端开发人员技能的重要指标）。React为此引入了虚拟DOM（Virtual DOM）的机制：在浏览器端用Javascript实现了一套DOM API。基于React进行开发时所有的DOM构造都是通过虚拟DOM进行，每当数据变化时，React都会重新构建整个DOM树，然后React将当前整个DOM树和上一次的DOM树进行对比，得到DOM结构的区别，然后仅仅将需要变化的部分进行实际的浏览器DOM更新。而且React能够批处理虚拟DOM的刷新，在一个事件循环（Event Loop）内的两次数据变化会被合并，例如你连续的先将节点内容从A变成B，然后又从B变成A，React会认为UI不发生任何变化，而如果通过手动控制，这种逻辑通常是极其复杂的。尽管每一次都需要构造完整的虚拟DOM树，但是因为虚拟DOM是内存数据，性能是极高的，而对实际DOM进行操作的仅仅是Diff部分，因而能达到提高性能的目的。这样，在保证性能的同时，开发者将不再需要关注某个数据的变化如何更新到一个或多个具体的DOM元素，而只需要关心在任意一个数据状态下，整个界面是如何Render的。
+
+20140915
+WowWindow is an alternative to Lightbox, 
+for jQuery, that is much more fun and powerful. This modal window script uses CSS3 transformations
+ to display the window, 
+ 
+后台可以像正常返回view一样返回 html/js/css，然后能自动显示和处理
+
+
+20140827
+
+用sitemesh来统一做footer/banner的配置，通过filter拦截改写response实现，很简单
+
+public void doFilter(ServletRequest request, ServletResponse response,
+       FilterChain chain) 
+       throws java.io.IOException, javax.servlet.ServletException
+{
+    long start = System.currentTimeMillis();
+    System.out.println("Milliseconds in: " + start);  request被servlet处理之前执行
+    chain.doFilter(request, response);
+    long end = System.currentTimeMillis();         request被servlet处理之后返回客户之前执行
+    System.out.println("Milliseconds out: " + end);
+}
+
+可以通过 HttpServletResponseWrapper 来对 response的内容做修改像siteMesh一样
+
+   import java.io.CharArrayWriter;
+   import java.io.PrintWriter;
+   import javax.servlet.http.HttpServletResponse;
+   import javax.servlet.http.HttpServletResponseWrapper;
+  
+   /**
+   * 一个对response的包装器，将response的输出流封装在一个大的字符数组里便于修改！
+   * <P>
+   * 在过滤器中使用的时候应该这样使用：
+   * CharArrayWrapper wrapper = new CharArrayWrapper((HttpServletResponse)response);
+   * //这步很重要，将调用资源将输出流累计在我们的CharArrayWrapper中
+   * chain.doFilter(request, wrapper);
+   * String result = wrapper.toString(); // 获取完整的输出流
+   * …… // 处理字符串
+   * PrintWriter out = response.getWriter(); // 输出结果
+   * out.write(responseString);
+   * out.close();
+   *
+   *  
+   */
+   public class CharArrayWrapper extends HttpServletResponseWrapper
+   ...{
+       private CharArrayWriter charWriter;
+  
+       /**
+        * 包装器初始化
+        * <P>
+        * 首先这个包装器将调用父类的构造方法，并设置这些方法如setHeader, setStatus,
+        * addCookie等
+        * <P>
+        * 另外将新建立一个字符输出流来执行response的响应输出操作.
+        */
+       public CharArrayWrapper(HttpServletResponse response)
+       ...{
+           super(response);
+           charWriter = new CharArrayWriter();
+       }
+       
+       public PrintWriter getWriter()
+       ...{
+           return new PrintWriter(charWriter);
+       }
+  
+       /**
+        * 将缓冲区的字符转换成一个字符串返回.
+        * <P>
+        * 需要注意的是不要对同一个包装器多次调用该方法，否则将每次返回一个新的字符串！
+        */
+       public String toString()
+       ...{
+           return charWriter.toString();
+       }
+  
+       public char[] toCharArray()
+       ...{
+           return charWriter.toCharArray();
+       }
+   }
+
+    然后我们在filter中就像代码前的注释一样使用就可以了,如下:
+       public void doFilter(ServletRequest req, ServletResponse resp,
+               FilterChain fc) throws IOException, ServletException
+       ...{
+               HttpServletRequest httpReq = (HttpServletRequest) req;
+               
+               // 使用CharArrayWrapper包装器进行输出过滤
+               CharArrayWrapper wrapper = new CharArrayWrapper(httpResp);
+               fc.doFilter(req, wrapper);
+               String result = wrapper.toString(); // 获取返回结果
+               ......//处理返回结果
+               PrintWriter out = httpResp.getWriter();
+               out.write(result);
+               out.close(); //输出处理后的结果
+        }
+
+将 HttpServletRequestWrapper 传递给链条中的下一位，filter可以通过wrapper改变request中的任意值。
+将 HttpServletResponseWrapper 传递给链条中的下一位，filter可以通过wrapper来拦截后续filter或servlet对response的修改。
+
+@Override
+public void doFilter(ServletRequest request, ServletResponse response,
+                     FilterChain chain
+                     ) throws IOException, ServletException {
+  HttpServletRequest httpRequest = (HttpServletRequest) request;
+  // if the user is already authenticated, don't override it
+  if (httpRequest.getRemoteUser() != null) {
+    chain.doFilter(request, response);
+  } else {
+    HttpServletRequestWrapper wrapper = 
+        new HttpServletRequestWrapper(httpRequest) {
+      @Override
+      public Principal getUserPrincipal() {
+        return WEB_USER;
+      }
+      @Override
+      public String getRemoteUser() {
+        return WEB_USERNAME;
+      }
+    };
+    chain.doFilter(wrapper, response);
+  }
+}
+
+20140805
+<input type="text" name="a" value="1" id="a" menu_id="123" />   设置属性          
+$("#a").attr("menu_id")  读取属性
+
+
+20140627
+bootstrap实现流式原理是 有 @media 关键字可以用来根据屏幕尺寸和device-pixel-ratio来激活使用哪个css
+@media screen and (min-width: 320px) and (max-width : 479px)
+
+20140422
+AJAX跨域 原理是利用   <script src="http://127.0.0.1:8081/test.js">  js可以是远程的任意一个js文件,这样就能实现跨域了
+Jsonp原理：
+首先在客户端注册一个callback, 然后把 callback 的名字传给服务器。
+此时，服务器先生成 json 数据。
+然后以 javascript 语法的方式，生成一个 function , function 名字就是传递上来的参数 jsonp.
+最后将 json 数据直接以入参的方式，放置到 function 中，这样就生成了一段 js 语法的文档，返回给客户端。
+客户端浏览器，解析script标签，并执行返回的 javascript 文档，此时数据作为参数，传入到了客户端预先定义好的 callback 函数里.
+（动态执行回调函数）
+
+  <% 
+response.setContentType("application/json");
+String callbackName=request.getParameter("callbackFunction");
+String returnMessasge=callbackName+"('hi5')";
+response.getWriter().write(returnMessasge);
+System.out.println("returned"+returnMessasge);
+%>
+  
+  <script >
+
+function callback(test)
+{
+alert("i'm call back " +test);
+}
+	
+</script>
+<script src="js/jquery-2.0.3.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/docs.min.js"></script>
+
+    <script >
+function clicked()
+	{
+	alert("you clicked me");
+	$.ajax({
+            type: "POST",
+            dataType:"jsonp",
+            jsonp: "callbackFunction",
+            jsonpCallback:"callback",
+            url: "http://127.0.0.1:8081/w.jsp",
+            success: function (data) {
+                // Play with returned data in JSON format
+               //alert("success"+msg);
+            },
+            error: function (msg) {
+             //   alert("error"+msg);
+            }
+        });
+}
+
+或者直接用这样的代码也能执行
+  var eleScript= document.createElement("script");
+				eleScript.type = "text/javascript";
+				eleScript.src = "http://127.0.0.1:8081/w.jsp?callbackFunction=callback";
+				document.getElementsByTagName("HEAD")[0].appendChild(eleScript);       
+JSONP即JSON with Padding。由于同源策略的限制，
+XmlHttpRequest只允许请求当前源（域名、协议、端口）的资源。如果要进行跨域请求， 我们可以通过使用html的script标记来进行跨域请求，并在响应中返回要执行的script代码，
+其中可以直接使用JSON传递javascript对象。 这种跨域的通讯方式称为JSONP。
+可以说jsonp的方式原理上和<script src="http://跨域/...xx.js"></script>是一致的(qq空间就是大量采用这种方式来实现跨域数据交换的)。JSONP是一种脚本注入(Script Injection)行为，所以有一定的安全隐患。
+那jquery为什么不支持post方式跨域呢？ 
+也可以说get方式的跨域是合法的，post方式从安全角度上，被认为是不合法的，万不得已还是不要剑走偏锋。				
+				
+websocket也支持跨域
+直接用 wsocket = new SockJS("http://127.0.0.1:8080/springweb/app/myHandler"); 就可以
+如何让 sockjs只支持ajax long polling  wsocket = new SockJS("/springweb/app/myHandler","", {protocols_whitelist: ['jsonp-polling','xhr-polling']});
+
+web.xml里面出现的filter和serverlet都必须加上 async 支持
+ <filter>
+    <filter-name>httpMethodFilter</filter-name>
+    <filter-class>org.springframework.web.filter.HiddenHttpMethodFilter</filter-class>
+     <async-supported>true</async-supported>
+  </filter>
+
+<servlet>
+    <servlet-name>spring</servlet-name>
+    <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+    <init-param>
+      <param-name>contextConfigLocation</param-name>
+      <param-value>/WEB-INF/spring.xml</param-value>
+    </init-param>
+    <load-on-startup>1</load-on-startup>
+    <async-supported>true</async-supported>
+  </servlet>
+
+
+使用sockjs+spring同时支持ajax和websocket，一套程序就能支持两种协议
+<!DOCTYPE html>
+<html>
+<head>
+<script src="js/sockjs.js">
+
+  </script>
+   <script src="js/jquery-2.0.3.min.js"></script>
+<meta charset="GB18030">
+<script >
+wsocket = new SockJS("/springweb/app/myHandler");
+wsocket.onmessage = function(e) {
+	console.log("<<< " + e.data);
+};
+wsocket.onopen = function() {
+	console.log("Connection opened. (" + wsocket.protocol + ")");
+    
+};
+wsocket.onclose = function(e) {
+	console.log("Connection closed.  Reason: (" + e.code + ") " + e.reason);
+};
+function clickMe()
+{
+	wsocket.send("hello");	}
+	
+	
+function clickAjax()
+{  var toServer='{"id":1,"name":"mary"}' ;
+	$.ajax({ 
+        type:"DELETE", 
+        url:"/springweb/app/restful/1", 
+        dataType:"json",      
+        contentType:"application/json",               
+        data:toServer, 
+        success:function(data){ 
+        	console.log(data);
+        } 
+     }); 
+	}
+
+function clickServlet()
+{  var toServer='{"id":1,"name":"mary"}' ;
+	$.ajax({ 
+        type:"DELETE", 
+        url:"/springweb/myservlet", 
+        dataType:"json",      
+        contentType:"application/json",               
+        data:toServer, 
+        success:function(data){ 
+        	console.log(data);
+        } 
+     }); 
+	}
+</script>
+<title>Insert title here</title>
+</head>
+<body>
+<form action="/springweb/app/restful/1" method="POST">
+  <p>First name: <input type="text" name="fname" /></p>
+  <p>Last name: <input type="text" name="lname" /></p>
+  <input type="submit" value="Submit" />
+  <input type="hidden" name="_method" value="GET" />
+</form>
+<input type="button" onclick="clickMe()" value="send message" />
+<input type="button" onclick="clickAjax()" value="send ajax message" />
+<input type="button" onclick="clickServlet()" value="send Servlet message" />
+
+</body>
+</html>
+
+
+package com.test;
+import org.springframework.web.socket.CloseStatus;
+import org.springframework.web.socket.WebSocketHandler;
+import org.springframework.web.socket.WebSocketSession;
+import org.springframework.web.socket.TextMessage;
+import org.springframework.web.socket.handler.TextWebSocketHandler;
+import org.apache.log4j.Logger;
+
+public class MyHandler  extends TextWebSocketHandler {
+	static Logger log = Logger.getLogger(MyHandler.class.getName());
+
+	 	    @Override
+		    public void handleTextMessage(WebSocketSession session, TextMessage message) 
+	 	    {
+	 	    	
+	 	    	log.info("message arrived"+message);
+	 	    	TextMessage m1=new TextMessage("retruned from server");
+	 	    	try {
+	 	    	session.sendMessage(m1);
+	 	    	}
+	 	    	catch(java.lang.Exception e)
+	 	    	{
+	 	    		e.printStackTrace();
+	 	    	}
+		       
+		    }
+	 	    @Override
+	 	    public  void afterConnectionEstablished(WebSocketSession wsSession)
+	 	    {
+	 	   	log.info("connection afterConnectionEstablished");
+ 	   		}
+	 	    
+	 	    @Override
+	 	    public  void afterConnectionClosed(WebSocketSession wsSession, CloseStatus status)
+	 	    {
+	 	   	log.info("connection closed");
+ 	   		}
+	 	    
+}
+
+
+
+
+ 
+20140401
+
+使用type="text/template 的方式(这是页面显示的一种模板),browser就不会解析显示它，可以等js 脚本来自己处理
+ <script type="text/template" id="stats-template">
+    <% if (done) { %>
+      <a id="clear-completed">Clear <%= done %> completed <%= done == 1 ? 'item' : 'items' %></a>
+    <% } %>
+    <div class="todo-count"><b><%= remaining %></b> <%= remaining == 1 ? 'item' : 'items' %> left</div>
+  </script>
+  
+  
+ backbone tutorial 
+ 
+  http://arturadib.com/hello-backbonejs/docs/1.html
+  backbone module只能用  item1.set("part1","hi1"); item.get("part1")方式访问属性
+  或者   item1.set({
+	        part1: "part1",
+	        part2:" how are you 2"// modify item defaults
+	      });
+	      
+	  和jqgrid集成 datatype: 'local',
+data:this.collection.toJSON()    
+  
+Backbone's only hard dependency is Underscore.js ( >= 1.4.3). For RESTful persistence, history support via Backbone.Router and DOM manipulation with Backbone.View, include json2.js, and either jQuery ( >= 1.7.0) or Zepto. 
+
+js的顺序很重要！
+underscore.js 必须放到 backbone前面
+<script src="js/jquery-2.0.3.min.js"></script>
+<script src="js/underscore.js"></script>
+<script src="js/backbone.js"></script>
+
+且看这样一段HTML片段：
+<div style="background-color: red" id="name" onclick="alert('');">
+    Jim
+</div>
+这是前端代码全部耦合在一起的例子，下面对它进行MVC解耦。
+ 
+第一步解耦，把View层分离出来：
+<div id="name" class="name" onclick="alert('');">
+    Jim
+</div>
+同时，引入一表示name的css。
+ 第二步解耦，把Controller分离出来：
+<div id="name" class="name" onclick="clickName()">
+    Jim
+</div>
+把点击的行为逻辑转移到一个方法上了。
+ 第三步解耦，把Controller和Model的关联关系剥离出来：
+<div id="name" class="name">
+    Jim
+</div>
+借助JQuery，增加绑定方法，关联div和点击行为：
+$("#name").click(
+    function(){ alert(""); }
+);
+在后端，M和C这样的关联关系有多种实现方式，比如xml配置文件，比如注解，比如规约方式；在前端，这里采用绑定的方式关联。
+ 第四步解耦，借助backbone.js，把数据和模板分离：
+	<script type="text/template" id="name-template">
+    <div id="name" class="name">
+        <%=name%>
+    </div>
+</script>
+增加js代码，渲染模板：
+	window.NameView = Backbone.View.extend({
+    template : _.template($('#name-template').html()),
+    ……
+    render: function() {
+        $(this.el).html(this.template(this.model.toJSON()));
+        return this;
+    }
+});
+而渲染模板的数据通过ajax异步获取。ajax不仅仅给用户带来好的体验，也给前端程序员带来变革，它让前端页面的展示可以拆分为多个步骤，增加了解耦的可能性。
+ 
+至此，原有的单个HTML片段已经解耦成为：M：HTML模型，View：CSS，C：JavaScript方法；同时，M和C之间的映射使用绑定方式关联，M又剥离成为模板和数据两个部分。
+ 
+ 
+
+
+http://code.google.com/p/jquery-i18n-properties/  for html 国际化
+
+dust.js是一个前台页面的template工具，已经由linked接手开发 
+http://linkedin.github.io/dustjs/
+RequireJS 和 SeaJS 都是很不错的模块加载器，两者区别如下：
+两者定位有差异。RequireJS 想成为浏览器端的模块加载器，同时也想成为 Rhino / Node 等环境的模块加载器。SeaJS 则专注于 Web 浏览器端，同时通过 Node 扩展的方式可以很方便跑在 Node 服务器端
+我了解的是，预先配置、适时加载。
+也可以说是主调子模块、子再调依赖模块，以此类推。 
+
+20140307
+bootstrap v3 navbar在android表现不对?
+主要有以下特色：支持所有主流浏览器、12 列栅格布局、响应式设计、样式化的文档以及常用的定制的 jQuery 插件等等
+
+LESS是开源的，其第一个版本由Ruby写成，但在后续的版本当中，Ruby逐渐被替换为JavaScript。受益于JavaScript，LESS可以在客户端上运行（IE6+、Webkit、Firefox），也可以在服务端运行（Node.js、Rhino）
+
+在语法方面，LESS与CSS较为接近，一个合法的CSS代码段本身也是一段合法的LESS代码段。LESS提供变量、嵌套、混合、操作符、函数等一般编程所需的抽象机制。
+
+Sass与LESS都属于CSS的预处理器，都允许通过一定的抽象手段将开发者的意图转化为CSS代码。
+
+LESS受启发于Sass[3]，但Sass被设计为简化、扩展CSS，因此诸如大括号等语法都被移除，但流程控制、继承等概念被引入其中；相反，LESS被设计为更接近于CSS，其语法与CSS本身非常接近，因此一段合法的CSS代码也是一段合法的LESS代码。[4]不过新版本的Sass同样将CSS式语法引入了其中，命名为SCSS（Sassy CSS）
+
+块级元素在浏览器显示时，通常会以新行来开始（和结束）。 
+span元素是内联元素，可用作文本的容器。 请使用 <span> 来组合行内元素，以便通过样式来格式化它们。
+<code> 标签用于表示计算机源代码或者其他机器可以阅读的文本内容。 pre
+Bootstrap 3 使用了一些 HTML5 元素和 CSS 属性。为了让这些正常工作，您需要使用 HTML5 文档类型（Doctype）。
+通过添加 img-responsive class 可以让 Bootstrap 3 中的图片对响应式布局的支持更友好
+
+CSS :before 伪元素在元素之前添加内容,这个伪元素允许创作人员在元素内容的最前面插入生成内容。默认地，这个伪元素是行内元素，不过可以使用属性 display 改变这一点。
+
+为了让布局更具响应性，Bootstrap 做了三件事情：
+1. 修改了网格中列的宽度。
+2. 只要有需要，它就使用堆栈元素，而不是浮动元素。如果您还不清楚什么是堆栈元素，下面来自 w3.org 的表单可能会提供一些帮助：
+    根元素（html）形成了堆栈上下文的根，其他堆栈上下文通过任意定位的元素生成（包括相对定位元素，有一个 'z-index' 的计算值，而不是 'auto'）。堆栈上下文相对与包含的块不是必需的。
+3.要正确地渲染标题和文字它们的尺寸。
+
+
+http://www.cnblogs.com/aehyok/p/3404867.html
+
+col-xs-2 表示用一共这个行占用两列，一共12列
+.col-md-push-4的样式类。（让占有两个列的元素又向右移动了4列那么现在就是占据了第五列和第六列
+
+将任何.table包裹在.table-responsive中即可创建响应式表格，其会在小屏幕设备上（小于768px）水平滚动。当屏幕大于768px宽度时，水平滚动条消失。
+
+弹出框效果很好
+
+
+
+
+
+
+vb webbrowser控件
+
+https://bitbucket.org/geckofx/
+http://stackoverflow.com/questions/12394351/c-sharp-using-geckofx-14-how-to-get-started
+http://www.vbforums.com/showthread.php?692005-Mozilla-Firefox-Gecko-Xulrunner-in-VB-NET-%28versions-14-and-up%29
+或者可以用
+http://www.vbrichclient.com/#/en/Downloads.htm  Its main-purpose is, to decouple from as many MS-COM-dependencies as possible, with the goal in mind,
+to achieve a self-hosting state easier later on, when the accompanying (VB6-compatible) C
+
+
+
+20131230
+移动开发使用
+
+    Backbone.js，负责处理历史记录、用户操作以及为整个JavaScript框定结构 是MVC框架 
+    HTML5Boilerplate，旨在减少不同平台上不一致的渲染默认值带来的影响
+    Zepto ，这个面向移动设备的轻型框架是jQuery的替代方案，可用于DOM（文档对象模型）处理。 支持webkit
+    多用css渲染，少用js
+  Backbone 最适合的应用场景是单页面应用，并且页面上有大量数据模型，模型之间需要进行复杂的信息沟通。Backbone 在这种场景下，能很好的实现模块间松耦合和事件驱动。 其他适用产品还有微博，网易微博的前端设计也是和 Backbone 类似的一个结构。
+  Backbone 的优点和一些经验 Tip：
+  jQuery handles the nitty-gritty details, and Backbone is more high-level.
+  
+  等一等，为了把问题讲清楚，我们还是先假定 Zepto 的执行速度可能比 jQeury 快。我们不希望犯同样的错误，
+  因此，我们将 Zepto 和 jQuery 2 进行对比测试，测试结果是：jQuery 2 每秒执行的操作次数比 Zepto 多。
+  这让 Foundation 版本 5 的执行效率更高，同时让所有用户感受到更好的体验。
+  
+  AngularJS是一款开源JavaScript函式庫，由Google维护，用來協助單一頁面應用程式運行的。它的目标是透過MVC模式（MVC）功能增强基于浏览器的应用，使开发和测试变得更加容易。
+其实如果用了 AngularJS Ember.js 这种 jQuer都基本不用了. 就是都是dom binding. 数据json变化了, 网页数据自动更新.所以也不用jQuery了.
+
+backbone是更好了组织程序结构. 但没有其他任何dom binding的功能. 所以如果小页面反而没有直接用jQuery好.
+1. Backbone.js和Spine.js很相近，核心差不多，只是API不同。框架很小，没有DOM Binding - 需要自己写。Backbone.js应用广泛，也比较成熟，社区比较大。
+2. Knockout.js则是几乎纯粹的DOM Binding，没有一个默认的组织程序的架构。
+3. Ember.js Batman.js Angular.js都比较晚一些，吸取了前两类的优点，既提供DOM Binding，又有MVC架构支持。具体的不同在于DOM Binding的机制，看个人喜好。
+
+
+
+因为之前一直是用Bootstrap进行前端框架的基础进行开发的 但是随着使用的增多 发现这个框架很笨重 而且也由于非常庞大数量的网站使用这个框架 导致网站的个性率不是很强
+
+从JS库来说， Bootstrap 2/3采用的都是更为常见的jQuery，而 Foundation 4采用的是Zepto，Zepto我没有用过，所以无法评判其好坏。
+1- UI Elements
+Foundation has a very limited number of UI elements, Bootstrap have almost everything you can imagine.
+2.Foundation use REMs and Bootstraps use pixels.
+3.
+ 在 foundation 4 的版本中 主打的有三个特点:
+1.移动为先
+开发商ZURB认为是从移动设备开始 你的代码开始适应越来越大的屏幕 直到桌面电脑
+如果non-app first,bootstrap,otherwise foundaaion 
+foundation的UI控件稍微少一点  If you want great level of control with grids you should go with Foundation. For UI/Plugins, Bootstrap is good choice
+F4不支持IE8/Bootstrap 3 支持IE8
+
+
+sencha touch及phonegap在andorid平台上的性能目前还是一个问题，需要时间去解决，开始考虑切换到titanium了。 
+
+
+    View 的划分将页面上的视图元素解耦，粒度细化。View 间通过事件和 Model 通讯，避免了 DOM 事件的滥用。
+    Model 和 Restful 的通讯方式对于后端人员非常友好。
+    MVC 架构清晰， 我有个常年写 Java 没写过 JS 的同事看 Backbone 很快就了解了整体设计，虽然这时候他还是不会写 JS。
+    Collection/Model 抽象了以前杂乱的 AJAX 请求，CRUD 请求变得非常非常方便。
+    强烈建议 View -> Model 单向依赖，世界会美好很多。
+    配上一个模块化加载器例如 SeaJS 会很爽。
+
+Backbone 的一些缺点，或者说一些尚未实现的 Feature：
+
+    Model 层比较简单，如果要支持 One-To-One 或者 One-To-Many 等复杂数据关系时有些力不从心。还有 一个 Model 只能属于一个 Collection 这个设计，页面复杂的时候会很受局限。例如这个问题： http://www.zhihu.com/question/19843899 （补充：Backbone.Relations 插件是这个问题的一个解决方案 https://github.com/PaulUithol/Backbone-relational By zjhiphop）
+    同上，Model 只有基本的 CRUD 操作，不能很好的扩展，Backbone.sync 方法写的不太灵活，要想扩展就得重写 sync 方法。
+    View 层没有很强的 Page 管理机制，比如通过 URL 切换改变整个页面时，页面上尚存的 View 如何处理？直接销毁的话，是否要销毁关联的 Model、Collection？Cache 住？如何管理 Cache？
+    内存管理需要比较小心，缺乏机制避免创建重复 Model。
+    extends override 父类方法的时候得写一串的 SuperClass.prototype.someMethod.apply 什么的，就不能实现个 _super 方法么……
+    对调试非常不友好。
+    作者有代码洁癖（也是加分项），this.$el 大家呼唤了这么久才加上，估计今生也看不到 this._super。
+    更新慢。
+    Backbone.js 的适用场景非常广，无论是 Web-Page 还是 Web-App 都可以应用，但最合适的还是大型的 Web-App，对于中小型项目来讲 Backbone.js 的 MVC 结构还是有点臃肿了，用不好很容易 over design。Backbone.js 是非常典型的 MVC 框架，但是相对于传统的 server 端 MVC 来讲还是有一些特殊的地方的。
+      
+
+
+
+20131108
+
+
+Scenarios 
+                                         Chrome  30.0.1599.69 m         Firefox 25.0
+
+ 
+同一页面连多个不同(12)的websocket         Y                                Y
+多个页面，每个页面连多个不同的websocket   Y                                Y
+多个页面，每个页面连同一websocket         Y                                Y
+同一个页面连多个相同的websocket           Y                                Y
+多个页面，每个页面两多个相同的websocket   Y                                Y
+Notes: Fixfox 可以通过network.websocket.max-connections 设置最大连接数，默认是200
+
+ 
+
+
+
+
+20131109  
+websocket 1.0
+chrome能够看到websocket通讯信息
+websocket 支持text和binary message
+websocket支持的消息类型有  message,close,ping and pong(pong response to ping),ping pong也可能带应用的消息
+和servlet不一样,websocket endpoints 每次新的连接来的时候，就生成一个新的对象 
+Session 接口有方法能够拿到当前所有的连接 比如
+ 
+ 
+ 
+ 
+             if (sess.isOpen())
+               sess.getBasicRemote().sendText(msg);
+         }
+
+，同时也能设置属性 
+ String prev = (String) session.getUserProperties()
+                                    .get("previousMsg");
+      session.getUserProperties().put("previousMsg", msg);
+
+
+
+可以用静态对象来保存所有连接 ，然后做广播用
+import java.io.IOException;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
+
+import javax.websocket.OnClose;
+import javax.websocket.OnError;
+import javax.websocket.OnOpen;
+import javax.websocket.Session;
+import javax.websocket.server.ServerEndpoint;
+
+@ServerEndpoint("/etf")
+public class ETFEndpoint {
+  // private static final Logger logger = Logger.getLogger("ETFEndpoint");
+   /* Queue for all open WebSocket sessions */
+   static Queue<Session> queue = new ConcurrentLinkedQueue<>();
+
+   /* PriceVolumeBean calls this method to send updates */
+   public static void send(double price, int volume) {
+      String msg = "server response";
+      try {
+         /* Send updates to all open WebSocket sessions */
+         for (Session session : queue) {
+            session.getBasicRemote().sendText(msg);
+            
+         }
+      } catch (IOException e) {
+         
+      }
+    }
+   @OnOpen
+   public void openConnection(Session session) {
+      /* Register this connection in the queue */
+      queue.add(session);
+     System.out.println("Connection opened.");
+   }
+
+   @OnClose
+   public void closedConnection(Session session) {
+      /* Remove this connection from the queue */
+      queue.remove(session);
+      System.out.println("Connection remove.");
+
+   }
+
+   @OnError
+   public void error(Session session, Throwable t) {
+      /* Remove this connection from the queue */
+      queue.remove(session);
+      System.out.println("Connection remove.");
+
+   }
+}
+
+
+
+
+
+import java.io.IOException;
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import javax.websocket.OnClose;
+import javax.websocket.OnMessage;
+import javax.websocket.OnOpen;
+import javax.websocket.Session;
+import javax.websocket.server.ServerEndpoint;
+
+import util.HTMLFilter;
+
+@ServerEndpoint(value = "/websocket/chat")
+public class ChatAnnotation {
+
+    private static final String GUEST_PREFIX = "Guest";
+    private static final AtomicInteger connectionIds = new AtomicInteger(0);
+    private static final Set<ChatAnnotation> connections =
+            new CopyOnWriteArraySet<ChatAnnotation>();
+
+    private final String nickname;
+    private Session session;
+
+    public ChatAnnotation() {
+        nickname = GUEST_PREFIX + connectionIds.getAndIncrement();
+    }
+
+
+    @OnOpen
+    public void start(Session session) {
+        this.session = session;
+        connections.add(this);
+        String message = String.format("* %s %s", nickname, "has joined.");
+        broadcast(message);
+    }
+
+
+    @OnClose
+    public void end() {
+        connections.remove(this);
+        String message = String.format("* %s %s",
+                nickname, "has disconnected.");
+        broadcast(message);
+    }
+
+
+    @OnMessage
+    public void incoming(String message) {
+        // Never trust the client
+        String filteredMessage = String.format("%s: %s",
+                nickname, HTMLFilter.filter(message.toString()));
+        broadcast(filteredMessage);
+    }
+
+
+    private static void broadcast(String msg) {
+        for (ChatAnnotation client : connections) {
+            try {
+//                client.session.getBasicRemote().sendText(msg);
+                                client.session.getAsyncRemote().sendText(msg); //异步发送消息，性能更好
+
+            } catch (IOException e) {
+                connections.remove(client);
+                try {
+                    client.session.close();
+                } catch (IOException e1) {
+                    // Ignore
+                }
+                String message = String.format("* %s %s",
+                        client.nickname, "has been disconnected.");
+                broadcast(message);
+            }
+        }
+    }
+}
+
+
+
+
+使用 long poll and websocket 测试 http://localhost:8080/websocket/poll?action=setPrice&market=HKG&symbol=00001&date=2011-12-01%2012:02:01&uid=1&price=102.55
+
+
+当启动异步servlet之后，当前线程结束后，response不会输出，不会提交，只有等 AsyncContext 调用的方法结束后，输出response,调用
+AsyncContext.complete 客户端才能收到返回的数据
+为了让tomcat支持注解扫描，需要把 metadata-complete=true修改为false
+<web-app xmlns="http://java.sun.com/xml/ns/javaee"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
+                      http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+  version="3.0"
+  metadata-complete="false">  这个设置为false，会导致tomcat扫描classpath里面的所有class和jar里面的class是否有 Annotation,导致启动很慢
+  可以设置  ，Tomcat 7 的 Context 配置中，支持一个叫 JarScanner 的元素，可以定制 Jar 包的搜索策略。其缺省配置实现中，有一个属性“scanClassPath”，缺省值为“true”，就是该属性导致 Tomcat 启动过程中解析 Classpath 中的所有类库。如果将这个属性改为“false”，Tomcat 将只解析 WEB-INF\lib 和 WEB-INF\classes\ 中的类库，这样启动速度将大幅提升，内存占用也会降低。
+  
+  
+  
+
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.AsyncContext;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+@WebServlet(urlPatterns={"/asyncservlet"}, asyncSupported=true)
+public class AsyncServlet extends HttpServlet {
+   /* ... Same variables and init method as in SyncServlet ... */
+
+   @Override
+   public void service(HttpServletRequest request, 
+                     HttpServletResponse response) {
+      response.setContentType("text/html;charset=UTF-8");
+      SimpleDateFormat df=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+      
+      System.out.println("primary thread begin "+df.format(new Date()));
+      final AsyncContext acontext = request.startAsync();
+      acontext.start(new Runnable() {
+         public void run() {
+            //String param = acontext.getRequest().getParameter("param");
+            SimpleDateFormat df=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            try{ 
+                System.out.println("task thread begin "+df.format(new Date()));
+
+            Thread.sleep(5000);
+            
+            HttpServletResponse response = (HttpServletResponse)acontext.getResponse();
+            response.getWriter().write("finished");;
+            /* ... print to the response ... */
+         
+            }
+            catch(java.lang.Exception e)
+            {
+            	e.printStackTrace();
+            }
+             acontext.complete();
+             System.out.println("task thread finish "+df.format(new Date()));
+                    } 
+      });
+      System.out.println("primary thread finish "+df.format(new Date()));
+   }
+}
+
+所有请求加入queue里面，其他线程有新的消息时，然后发送回去消息
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.AsyncContext;
+import javax.servlet.AsyncEvent;
+import javax.servlet.AsyncListener;
+
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+@WebServlet(urlPatterns={"/asyncservlet"}, asyncSupported=true)
+public class AsyncServlet extends HttpServlet {
+   /* ... Same variables and init method as in SyncServlet ... */
+	ConcurrentLinkedQueue<AsyncContext>	requestQueue = new ConcurrentLinkedQueue<AsyncContext>();
+   @Override
+   public void service(HttpServletRequest request, 
+                     HttpServletResponse response) {
+      response.setContentType("text/html;charset=UTF-8");
+      SimpleDateFormat df=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+      
+      System.out.println("primary thread begin "+df.format(new Date()));
+      final AsyncContext acontext = request.startAsync();
+      acontext.addListener(new AsyncListener() {
+    	  SimpleDateFormat df=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+          public void onComplete(AsyncEvent ae) throws IOException {
+        	  System.out.println("listener  onComplete"+df.format(new Date()));
+             requestQueue.remove(acontext);
+          }
+          public void onTimeout(AsyncEvent ae) throws IOException {
+             requestQueue.remove(acontext);
+          }
+          public void onError(AsyncEvent ae) throws IOException {
+             requestQueue.remove(acontext);
+          }
+          public void onStartAsync(AsyncEvent ae) throws IOException {
+        	  System.out.println("listener  onStartAsync"+df.format(new Date()));
+          }
+       });
+      requestQueue.add(acontext);
+      
+      acontext.start(new Runnable() {
+         public void run() {
+            //String param = acontext.getRequest().getParameter("param");
+            SimpleDateFormat df=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            try{ 
+                System.out.println("task thread begin "+df.format(new Date()));
+
+            Thread.sleep(5000);
+            for (AsyncContext acontext : requestQueue) {
+                try {
+                   PrintWriter writer = acontext.getResponse()
+                                                .getWriter();
+                  writer.write("finished"+acontext);
+                   acontext.complete();
+                } catch (IOException ex) {}
+             }
+
+    
+            }
+            catch(java.lang.Exception e)
+            {
+            	e.printStackTrace();
+            }
+            //String result = resource.process(param);
+             
+             System.out.println("task thread finish "+df.format(new Date()));
+
+                    } 
+      });
+      System.out.println("primary thread finish "+df.format(new Date()));
+
+   }
+}
+non-blocking IO处理
+
+@WebServlet(urlPatterns={"/asyncioservlet"}, asyncSupported=true)
+public class AsyncIOServlet extends HttpServlet {
+   @Override
+   public void doPost(HttpServletRequest request, 
+                      HttpServletResponse response)
+                      throws IOException {
+      final AsyncContext acontext = request.startAsync();
+      final ServletInputStream input = request.getInputStream();
+      
+      input.setReadListener(new ReadListener() {
+         byte buffer[] = new byte[4*1024];
+         StringBuilder sbuilder = new StringBuilder();
+         @Override
+         public void onDataAvailable() {
+            try {
+               do {
+                  int length = input.read(buffer);
+                  sbuilder.append(new String(buffer, 0, length));
+               } while(input.isReady());
+            } catch (IOException ex) { ... }
+         }
+         @Override
+         public void onAllDataRead() {
+            try {
+               acontext.getResponse().getWriter()
+                                     .write("...the response...");
+            } catch (IOException ex) { ... }
+            acontext.complete();
+         }
+         @Override
+         public void onError(Throwable t) { ... }
+      });
+   }
+}
+
+
+
+20130802
+上述代码的意图是：服务器获得浏览器请求头部中的 If-Modified-Since 时间，这个时间是浏览器询问服务器，它所请求的资源是否过期，如果没过期就返回 304 状态码，告诉浏览器直接使用本地的缓存就可以，
+
+				
+ <% 
+ SimpleDateFormat f2=new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss"); 
+ String ims = request.getHeader("If-Modified-Since"); 
+ if (ims != null) 
+ { 
+ try 
+ { 
+ Date dt = f2.parse(ims.substring(0, ims.length()-4)); 
+ if (dt.after(new Date(2009, 1, 1))) 
+ { 
+ response.setStatus(304); 
+ return; 
+ } 
+ } catch(Exception e) 
+ { 
+
+ } 
+ } 
+ response.setHeader("Last-Modified", f2.format(new Date(2010, 5, 5)) + " GMT"); 
+ %> 
+
+
+
+为了减少传输的数据，压缩是一个不错的选择，而 HTTP 协议支持 GZIP 的压缩格式
+ <Connector  port ="80"  maxHttpHeaderSize ="8192" 
+ maxThreads ="150"  minSpareThreads ="25"  maxSpareThreads ="75" 
+ enableLookups ="false"  redirectPort ="8443"  acceptCount ="100" 
+ connectionTimeout ="20000"  disableUploadTimeout ="true"  URIEncoding ="utf-8"   
+ compression="on" 
+ compressionMinSize="2048" 
+ noCompressionUserAgents="gozilla, traviata" 
+ compressableMimeType="text/html,text/xml" /> 
+ 
+
+20130716
+js div 慢慢消失，通过anmiate(opcatity 来解决)
+
+20130617
+jqgrid API设置多列排序 
+
+通过setGridParam({sortname: ''}) 来设置
+
+sortname as 'firstName asc, lastName'    最后一列的排序方向放到 sortorder里面
+sortorder as 'asc'  
+
+
+20130604
+sortable如果一个list没有值，会导致另外一个拖不过来，原因是没有height了，所以需要设置一个 min-height 和 min-width
+20130509 AJAX 异步超时及错误全局处理
+IE 开始 14:43  持续等待半小时后正常结束
+firefox 14:38  持续等待半小时后正常结束
+firefox AJAX 14:22 持续等待半小时后正常结束
+
+thrownError  Not Found/Internal Server Error/timeout
+$(function() {
+		
+		$.ajaxSetup({timeout:1000});
+		
+	$(document).ajaxError(function(event, jqXHR, ajaxSettings, thrownError) {
+ $( "#log" ).html( "Triggered ajaxError handler."+thrownError);
+});
+
+	});
+
+	function clicked()
+	{
+	alert("you clicked me");
+	$.post('w2.jsp', function(data) {
+$('#return').html(data);
+});
+	}
+	
+	
+20130418
+webapp    deploy方便，开发成本低，使用GPS每次都要提醒授权
+nativeapp 可以访问硬件，速度快
+
+hybrid solutions (Appcelerator, PhoneGap) Appcelerator 对ios支持比较好，对其他平台稍差，phonegap跨平台较好
+phonegap 就是纯粹的html+css开发，可以和第三方libary集成(jqm)，但是appce只能用自己的js
+phonegap deploy方便
+trigger.io 商业版的phonegap,更快
+Cordova phonegap把操作native设备的js开源给apache的
+Titanium (专用js) 移动平台是所有移动开发平台中比较另类的，它将JavaScript和本地库链接在一起，编译成字节码，针对iOS以及Android两个平台分别构建一个软件包。
+xamarin 基于monotouch，通过c#实现跨平台，是native 要钱
+jqmobi 效率高不少，jQueryMobile 最慢，不过JQueryMobile和Sencha胜在更完善的控件库 被intel收购了变成了 App Framework(is a a UI/UX) App Framework 也需要jquery支持
+
+
+
+Adobe公司宣布，他们将不再支持Android 4.1及以上版本的Flash
+例如Gmail、新浪微博、淘宝都是Web App设计的案例
+豆瓣阅读 hybrid app
+
+
+
+webkit的WebView不能很好释放内存，导致内存占用上升，甚至会引起应用的crash
+
+
+此次对比主要集中在对大量数据通信下web app UI性能。通过与Java app相比较，web app的UI性能会比Java app的UI性能差。主要原因是依赖webkit浏览器内核的渲染解析能力。同时在只有一个WebView的情况下，如何控制内存的上涨速度以无法释放内存的情况无缝地重新启动WebView从而不影响用户体验，是一个现实待解决问题。
+在非大数据量且不需要频繁更新UI的情况下，基于wekit浏览器phonegap模式还是可以满足Android开发应用的需求。同时应用的实现的效率还依赖于OPOA开发模式的Javascript基础架构是否强大和高效。
+对于不同分辨率的屏幕，需要通过JS或者通过要集成的框架封装来解决适配的问题。同时由于不同版本的Android所集成的webkit的版本不同，同样也需要处理不同版本的在JavaScript和CSS支持上不同的兼容性问题。还有解决开发时多人协作及方便的调试工具集成，也是进行html5 app开发的重要前提条件。
+
+
+
+20130312
+1、frame不能脱离frameSet单独使用，iframe可以；
+2、frame不能放在body中；如下可以正常显示：
+
+
+20130304 
+Ie里面的文本输入框，如果调整高度，会导致光标输入位置不在中间，需要加入 line-height属性来调整，
+比如height=32px; line-height=29px;
+
+20121226 jquery操作 select 
+function clickMe()
+{
+alert("about to change selected value "+$("#SEL").val() );
+$("#SEL").val("7");
+}
+
+1. $("#select_id").append("<option value='Value'>Text</option>");  //为Select追加一个Option(下拉项)
+2. $("#select_id").prepend("<option value='0'>请选择</option>");  //为Select插入一个Option(第一个位置)
+3. $("#select_id option:last").remove();  //删除Select中索引值最大Option(最后一个)
+4. $("#select_id option[index='0']").remove();  //删除Select中索引值为0的Option(第一个)
+5. $("#select_id option[value='3']").remove();  //删除Select中Value='3'的Option
+6. $("#select_id option[text='4']").remove();  //删除Select中Text='4'的Option 
+
+
+jqgrid 自定义编辑控件
+
+<script>
+function myelem (value, options) {
+  var el = document.createElement("input");
+  el.type="text";
+  el.value = value;
+  return el;
+}
+ 
+function myvalue(elem, operation, value) {
+    if(operation === 'get') {
+       return $(elem).find("input").val();
+    } else if(operation === 'set') {
+       $('input',elem).val(value);
+    }
+}
+jQuery("#grid_id").jqGrid({
+...
+   colModel: [ 
+      ... 
+      {name:'price', ..., editable:true, edittype:'custom', editoptions:{custom_element: myelem, custom_value:myvalue} },
+      ...
+   ]
+...
+});
+</script>
+
+或者直接用 …editoptions: { dataInit : function (elem) {
+$(elem).autocomplete();
+}
+} 
+
+20121221 模拟鼠标点击
+$("#tr_id").find("td").first().trigger("click")
+
+
+
+20120904 
+theObj.prop("defaultValue")  可以拿到html页面初始化的值，和用js重新设置的value不一样
+修改 theObj.val(formatedNum)
+
+
+http://www.jqplot.com/index.php  和highcharts差不多的东西 ，但是是用 canvas，highcharts用svg
+Google Chart Tools  https://developers.google.com/ 也是用SVG 必须online用
+http://www.flotcharts.org 用的是Canvas
+http://raphaeljs.com  用SVG
+chart比较比较 http://www.fusioncharts.com/javascript-charting-comparison/
+
+
+web editor 
+http://ckeditor.com/demo
+
+CKEditor 是一款功能强大的开源在线文本编辑器。它所见即所得的特点，使你在编辑时所看到的内容和格式，能够与发布后看到的效果完全一致。利用它，我们可以在 Web 上实现类似于 Microsoft Word 的许多强大的功能。CKEditor 完全是基于 JavaScript 开发的，因此不必在客户端进行任何安装，并且兼容各大主流浏览器，比如：IE，Firefox，Chrome，Safari，Opera。而且由于它是一个纯粹的 JavaScript 应用，所以无论用的是哪种服务器端技术（JSP，PHP，ASP 等等），都可以获得很好的支持。
+CKEditor 的前身是 FCKEditor，这个项目是在 2003 年由 Frederico Caldeira Knabben 发起的，FCK 代表的就是项目创建者 Frederico Caldeira Knabben 的简称。从 3.0 版本后，它改名为 CKEditor，CK 代表的含义是 Content And Knowledge（内容与知识）。现在，CKEditor 隶属于 CKSource 公司，背后拥有一个强大的技术团队的支持。在同类产品之中，CKEditor 的使用最为广泛，社区最为活跃，一直拥有良好的口碑。
+目前，有很多公司都在使用 CKEditor 作为 Web 编辑的解决方案，比如：IBM，Oracle，Adobe 等等。其中，IBM 已经在其所发布的多款软件中广泛应用了 CKEditor，这些软件包括：Lotus Connections，Lotus Quickr，LotusLive，Lotus Notes，Rational Requirements Management 等等。不仅如此，IBM 也为 CKEditor 的发展，不遗余力地提供了持续性的投入与支持，在 IBM 内部的产品团队中，有专业的开发人员负责 CKEditor 的定制开发，还有专门的技术社区供大家讨论和交流。
+
+
+TinyMCE
+
+
+20120427
+canvas 更合适像素类操作，比如游戏啥的 
+SVG 更合适图形图标显示，可以搜索，是对象形式，XML描述 Scalable Vector Graphics 
+
+JQGrid
+gridview=true可以加快渲染速度，但是不能用在treeGrid, subGrid
+通过post方式 
+mtype:"POST",
+
+通过这个传递更多的参数
+ serializeGridData: function(postData) {
+                    	postData.age="你好";
+                    	return postData;
+                          },         
+
+serializeCellData            
+设置 jqgrid内部出现scroll bar
+"shrinkToFit":false
+"gridview":true              加快插入速度，但是不能用在 treeGrid, subGrid, or afterInsertRow event 
+                  
+ Jqgrid返回数据格式
+ {"total":200,"page":1,"records":2000,"rows":[{"id":"ACacgEdd","cell":["ACacgEdd","Client","CASH"]},{"id":"AC00110","cell":["AC00110","Client","CASH"]},{"id":"AC00111","cell":["AC00111","Client","CASH"]},{"id":"AC00112","cell":["AC00112","Client","CASH"]},{"id":"AC00113","cell":["AC00113","Client","CASH"]},{"id":"AC00114","cell":["AC00114","Client","CASH"]},{"id":"AC00115","cell":["AC00115","Client","CASH"]},{"id":"LUDG001","cell":["LUDG001","Client","CASH"]},{"id":"5135","cell":["5135","Client","CASH"]},{"id":"5136","cell":["5136","Client","CASH"]}]}
+ 
+设置画图背景
+      chart: {
+            type: 'line',
+            plotBackgroundImage: 'http://www.highcharts.com/demo/gfx/skies.jpg'
+        },
+        
+    data group是需要显示的数据太多的时候，用一定的算法进行合并，缺省是Line算avg,column sum,OHLC用专门的
+    背景色也可以显示成渐变
+     backgroundColor: {
+                linearGradient: { x1: 0, y1: 0, x2: 1, y2: 1 },
+                stops: [
+                    [0, 'rgb(255, 255, 255)'],
+                    [1, 'rgb(200, 200, 255)']
+                ]
+            },
+            
+            出现十字交叉线当移动的时候
+            
+             tooltip: {
+	    	crosshairs: [true, true]
+	    }
+	    ,
+	    tickPixelInterval 可以控制x轴lable的间隔        tickPositions: [1, 100, 300] 也可以
+	      chart.redraw(); 重新绘制
+
+	      修改某个点的数据
+            chart.series[0].data[0].update([100]);
+    添加数据点
+             chart.series[0].addPoint (['December',   54.4]);
+
+
+	     xAxis: {
+	    	tickPixelInterval: 500
+	    }
+    
+
+Highcharts 的时间问题，从oracle拿到的时间返回到highcharts的时候，需要加上 一天的 million second
+rs.getDate("trans_date").getTime()+3600*1000*24
+
+chart js
+      
+      var chart;
+			var options;
+			function initChart()
+			{
+					  options={ 
+					           chart : {
+					              renderTo : 'container'
+					           },
+				           rangeSelector : {
+					              selected : 5
+					           },
+					           title : {
+					              text : 'Fund Price'
+					           },
+					           xAxis : {
+					              maxZoom : 7 * 24 * 3600000 ,
+					              minPadding:0.05,
+					              dateTimeLabelFormats: {
+					                  second: '%Y-%m-%d<br/>%H:%M:%S',
+					                  minute: '%Y-%m-%d<br/>%H:%M',
+					                  hour: '%Y-%m-%d<br/>%H:%M',
+					                  day: '%Y<br/>%m-%d',
+					                  week: '%Y<br/>%m-%d',
+					                  month: '%Y-%m',
+					                  year: '%Y'
+					              }
+					           },
+				           series : [{
+					              name : 'Price',
+					              data : [],
+					              marker : {
+										enabled : false,
+										radius : 3
+									},
+									shadow : true,
+									type: 'spline',
+								 tooltip: {
+						                  yDecimals: 2
+									 }
+						           }],
+					         tooltip: {
+					                   formatter: function() {
+					                       var s = '<b>'+ Highcharts.dateFormat('%Y-%m-%d', this.x) +'</b>';
+					                       $.each(this.points, function(i, point) {
+					                    	   var num = new Number(point.y);
+					                          //s += '<br>'+ num.toFixed(3) ;
+					                          s += '<br>'+ num ;
+					                         //  alert(point.y);
+					                       });
+					                       return s;
+					                   		}
+					                  }
+					           
+					       };
+					
+			           chart = new Highcharts.StockChart(options);	
+			           var fundTickerId = $("#p_fund_ticker_id").val();
+			           if (fundTickerId != '-1' && fundTickerId != '')
+						{
+			           var queryParams = getQueryParams();
+						refreshData(queryParams);
+					}
+						
+			}
+			function refreshData(queryParams)
+			{
+				$.post("/rdsMaintain/request/ControlServlet?QueryType=getFundPrice" + queryParams, null,
+						function(prices) {
+					  newData=prices.data;
+	              chart.series[0].setData(newData,true);
+	              var subtitle=prices.Name+"  "+prices.ISIN+"  "+prices.Currency;
+	              if (subtitle.indexOf("undefined")>0) 
+	              var subtitle='';
+	              chart.setTitle({text:'Fund NAV'},{ text:subtitle});
+										}, "JSON");
+			}
+			
+线条chart
+	<script type="text/javascript">
+			var chart;
+			var options;
+		function initChart()
+			{
+					  options={ 
+					           chart : {
+					              renderTo : 'ratioChart',
+					              type: 'line',
+					  			marginRight: 50,
+					  			borderWidth: 1,
+					            plotBorderWidth: 1,
+					            marginBottom: 60,
+					            zoomType: 'x',
+					           },
+					          
+					           title : {
+					              text : 'Order Ratio'
+					           },
+
+					           xAxis : {
+					        	   maxZoom: 2 * 24 * 3600000, 
+					        	   type: 'datetime',
+					        	    dateTimeLabelFormats: {
+					                  month: '%Y-%m',
+					                  year: '%Y'
+					              }
+					           },
+					   		yAxis: [{ // Primary yAxis
+								labels: {
+									style: {
+										color: '#89A54E'
+									}
+								},
+								max:120,
+								min:-20,
+								tickInterval: 20,
+								title: {
+									text: 'Ratio',
+									style: {
+										color: '#89A54E'
+									}
+								}
+							}],
+							
+					            series : [{
+					              name : 'Buy Percent',
+					              data : [],
+					              color: '#FF0000'
+					              
+						           },
+						           { name : 'Sell Percent',
+							         data : [],
+							         color: '#000000'
+								    }],
+					         tooltip: {
+					                   formatter: function() {
+					                       var s = '<b>'+ Highcharts.dateFormat('%Y-%m-%d', this.x) +'</b>';
+					                        s += '<br> Buy Percent:'+ this.y;
+					                         //  alert(point.y);
+					                      
+					                       return s;
+					                   		}
+					                  }
+					           
+					       };
+					
+		 	       
+			           chart = new Highcharts.Chart(options);	
+	                 	refreshData();
+			}
+			 
+			function refreshData()
+			{
+				$.post("<%=path%>/app/gmo?action=gmo_ratio_refresh_data",$("#mainForm").serialize(),
+						function(ratio) {
+					  newData=ratio.data;
+	              chart.series[0].setData(newData,true);
+	              chart.series[1].setData(ratio.data2,true);
+					},
+ 						 
+ 						"JSON");
+			}
+		
+			$(function()
+					{
+				$('#p_start_date').datepicker({
+					inline : false,
+					dateFormat : "yy-mm-dd",
+					changeMonth : true,
+					changeYear : true
+				});
+				$('#p_end_date').datepicker({
+					inline : false,
+					dateFormat : "yy-mm-dd",
+					changeMonth : true,
+					changeYear : true
+				});		
+				$("#btnQuery").click(refreshData);
+				initChart();
+			});
+		
+		</script>
+
+		<div id="accountMain">
+			<form action="<%=path%>/request/ControlServlet" method="post"
+				id="mainForm">
+				<%@include file="RatioQueryFilter.jsp"%>
+
+			<div id="ratioChart"
+					style="height: 300px; margin: 10 auto">
+					
+		    </div> 
+
+
+         
+浏览器内核  
+IE  Trident 
+Opera9.5  Kestrel  
+Safari  　　Webkit 
+chrome       Webkit 
+Firefox    Gecko
+
+这两天遇到一个问题:当该页面第一次发出Ajax请求的时候可以正常运行，但是从第二次调用开始就完全没有了反应。当然在firefox和ie中效果是不一样的。在firefox中并没有此问题。起先还一直以为是ie坏掉了。
+之前有个错误的想法:就是XmlHttp只能使用一次send()，每次要使用新的XmlHttp。后来在js代码中添加了暴多alert硬是发现没有什么问题，每次servlet都过去了。
+后来发现有这样一个原因。由于IE浏览器有缓存，第一次发送的Ajax请求确实被发送出去了。但是从第二次起IE浏览器发现缓存里面已经有请求的页面，于是Ajax请求将不再被发送出去。所以只要我们在url里加上+"&"+Math.random()就可以避免这个问题。当我做了这样修改后果真就可以在同一页面多次使用XmlHttp发起
+
+在firefox里面如果同时打个同一个URL，则它串行处理，只有第一个完成后才会做发起第二次连接，所以可以加个随机数在后面
+
+
+js对象转成json对象
+下载 http://code.google.com/p/jquery-json/
+使用 var c=$.toJSON(obA);
+
+var thing = {plugin: 'jquery-json', version: 2.3};
+var encoded = $.toJSON( thing );
+// '{"plugin":"jquery-json","version":2.3}'
+var name = $.evalJSON( encoded ).plugin;
+// "jquery-json"
+var version = $.evalJSON(encoded).version;
+// 2.3
+
+或者用 https://github.com/douglascrockford/JSON-js/blob/master/json2.js
+
+直接用jquery方法转换字符串为js 对象
+var response = '{"result":true,"count":1}';
+var obj = $.parseJSON(response);
+
+或者用 eval('('+myObject+')') ,但这个有点危险，可能有注入风险
+或者这样的写法也行 eval("my.id=12");
+	                 eval('my.id3=12');
+使用 这个方法性能更高 	var newAttr='id4';	var newValue='myid4'; my[newAttr] = newValue;
+
+
+
+如果打开service方法，则 websocket失效只会调用service方法
+
+requset.setCharencode只对post里面的body生效
+url里面的字符解码取决于app server实现
+通过js里面的encodeURI把url直接变成utf-8编码
+
+在tomcat6中设置字符集编码：
+     <Connector port="8080" protocol="HTTP/1.1"
+               connectionTimeout="20000"
+               redirectPort="8443" URIEncoding="UTF-8"/>
+
+servet 3.0 异步 
+<servlet> 
+    <servlet-name>DemoServlet</servlet-name> 
+    <servlet-class>footmark.servlet.Demo Servlet</servlet-class> 
+    <async-supported>true</async-supported> 
+</servlet> 
+
+在异步servlet方式下，同一个session在同一时间只能有一个连接 
+
+
+HttpServletRequest 对文件上传的支持
+
+此前，对于处理上传文件的操作一直是让开发者头疼的问题，因为 Servlet 本身没有对此提供直接的支持，需要使用第三方框架来实现，而且使用起来也不够简单。如今这都成为了历史，Servlet 3.0 已经提供了这个功能，而且使用也非常简单。为此，HttpServletRequest 提供了两个方法用于从请求中解析出上传的文件：
+
+    Part getPart(String name)
+    Collection<Part> getParts()
+
+前者用于获取请求中给定 name 的文件，后者用于获取所有的文件。每一个文件用一个 javax.servlet.http.Part 对象来表示。该接口提供了处理文件的简易方法，比如 write()、delete() 等。至此，结合 HttpServletRequest 和 Part 来保存上传的文件变得非常简单，如下所示：
+
+Part photo = request.getPart("photo"); 
+photo.write("/tmp/photo.jpg"); 
+// 可以将两行代码简化为 request.getPart("photo").write("/tmp/photo.jpg") 一行。
+
+
+
+<html>
+<head>
+
+<title>jQuery Socket Chat</title>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript">
+var randomNumber=Math.random();
+var SocketService= {};
+SocketService.webSocketURL='ws://localhost:8080/websocket/wsprice';
+SocketService.cometURL='/websocket/poll?action=getPrice&market=HKG&symbol=00001&uid='+randomNumber;
+SocketService.supportWebSocket=false;
+SocketService.webSocket=null;
+
+SocketService.connect=function() {
+	 if ('WebSocket' in window  && !$.browser.safari) {  
+	 //safari now has problem with tomcat when using websocket
+		 SocketService.webSocket = new WebSocket(SocketService.webSocketURL);
+		 SocketService.supportWebSocket=true;
+		  console.log("websocket "+SocketService.supportWebSocket+" "+SocketService.webSocket);
+	    } 
+	 else if ('MozWebSocket' in window) {
+		 SocketService.webSocket= new MozWebSocket(SocketService.webSocketURL);
+		 SocketService.supportWebSocket=true;
+	    } 
+	 else {
+	      //  console.log('Error: WebSocket is not supported by this browser.');
+	    	$.ajax({
+	   		  type: 'POST',
+	   		  url: '/websocket/poll?action=register&market=HKG&symbol=00001&uid='+randomNumber,
+	   		  success: SocketService.registerSuccess,
+	   		  error:   SocketService.registerError,
+	   		  dataType: 'json'
+	   		});
+	    }
+	 if(SocketService.supportWebSocket)
+		 {
+		  //console.log("about to register"+" "+SocketService.webSocket);
+		  SocketService.webSocket.onmessage = function (message) 
+		  {
+			  price=eval('(' + message.data + ')');
+			 showData(price.date+"-"+price.price);
+          }
+		  SocketService.webSocket.onopen = function () 
+		  {
+			    SocketService.webSocket.send("register HKG 00001 "+randomNumber);
+          }
+ 		 timer=setInterval(SocketService.heartbeat,5000);
+		 }
+   }
+   SocketService.heartbeat=function() {
+	  // console.log("about to send heartbeat");
+	   SocketService.webSocket.send("heartbeat"+randomNumber);
+   }
+   SocketService.registerSuccess= function()
+   {
+	   SocketService.getPrice();
+   }
+   SocketService.registerError= function ()
+   {
+	 alert("can't register")
+   }
+   SocketService.getPrice= function ()
+   {
+	   $.ajax({
+	 		  type: 'POST',
+	 		  url: '/websocket/poll?action=getPrice&market=HKG&symbol=00001&uid='+randomNumber,
+	 		  success: SocketService.getPriceSuccess,
+	 		  error:SocketService.getPriceError,
+	 		  dataType: 'json',
+	 		  timeout: 100000
+	 		});
+   }
+
+   SocketService.getPriceSuccess= function (data, textStatus)
+   {	  
+	   showData(data.price);
+	   SocketService.getPrice();
+   }
+   SocketService.getPriceError=function (jqXHR, textStatus, errorThrown)
+   {
+   alert("get Price Error");
+   //var t=setTimeout(getPrice,3000);
+   }
+   
+   function showData(data)
+   {
+	   $("#content").html(data);  
+   }
+ $(document).ready(function() {
+	SocketService.connect();
+  
+ 	 });
+</script>
+
+</head>
+<body>
+<div id="content">
+<p >content</p>
+</div>
+
+<div id="editor">
+<p class="guide">Enter your username</p>
+<form action="#" onsubmit="return false;">
+<input type="text" />
+</form>
+</div>
+</body>
+</html>
+服务程序
+protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{ 
+		// TODO Auto-generated method stub
+		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Date currentDate=new Date();
+		String market=request.getParameter("market").trim();
+		String symbol=request.getParameter("symbol").trim();
+		String uid=request.getParameter("uid").trim();
+		String serviceID=market+symbol+uid;
+		if(request.getParameter("action").equals("register"))
+		{	
+			ConcurrentHashMap<String,PriceMonitorObject> ls=monitorStock.get(market+symbol);
+			if(ls==null)
+			{
+				ls=new ConcurrentHashMap<String,PriceMonitorObject>();
+				monitorStock.put(market+symbol, ls);
+			}
+		
+			System.out.println("new register service "+df.format(currentDate)+" "+serviceID);
+			PriceMonitorObject priceMO=ls.get(serviceID); 
+			if(priceMO==null)
+				{priceMO=new  PriceMonitorObject(serviceID);
+				ls.put(serviceID, priceMO);
+				}
+		
+		}
+		if(request.getParameter("action").equals("deregister"))
+		{	
+		   ConcurrentHashMap<String,PriceMonitorObject> ls=monitorStock.get(market+symbol);
+			System.out.println("new deregister service "+df.format(currentDate)+" "+serviceID);
+			PriceMonitorObject priceMO=ls.get(serviceID); 
+			ls.remove(serviceID);
+			
+			if(ls.size()==0)  //all sessions,no more registered session ,removed
+			{
+				monitorStock.remove(market+symbol);
+			}
+		}
+	
+	
+		if(request.getParameter("action").equals("getPrice"))
+		{
+			System.out.println("new getPrice service "+df.format(currentDate)+" "+serviceID);
+			ConcurrentHashMap<String,PriceMonitorObject> ls=monitorStock.get(market+symbol);
+			PriceMonitorObject priceMO=ls.get(serviceID);
+			PriceObject po=	priceMO.getPrice();
+			JSONObject jdata=new JSONObject();
+			jdata.put("date",df.format(po.getPriceTime()));
+			jdata.put("price",po.getRealPrice());
+			response.getWriter().println(jdata.toString());
+	   }	
+		
+		if(request.getParameter("action").equals("setPrice"))
+		{System.out.println("new setPrice service "+df.format(currentDate));
+			Date priceDate=new Date();
+			Double price=new Double(0);
+			try{
+			 priceDate=df.parse(request.getParameter("date").trim());
+		    price=Double.parseDouble(request.getParameter("price").trim());
+			}
+			catch(java.lang.Exception e)
+			{
+				e.printStackTrace();
+			}
+			
+			PriceObject priceObj=new PriceObject(market,symbol,priceDate,price);
+			ConcurrentHashMap<String,PriceMonitorObject> ls=monitorStock.get(market+symbol);
+	     if(ls!=null)
+	     {
+			for (Enumeration<PriceMonitorObject> e = ls.elements(); e.hasMoreElements();)
+			{
+				PriceMonitorObject pmo=e.nextElement();
+				System.out.println("about to wakeup service "+df.format(currentDate)+" "+pmo.getServiceID());
+				pmo.setPrice(priceObj);
+			}
+	     }
+	   }	
+
+}
+
+import java.util.Date;
+
+public class PriceObject
+{   public  PriceObject(String market,String Symbol,Date priceTime,Double realPrice)
+	{
+		this.market=market;
+		this.Symbol=Symbol;
+		this.priceTime=priceTime;
+		this.realPrice=realPrice;
+		
+	}
+    private String market;
+     public String getMarket() {
+		return market;
+	}
+	public void setMarket(String market) {
+		this.market = market;
+	}
+	public String getSymbol() {
+		return Symbol;
+	}
+	public void setSymbol(String symbol) {
+		Symbol = symbol;
+	}
+	private String Symbol;
+	private Date priceTime ;
+	public Date getPriceTime() {
+		return priceTime;
+	}
+	public void setPriceTime(Date priceTime) {
+		this.priceTime = priceTime;
+	}
+	public Double getRealPrice() {
+		return realPrice;
+	}
+	public void setRealPrice(Double realPrice) {
+		this.realPrice = realPrice;
+	}
+	private Double realPrice;
+
+}
+
+
+public class PriceMonitorObject {
+	private boolean newPrice; //if true ,price updated ,if false ,not updated
+	PriceObject price;
+	private String serviceID;
+	
+	public PriceMonitorObject(String serviceID)
+	{
+		this.serviceID=serviceID;
+		
+	}
+	
+	public String getServiceID() {
+		return serviceID;
+	}
+	public void setServiceID(String serviceID) {
+		this.serviceID = serviceID;
+	}
+	
+	public boolean hasPrice()
+	{
+		return this.newPrice;
+	}
+	public synchronized PriceObject getPrice()
+	{ try {
+		while(!newPrice)
+	 {
+		wait();
+	 }
+	}
+	catch( java.lang.Exception e)
+	{
+		e.printStackTrace();
+	}
+	  
+    this.newPrice=false; //consumed
+	return this.price;
+	}
+	
+	public synchronized void setPrice(PriceObject price)
+	{ try {
+       this.price=price;
+       this.newPrice=true; //produced
+       this.notifyAll();
+	   }
+	catch( java.lang.Exception e)
+	{
+		e.printStackTrace();
+	}
+	  
+		
+  }
+}
+
+web socket server
+
+public class RealTimeWebSocket extends WebSocketServlet{
+    @Override
+    protected StreamInbound createWebSocketInbound(String subProtocol) {
+    	 System.out.println("newWebSocketInbound=" +subProtocol)  ;
+        return new RealPrice();
+    }
+
+  
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.concurrent.ConcurrentHashMap;
+
+import net.sf.json.JSONObject;
+
+import org.apache.catalina.websocket.MessageInbound;
+import org.apache.catalina.websocket.WsOutbound;
+
+
+ public   class RealPrice extends MessageInbound {
+	 String serviceID;
+	 String market;
+	 String symbol;
+  static ConcurrentHashMap<String,ConcurrentHashMap> monitorStock=new ConcurrentHashMap<String,ConcurrentHashMap> ();
+    	public RealPrice() {
+    		
+        }
+
+        @Override
+        protected void onOpen(WsOutbound outbound) {
+            System.out.println(" onOpen "+ serviceID+" "+(new java.util.Date()))  ;
+      }
+
+        @Override
+        protected void onClose(int status) {
+            System.out.println( " onClose "+ serviceID+" "+(new java.util.Date()))  ;
+        	ConcurrentHashMap<String,RealPrice> ls=monitorStock.get(market+symbol);
+        	RealPrice priceMO=ls.get(serviceID);
+        	if(priceMO!=null)
+			{
+			ls.remove(serviceID); //de-register
+			if(ls.size()==0)
+			{
+				monitorStock.remove(market+symbol);
+			}
+			}
+
+        }
+
+        @Override
+        protected void onBinaryMessage(ByteBuffer message) throws IOException {
+            throw new UnsupportedOperationException(
+                    "Binary message not supported.");
+        }
+
+        @Override
+      protected void onTextMessage(CharBuffer message) throws IOException {
+            // Never trust the client
+           // System.out.println(" onTextMessage "+ serviceID+" "+message) ;
+            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    		Date currentDate=new Date();
+    		
+            String filteredMessage =  message.toString();
+            
+            if(filteredMessage.startsWith("deregister"))
+            {
+            System.out.println( " deregister "+ serviceID+" "+(new java.util.Date())) ; 
+            ConcurrentHashMap<String,RealPrice> ls=monitorStock.get(market+symbol);
+        	RealPrice priceMO=ls.get(serviceID);
+        	if(priceMO!=null)
+			{
+			ls.remove(serviceID); //de-register
+			if(ls.size()==0)
+			{
+				monitorStock.remove(market+symbol);
+			}
+			}
+            }
+
+        	
+            if(filteredMessage.startsWith("register"))
+            {
+            String args[]=filteredMessage.split(" ");
+        	 market=args[1];
+    		 symbol=args[2];
+    		String uid=args[3];
+    	    serviceID=market+symbol+uid;
+    	    
+    	   
+            	ConcurrentHashMap<String,RealPrice> ls=monitorStock.get(market+symbol);
+    			if(ls==null)
+    			{
+    				ls=new ConcurrentHashMap<String,RealPrice>();
+    				monitorStock.put(market+symbol, ls);
+    			}
+    		
+    			System.out.println("RealPrice new register service "+df.format(currentDate)+" "+serviceID);
+    			RealPrice priceMO=ls.get(serviceID); 
+    			if(priceMO==null)
+    				{this.serviceID=serviceID;
+    				ls.put(serviceID, this);
+    				}
+            	}
+        
+
+        }
+        public String getServiceID() {
+    		return serviceID;
+    	}
+  public static void  broadcast(String marketSymbol,Date date,Double price) {
+            System.out.println(" broadcast")  ;
+            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    		Date currentDate=new Date();
+    		JSONObject jdata=new JSONObject();
+			jdata.put("date",df.format(date));
+			jdata.put("price",price);
+
+				System.out.println("RealPrice about to  send "+df.format(currentDate)+" "+jdata.toString());
+   
+			
+        	ConcurrentHashMap<String,RealPrice> ls=monitorStock.get(marketSymbol);
+   	     if(ls!=null)
+   	     {
+   			for (Enumeration<RealPrice> e = ls.elements(); e.hasMoreElements();)
+   			{
+   				RealPrice pmo=e.nextElement();
+   				System.out.println("RealPrice about to wakeup service "+df.format(currentDate)+" "+pmo.getServiceID());
+   				try {
+                     pmo.getWsOutbound().writeTextMessage(  CharBuffer.wrap(jdata.toString()));
+                } catch (IOException ignore) {
+                    // Ignore
+                }
+   			}
+   	     }
+   	     
+        
+        }
+    }
+    
+    
+    
+web socket html
+<script type="text/javascript">
+        var Chat = {};
+        Chat.socket = null;
+        Chat.connect = (function(host) {
+            if ('WebSocket' in window) {
+                Chat.socket = new WebSocket(host);
+            } else if ('MozWebSocket' in window) {
+                Chat.socket = new MozWebSocket(host);
+            } else {
+                Console.log('Error: WebSocket is not supported by this browser.');
+                return;
+            }
+            Chat.socket.onopen = function () {
+                Console.log('Info: WebSocket connection opened.');
+                document.getElementById('chat').onkeydown = function(event) {
+                    if (event.keyCode == 13) {
+                        Chat.sendMessage();
+                    }
+                };
+            };
+            Chat.socket.onclose = function () {
+                document.getElementById('chat').onkeydown = null;
+                Console.log('Info: WebSocket closed.');
+            };
+           Chat.socket.onmessage = function (message) {
+                Console.log(message.data);
+            };
+        });
+        Chat.initialize = function() {
+            Chat.connect('ws://' + window.location.host + '/websocket/websocket/chat');
+        };
+        Chat.sendMessage = (function() {
+            var message = document.getElementById('chat').value;
+            if (message != '') {
+                Chat.socket.send(message);
+                document.getElementById('chat').value = '';
+            }
+        });
+        var Console = {};
+        Console.log = (function(message) {
+            var console = document.getElementById('console');
+            var p = document.createElement('p');
+            p.style.wordWrap = 'break-word';
+            p.innerHTML = message;
+            console.appendChild(p);
+            while (console.childNodes.length > 25) {
+                console.removeChild(console.firstChild);
+            }
+            console.scrollTop = console.scrollHeight;
+        });
+
+        Chat.initialize();
+    </script>
+
+package websocket.chat;
+
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import org.apache.catalina.websocket.MessageInbound;
+import org.apache.catalina.websocket.StreamInbound;
+import org.apache.catalina.websocket.WebSocketServlet;
+import org.apache.catalina.websocket.WsOutbound;
+
+import util.HTMLFilter;
+
+/**
+ * Example web socket servlet for chat.
+ */
+public class ChatWebSocketServlet extends WebSocketServlet {
+
+    private static final long serialVersionUID = 1L;
+
+    private static final String GUEST_PREFIX = "Guest";
+
+    private final AtomicInteger connectionIds = new AtomicInteger(0);
+    private final Set<ChatMessageInbound> connections =
+            new CopyOnWriteArraySet<ChatMessageInbound>();
+
+    @Override
+    protected StreamInbound createWebSocketInbound(String subProtocol) {
+        return new ChatMessageInbound(connectionIds.incrementAndGet());
+    }
+
+    private final class ChatMessageInbound extends MessageInbound {
+
+        private final String nickname;
+
+        private ChatMessageInbound(int id) {
+            this.nickname = GUEST_PREFIX + id;
+        }
+
+        @Override
+        protected void onOpen(WsOutbound outbound) {
+            connections.add(this);
+            String message = String.format("* %s %s",
+                    nickname, "has joined.");
+            broadcast(message);
+        }
+
+        @Override
+        protected void onClose(int status) {
+            connections.remove(this);
+            String message = String.format("* %s %s",
+                    nickname, "has disconnected.");
+            broadcast(message);
+        }
+
+        @Override
+        protected void onBinaryMessage(ByteBuffer message) throws IOException {
+            throw new UnsupportedOperationException(
+                    "Binary message not supported.");
+        }
+
+        @Override
+        protected void onTextMessage(CharBuffer message) throws IOException {
+            // Never trust the client
+            String filteredMessage = String.format("%s: %s",
+                    nickname, HTMLFilter.filter(message.toString()));
+            broadcast(filteredMessage);
+        }
+
+        private void broadcast(String message) {
+            for (ChatMessageInbound connection : connections) {
+                try {
+                    CharBuffer buffer = CharBuffer.wrap(message);
+                    connection.getWsOutbound().writeTextMessage(buffer);
+                } catch (IOException ignore) {
+                    // Ignore
+                }
+            }
+        }
+    }
+}
+
+
+
+
+”JavaScript中的函数运行在它们被定义的作用域里,而不是它们被执行的作用域里.”
+
+function doSomething(){  
+    var authorName="山边小溪";   --局部变量
+    blogName="梦想天空";      --全局变量
+    alert(authorName);  
+}  
+https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Guide
+js创造对象 https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Guide/Details_of_the_Object_Model
+原始方式
+var oCar = new Object;
+oCar.color = "blue";
+oCar.doors = 4;
+oCar.mpg = 25;
+oCar.showColor = function() {
+  alert(this.color);
+};
+工厂方式
+function createCar() {
+  var oTempCar = new Object;
+  oTempCar.color = "blue";
+  oTempCar.doors = 4;
+  oTempCar.mpg = 25;
+  oTempCar.showColor = function() {
+    alert(this.color);
+  };
+  return oTempCar;
+}
+
+var oCar1 = createCar();
+var oCar2 = createCar();
+混合工厂方式
+function Car() {
+  var oTempCar = new Object;
+  oTempCar.color = "blue";
+  oTempCar.doors = 4;
+  oTempCar.mpg = 25;
+  oTempCar.showColor = function() {
+    alert(this.color);
+  };
+
+  return oTempCar;
+}
+var car = new Car();
+
+由于在 Car() 构造函数内部调用了 new 运算符，所以将忽略第二个 new 运算符（位于构造函数之外），在构造函数内部创建的对象被传递回变量 car。
+
+
+(function () { /* code */ } ()); 立即执行的js匿名函数
+
+var result = function (x) { return x + 1; }(3); // => result 的值为4
+这段代码的本质是：
+var plusOne = function (x) {
+  return x + 1;
+};
+var result = plusOne(3);
+
+
+混合的构造函数/原型方式 目前使用最广泛的是混合的构造函数/原型方式。此外，动态原始方法也很流行
+
+联合使用构造函数和原型方式，就可像用其他程序设计语言一样创建对象。这种概念非常简单，即用构造函数定义对象的所有非函数属性，用原型方式定义对象的函数属性（方法）。结果是，所有函数都只创建一次，而每个对象都具有自己的对象属性实例。
+我们重写了前面的例子，代码如下：
+
+function Car(sColor,iDoors,iMpg) {
+  this.color = sColor;
+  this.doors = iDoors;
+  this.mpg = iMpg;
+  this.drivers = new Array("Mike","John");
+}
+
+Car.prototype.showColor = function() {
+  alert(this.color);
+};
+
+var oCar1 = new Car("red",4,23);
+var oCar2 = new Car("blue",3,25);
+
+oCar1.drivers.push("Bill");
+
+alert(oCar1.drivers);	//输出 "Mike,John,Bill"
+alert(oCar2.drivers);	//输出 "Mike,John"
+
+动态原型方法:
+直到检查 typeof Car._initialized 是否等于 "undefined" 之前，这个构造函数都未发生变化。这行代码是动态原型方法中最重要的部分。如果这个值未定义，构造函数将用原型方式继续定义对象的方法，然后把 Car._initialized 设置为 true。如果这个值定义了（它的值为 true 时，typeof 的值为 Boolean），那么就不再创建该方法。简而言之，该方法使用标志（_initialized）来判断是否已给原型赋予了任何方法。该方法只创建并赋值一次，传统的 OOP 开发者会高兴地发现，这段代码看起来更像其他语言中的类定义了。
+
+function Car(sColor,iDoors,iMpg) {
+  this.color = sColor;
+  this.doors = iDoors;
+  this.mpg = iMpg;
+  this.drivers = new Array("Mike","John");
+  
+  if (typeof Car._initialized == "undefined") {
+    Car.prototype.showColor = function() {
+      alert(this.color);
+    };
+	
+    Car._initialized = true;
+  }
+}
+js字符串处理性能很差和java一样，最好封装成 StringBuffer类 在firefox下面测试，这个方法反而慢，只有IE下面快
+function StringBuffer () {
+  this._strings_ = new Array();
+}
+
+StringBuffer.prototype.append = function(str) {
+  this._strings_.push(str);
+};
+
+StringBuffer.prototype.toString = function() {
+  return this._strings_.join("");
+};
+var buffer = new StringBuffer ();
+buffer.append("hello ");
+buffer.append("world");
+var result = buffer.toString();
+
+
+prototype 对象是个模板，要实例化的对象都以这个模板为基础。总而言之，prototype 对象的任何属性和方法都被传递给那个类的所有实例。原型链利用这种功能来实现继承机制。
+
+所有的实例对象共享同一个prototype，就像父类的方法和属性一样
+
+JS 里面的 apply方法能劫持另外一个对象的方法，继承另外一个对象的属性
+
+
+call() 方法是与经典的对象冒充方法最相似的方法。它的第一个参数用作 this 的对象。其他参数都直接传递给函数自身。例如：
+function sayColor(sPrefix,sSuffix) {
+    alert(sPrefix + this.color + sSuffix);
+};
+var obj = new Object();
+obj.color = "blue";
+sayColor.call(obj, "The color is ", "a very nice color indeed.");
+在这个例子中，函数 sayColor() 在对象外定义，即使它不属于任何对象，也可以引用关键字 this。对象 obj 的 color 属性等于 blue。调用 call() 方法时，第一个参数是 obj，说明应该赋予 sayColor() 函数中的 this 关键字值是 obj。第二个和第三个参数是字符串。它们与 sayColor() 函数中的参数 sPrefix 和 sSuffix 匹配，最后生成的消息 "The color is blue, a very nice color indeed." 将被显示出来。
+要与继承机制的对象冒充方法一起使用该方法，只需将前三行的赋值、调用和删除代码替换即可：
+
+function ClassB(sColor, sName) {
+    //this.newMethod = ClassA;
+    //this.newMethod(color);
+    //delete this.newMethod;
+    ClassA.call(this, sColor);
+
+    this.name = sName;
+    this.sayName = function () {
+        alert(this.name);
+    };
+}
+
+
+
+
+Function.apply(obj,args)方法能接收两个参数
+
+    obj：这个对象将代替Function类里this对象
+
+    args：这个是数组，它将作为参数传给Function（args-->arguments）
+    
+    function Person(name,age){   //定义一个类，人类  
+    this.name=name;     //名字  
+    this.age=age;       //年龄 
+    this.sayhello=function(){alert("hello")};
+       } 
+function Student(name,age,grade,school){    //学生类 
+    Person.apply(this,arguments);
+    Print.apply(this,arguments);
+    或者     Person.call(this,name,age); 也行
+
+    this.grade=grade;                //年级 
+    this.school=school;                 //学校 
+} 
+var s1=new Student("tom",13,6,"清华小学");
+s1.sayhello();
+
+var options = $.extend(defaults, options); 合并options到defaults
+
+在下面例子中，继承机制由两行突出显示的蓝色代码实现。在第一行突出显示的代码中，在 ClassB 构造函数中，用对象冒充继承 ClassA 类的 sColor 属性。在第二行突出显示的代码中，用原型链继承 ClassA 类的方法。由于这种混合方式使用了原型链，所以 instanceof 运算符仍能正确运行。
+function ClassA(sColor) {
+    this.color = sColor;
+}
+ClassA.prototype.sayColor = function () {
+    alert(this.color);
+};
+function ClassB(sColor, sName) {
+    ClassA.call(this, sColor);
+    this.name = sName;
+}
+ClassB.prototype = new ClassA();
+ClassB.prototype.sayName = function () {
+    alert(this.name);
+};
+
+var objA = new ClassA("blue");
+var objB = new ClassB("red", "John");
+objA.sayColor();
+objB.sayColor();
+objB.sayName();
+
+
+
+一个类凡是通过 prototype 加的属性，方法，都可以在这个类的对象里找到 对象.
+闭包
+各种专业文献上的“闭包”（closure）定义非常抽象，很难看懂。我的理解是， 闭包就是能够读取其他函数内部变量的函数。
+
+由于在Javascript语言中，只有函数内部的子函数才能读取局部变量，因此可以把闭包简单理解成“定义在一个函数内部的函数”。 
+所以，在本质上，闭包就是将函数内部和函数外部连接起来的一座桥梁。 
+
+闭包一般用来实现单例，实现对象属性私有属性的访问等等
+因为闭包对脚本性能具有负面影响，包括处理速度和内存消耗。
+
+    闭包就是函数的局部变量集合，只是这些局部变量在函数返回后会继续存在。
+    闭包就是就是函数的“堆栈”在函数返回后并不释放，我们也可以理解为这些函数堆栈并不在栈上分配而是在堆上分配
+    当在一个函数内定义另外一个函数就会产生闭包
+
+
+
+　function f1(){
+
+　　　　n=999;
+
+　　　　function f2(){
+　　　　　　alert(n);
+　　　　}
+
+　　　　return f2;
+
+　　}
+
+　　var result=f1();
+
+　　result(); // 999
+
+闭包的应用场景
+保护函数内的变量安全。
+在内存中维持一个变量
+
+
+var Counter = (function() {
+  var privateCounter = 0;
+  function changeBy(val) {
+    privateCounter += val;
+  }
+  return {
+    increment: function() {
+      changeBy(1);
+    },
+    decrement: function() {
+      changeBy(-1);
+    },
+    value: function() {
+      return privateCounter;
+    }
+  }   
+})();
+
+alert(Counter.value()); /* 提示 0 */
+Counter.increment();
+Counter.increment();
+alert(Counter.value()); /* 提示 2 */
+Counter.decrement();
+alert(Counter.value()); /* 提示 1 */
+该共享环境创建于一个匿名函数体内，该函数一经定义立刻执行。环境中包含两个私有项：名为 privateCounter 的变量和名为 changeBy 的函数。 这两项都无法在匿名函数外部直接访问。必须通过匿名包装器返回的三个公共函数访问。
+
+这三个公共函数是共享同一个环境的闭包。多亏 JavaScript 的词法范围的作用域，它们都可以访问 privateCounter 变量和 changeBy 函数。
+
+this，表示当前的上下文对象是一个html对象，可以调用html对象所拥有的属性，方法
+$(this),代表的上下文对象是一个jquery的上下文对象，可以调用jquery的方法和属性值。 
+
+创建plugin 
+
+<html>
+<body>
+<script type="text/javascript" src="jquery.js"></script>
+
+<script type="text/javascript">
+(function( $ ){
+var settings={ 'name' : 'Roger',
+      'age' : 15
+             } ;
+  var methods = {
+    init : function( options ) { 
+    settings= $.extend(settings,options);
+    },
+    show2:function(type) {  
+    return this.each(function() {
+      var $this = $(this);
+      alert(settings.name+this.id);
+    });
+  },
+   show : function(yourID ) {
+     return this.each(function() {
+    alert(yourID+" "+$(this).height());
+    });
+  }
+  };
+  $.fn.tooltip = function( method ) {
+    // Method calling logic
+    if ( methods[method] ) {
+      return methods[ method ].apply( this, Array.prototype.slice.call( arguments, 1 ));
+    } else if ( typeof method === 'object' || ! method ) {
+      return methods.init.apply( this, arguments );
+    } else {
+      $.error( 'Method ' +  method + ' does not exist on jQuery.tooltip' );
+    }    
+  };
+
+})( jQuery );
+$(document).ready(function() {
+$('#div1').height(100);
+$('#div2').height(150);
+$("div").html("test");
+$('div').tooltip();
+$('div').tooltip("show",25);
+$('div').tooltip({
+  'name' : 'wzy'
+});
+  $('div').tooltip("show",15);
+ 	 });
+</script>
+<p>This is a paragraph.</p>
+<p>This is another paragraph.</p>
+<div id="div1" height="100">
+</div>
+<div id="div2"  height="200">
+</div>
+</body>
+</html>
+
+$().children()只找到子节点，不找孙子节点
+$().find()找所有的节点，不管子孙
+
+Response already committed
+1）response.sendRedirect()重定向跳转的地方
+调了重定向，但是没有return;下面的程序改写了header
+
+会有同学问，为什么需要流（streaming）和长轮询（long-polling）两种方式呢？是因为：对于流方式，有诸多限制。如果使用AJAX方式，需要判断XMLHttpRequest 的 readystate，即readystate==3时（数据仍在传输），客户端可以读取数据，而不用关闭连接。问题也在这里，IE 在 readystate 为 3 时，不能读取服务器返回的数据，所以目前 IE 不支持基于 Streaming AJAX，而长轮询由于是普通的AJAX请求，所以没有浏览器兼容问题。另外，由于使用streaming方式，控制权在服务器端，并且在长连接期间，并没有客户端到服务器端的数据，所以不能根据客户端的数据进行即时的适应（比如检查cookie等等），而对于long polling方式，在每次断开连接之后可以进行判断。所以综合来说，long polling是现在比较主流的做法（如fb，Plurk）。

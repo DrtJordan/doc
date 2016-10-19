@@ -1,0 +1,308 @@
+mysql 5.6
+有procedure/function的情况下，备份要用
+mysqldump -h 192.168.193.132 -P 3308 -u gaf_test --password=gaf_test --routines  gaf_test > gaf_v1_mysql.sql
+
+mysql存储过程限制比较多，没有for 1..2 loop，也没有for c in select loop的方式，exception处理也不够方便，动态sql不能创建trigger
+而且cursor只能fetch into 变量，不能使用 cursor.name的方式，不支持数组record等
+
+查看列信息
+ select TABLE_SCHEMA,TABLE_NAME,COLUMN_NAME,DATA_TYPE from columns where table_schema='wechat';
+ 查看当前登陆用户 select user(); 查看当前连接id    select CONNECTION_ID();
+ 
+ oracle->mysql导入数据需要做转换
+ to_timestamp('dd-mm-yyyy hh24:mi:ss.ff' ->STR_TO_DATE('%d-%m-%Y %H:%i:%s.%f'
+ 查询分离当前用户和主机名字 
+ select substr(current_user(),1,instr(current_user(),'@')-1),substr(current_user(),instr(current_user(),'@')+1);
+ 
+ 列名在所有情况下都是忽略大小写的
+ 
+ 不区分表名大小写 ，先导出需要修改的数据库，drop database 然后修改参数，然后重新导入该数据库
+ [mysqld]
+ lower_case_table_names=1
+ 如果用户需要创建trigger，加上参数 log_bin_trust_function_creators=1
+ 
+Oracle移植到mysql事项:
+mysql日期和字符相互转换方法
+date_format(date,'%Y-%m-%d')    -------------->oracle中的to_char();
+str_to_date(date,'%Y-%m-%d')     -------------->oracle中的to_date();
+没有decode函数，换用SELECT CASE 1 WHEN 1 THEN 'one' WHEN 2 THEN 'two' ELSE 'more' END 的形式 
+没有nvl，用ifnull或者coalesce
+sysdate换成sysdate()，或者now()
+合并字符串用 contact(str,str)，但是如果有Null,就变成null
+oracle使用的是：--(两个-) ，批量注释 /**/ 。 mysql使用的是：# ，批量注释 /**/ 或者-- (必须有个空格)。
+表和列添加comment alter table test.t comment  'hi';  alter table test.t modify column id int comment 'my comment';
+分页 select host,user from user where user!='' order by user  limit 4 offset 1 ; 等于 limit 1,4;
+日期加减 date +/- INTERVAL expr unit 比如 SELECT now() + INTERVAL 1 day;
+NULL的值用mysql客户端查询就显示为NULL,而不像Oracle查询出来为空字符
+MySQL不支持自治事务  不允许在触发器过程中执行对触发器所在表的操作(包括读写)
+MySQL函数和trigger中不能执行动态SQL语句
+直接使用 select 变量，字符之类的来输出信息 相当于 dbms_output ,
+使用call来调用procedure,function直接select
+Stored functions cannot be recursive除非打开max_sp_recursion_depth 参数
+需要CREATE ROUTINE /ALTER ROUTINE / EXECUTE权限
+LAST_INSERT_ID()可以安全的返回当前自增长的列值
+mysql where条件过滤的时候缺省是不区分大小写的 ，要么写sql的指定 select *from t where name=binary 'hi'; 或者修改column定义为 binary  alter table t modify name varchar(50) binary;
+DDL的名字是大小写敏感的，可以修改lower_case_table_names
+
+trigger
+不能使用采用CALL语句的动态SQL（允许存储程序通过参数将数据返回触发程序）。
+触发程序不能使用以显式或隐式方式开始或结束事务的语句，如START TRANSACTION、COMMIT或ROLLBACK。
+在BEFORE触发程序中，AUTO_INCREMENT列的NEW值为0，不是实际插入新记录时将自动生成的序列号。
+不支持在同一个表上面同一类型的多个trigger,比如两个before update 5.7之后没有这个限制了 
+用SET NEW.col_name = value来修改值
+load data的时候也会触发trigger 
+在trigger里面不能再查询或者修改trigger的base表
+创建trigger需要超级用户权限，或者修改参数 log_bin_trust_function_creators=1
+
+动态sql
+PREPARE stmt1 FROM 'SELECT SQRT(POW(?,2) + POW(?,2)) AS hypotenuse';
+EXECUTE stmt1 USING @a, @b;
+DEALLOCATE PREPARE stmt1;
+
+创建超级用户
+GRANT super ON 	*.* TO 'wzy'@'192.168.73.164' IDENTIFIED BY 'wzy' ;
+GRANT all privileges ON *.* TO 'wzy'@'192.168.73.164' IDENTIFIED BY 'wzy' ;
+
+5.7.2支持多主复制
+change master to master_host="10.186.21.102", master_port=13306, master_user="repl",master_password="repl" for channel="master1";
+change master to master_host="10.186.21.102", master_port=13307, master_user="repl",master_password="repl" for channel="master2";
+
+
+
+ delimiter //
+ CREATE TRIGGER upd_check BEFORE UPDATE ON account
+ FOR EACH ROW
+ BEGIN
+ IF NEW.amount < 0 THEN
+ SET NEW.amount = 0;
+ ELSEIF NEW.amount > 100 THEN
+    SET NEW.amount = 100;
+    END IF;
+ END;//
+ delimiter ;
+
+delimiter //
+CREATE PROCEDURE curdemo()
+
+BEGIN
+ DECLARE done INT DEFAULT 0;
+  DECLARE a CHAR(16);
+  DECLARE b,c INT;
+  DECLARE cur1 CURSOR FOR SELECT id,data FROM test.t1;
+  DECLARE cur2 CURSOR FOR SELECT i FROM test.t2;
+  DECLARE CONTINUE HANDLER FOR SQLSTATE '02000' SET done = 1;
+  OPEN cur1;
+  OPEN cur2;
+
+  REPEAT
+    FETCH cur1 INTO a, b;
+    FETCH cur2 INTO c;
+    IF NOT done THEN
+       IF b < c THEN
+          INSERT INTO test.t3 VALUES (a,b);
+       ELSE
+          INSERT INTO test.t3 VALUES (a,c);
+       END IF;
+    END IF;
+  UNTIL done END REPEAT;
+  CLOSE cur1;
+  CLOSE cur2;
+END
+//
+
+多个handler
+
+CREATE 
+PROCEDURE test.test_handler()
+BEGIN
+  declare ret varchar(500);
+ DECLARE done INT DEFAULT 0;
+  DECLARE bINT;
+  DECLARE cur1 CURSOR FOR SELECT pk FROM test.t_user;
+  DECLARE cur2 CURSOR FOR SELECT pk FROM test.t_user;
+  DECLARE CONTINUE HANDLER FOR SQLSTATE '02000' SET done=1;
+  OPEN cur1;
+  OPEN cur2;
+
+  REPEAT
+    FETCH cur1 INTO b;
+   SELECT done;
+  UNTIL done END REPEAT;
+  CLOSE cur1;
+  
+  BEGIN 
+  DECLARE CONTINUE HANDLER FOR SQLSTATE '02000' SET done=0;
+      REPEAT
+     FETCH cur2 INTO b;
+      SELECT done;
+      UNTIL  !done END REPEAT;
+  CLOSE cur2;
+   end ;
+end ;
+
+delimiter ;
+
+IF search_condition THEN statement_list
+    [ELSEIF search_condition THEN statement_list] ...
+    [ELSE statement_list]
+END IF
+
+CASE case_value
+    WHEN when_value THEN statement_list
+    [WHEN when_value THEN statement_list] ...
+    [ELSE statement_list]
+END CASE
+
+Or:
+CASE
+    WHEN search_condition THEN statement_list
+    [WHEN search_condition THEN statement_list] ...
+    [ELSE statement_list]
+END CASE
+
+[begin_label:] LOOP
+    statement_list
+    if condition is ok then leave begin_lable end if;
+    END LOOP [end_label]
+
+ITERATE只可以出现在LOOP, REPEAT, 和WHILE语句内。ITERATE意思为：“再次循环。” 
+delimiter //
+CREATE PROCEDURE doiterate(p1 INT)
+BEGIN
+declare count_number INT default 100;
+  label1: LOOP
+    SET  p1 =  p1 + 1;
+    IF p1 < count_number THEN ITERATE label1; 
+    END IF;
+    LEAVE label1;
+  END LOOP label1;
+  SET @x = p1;
+  select 'fininsh';
+END
+//
+delimiter ;
+
+  WHILE v1 > 0 DO
+    SET v1 = v1 - 1;
+  END WHILE;
+//
+delimiter ;
+ 
+ 修改主键为自增长 
+ ALTER TABLE t_account_sample MODIFY COLUMN ACCOUNT_ID int  AUTO_INCREMENT primary key;
+ 
+修改root 密码
+
+　　启动MySQL：bin/mysqld_safe --skip-grant-tables &
+　　就可以不需要密码就进入MySQL了。
+　　然后就是
+　　>use mysql
+　　>update user set password=password("mysql") where user="root";
+　　>flush privileges;
+
+
+查询内容缺省是不区分大小写的，可以用如下写法来区分大小写
+select *From t_user where binary name='ABC';
+或者建表的时候  name varchar (20) binary   
+ ALTER TABLE `tablename` MODIFY COLUMN `cloname` VARCHAR(45) BINARY; 
+20140827
+安装 5.6.20
+rpm -Uvh --force MySQL-server-5.6.20-1.el6.x86_64.rpm
+You will find that password in  /root/.mysql_secret
+
+20140725
+sockethandler 直接和innodb storage打交道，提交和查询，绕过了,mysql的sql解析层，所以效率会快3-5倍
+
+
+20140423
+修改客户端字符集显示
+SHOW VARIABLES LIKE 'CHAR%';
+  character_set_client     | latin1                             | 
+| character_set_connection | latin1        
+
+导致mysql上去查到乱码
+修改方法 添加如下到 [mysql]
+default-character-set   = utf8
+
+5.6 支持 range/list/hash(用户提供算法)/key(mysql提供算法)/column(多个column考虑，支持rang_column和list_column) 分区， subpartition(hash/key)只能主partition是range/list,
+5.65 后支持事物复制 也支持delayed 复制  MySQL Cluster 支持同步复制
+ 5.5  支持的 Semisynchronous Replication 当有一个 salve收到日志后并且提交到slave的日志后，才返回给客户，如果slave不可用，
+自动转成异步复制
+
+mysql proxy 用来做监控，读写分离等等
+
+
+配置双主复制 启用GTID，transaction级别复制
+参数 /etc/my.cnf
+binlog-format=MIXED
+log-slave-updates=true
+gtid-mode=on
+enforce-gtid-consistency=true
+master-info-repository=TABLE
+relay-log-info-repository=TABLE
+sync-master-info=1
+slave-parallel-workers=2
+binlog-checksum=CRC32
+master-verify-checksum=1
+slave-sql-verify-checksum=1
+binlog-rows-query-log_events=1
+server-id=2
+log-bin=black-bin.log
+rpl_semi_sync_master_enabled=ON
+rpl_semi_sync_slave_enabled=ON
+
+
+
+服务器一 110
+GRANT REPLICATION SLAVE ON *.* TO 'repl_user'@'192.168.122.245' IDENTIFIED BY 'rep';
+CHANGE MASTER TO MASTER_HOST='192.168.122.245', MASTER_USER='repl_user', MASTER_PASSWORD='rep', MASTER_AUTO_POSITION=1;
+START SLAVE;
+服务器二245
+GRANT REPLICATION SLAVE ON *.* TO 'repl_user'@'192.168.122.110' IDENTIFIED BY 'rep';
+CHANGE MASTER TO MASTER_HOST='192.168.122.110', MASTER_USER='repl_user', MASTER_PASSWORD='rep', MASTER_AUTO_POSITION=1;
+START SLAVE;
+
+检查状态
+SHOW SLAVE STATUS\G 
+
+设置双主半同步设置
+
+两个服务器一样设置
+INSTALL PLUGIN rpl_semi_sync_master SONAME 'semisync_master.so'; 
+INSTALL PLUGIN rpl_semi_sync_slave SONAME 'semisync_slave.so';
+SET GLOBAL rpl_semi_sync_master_enabled = ON; 
+SET GLOBAL rpl_semi_sync_slave_enabled = ON; 
+stop slave;
+start slave;
+检查已经启用 
+SHOW STATUS LIKE 'Rpl_semi_sync_master_status'; 
+检查有同步复制客户连接上来
+SHOW STATUS LIKE 'Rpl_semi_sync_master_clients'; 
+做数据修改，确认已经有同步复制发生
+SHOW STATUS LIKE 'Rpl_semi_sync_master_yes_tx'; 
+
+slave端如果宕机，10s自动切换成异步复制
+检查
+show variables like '%rpl_semi_sync_master_enabled%';
+
+未启用 semi_sync ，insert一条记录约 0.04s ,启用之后约 0.25s，降低6倍 
+启用异步复制     不影响性能
+
+
+SET GLOBAL rpl_semi_sync_slave_enabled =OFF;
+SET GLOBAL rpl_semi_sync_master_enabled =OFF; 
+设置delay apply
+change master to master_delay=n; seconds 
+
+可以单独停止 sql apply 而继续接收 master log 
+STOP SLAVE IO_THREAD;
+STOP SLAVE SQL_THREAD;
+
+
+
+错误 GTID不支持里面创建临时表也不支持 CREATE TABLE ... SELECT s
+java.sql.SQLException: Validation Query Failed, enable logValidationErrors for more details.
+        at org.apache.tomcat.jdbc.pool.ConnectionPool.createConnection(ConnectionPool.java:715)
+    原因    
+java.sql.SQLException: When @@GLOBAL.ENFORCE_GTID_CONSISTENCY = 1, the statements CREATE TEMPORARY TABLE and DROP TEMPORARY TABLE can be executed in a non-transactional context only, and require that AUTOCOMMIT = 1.
+

@@ -1,0 +1,770 @@
+lvs
+LVS(direct routing,same subnet/nat/ip tunnel) ,F5 big IP/3DNS /HAProxy+Heartbeat/Keepalive
+堡垒机 Shterm
+F5使用SNAT方式，进来的包选择把Src改成vip,dst改成realserver发出去，所以可以跨网段，也不用改real server。
+或者使real server网管指到f5，就不用改src了。
+常用双臂并联的方式连接，f5和realserver分布接switch，分布在不同的vlan或者同一vlan 也支持npath，像lvs的dr回去的流量直接出去，不走f5
+同一vlan可以跨物理网段，物理交换机，实现广播隔离，控制流量
+VLAN是为解决以太网的广播问题和安全性而提出的一种，它在以太网 帧的基础上增加了VLAN头，用VLAN ID把用户划分为更小的工作组，限制不同工作组间的用户互访，每个工作组就是一个虚拟局域网。虚拟局域 网的好处是可以限制广播范围，并能够形成虚拟工作组，动态管理网络
+一般根据端口/mac/协议来划分vlan
+VLAN具有与物理网络相同的属性，但是可以聚合即使不在同一个物理网段中的终端站点。任一交换机端口可以配置为VLAN接口，负责整个VLAN的单播、广播和多播包转发。
+也就是说一个VLAN可以跨越多台物理交换机，这就是VLAN的中继（Trunk）功能
+所以在同一物理交换机上默认情况下各VLAN间是不能直接通信的，即使它们都位于同一IP网段。但在不同物理交换机上的相同VLAN却是可以直接通信的，只要物理交换机间的连接端口允许相应VLAN数据包通过学习即可，因为位于不同物理交换机上的相同VLAN的连接就是利用物理交换机间的物理连接
+广播域，指的是广播帧（目标MAC地址全部为1）所能传递到的范围，亦即能够直接通信的范围。严格地说，并不仅仅是广播帧，多播帧（Multicast Frame）和目标不明的单播帧（Unknown Unicast Frame）也能在同一个广播域中畅行无阻
+
+网桥工作在链路层 (bridge就是用来分割多个物理机器形成不同的小的物理网络，减少报的的群发(flood)
+比如8个电脑 其中分别4个接到一个hub,另外4个接到另外一个hub,都在同一个ip网段(比如192.168.1/24)，通过网桥连接两个hub，
+能够有效的减少包的冲突和群发，只用群发到一个hub里面的机器了，有效的提高了网络利用率
+交换机就是更高级的网桥了，也工作在链路层，可以理解为把每个电脑都分割到一个物理的小网络了，直接进行端到端的转发，效率更高
+
+
+总之，广播就在我们身边。下面是一些常见的广播通信：     l ARP请求：建立IP地址和MAC地址的映射关系。      RIP：一种路由协议。       DHCP：用于自动设定IP地址的协议。      NetBEUI：Windows下使用的网络协议。      IPX：Novell Netware使用的网络协议。       Apple Talk：苹果公司的Macintosh计算机使用的网络协议。     如果整个网络只有一个广播域，那么一旦发出广播信息，就会传遍整个网络，并且对网络中的主机带来额外的负担。因此，在设计LAN时，需要注意如何才能有效地分割广播域
+汇聚链接（Trunk Link）指的是能够转发多个不同VLAN的通信的端口。   汇聚链路上流通的数据帧，都被附加了用于识别分属于哪个VLAN的特殊信息
+默认条件下，汇聚链接会转发交换机上存在的所有VLAN的数据。换一个角度看，可以认为汇聚链接（端口）同时属于交换机上所有的VLAN。
+
+在LAN内的通信，必须在数据帧头中指定通信目标的MAC地址。而为了获取MAC地址，TCP/IP协议下使用的是ARP。ARP解析MAC地址的方法，则是通过广播。也就是说，如果广播报文无法到达，那么就无从解析MAC地址，亦即无法直接通信。   计算机分属不同的VLAN，也就意味着分属不同的广播域，自然收不到彼此的广播报文。因此，属于不同VLAN的计算机之间无法直接互相通信。为了能够在VLAN间通信，需要利用OSI参照模型中更高一层——网络层的信息（IP地址）来进行路由。
+路由功能，一般主要由路由器提供。但在今天的局域网里，我们也经常利用带有路由功能的交换机——三层交换机（Layer 3 Switch）来实现。接下来就让我们分别看看使用路由器和三层交换机进行VLAN间路由时的情况
+
+
+ECMP（Equal-CostMultipathRouting）等价多路径，存在多条不同链路到达同一目的地址的网络环境中，如果使用传统的路由技术，发往该目的地址的数据包只能利用其中的一条链路，其它链路处于备份状态或无效状态，并且在动态路由环境下相互的切换需要一定时间，而等值多路径路由协议可以在该网络环境下同时使用多条链路，不仅增加了传输带宽，并且可以无时延无丢包地备份失效链路的数据传输。
+为了实现负载分担，安全设备可以提供ECMP功能，对于每个接口去往同一目的的流量，支持最大3条等价路径。通过一个计算源和目的IP地址散列值的算法，安全设备可以在特定网关之间实现流量的负载分担。要
+　　ECMP最大的特点是实现了等值情况下，多路径负载均衡和链路备份的目的，在静态路由和OSPF中基本上都支持ECMP功能。
+但是实际情况是，各路径的带宽、时延和可靠性等不一样，把Cost认可成一样，不能很好地利用带宽，尤其在路径间差异大时，效果会非常不理想。例如，路由器两个出口，两路径，一个带宽是100M，一个是2M，如果部署是ECMP，则网络总带宽只能达到4M的利用率。
+
+
+OSPF知识
+
+    当临接的设备之间相互通告各网络可达性的时候，动态路由协议就发挥了作用。因为这些设备会使用诸如OSPF这样的路由协议来相互交换路由信息。与静态路由不同的是，在路由发生变化时，动态路由协议会动态地添加、删除路由表中的路由信息。
+
+    OSPF是一个内部网关协议（IGP），它用来在设备间实现路由信息的分发。OSPF协议使用IP协议，而且在传输OSPF数据包时要用IP数据包进行封装，并把IP包头的协议字段值设置为89。OSPF用链路状态算法建立和计算所有目的地址的最短路径，这个用来计算最短路径所使用的算法叫做Dijkstra算法（以该算法的发明者Edsger W.Dijkstra的名字命名）。
+    
+
+
+具体实现过程为：首先将用于连接路由器的交换机端口设为汇聚链接，而路由器上的端口也必须支持汇聚链路。双方用于汇聚链路的协议自然也必须相同。接着在路由器上定义对应各个VLAN的“子接口（Sub Interface）”。尽管实际与交换机连接的物理端口只有一个，但在理论上我们可以把它分割为多个虚拟端口。   VLAN将交换机从逻辑上分割成了多台，因而用于VLAN间路由的路由器，也必须拥有分别对应各个VLAN的虚拟接口
+
+十七、Heartbeat的脑裂问题没有想象中那么严重，在线上环境可以考虑使用；DRDB+Heartbeat算是成熟的应用了，建议掌握。我在相当多的场合用此组合来替代EMC共享存储，毕竟30万的价格并不是每个客户都愿意接受的。
+DRDB+Heartbeat+NFS
+
+nginx 的健康检查和负载均衡是密切相关的，它没有独立的健康检查模块，而是使用业务请求作为健康检查，这省去了独立健康检查线程，这是好处。坏处是，当业务复杂时，可能出现误判，例如后端响应超时，这是可能是后端宕机，也可能是某个业务请求自身出现问题，跟后端无关。如果后端宕机，nginx还要在将它标记为不可用之后，仍不时的将业务请求分发给它，以检查后端是否恢复
+如果后端服务器宕掉的话，nginx是不能把这台realserver提出upstream的，所以还会有请求转发到后端的这台realserver上面去，虽然nginx可以在localtion中启用proxy_next_upstream来解决返回给用户的错误页面，方法在：http://www.linuxyan.com/web-server/67.html，大家可以参考一下，但这个还是会把请求转发给这台服务器的，然后再转发给别的服务器，这样就浪费了一次转发，这次借助与淘宝技术团队开发的nginx模快nginx_upstream_check_module来检测后方realserver的健康状态，如果后端服务器不可用，则所以的请求不转发到这台服务器。
+
+
+HAPROXY
+Haproxy的优点:
+它的优点正好可以补充nginx的缺点。支持session保持，同时支持通过获取指定的url来检测后端服务器的状态。
+支持tcp模式的负载均衡。比如可以给mysql的从服务器集群和邮件服务器做负载均衡。
+缺点：
+不支持虚拟主机
+目前没有nagios和cacti的性能监控模板
+ 
+3、LVS
+LVS的优点:
+性能好，接近硬件设备的网络吞吐和连接负载能力。
+LVS的DR模式，支持通过广域网进行负载均衡。这个其他任何负载均衡软件目前都不具备。
+
+
+
+DR模式的工作过程：
+当一个client发送一个WEB请求到VIP，LVS服务器根据VIP选择对应的real-server的Pool，根据算法，在Pool中选择一台Real-server，LVS在hash表中记录该次连接，然后将client的请求包发给选择的Real-server，最后选择的Real-server把应答包直接传给client；当client继续发包过来时，LVS根据更才记录的hash表的信息，将属于此次连接的请求直接发到刚才选择的Real-server上；
+DR模式在转发client的包时，只修改了包目的MAC地址为选定的Real-server的mac地址，所以如果LVS和Real-server在不通的广播域内，那么Real-server就没办法接收到转发的包。下面是mac地址的修改过程：
+，DR模式需要在Real-server上配置VIP 要求同网段，而且real server也要配置lvs的服务ip(一般配置在lo上) 需要关闭arp响应
+
+IP Tunneling的工作过程 (only linux)
+1> client 发送request包到LVS服务器的VIP上。
+2> VIP按照算法选择后端的一个Real-server，并将记录一条消息到hash表中，然后将client的request包封装到一个新的IP包里，新IP包的目的IP是Real-server的IP，然后转发给Real-server。
+3> Real-server收到包后，解封装，取出client的request包，发现他的目的地址是VIP，而Real-server发现在自己的lo:0口上有这个IP地址，于是处理client的请求，然后将relpy这个request包直接发给client。
+4> 该client的后面的request包，LVS直接按照hash表中的记录直接转发给Real-server，当传输完毕或者连接超时，那么将删除hash表中的记录。
+
+LVS和Real-server不需要在一个网段：
+由于通过IP Tunneling 封装后，封装后的IP包的目的地址为Real-server的IP地址，那么只要Real-server的地址能路由可达，Real-server在什么网络里都可以，这样可以减少对于公网IP地址的消耗，但是因为要处理IP Tunneling封装和解封装的开销，那么效率不如DR模式。
+
+
+NAT模式的工作过程:
+1> client发送request到LVS的VIP上，VIP选择一个Real-server，并记录连接信息到hash表中，然后修改client的request的目的IP地址为Real-server的地址，将请求发给Real-server;
+2> Real-server收到request包后，发现目的IP是自己的IP，于是处理请求，然后发送reply给LVS;
+3> LVS收到reply包后，修改reply包的的源地址为VIP，发送给client;
+4> 从client来的属于本次连接的包，查hash表，然后发给对应的Real-server。
+5> 当client发送完毕，此次连接结束或者连接超时，那么LVS自动从hash表中删除此条记录。
+
+Keepalived使用VRRP协议进行通信和选举，Heartbeat使用心跳进行通信和选举；Heartbeat除了走网络外，还可以通过串口通信，貌似更可靠；
+
+keepalived 能很好滴解决Heartbeat的split-brain 脑裂问题
+应该在主、备服务器使用两个物理连接传输heartbeat的控制信息；这样可以避免在一个网络或线缆故障时导致两个节点同时认为自已是唯一处于活动状态的服务器从而出现争用资源的情况，这种争用资源的场景即是所谓的“脑裂”（split-brain）或“partitioned cluster”。在两个节点共享同一个物理设备资源的情况下，脑裂会产生相当可怕的后果。
+
+安装 2.6内核已经打好了ipvs的补丁，所以直接安装admin程序即可
+
+
+arp_announce:对网络接口上，本地IP地址的发出的，ARP回应，作出相应级别的限制: 确定不同程度的限制,宣布对来自本地源IP地址发出Arp请求的接口 
+0 - (默认) 在任意网络接口（eth0,eth1，lo）上的任何本地地址 
+1 -尽量避免不在该网络接口子网段的本地地址做出arp回应. 当发起ARP请求的源IP地址是被设置应该经由路由达到此网络接口的时候很有用.此时会检查来访IP是否为所有接口上的子网段内ip之一.如果改来访IP不属于各个网络接口上的子网段内,那么将采用级别2的方式来进行处理. 
+2 - 对查询目标使用最适当的本地地址.在此模式下将忽略这个IP数据包的源地址并尝试选择与能与该地址通信的本地地址.首要是选择所有的网络接口的子网中外出访问子网中包含该目标IP地址的本地地址. 如果没有合适的地址被发现,将选择当前的发送网络接口或其他的有可能接受到该ARP回应的网络接口来进行发送.
+
+
+arp_ignore:定义对目标地址为本地IP的ARP询问不同的应答模式0 
+0 - (默认值): 回应任何网络接口上对任何本地IP地址的arp查询请求 
+1 - 只回答目标IP地址是来访网络接口本地地址的ARP查询请求 
+2 -只回答目标IP地址是来访网络接口本地地址的ARP查询请求,且来访IP必须在该网络接口的子网段内 
+3 - 不回应该网络界面的arp请求，而只对设置的唯一和连接地址做出回应 
+4-7 - 保留未使用 
+8 -不回应所有（本地地址）的arp查询
+
+echo "1" > /proc/sys/net/ipv4/conf/all/arp_ignore
+echo "1" > /proc/sys/net/ipv4/conf/lo/arp_ignore
+echo "2" > /proc/sys/net/ipv4/conf/lo/arp_announce
+echo "2" > /proc/sys/net/ipv4/conf/all/arp_announce
+
+
+-s rr  循环法
+-s wrr 带权重的循环法
+-s lc   最少连接法
+-s wlc   带权重的最少连接法
+-s lblc 基于本地的最少连接法
+-s dh    目标散列法
+-s sh   源散列法
+-s sed   最短预期延迟法
+-s nq   永不排队法
+
+保存rule
+ipvsadm --save > /etc/sysconfig/ipvsadm 
+
+real server 1 :kvm8  192.168.73.198/10.0.1.8
+real server 1 :kvm7  192.168.73.197/10.0.1.53
+
+DR 1:          kvm4  192.168.73.135/10.0.1.20
+DR 2:          kvm6  192.168.73.194/10.0.1.23  
+
+从2.4开始，NAT性能比DR/TUN好
+
+DR和Tun不支持端口转发，只有NAT支持 除非使用iptables做转换  lo/tunl0/dummy都是用来配置vip来接受 packet的，发出去的时候不走这几个dev
+
+
+确认是否内核已经支持ipvs 
+grep -i 'ip_vs' /boot/config-2.6.32-431.el6.x86_64
+CONFIG_IP_VS=m
+CONFIG_IP_VS_IPV6=y
+
+
+ 保持连接持久， 缺省保持 300 s
+ ipvsadm -A -t virtualdomain:www -p 360
+或者
+先运行 ipvsadm 然后 lsmod |grep ip_vs
+
+启动 director 状态复制
+ipvsadm --start-daemon=master --mcast-interface=eth3
+ipvsadm --start-daemon=backup --mcast-interface=eth7
+ipvsadm --stop-daemon
+ 
+  ipvsadm -Lcn 查看连接的客户端 或者  /proc/net/ip_vs_conn
+查看流量
+ipvsadm -L -t   192.168.73.166:80 --stats  
+
+
+
+
+直接安装
+rpm -ivh ipvsadm-1.26-2.el6.x86_64.rpm
+
+
+配置NAT
+
+director 
+添加如下内容到 /etc/sysctl.conf 
+net.ipv4.ip_forward=1 
+net.ipv4.conf.all.send_redirects=0 
+net.ipv4.conf.default.send_redirects=0
+net.ipv4.conf.eth5.send_redirects=0      eth5 is the same subnet ip as the real server
+
+sysctl -p
+
+cat   /proc/sys/net/ipv4/conf/eth5/send_redirects
+添加default gw for  director 
+ip route del default
+ip route add default via 192.168.73.1 dev eth3
+
+
+
+
+
+ipvsadm -A -t 192.168.73.135:80 -s rr
+ipvsadm -a -t 192.168.73.135:80 -r 10.0.1.8 -m
+ipvsadm -a -t 192.168.73.135:80 -r 10.0.1.53 -m
+
+
+
+realserver
+添加default gw point 到 director 
+ip route del default
+ip route add default via 10.0.1.20 dev eth6
+chkconfig --level 345 iptables off
+
+
+测试http是否正常
+curl http://10.0.1.8/w.html 
+curl http://10.0.1.53/w.html 
+
+curl http://192.168.73.135/w.html 
+
+ifconfig eth3:165 192.168.73.165 
+
+ipvsadm -A -t 192.168.73.165:1024 -s rr
+ipvsadm -a -t 192.168.73.165:1024 -r 10.0.1.8:22 -m
+ipvsadm -a -t 192.168.73.165:1024 -r 10.0.1.53:22 -m
+
+ipvsadm -A -t 192.168.73.135:80 -s rr
+ipvsadm -a -t 192.168.73.135:80 -r 10.0.1.8 -m
+ipvsadm -a -t 192.168.73.135:80 -r 10.0.1.53 -m
+
+
+ipvsadm -A -t 192.168.73.165:80 -s rr
+ipvsadm -a -t 192.168.73.165:80 -r 10.0.1.8 -m
+ipvsadm -a -t 192.168.73.165:80 -r 10.0.1.53 -m
+
+curl http://192.168.73.165/w.html 
+
+如果realserver和director以及对外的vip都在一个网段，需要把realserver上的直接路由断掉，只能从director上面走
+
+配置DR
+
+director  在 director 配置vip的同时在lo:上面也配置一个vip都能work
+
+添加一个服务ip 
+ifconfig eth3:166 192.168.73.166
+
+添加路由 
+route add -host 192.168.73.166 dev eth3:166
+
+ip route del default
+ip route add default via 192.168.73.1 dev eth3
+
+关闭forward
+net.ipv4.ip_forward=0   //security reason
+net.ipv4.conf.all.send_redirects=1
+net.ipv4.conf.default.send_redirects=1
+net.ipv4.conf.eth5.send_redirects=1 
+
+sysctl -p
+
+ipvsadm -A -t 192.168.193.144:8400 -s rr  
+ipvsadm -a -t  192.168.193.144:8400 -r 192.168.193.145 -g
+ipvsadm -a -t  192.168.193.176:8400 -r 192.168.193.146 -g
+
+
+realserver 
+关闭forward
+net.ipv4.ip_forward=0   //security reason
+net.ipv4.conf.lo.arp_announce=2   
+net.ipv4.conf.all.arp_announce=2
+net.ipv4.conf.lo.arp_ignore=1
+net.ipv4.conf.all.arp_ignore=1
+
+ip route del default
+ip route add default via 192.168.73.1 dev eth7
+配置vip(不能用ip add的方式配置，会导致网络不可用)
+ifconfig lo:110 192.168.73.166 broadcast 192.168.73.166 netmask 0xffffffff up
+route add -host 192.168.73.166 dev lo:110
+
+ifconfig lo:111 192.168.193.144 broadcast 192.168.193.144  netmask 0xffffffff up
+route add -host 192.168.193.144 dev lo:111
+
+
+Tunnel  如果送大包>1500 byte会出问题，只支持MTU=1480，因为tunl设备会到来额外的开销
+如果tunnel环境下，realserver和ld不在一个网段，有可能real server回包给client的时候，router会丢弃这个包，因为vip不在这个网段
+添加一个服务ip 
+ip addr del 192.168.73.165/24 dev eth3
+ip addr add 192.168.73.165/24 broadcast 192.168.73.255  dev eth3 label eth3:165
+
+关闭forward
+net.ipv4.ip_forward=0   //security reason
+net.ipv4.conf.all.send_redirects=1
+net.ipv4.conf.default.send_redirects=1
+net.ipv4.conf.eth5.send_redirects=1 
+
+sysctl -p
+
+ipvsadm -A -t 192.168.73.165:80 -s rr  
+ipvsadm -a -t 192.168.73.165:80 -r 10.0.1.8  -i
+ipvsadm -a -t 192.168.73.165:80 -r 10.0.1.53 -i
+
+ipvsadm -A -t 192.168.73.165:8900 -s rr  
+ipvsadm -a -t 192.168.73.165:8900 -r 192.168.193.136 -i
+
+
+realserver  modprobe ipip (如果没有静态编译到内核)
+如果和director使用同一个网关，需要关闭realserver的arp，如果不是，可以不管
+net.ipv4.conf.all.arp_announce=2
+net.ipv4.conf.all.arp_ignore=1
+net.ipv4.conf.tunl0.arp_ignore=1
+net.ipv4.conf.tunl0.arp_announce=2   
+ifconfig tunl0 192.168.73.165 netmask 255.255.255.255 broadcast 192.168.73.165
+
+如果配置的dr也作为real server有可能会导致request发送到dr1,dr1转发到 dr2,然后dr2(dr2也激活lvs的情况下)又转回dr1的情况，出现loop
+可以通过 fwmark(firemark) 来处理，给它加上独特的mark值，或者先不激活dr2的ipvsadmin表，等dr2切换成master后在load ipvs table。
+如果有两个网卡，一个对外，一个real server用来监控，可以用下面的方式设置 fwmark值
+这样ipvs只处理通过vip监听网卡进来的包，而不是所有网卡的包
+iptables -t mangle -I PREROUTING -i eth0 -p tcp -m tcp -s 0/0 -d $VIP --dport $VIP_PORT -j MARK --set-mark 0x1
+virtual_server fwmark 1 {
+     delay_loop 10
+     lb_algo rr
+     lb_kind DR
+     protocol TCP
+
+     real_server x.x.x.72 25 {
+         TCP_CHECK {
+             connect_timeout 5
+         }
+     }
+     real_server x.x.x.73 25 {
+         TCP_CHECK {
+             connect_timeout 5
+         }
+     }
+}
+
+
+
+
+
+如果只有一个网卡 ，则可以通过下面的方式来处理
+on dr1
+iptables  -t mangle -I PREROUTING -d $VIP -p tcp -m tcp --dport $VPORT -m mac \! --mac-source $MAC_NODE2 -j MARK --set-mark 0x6
+on dr2
+iptables  -t mangle -I PREROUTING -d $VIP -p tcp -m tcp --dport $VPORT -m mac \ ! --mac-source $MAC_NODE1 -j MARK --set-mark 0x7 
+node1: virtual_server fwmark 6 { }
+node2: virtual_server fwmark 7 { }
+
+
+localnode 独立于 NAT,TUN or DR ，发送到local node的时候，dst ip还是vip不会改变，所以返回能正常work
+ server必须要监听vip地址，可以像apache那样监听所有的ip，添加realserver的时候用127.0.0.1
+ipvsadm -C
+ipvsadm -A -t 192.168.73.166:80 -s rr  
+ipvsadm -a -t 192.168.73.166:80 -r 192.168.73.197 -g
+ipvsadm -a -t 192.168.73.166:80 -r 192.168.73.198 -g
+ipvsadm -a -t 192.168.73.166:80 -r 127.0.0.1 -g
+
+
+
+real server 客户端自动配置脚本
+#!/bin/bash
+#description : start realserver
+VIP=61.135.20.16
+case "$1" in
+start)
+echo " start LVS of REALServer"
+/sbin/ifconfig lo:0 $VIP broadcast $VIP netmask 255.255.255.255 up
+echo "1" >/proc/sys/net/ipv4/conf/lo/arp_ignore
+echo "2" >/proc/sys/net/ipv4/conf/lo/arp_announce
+echo "1" >/proc/sys/net/ipv4/conf/all/arp_ignore
+echo "2" >/proc/sys/net/ipv4/conf/all/arp_announce
+;;
+stop) 
+/sbin/ifconfig lo:0 down
+echo "close LVS Directorserver"
+echo "0" >/proc/sys/net/ipv4/conf/lo/arp_ignore
+echo "0" >/proc/sys/net/ipv4/conf/lo/arp_announce
+echo "0" >/proc/sys/net/ipv4/conf/all/arp_ignore
+echo "0" >/proc/sys/net/ipv4/conf/all/arp_announce
+;;
+*)
+echo "Usage: $0 {start|stop}"
+exit 1
+esac 
+
+
+keepalived 基于 vrrp 协议，而vrrp使用IP多播数据包进行封装，组地址为 224.0.0.18 ,
+keepalived 支持
+o TCP CHECK: Performing a LAYER3 check. TCP Vanilla check using nonblocking/timed-out TCP connections. If the remote server does not reply to this request (timed-out)
+o HTTP GET: Checking a remote HTTP server html content integrity. layer5. Performs a GET HTTP to a specified URL. The get result is then summed using the MD5 algorithm
+o SSL GET: Checking a remote SSL server html content integrity.
+o MISC CHECK: Performing user defined integrity checks.  This check allows a user defined script to be run as the health checker. The result must be 0 or 1.
+生成http的hash genhash –s 192.168.100.2 –p 80 –u /testurl/test.jsp
+
+安装 keeplived  keepalived 启动后，ipvs的配置就已经加上了，只不过没有vip，不能对外服务
+如果weight 设置为0 就不能服务了
+解压 
+./configure --prefix=/ciccdev/keepalived 
+make 
+make install
+配置文件在   /etc/keepalived/keepalived.conf  
+启动日志写到 /var/log/messages
+cp /usr/local/keepalived/sbin/keepalived /usr/sbin/ 
+cp /usr/local/keepalived/etc/sysconfig/keepalived /etc/sysconfig/ 
+cp /usr/local/keepalived/etc/rc.d/init.d/keepalived /etc/init.d/ 
+
+
+mkdir /etc/keepalived 
+lvs_sync_daemon_inteface   specify the network interface for the LVS sync_daemon to run on
+primary 配置
+
+global_defs 
+{
+ notification_email {
+        wanzy@cicc.com.cn 
+										}
+
+   notification_email_from iti_alert@cicc.com.cn
+   smtp_server 192.168.20.43
+   smtp_connect_timeout 30
+router_id LVS_CNC_1
+
+}
+
+vrrp_sync_group VGM 
+{
+group 	{
+VI_CACHE
+				}
+}
+
+vrrp_instance VI_CACHE  这个是为了配置vip
+{
+state MASTER
+interface eth3
+lvs_sync_daemon_inteface eth3
+virtual_router_id 51
+priority 180
+advert_int 1
+authentication {
+auth_type PASS
+auth_pass 1111
+					}
+virtual_ipaddress 
+      {
+192.168.73.166
+			}
+}
+
+virtual_server 192.168.73.166 80   这个就是为了配置lvs用的 
+{
+delay_loop 6
+lb_algo wlc
+lb_kind DR
+# persistence_timeout 20
+protocol TCP
+real_server 192.168.73.197 80 
+	{
+weight 100
+TCP_CHECK {
+connect_timeout 3
+nb_get_retry 3
+delay_before_retry 3
+connect_port 80
+					}
+	}
+real_server 192.168.73.198 80 
+	{
+weight 100
+TCP_CHECK {
+connect_timeout 3
+nb_get_retry 3
+delay_before_retry 3
+connect_port 80
+					}
+	}
+	real_server 192.168.73.194 80
+        {
+weight 100
+TCP_CHECK {
+connect_timeout 3
+nb_get_retry 3
+delay_before_retry 3
+connect_port 80
+                                        }
+        }
+    real_server 127.0.0.1 80
+        {
+weight 100
+TCP_CHECK {
+connect_timeout 3
+nb_get_retry 3
+delay_before_retry 3
+connect_port 80
+          }
+       }
+}
+
+backup 
+
+global_defs 
+{
+ notification_email 
+                {
+        wanzy@cicc.com.cn 
+								}
+
+   notification_email_from iti_alert@cicc.com.cn
+   smtp_server 192.168.20.43
+   smtp_connect_timeout 30
+router_id LVS_CNC_2
+}
+
+vrrp_sync_group VGM 
+{
+group {
+VI_CACHE
+			}
+}
+
+vrrp_instance VI_CACHE 
+{
+state BACKUP
+interface eth7
+lvs_sync_daemon_inteface eth7   
+virtual_router_id 51
+priority 100
+advert_int 1
+authentication {
+auth_type PASS
+auth_pass 1111
+}
+virtual_ipaddress {
+192.168.73.166
+								}
+}
+
+virtual_server 192.168.73.166 80 
+{
+delay_loop 6
+lb_algo wlc
+lb_kind DR
+# persistence_timeout 20
+protocol TCP
+real_server 192.168.73.197 80 
+	{
+weight 100
+TCP_CHECK {
+connect_timeout 3
+nb_get_retry 3
+delay_before_retry 3
+connect_port 80
+				}
+	}
+real_server 192.168.73.198 80 
+	{
+weight 100
+TCP_CHECK {
+connect_timeout 3
+nb_get_retry 3
+delay_before_retry 3
+connect_port 80
+					}
+	}
+	
+	real_server 192.168.73.135 80
+        {
+weight 100
+TCP_CHECK {
+connect_timeout 3
+nb_get_retry 3
+delay_before_retry 3
+connect_port 80
+                                        }
+        }
+    real_server 127.0.0.1 80
+        {
+weight 100
+TCP_CHECK {
+connect_timeout 3
+nb_get_retry 3
+delay_before_retry 3
+connect_port 80
+                                        }
+        }
+        
+}
+
+
+virtual_server 192.168.202.200 23 {
+    delay_loop 6 #健康检查时间间隔
+    lb_algo rr  #lvs调度算法rr|wrr|lc|wlc|lblc|sh|dh
+    lb_kind DR  #负载均衡转发规则NAT|DR|RUN
+    persistence_timeout 5 #会话保持时间
+    protocol TCP #使用的协议
+    persistence_granularity <NETMASK> #lvs会话保持粒度
+    mcast_src_ip  vrrp广播地址
+    virtualhost <string> #检查的web服务器的虚拟主机（host：头）    
+    sorry_server<IPADDR> <port> #备用机，所有realserver失效后启用
+real_server 192.168.200.5 23 {
+            weight 1 #默认为1,0为失效
+            inhibit_on_failure #在服务器健康检查失效时，将其设为0，而不是直接从ipvs中删除 
+            notify_up <string> | <quoted-string> #在检测到server up后执行脚本
+            notify_down <string> | <quoted-string> #在检测到server down后执行脚本
+
+keepalived起来的vip只能通过 ip addr 看到
+
+genhash –s 192.168.100.2 –p 80 –u /testurl/test.jsp  生成 md5 digest
+定义同步组表示 这两组要一起变成主的或者备的 ，用组是因为v1_1和v1_2需要在不同的interface上启动
+vrrp_sync_group VG1 {
+  VI_1
+VI_2 }
+VRRP同步组(synchroization group)配置范例
+vrrp_sync_group VG_1 {
+group {
+http
+mysql
+}
+notify_master /path/to/to_master.sh  --表示当切换到master状态时，要执行的脚本
+notify_backup /path_to/to_backup.sh
+notify_fault "/path/fault.sh VG_1"  失败的世邦
+notify /path/to/notify.sh
+smtp_alert
+}
+
+mysql配置为相互复制
+
+让 keepalived 输出更多信息
+修改/etc/sysconfig/keepalived
+KEEPALIVED_OPTIONS="-D --log-detail --dump-conf"
+
+配置HA模式
+global_defs
+{
+ notification_email {
+        wanzy@cicc.com.cn
+}
+
+   notification_email_from iti_alert@cicc.com.cn
+   smtp_server 192.168.20.43
+   smtp_connect_timeout 30
+router_id LVS_CNC_1
+
+}
+vrrp_script checkhaproxy
+{
+    script "/etc/keepalived/check.sh"
+    interval 3
+    weight   10
+     fall   2
+    rise 1
+
+}
+
+
+vrrp_instance VI_CACHE
+{
+state BACKUP
+interface eth6
+#mcast_src_ip  224.0.0.19
+#lvs_sync_daemon_inteface eth6
+virtual_router_id 51
+priority 51
+nopreempt
+advert_int 1
+authentication {
+auth_type PASS
+auth_pass 1111
+						}
+virtual_ipaddress
+      {
+192.168.122.118
+        }
+notify_master "/etc/keepalived/stateChange.sh master"
+notify_backup "/etc/keepalived/stateChange.sh backup"
+notify_fault "/etc/keepalived/stateChange.sh fault"
+smtp_alert  出现状态变化的时候发邮件通知
+track_script    这个两个状态 下都执行 放在virtual_ipaddress 脚本后 能修改优先级，
+但是测试环境下，始终有个机器抢占主的，如果在检测脚本里面kill keepalived，就ok了 脚本必须有执行权限
+
+    {
+        checkhaproxy
+    }
+    
+}
+
+
+virtual_server 192.168.122.118 80 {
+   delay_loop 2
+   lb_algo rr
+   lb_kind DR
+   persistence_timeout 20
+   protocol TCP
+   
+    
+   real_server 127.0.0.1 80 {
+     weight 3
+     notify_down "/etc/keepalived/stateChange.sh MYSQL_DOWN"    这个在master/slave状态下都会执行
+     TCP_CHECK {
+       connect_timeout 3
+       nb_get_retry 3
+       delay_before_retry 3
+       connect_port 80
+     }
+   }
+}
+
+                
+ [root@kvm4 keepalived]# cat /etc/keepalived/stateChange.sh
+#!/bin/sh
+date >> change.log 
+echo "changed to" $1 >> change.log
+
+[root@kvm4 keepalived]# cat check.sh 
+#!/bin/bash
+count=$(ps aux | grep -v grep | grep httpd | wc -l)
+date >> /tmp/check.log
+echo $count >> /tmp/check.log
+if [ $count -gt  0 ]; then
+    exit 0
+else
+# /etc/init.d/keepalived stop
+    exit 1
+fi
+
+
+
+首先在vrrp_script区域定义脚本名字和脚本执行的间隔和脚本执行的优先级变更
+vrrp_script check_running {
+script "/usr/local/bin/check_running"
+interval 10     #脚本执行间隔
+weight 10      #脚本结果导致的优先级变更：10表示优先级+10；-10则表示优先级-10
+}
+然后在实例(vrrp_instance)里面引用，有点类似脚本里面的函数引用一样：先定义，后引用函数名
+track_script {
+check_running weight 20
+}
+
+keepalived 参数说明
+http://bbs.ywlm.net/thread-845-1-1.html
+keeplived 组件 
+1、WatchDog负责监控checkers和VRRP进程的状况
+2、Checkers负责真实服务器的健康检查healthchecking，是keepalived最主要的功能。换句话说—可以没有VRRP Stack,但健康检查healthchecking是一定要有的
+3VRRP Stack负责负载均衡器之间的失败切换FailOver.如果只用一个负载均衡器，则VRRP不是必须的
+4、IPVS wrapper用来发送设定的规则到内核ipvs代码
+5 Netlink Reflector用来设定vrrp的vip 地址等
+
+能够很快的发现后台服务是否正常
+
+keepalived切换时间为3s
+
+通过 tcpdump vrrp 来检测VRRP广播内容
+
+vrrp_script 里的script返回值为0时认为检测成功，其它值都会当成检测失败； 
+    weight 为正时，脚本检测成功时此weight会加到priority上，检测失败时不加；
+        主失败:
+            主 priority < 从 priority + weight 时会切换。
+        主成功：
+            主 priority + weight > 从 priority + weight 时，主依然为主
+    weight 为负时，脚本检测成功时此weight不影响priority，检测失败时priority – abs(weight)
+        主失败:
+            主 priority – abs(weight) < 从priority 时会切换主从
+        主成功:
+            主 priority > 从priority 主依然为主
+
+
+A(pri 80),B(pri 70)同时启动后，由于A的优先级较高，因此通过选举会成为master。当A上的业务进程出现问题时，优先级会降低到60。此时B收到优先级比自己低的vrrp广播包时，将切换为master状态。那么当B上的业务出现问题时，优先级降低到50，尽管A的优先级比B的要高，但是由于设置了nopreempt，A不会再抢占成为master状态,除非把b的keepalived彻底kill就没问题
+
+keepalived中优先级高的节点为MASTER。MASTER其中一个职责就是响应VIP的arp包，将VIP和mac地址映射关系告诉局域网内其他主机，同时，它还会以多播的形式（目的地址224.0.0.18）向局域网中发送VRRP通告，告知自己的优先级。网络中的所有BACKUP节点只负责处理MASTER发出的多播包，当发现MASTER的优先级没自己高，或者没收到MASTER的VRRP通告时，BACKUP将自己切换到MASTER状态，然后做MASTER该做的事：1.响应arp包，2.发送VRRP通告。
+当两个节点的优先级相同时，以节点发送VRRP通告的IP作为比较对象，IP较大者为MASTER
+
+2.2 MASTER选举
+如果对外的虚拟路由器IP就是路由器本身配置的IP地址的话，该路由器始终都是MASTER；
+否则如果不具备虚拟IP的话，将进行MASTER选举，各路由器都宣告自己是MASTER，发送VRRP通告信息；
+如果收到其他机器的发来的通告信息的优先级比自己高，将转回BACKUP状态；
+如果优先级相等的话，将比较路由器的实际IP，IP值较大的优先权高；
+不过如果对外的虚拟路由器IP就是路由器本身的IP的话，该路由器始终将是MASTER，这时的优先级值为255。
+
+
+
+  在VRRP协议中，有两组重要的概念：VRRP路由器和虚拟路由器，主控路由器和备份路由器。VRRP路由器是指运行VRRP的路由器，是物理实体，虚拟路由器是指VRRP协议创建的，是逻辑概念。一组VRRP路由器协同工作，共同构成一台虚拟路由器。该虚拟路由器对外表现为一个具有唯一固定IP地址和MAC地址的逻辑路由器。处于同一个VRRP组中的路由器具有两种互斥的角色：主控路由器和备份路由器，一个VRRP组中有且只有一台处于主控角色的路由器，可以有一个或者多个处于备份角色的路由器。VRRP协议使用选择策略从路由器组中选出一台作为主控，负责ARP相应和转发IP数据包，组中的其它路由器作为备份的角色处于待命状态。当由于某种原因主控路由器发生故障时，备份路由器能在几秒钟的时延后升级为主路由器。由于此切换非常迅速而且不用改变IP地址和MAC地址，故对终端使用者系统是透明的。  
+在一个VRRP虚拟路由器中，有多台物理的VRRP路由器，但是这多台的物理的机器并不能同时工作，而是由一台称为MASTER的负责路由工作，其它的都是BACKUP，MASTER并非一成不变，VRRP让每个VRRP路由器参与竞选，最终获胜的就是MASTER。MASTER拥有一些特权，比如 拥有虚拟路由器的IP地址，我们的主机就是用这个IP地址作为静态路由的。拥有特权的MASTER要负责转发发送给网关地址的包和响应ARP请求。
+
+VRRP 通过竞选协议来实现虚拟路由器的功能，所有的协议报文都是通过IP多播(multicast)包(多播地址 224.0.0.18)形式发送的。虚拟路由器由VRID(范围0-255)和一组IP地址组成，对外表现为一个周知的MAC地址。所以，在一个虚拟路由 器中，不管谁是MASTER，对外都是相同的MAC和IP(称之为VIP)。客户端主机并不需要因为MASTER的改变而修改自己的路由配置，对他们来 说，这种主从的切换是透明的。

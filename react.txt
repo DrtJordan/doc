@@ -1,0 +1,453 @@
+React + react-router + redux 的主流方案
+- react：作为view层，同时实现同构应用
+- react-router：一方面作为前端的controller，另一方面实现单页应用
+- redux: model层，进行state管理，同时配合使用immutable
+material-ui 是基于 react的组件库
+如果你的UI层非常简单，没有很多互动，Redux 就是不必要的，用了反而增加复杂性。
+redux 概念
+（1）Web 应用是一个状态机，视图与状态是一一对应的。
+（2）所有的状态，保存在一个对象里面。
+
+IOS chart       https://github.com/danielgindi/Charts
+Androi chart  https://github.com/PhilJay/MPAndroidChart
+https://github.com/tomauty/react-native-chart
+
+开发工具  React Developer Tools  支持 看react 各种 Component 
+Redux Developer Tools 
+ SASS as our CSS preprocessor  比  less好
+ ESLint 用来检查分析代码 
+ 
+flux不是一个js库，而是一种前端代码的组织思想，比如说redux库可以认为是一种flux思想的实现。
+
+具体而言，前端开发的Model相当于后台数据的镜像或缓存池，它和服务器端MVC中的Model概念一脉相承；View对应页面的呈现，主要指的是和html、css相关的代码，它和服务器端MVC中的View概念也非常相近。
+显著的差别来自于controller：在后台应用中，用户和服务器之间的交互是通过http请求实现的，因此后台controller的表达形式是http请求的handler，并且和router（定义网站的url规则）紧密相关; 而前端应用中，用户和网页之间的交互主要是通过操作事件（例如点击鼠标、键盘输入等）实现的，因此前端的controller这里可以简单理解为各种交互事件的handler。
+
+从代码层面而言，flux无非就是一个常见的event dispatcher，其目的是要将以往MVC中各个View组件内的controller代码片断提取出来放到更加恰当的地方进行集中化管理，并从开发体验上实现了舒适清爽、容易驾驭的“单向流”模式。 所以我觉得，Flux与其说是对前端MVC模式的颠覆，倒不如说是对前端MVC思想的补充和优化。
+
+Babel是一个广泛使用的ES6转码器，可以将ES6代码转为ES5代码，从而在现有环境执行。
+
+如果是 Angular 那就选 Ionic (一对好 CP)
+如果是 Vue 那就选 Vux (基于 WeUI)
+如果是 jQuery 那就选 Framework7 (iOS 和 Android 双皮肤)
+如果是 React 那就选 ... (额，知道的补充下!)
+
+node package manager=NPM
+npm config set proxy=http://192.168.31.77:8080
+本地安装 将安装包放在 ./node_modules 下
+npm install -g 全局安装
+ npm uninstall express
+npm ls 
+npm init 创建新的 package.json   
+npm install --save  package 会把 package 放到 package.json的 dependencies  部分
+npm start  This runs an arbitrary command specified in the package's "start" property of its "scripts" object.   If no "start" property is specified on the "scripts" object, it will run node server.js.
+watchify是一个browserify的封装  文件每次变动都编译
+
+
+ react-hot-loader 可以动态刷新 component代码，但是不用丢失状态
+ 
+Angular 适用于 Web 前端资源偏紧的团队和富交互、对性能 / SEO 要求不高的业务。一般刚刚起步而且没有专业前端的团队我会建议他们用 Angular。Java 系程序员对 Angular 的很多概念都很容易理解呢
+React 适用于有一定规模的业务和团队，因为这通常意味着复用的需求较为强烈
+Vue 更加轻量一些，我判断比较适用于对有一定自研能力的团队，能够基于 Vue 做一些新轮子出来满足业务线
+基于以上的分析，说下我对发展趋势的判断：
+随着前端工程师数量的增加和专业能力的进步，用 Vue 这类小而美方案的团队会增加
+随着 React Native 这类 JS2Native 技术的发展，React 会加速发展，比 15 年更快
+ 
+ 作为亚洲第二的淘宝前端团队，我们用React组件标准，不完全统计阿里一半以上的团队都有在重度使用React；
+ 
+ Angular 2 继续把 “JS” 放到 HTML 里。React 则把 “HTML” 放到 JS 里。
+ 
+ webpack，babel，
+ 
+ Gulp应该和Grunt比较，他们的区别我就不说了，说说用处吧。Gulp / Grunt 是一种工具，能够优化前端工作流程。比如自动刷新页面、combo、压缩css、js、编译less等等。简单来说，就是使用Gulp/Grunt，然后配置你需要的插件，就可以把以前需要手工做的事情让它帮你做了。
+
+说到 browserify / webpack ，那还要说到 seajs / requirejs 。这四个都是JS模块化的方案。其中seajs / require 是一种类型，browserify / webpack 是另一种类型。
+RequireJS是一个非常小巧的JavaScript模块载入框架，是AMD规范最好的实现者之一
+seajs / require : 是一种在线"编译" 模块的方案，相当于在页面上加载一个 CMD/AMD 解释器。这样浏览器就认识了 define、exports、module 这些东西。也就实现了模块化。
+
+browserify / webpack : 是一个预编译模块的方案，相比于上面 ，这个方案更加智能。没用过browserify，这里以webpack为例。首先，它是预编译的，不需要在浏览器中加载解释器。另外，你在本地直接写JS，不管是 AMD / CMD / ES6 风格的模块化，它都能认识，并且编译成浏览器认识的JS。
+这样就知道，Gulp是一个工具，而webpack等等是模块化方案。Gulp也可以配置seajs、requirejs甚至webpack的插件。
+简单来说，webpack 太复杂，是比较全面的解决方案（因此配置也比较复杂），而 browserify 只是一个核心，其本身也是由不同模块组成的，更符合 unix 的干好一件事的哲学。用 webpack 的某些功能和 browserify 去比较是不太公平的，因为哲学不一样。
+
+ 
+ Redux
+ UI 组件负责 UI 的呈现，容器组件负责管理数据和逻辑。
+你可能会问，如果一个组件既有 UI 又有业务逻辑，那怎么办？回答是，将它拆分成下面的结构：外面是一个容器组件，里面包了一个UI 组件。前者负责与外部的通信，将数据传给后者，由后者渲染出视图。
+React-Redux 规定，所有的 UI 组件都由用户提供，容器组件则是由 React-Redux 自动生成。也就是说，用户负责视觉层，状态管理则是全部交给它。
+ 
+ Store 就是保存数据的地方，你可以把它看成一个容器。整个应用只能有一个 Store。
+ State 的变化，会导致 View 的变化。但是，用户接触不到 State，只能接触到 View。所以，State 的变化必须是 View 导致的。Action 就是 View 发出的通知，表示 State 应该要发生变化了。
+ store.dispatch()是 View 发出 Action 的唯一方法。 store.dispatch(addTodo('Learn Redux'));
+Store 收到 Action 以后，必须给出一个新的 State，这样 View 才会发生变化。这种 State 的计算过程就叫做 Reducer。
+Reducer 是一个函数，它接受 Action 和当前 State 作为参数，返回一个新的 State。 Reducer 函数最重要的特征是，它是一个纯函数。也就是说，只要是同样的输入，必定得到同样的输出。
+
+store.subscribe(render);  这样store有变化，就会调用 react 的render方法。
+const store = createStore(
+  reducer,
+  initial_state,
+  applyMiddleware(thunk, promise, logger)
+
+);
+
+
+
+ 
+ 家开发前端的思路早已不是当年的 Web page，而是 Application。
+
+ React官方博客发布了一篇文章，声明其自身用于JSX语法解析的编译器JSTransform已经过期，不再维护，React JS和React Native已经全部采用第三方Babel的JSX编译器实现。原因是两者在功能上已经完全重复，而Babel作为专门的JavaScript语法编译工具，提供了更为强大的功能。而browser.js是babel编译器的浏览器版本。
+ React Hot Loader
+ 
+ 
+ Browserify 可以让你使用类似于 node 的 require() 的方式来组织浏览器端的 Javascript 代码，通过预编译让前端 Javascript 可以直接使用 Node NPM 安装的一些库。
+ 如
+ main.js
+ var foo = require('./foo.js');   //CommonJS格式，无法在浏览器中运行
+var bar = require('../lib/bar.js');
+var gamma = require('gamma');
+module.exports = function (n) { return n * 111 }
+
+browserify main.js > bundle.js 
+现在 main.js 需要的所有其它文件都会被编译进 bundle.js 中，包括很多层 require() 的情况也会一起被递归式的编译过来。
+编译好的 js 可以直接拿到浏览器使用
+<script src="bundle.js"></script>
+
+最早也是最有名的前端模块管理器，非RequireJS莫属。它采用AMD格式，异步加载各种模块。具体的用法，可以参考我写的教程。Require.js的问题在于各种参数设置过于繁琐，不容易学习，很难完全掌握。而且，实际应用中，往往还需要在服务器端，将所有模块合并后，再统一加载，这多出了很多工作量。
+
+
+es 6  特性
+解构 赋值
+var a, b, rest;
+[a, b] = [1, 2];
+console.log(a); // 1
+console.log(b); // 2
+
+[a, b, ...rest] = [1, 2, 3, 4, 5];
+console.log(a); // 1
+console.log(b); // 2
+console.log(rest); // [3, 4, 5]
+
+({a, b} = {a:1, b:2});
+console.log(a); // 1
+console.log(b); // 2
+缺省参数
+var link = function(height = 50, color = 'red', url = 'http://azat.co') {
+ ..
+}
+模板对象
+var name =`Your name is ${first} ${last}.`;
+
+箭头函数
+var messages = ids.map(function (value) {
+  return "ID is " + value; // explicit return
+});
+变成
+var messages = ids.map(value => `ID is ${value}`); // implicit return
+
+var messages = ids.map(function (value, index, list) {
+  return 'ID of ' + index + ' element is ' + value + ' '; // explicit return
+}); 变成
+var messages = ids.map((value, index, list) => `ID of ${index} element is ${value}`); // implicit return
+
+Let是一种新的变量申明方式，它允许你把变量作用域控制在块级里面。我们用大括号定义代码块
+
+定义类
+class baseModel {
+  constructor(options, data) { // class constructor，node.js 5.6暂时不支持options = {}, data = []这样传参
+    this.name = 'Base';
+    this.url = 'http://azat.co/api';
+    this.data = data;
+    this.options = options;
+   }
+ 
+    getName() { // class method
+        console.log(`Class name: ${this.name}`);
+    }
+}
+class AccountModel extends baseModel {
+    constructor(options, data) {
+//为了调用父级构造函数，可以毫不费力的唤起super()用参数传递：
+
+          super({private: true}, ['32113123123', '524214691']); //call the parent method with super
+      this.name = 'Account Model';
+      this.url +='/accounts/';
+    }
+    
+  let accounts = new AccountModel(5);
+accounts.getName();
+console.log('Data is %s', accounts.accountsData);  
+
+导出
+
+module.exports = {
+  port: 3000,
+  getAccounts: function() {
+    ...
+  }
+}
+导入
+
+import {port, getAccounts} from 'module';
+或者我们可以在main.js中把整个模块导入, 并命名为 service：
+import * as service from 'module';
+
+Promise  允许将回调函数的嵌套，改成链式调用  不是新的语法功能，而是一种新的写法 
+如  var readFile = require('fs-readfile-promise'); 
+readFile(fileA)
+.then(function(data){
+  console.log(data.toString());
+})
+.then(function(){
+  return readFile(fileB);
+})
+.then(function(data){
+  console.log(data.toString());
+})
+
+Generator函数是协程在ES6的实现，最大特点就是可以交出函数的执行权（即暂停执行）。
+整个Generator函数就是一个封装的异步任务，或者说是异步任务的容器。异步操作需要暂停的地方，都用yield语句注明。
+
+function* gen(x){
+  var y = yield x + 2;
+  return y;
+}
+
+在ES5中，main.js需要依赖require('module') 导入module.js：
+var service = require('module.js');
+
+RN  
+  flexDirection: 'row',   horizontally  column= vertically  (default)
+  alignItems  vertical align ,justifyContent horizontally align
+
+ES7 中有了更加标准的解决方案，新增了 async/await 两个关键词。async 可以声明一个异步函数，此函数需要返回一个 Promise 对象。await 可以等待一个 Promise 对象 resolve，并拿到结果。
+
+
+router :
+index.js
+render((
+  <Router history={browserHistory}>
+    <Route path="/" component={App}>
+          <IndexRoute component={Home}/>
+
+      <Route path="/repos" component={Repos}>
+      {/* add the new route */}
+      <Route path="/repos/:userName/:repoName" component={Repo}/>
+      </Route>
+      <Route path="/about" component={About}/>
+    </Route>
+  </Router>
+), document.getElementById('app'))
+
+
+<li><NavLink to="/about">About</NavLink></li>
+
+
+sample :
+<!-- index.html -->
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>React Tutorial</title>
+    <script src="build/react.js"></script>
+    <script src="build/react-dom.js"></script>
+    <script src="build/browser.min.js"></script>
+    <script src="build/jquery.min.js"></script>
+    <script src="build/remarkable.min.js"></script>
+  </head>
+  <body>
+    <div id="content"></div>
+    <div id="example"></div>
+    <script type="text/babel" src="src/example.js"></script>
+    <script type="text/babel">
+      // To get started with this tutorial running your own code, simply remove
+      // the script tag loading scripts/example.js and start writing code here.
+      
+    </script>
+  </body>
+</html>
+
+example.js
+
+// tutorial2.js
+var cdata=
+ [
+  {id: 1, author: "Roger Want", text: "This is one comment"},
+  {id: 2, author: "CSDN 2", text: "This is *another* comment"},
+    {id: 3, author: "Wzy 2", text: "This is *another* comment"}
+];
+
+
+// tutorial10.js
+var CommentList = React.createClass({
+  render: function() {
+    var commentNodes = this.props.data.map(function(comment) {
+      return (
+        <Comment author={comment.author} key={comment.id}>
+          {comment.text}
+        </Comment>
+      );
+    });
+    return (
+      <div className="commentList">
+        {commentNodes}
+      </div>
+    );
+  }
+});
+
+
+
+
+
+// tutorial19.js
+var CommentForm = React.createClass({
+  getInitialState: function() {
+    return {author: '', text: ''};
+  },
+  handleAuthorChange: function(e) {
+    this.setState({author: e.target.value});
+  },
+  handleTextChange: function(e) {
+    this.setState({text: e.target.value});
+  },
+  handleSubmit: function(e) {
+    e.preventDefault();
+    var author = this.state.author.trim();
+    var text = this.state.text.trim();
+      this.props.onCommentSubmit({author: author, text: text});
+    this.setState({author: '', text: ''});
+    if (!text || !author) {
+      return;
+    }
+  
+  },
+  render: function() {
+    return (
+      <form className="commentForm" onSubmit={this.handleSubmit}>
+        <input
+          type="text"
+          placeholder="Your name"
+          value={this.state.author}
+          onChange={this.handleAuthorChange}
+        />
+        <input
+          type="text"
+          placeholder="Say something..."
+          value={this.state.text}
+          onChange={this.handleTextChange}
+        />
+        <input type="submit" value="Post" />
+      </form>
+    );
+  }
+});
+
+
+
+var Comment = React.createClass({
+  render: function() {
+    return (
+      <div className="comment">
+        <h2 className="commentAuthor">
+          {this.props.author}
+        </h2>
+        {this.props.children}
+      </div>
+    );
+  }
+});
+
+var CommentBox = React.createClass({
+  getInitialState: function() {
+    return {data: []};
+  },
+  componentDidMount: function() {
+    $.ajax({
+      url: this.props.url,
+      dataType: 'json',
+      cache: false,
+      success: function(data) {
+        this.setState({data: data});
+      }.bind(this),
+      error: function(xhr, status, err) {
+        console.error(this.props.url, status, err.toString());
+      }.bind(this)
+    });
+  },
+  render: function() {
+    return (
+      <div className="commentBox">
+        <h1>Comments</h1>
+        <CommentList data={this.state.data} />
+        <CommentForm />
+      </div>
+    );
+  }
+});
+
+
+
+
+// tutorial20.js
+var CommentBox = React.createClass({
+  loadCommentsFromServer: function() {
+    $.ajax({
+      url: this.props.url,
+      dataType: 'json',
+      cache: false,
+      success: function(data) {
+        this.setState({data: data});
+      }.bind(this),
+      error: function(xhr, status, err) {
+        console.error(this.props.url, status, err.toString());
+      }.bind(this)
+    });
+  },
+  handleCommentSubmit: function(comment) {
+console.log("you input "+comment.author);
+    $.ajax({
+      url: this.props.url,
+      dataType: 'json',
+      type: 'POST',
+      data: comment,
+      success: function(data) {
+        this.setState({data: data});
+      }.bind(this),
+      error: function(xhr, status, err) {
+        console.error(this.props.url, status, err.toString());
+      }.bind(this)
+    });
+  },
+  getInitialState: function() {
+    return {data: []};
+  },
+  componentDidMount: function() {
+    this.loadCommentsFromServer();
+    setInterval(this.loadCommentsFromServer, this.props.pollInterval);
+  },
+  render: function() {
+    return (
+      <div className="commentBox">
+        <h1>Comments</h1>
+        <CommentList data={this.state.data} />
+        <CommentForm onCommentSubmit={this.handleCommentSubmit} />
+      </div>
+    );
+  }
+});
+
+
+
+ReactDOM.render(
+  <CommentBox url="/src/data.js"  url2="/getdata.jsp" pollInterval={2000} />,
+  document.getElementById('content')
+);
+
+
+data.js
+
+[
+  {"id": 1, "author": "Roger 2", "text": "This is one comment"},
+{"id": 2, "author": "Roger 3", "text": "This is 2 comment"},
+{"id": 3, "author": "Roger 4", "text": "This is 3  comment"}
+
+]

@@ -1,0 +1,354 @@
+sso
+yum -y install  gcc gcc-c++ autoconf automake zlib* fiex* libxml* ncurses-devel libmcrypt* libtool-ltdl-devel* cmake cmake-gui libaio-devel 
+rpm -ivh MySQL-server-5.6.21-1.el6.x86_64
+yum install openssl-devel.x86_64
+yum install ipvsadm.x86_64
+yum install cracklib-devel
+
+
+mysql
+
+cmake -DCMAKE_INSTALL_PREFIX=/sso/mysql -DWITH_INNOBASE_STORAGE_ENGINE=1 -DWITH_ARCHIVE_STORAGE_ENGINE=1 -DWITH_BLACKHOLE_STORAGE_ENGINE=1   -DWITH_PERFSCHEMA_STORAGE_ENGINE=1 -DWITH_PARTITION_STORAGE_ENGINE=1  -DDEFAULT_CHARSET=utf8 -DDEFAULT_COLLATION=utf8_general_ci
+make
+make install
+
+运行配置脚本
+scripts/mysql_install_db --user=hksso  --basedir=/sso/mysql  --datadir=/sso/mysql/data
+mkdir -p /sso/mysql/log/
+启动 
+/sso/mysql/bin/mysqld_safe   &
+修改密码
+/sso/mysql/bin/mysqladmin -u root password 'mysql'
+关闭
+bin/mysqladmin -u root shutdown
+配置自启动
+cp support-files/mysql.server /etc/init.d/mysql
+chmod +x /etc/init.d/mysql
+chkconfig --add mysql
+chkconfig --level 345 mysql on
+配置复制
+sso1
+GRANT REPLICATION SLAVE ON *.* TO 'repl_user'@'192.168.10.192' IDENTIFIED BY 'rep';
+CHANGE MASTER TO MASTER_HOST='192.168.10.192', MASTER_USER='repl_user', MASTER_PASSWORD='rep',MASTER_LOG_FILE='mysql-bin.000006',MASTER_LOG_POS=120;
+START SLAVE;
+sso2
+GRANT REPLICATION SLAVE ON *.* TO 'repl_user'@'192.168.10.191' IDENTIFIED BY 'rep';
+CHANGE MASTER TO MASTER_HOST='192.168.10.191', MASTER_USER='repl_user', MASTER_PASSWORD='rep', MASTER_LOG_FILE='mysql-bin.000006',MASTER_LOG_POS=120;
+START SLAVE;
+
+
+cp support-files/my-innodb-heavy-4G.cnf /etc/my.cnf
+
+
+
+
+keepalived 
+./configure --prefix=/sso/keepalived 
+mkdir -p /etc/keepalived
+cp /sso/keepalived/sbin/keepalived /usr/sbin/ 
+cp /sso/keepalived/etc/sysconfig/keepalived /etc/sysconfig/ 
+cp /sso/keepalived/etc/keepalived/keepalived.conf /etc/keepalived
+cp /sso/keepalived/etc/rc.d/init.d/keepalived /etc/init.d/ 
+
+chkconfig --add keepalived
+chkconfig --level 345 keepalived on
+
+tomcat自启动脚本
+chkconfig --add tomcatcas
+chkconfig --level 345 tomcatcas on
+
+
+haproxy 
+
+
+
+make TARGET=linux26 PREFIX=/sso/haproxy  USE_OPENSSL=1   ADDLIB=-lz
+make install PREFIX=/sso/haproxy
+
+chmod +x /etc/init.d/haproxy
+chkconfig --add haproxy
+chkconfig --level 345 haproxy on
+
+生成证书
+openssl genrsa -out sso.key 2048
+openssl req -new -key sso.key -out sso.csr
+openssl x509 -req -in sso.csr -out sso.crt -CA cacert.pem -CAkey  ca-key.pem -days 36500 -CAserial  cacert.srl  
+
+openssl x509 -req -in sso.csr -out sso.crt -CA cacert.pem -CAkey  ca-key.pem -days 36500 -CAserial  cacert.srl  -extfile sso.conf -extensions v3_ca 
+查看证书
+openssl x509  -text -in 
+cat sso.crt sso.key > sso.pem
+修改配置文件
+  listen        HTTP_SERVER
+    mode http
+    bind *:80
+    bind *:443 ssl crt /sso/cert/sso.pem
+    cookie JSESSIONID prefix
+    log 127.0.0.1 local0
+    option httplog
+    option httpchk
+    option httpclose
+    stats  uri /stats
+    option httplog
+
+        balance        roundrobin
+        option forwardfor
+        option httpchk HEAD /test_ha.jsp  HTTP/1.0
+        server  server191 192.168.10.191:8000 cookie A check
+        server  server192 192.168.10.192:8000 cookie B check
+        
+测试
+curl -k https://192.168.10.191/test_ha.jsp
+
+
+配置haproxy log 
+
+[root@HKSSO02 rsyslog.d]# cat /etc/rsyslog.d/49-haproxy.conf 
+$ModLoad imudp
+$UDPServerAddress 127.0.0.1
+$UDPServerRun 514
+
+# ..and in any case, put these two in /etc/rsyslog.d/49-haproxy.conf:
+local0.* -/var/log/haproxy_1.log
+#local0.* -/sso/haproxy/logs/haproxy_1.log
+& ~
+
+
+配置logrotate
+
+[root@HKSSO02 rsyslog.d]# cat /etc/logrotate.d/haproxy 
+/var/log/haproxy_1.log
+{
+    rotate 7
+    daily
+    copytruncate
+    missingok
+    notifempty
+    compress
+    delaycompress
+    olddir  /sso/haproxy/logs
+}
+
+
+
+[root@HKSSO02 rsyslog.d]# cat /etc/logrotate.d/portaltomcat 
+/sso/tomcat/serviceportal/logs/catalina.out {  
+rotate   
+daily  
+copytruncate  
+compress  
+notifempty  
+missingok  
+}  
+
+
+
+启停脚本 start/stop
+haproxy /etc/init.d/haproxy 
+keepalived /etc/init.d/keepalived
+mysql   /etc/init.d/mysql
+
+
+配置文件
+
+[root@HKSSO02 ~]# cat /sso/haproxy/conf/haproxy.cfg
+global
+    daemon
+    maxconn 256
+   log 127.0.0.1 local0
+   log-tag haproxy 
+tune.ssl.default-dh-param 1024
+  pidfile /sso/haproxy/logs/haproxy.pid
+#debug
+    defaults
+        mode http
+        timeout connect 5000ms
+        timeout client 600000ms
+        timeout server 600000ms
+
+
+frontend  sso
+mode http
+     bind *:80
+    bind *:443 ssl crt /sso/cert/sso.pem
+    acl is_cas  url_beg   /cas
+    acl is_portal url_beg   /ServicesPortal
+
+    use_backend cas if is_cas 
+    use_backend portal if is_portal 
+    default_backend portal 
+    log 127.0.0.1 local0
+    option httplog
+    stats  uri /stats
+backend cas 
+mode http
+    balance roundrobin
+    cookie JSESSIONID prefix
+    option httpclose
+    option forwardfor
+        option httpchk HEAD /test_ha.jsp  HTTP/1.0
+       # server  server191 192.168.10.191:8000 cookie A check  
+        server  casserver191 192.168.10.191:8443 cookie casA check   ssl verify none
+       # server  server192 192.168.10.192:8000 cookie B check
+        server  casserver192 192.168.10.192:8443 cookie casB check     ssl verify none
+
+backend portal 
+mode http
+    balance roundrobin
+     cookie JSESSIONID prefix
+    option httpclose
+    option forwardfor
+    option httpchk HEAD /test_ha.jsp  HTTP/1.0
+     server  portalserver191 192.168.10.191:8000 cookie portalA check  
+     server  portalserver192 192.168.10.192:8000 cookie portalB check
+     
+[root@HKSSO02 ~]# cat /etc/keepalived/keepalived.conf 
+! Configuration File for keepalived
+
+global_defs {
+   notification_email {
+     wanzy@cicc.com.cn
+   }
+   notification_email_from sso@cicc.com.cn
+   smtp_server 192.168.20.43
+   smtp_connect_timeout 30
+   router_id LVS_SSO
+}
+vrrp_script checkhaproxy
+{
+    script "/sso/scripts/checkhaproxy.sh"
+    interval 3
+    weight   10
+     fall   2
+    rise 1
+
+}
+vrrp_script checkmysql
+{
+    script "/sso/scripts/checkmysql.sh"
+    interval 3
+    weight   10
+     fall   2
+    rise 1
+
+}
+vrrp_script checkldap
+{
+    script "/sso/scripts/checkldap.sh"
+    interval 3
+    weight   10
+     fall   2
+    rise 1
+
+}
+vrrp_instance SSO_WEB {
+    state BACKUP
+    interface eth1
+    virtual_router_id 51
+    priority 95
+   # nopreempt
+    advert_int 1
+    authentication {
+        auth_type PASS
+        auth_pass 1111
+    }
+    virtual_ipaddress {
+        192.168.10.198
+    }
+smtp_alert
+track_script 
+ {
+        checkhaproxy
+ }
+}
+
+vrrp_instance SSO_MYSQL {
+    state BACKUP
+    interface eth1
+    virtual_router_id 52
+    priority 95
+   # nopreempt
+    advert_int 1
+    authentication {
+        auth_type PASS
+        auth_pass 1111
+    }
+    virtual_ipaddress {
+        192.168.10.196
+    }
+smtp_alert
+track_script 
+ {
+        checkmysql
+ }
+}
+vrrp_instance SSO_LDAP{
+    state BACKUP
+    interface eth1
+    virtual_router_id 53
+    priority 95
+   # nopreempt
+    advert_int 1
+    authentication {
+        auth_type PASS
+        auth_pass 1111
+    }
+    virtual_ipaddress {
+   192.168.10.197
+    }
+smtp_alert
+track_script 
+ {
+        checkldap
+ }
+}
+
+[root@HKSSO02 ~]# cat  /etc/my.cnf
+[client]
+port            = 3306
+socket=/sso/mysql/mysql.sock
+[mysqld]
+datadir=/sso/mysql/data
+socket=/sso/mysql/mysql.sock
+user=hksso
+# Disabling symbolic-links is recommended to prevent assorted security risks
+symbolic-links=0
+port            = 3306
+
+log_error=/sso/mysql/log/mysqld.log
+pid_file=/sso/mysql/mysqld.pid
+
+lower_case_table_names=1                                                              
+log_bin_trust_function_creators=1   
+
+max_connections = 600 
+thread_concurrency = 8  
+query_cache_size = 1024M                                                              
+default_storage_engine = InnoDB                                                       
+character_set_server=utf8                                                             
+collation_server=utf8_general_ci   
+log_bin=mysql-bin 
+binlog_format=mixed                                                                   
+slow_query_log
+long_query_time = 2 
+server-id = 2
+log_slave_updates=true
+#gtid_mode=on
+#enforce_gtid_consistency=true
+master_info_repository=TABLE
+relay-log-info-repository=TABLE
+sync-master-info=1
+slave-parallel-workers=2
+binlog-checksum=CRC32
+master-verify-checksum=1
+slave-sql-verify-checksum=1
+binlog-rows-query-log_events=1
+
+#rpl_semi_sync_master_enabled=ON
+#rpl_semi_sync_slave_enabled=ON
+
+open_files_limit = 8194
+skip-name-resolve
+
+
+[

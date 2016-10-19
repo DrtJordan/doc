@@ -1,0 +1,824 @@
+joomla,drupal,wordpress¡£Èý´ócms
+¶ÔÓÚÐ¡ÏîÄ¿ £¬ ¹úÄÚµÄÈËÏ²»¶ÓÃÕë¶ÔÐÔµÄ³ÌÐò ±ÈÈçÂÛÌ³ÓÃdiscuz ÍøµêÓÃecshop
+
+ÒìµØË«»î£º
+²»ÄÜÒÀÀµMySQLË«Ð´£¬±ØÐëÓÐÊÊÓ¦×ÔÉíÒµÎñµÄ¿ç»ú·¿ÏûÏ¢Í¬²½·½°¸
+ºËÐÄÒµÎñºÍ´ÎÒªÒµÎñÐèÒª·Ö¶øÖÎÖ®£¬ÒìµØ¶à»îµÄÒµÎñÐÎÊ½Ô½¼òµ¥Ô½ºÃ£¬ÉõÖÁ¿ÉÒÔÖ»×öºËÐÄÒµÎñ
+ °¢ÀïÊ¹ÓÃµ¥Ôª»¯£¬°´ÕÕÂò¼ÒÓÃ»§½Ç¶È½øÐÐµ¥Ôª»¯£¬¶ÔÓÚÂò¼Ò²Ù×÷·þÎñ¶¼ÔÚÍ¬Ò»¸ö»ú·¿ÄÚ¿ÉÍê³É£¬Íê³ÉºóÍ¬²½Êý¾Ýµ½ÆäËû»ú·¿£¬¶ÔÓÚÂô¼ÒºÍÉÌÆ·Î¬¶È£¬¸üÐÂÊý¾ÝÈÔÈ»ÐèÒª°´ÕÕÂò¼ÒÎ¬¶ÈÀ´³Ö¾ÃÊý¾Ý£¬ËùÒÔÂò¼ÒµÄ·þÎñÒÀÀµµÄ·þÎñ¿ÉÄÜ»áÉ¢ÂäÔÚ¶à¸ö·þÎñÖÐÐÄ£¬·þÎñ²Ù×÷ÈÔÈ»ÐèÒªÔÚ¶à»ú·¿ÄÚÍê³É£¬Ò²¾ÍÊÇ±ØÐëÓÐ¶à»ú·¿ÄÚµÄ·þÎñµ÷ÓÃ£¬µ«ÊÇÂò¼ÒÔ¶Ô¶´óÓÚÂò¼ÒºÍÉÌÆ·ÊýÁ¿£¬ÎÞÂÛÊ²Ã´²Ù×÷¶¼ÐèÒªÔÚ²Ù×÷ºóÍ¬²½Êý¾Ý£¬±£Ö¤Êý¾ÝµÄÒ»ÖÂÐÔÎÊÌâ£¬¾ÝËµ°¢Àï¿ÉÒÔ´ïµ½1ÃëÒÔÄÚµÄÊý¾ÝÍ¬²½£¬°¢Àï²¢Ã»ÓÐ¹«¿ªÊÇÔõÃ´×öµ½µÄ¡£
+ ±±¾©»ú·¿µ½¹ãÖÝ»ú·¿ÔòÓÐ½ü40msµÄÑÓÊ±
+
+×ÜµÄÀ´Ëµ£¬Chef¡¢PuppetºÍDockerÊÇ×îÖ÷ÒªµÄÈý´óDevOps¹¤¾ß£¨·Ö±ðÕ¼32%¡¢32%£¬ÒÔ¼°27%£©¡£
+
+
+ELKÈÕÖ¾´¦Àístack  elasticsearch(ËÑË÷)+logstash(ÊÕ¼¯)+kibana(ÏÔÊ¾)
+
+FlumeÊÇÒ»¸ö·Ö²¼Ê½¡¢¿É¿¿¡¢ºÍ¸ß¿ÉÓÃµÄº£Á¿ÈÕÖ¾¾ÛºÏµÄÏµÍ³£¬Ö§³ÖÔÚÏµÍ³ÖÐ¶¨ÖÆ¸÷ÀàÊý¾Ý·¢ËÍ·½£¬ÓÃÓÚÊÕ¼¯Êý¾Ý£»Í¬Ê±£¬FlumeÌá¹©¶ÔÊý¾Ý½øÐÐ¼òµ¥´¦Àí£¬²¢Ð´µ½¸÷ÖÖÊý¾Ý½ÓÊÜ·½£¨¿É¶¨ÖÆ£©µÄÄÜÁ¦¡£
+finagle ÊÇtwitter¿ªÔ´µÄrpc¿ò¼Ü£¬»ùÓÚnetty 
+
+Consul ¿ªÔ´µÄ·þÎñ·¢ÏÖ×¢²á¿ò¼Ü
+Hystrix ¿ªÔ´µÄ·þÎñµ÷ÓÃÈÝ´í¿ò¼Ü
+Eureka is Netflix¡¯s middle-tier, load balancing and discovery service. 
+
+LinkedIn ·ÅÆú Scala ºÍ Node.js
+node.js £¬ËüÄ¿Ç°±È½ÏÊÊºÏÊµÏÖ¸ß²¢·¢IOÏµÍ³£¬¶ø²»ÊÊºÏ¸ßCPU/ÄÚ´æÏû
+DDD=ÁìÓòÄ£ÐÍÉè¼Æ£¬=¶ÔÏó+ÒµÎñ·½·¨¾ÛºÏÔÚÒ»Æð?  ÔÚÁìÓòÄ£ÐÍÀïÃæÒ»¸öºË ÐÄ¾ÍÊÇÎÒÃÇ¹ØÐÄµÄÊÇÓÐÃ÷È·ÒµÎñº¬ÒåµÄ¶ÔÏó£¬¶ø²»ÊÇÊý¾Ý¿â±í
+CQRS=Command'Query'Responsibility'Segrega6on ¶ÁÐ´·ÖÀë£¬Á½¸öactor·Ö±ð×ö¸ü¸Ä×´Ì¬µÄÂß¼­ºÍ²éÑ¯Âß¼­£¬¼òµ¥¿ÉÀ©Õ¹ £¬Êý¾Ý¶ÌÆÚ¿ÉÄÜ²»Ò»ÖÂ
+
+Ã¿¸öactorÓÐ×Ô¼ºµÄmesasge queue
+Actor Model is comprised by 3 distinct pieces:
+A behavior
+An address
+A mailbox
+ReactorÄ£Ê½ÓÖÓÐ±ðÃû¡°Dispatcher¡±»òÕß¡°Notifier¡±£¬
+actorÊÇÒ»¸ö¼ÆËãÊµÌå£¬µ±ÆäÊÕµ½ÏûÏ¢Ê±£¬¿ÉÒÔ²¢·¢Ö´ÐÐÈçÏÂ²Ù×÷£º
+1. ·¢ËÍÓÐÏÞÊýÁ¿µÄÏûÏ¢¸øÆäËûactor
+2. ´´½¨ÓÐÏÞÊýÁ¿µÄÐÂactor
+3. Ö¸¶¨ÊÕµ½ÏÂÒ»ÏûÏ¢Ê±µÄÐÐÎª
+
+reactorÊÇÍ¨¹ý×¢²á/»Øµ÷·½Ê½½øÐÐÇý¶¯µÄ³ÌÐò¿ª·¢Ä£Ê½£¬ÏÈ×¢²á×Ô¼º¹Ø×¢Ê²Ã´ÊÂ¼þ£¬È»ºó·´Ó¦¶Ñ¾Í»áÔÚ¸ÃÊÂ¼þ·¢ÉúÊ±»Øµ÷Äã¡£ÕâÊµ¼ÊÉÏÓëactor Ä£ÐÍÓÐÐ©ÀàËÆ¡£
+reactorÊÇÒ»ÖÖÉè¼ÆÄ£Ê½£¬ÓÃÓÚÒ»µ½¶à¸öÊäÈë²¢·¢ÏòÒ»¸ö·þÎñ´¦ÀíÆ÷·¢ËÍÇëÇóÊ±½øÐÐÊÂ¼þ´¦Àí¡£·þÎñ´¦ÀíÆ÷½«ÊÕµ½µÄÇëÇóÍ¬²½·Ö·¢µ½ÏàÓ¦µÄÇëÇó´¦ÀíÆ÷ÉÏ¡£
+
+
+proactorÄ£ÐÍ¿ÉÒÔÈÏÎªÊÇreactorÄ£ÐÍµÄÒ»ÖÖÒì²½ÊµÏÖ£¬reactorÒªÇóÊÕµ½ÇëÇóºó£¬ReactorºÍProactorÄ£Ê½µÄÖ÷ÒªÇø±ð¾ÍÊÇÕæÕýµÄ¶ÁÈ¡ºÍÐ´Èë²Ù×÷ÊÇÓÐË­À´Íê³ÉµÄ£¬ReactorÖÐÐèÒªÓ¦ÓÃ³ÌÐò×Ô¼º¶ÁÈ¡»òÕßÐ´ÈëÊý¾Ý£¬¶øProactorÄ£Ê½ÖÐ£¬Ó¦ÓÃ³ÌÐò²»ÐèÒª½øÐÐÊµ¼ÊµÄ¶ÁÐ´¹ý³Ì£¬ËüÖ»ÐèÒª´Ó»º´æÇø¶ÁÈ¡»òÕßÐ´Èë¼´¿É£¬²Ù×÷ÏµÍ³»á¶ÁÈ¡»º´æÇø»òÕßÐ´Èë»º´æÇøµ½ÕæÕýµÄIOÉè±¸.Í¬²½·Ö·¢µÄÇëÇó´¦ÀíÆ÷ÉÏ£¬¶øproactorÔÊÐíÒì²½´¦Àí 
+
+like JQuery rather than javascript
+
+When to choose Akka
+
+Have lots of consumers (think millions).
+Need low latency
+Open to the Actor concurrency model
+Example system: An interactive real time chat system
+
+When to choose MQ
+
+Need to integrate with lots of different systems (ie non JVM)
+Message reliability is more important than latency
+Would like more tools and admin UI
+Because of previous points better for long running tasks
+Would like to use a different concurrency model than Actors
+ 
+·ÅÆú scala ÎÒ¾õµÃ²¢·ÇºÍ scala ÄÑÓÐ¹Ø£¬²»¾ÍÒ»¸ö¹¤¾ßÃ´£¬¸ß½×³ÌÐòÔ±»¹ÔÚºõÓïÑÔ²ãÃæÄÑ²»ÄÑµÄ£¿ÎÒÈÏÎª¸ü¶àµÄÊÇÒòÎª¼¼Êõ»ýÀÛµÄÎÊÌâ¡£scala µ÷ÓÃ java ÈÝÒ×£¬·´¹ýÀ´¾ÍÊÇ²ÝÄàÂíÁË°¡¡£¼ÈÈ»ÓÃÁË jvm ÁË£¬ºÎ²»¾ÍÖ±½ÓÉÏÒ»Ì× java µÄÍêÊÂ£¿ÎÞÂÛÊÇÕÐÈË»¹ÊÇ»ù´¡ÉèÊ©³É±¾¶¼ÊÇ¿ÉÔ¤¼ûµÄÏÂ½µ¡£ËùÒÔÎÒ×Ü¾õµÃ°¡£¬²»ÊÇ scala »òÕß clojure ²»ºÃ£¬ÏÖÔÚÕÐÈË³É±¾ÕâÃ´¸ß£¬»¹ÌØÃ´ÊÇÐ¡ÖÚÓïÑÔ£¬ÍùÉÏ×ßÈËÁ¦³É±¾ÊÇ²»ÄÜ³ÐÊÜµÄÖ®Í´¡£ÖÁÓÚ node£¬ºÚÏäºÍÒÔ×ÀÃæÎªÄ¿±êµÄV8ÑÜÉú³öÀ´Õâ2¸öµã¾Í×ãÒÓÔÚ¹¤³ÌÑ¡ÐÍµÄÊ±ºòÖ±½Ó·ÅÆú¡£×ö¹¤³Ì£¬ÓÈÆäÊÇ×ö´ó¹¤³ÌµÄ£¬»ù±¾²»»áÑ¡ÓÃÕâÃ´²»ÑÏ½÷µÄ¼¼Êõ¡£±¾À´Ç°ºó¶ËÒª½â¾öµÄÎÊÌâ¾Í²»Ò»Ñù£¬Ê¡ÁËÕâÃ´Ò»¶ª¶ªµÄËùÎ½ fullstack ³É±¾£¬ºóÆÚÔËÎ¬³É±¾·Ö·ÖÖÓ½¹×÷ÈË
+AkkaÓÃµÄForkjoinpool£¬Ïß³Ì³ØµÄµ÷ÓÅÒÔ¼°JVMµÄÓÅ»¯²ÅÊÇÌá¸ßÍÌÍÂÁ¿µÄ¹Ø¼ü
+
+ netty 4ÖÐÒ²Ôö¼ÓÁË¶Ômulticast
+ 
+×Ô¶¯sharding hibernate shards¡¢guzz¡¢halo-dal¡¢ibatis-sharding¡¢cobar¡¢mysql proxy¡¢tddl,mycat (latest)
+
+ÔõÃ´´øÍÅ¶Ó£¬¹ÜÏîÄ¿£º
+1.´òÔìÓÐÕ½¶·Á¦µÄÍÅ¶Ó£¬Ò»×¨¶àÄÜ£¬ÍÅ¶ÓµÄ·¢Õ¹ºÍ¸öÈËµÄ·¢Õ¹Í³Ò»£¬ÈÃ´ó¼ÒÓÐ¸ü¶àµÄ³É³¤¿Õ¼äºÍÌôÕ½,Å¬Á¦ÈÃÃ¿¸öÈË×ö×Ô¼º¸ÐÐËÈ¤µÄÊ¤ÈÎµÄÊÂÇé,½Ì»áËûÃÇ×öÖ®ºóÈÃËûÃÇ×ö
+2.¹æ·¶»¯£¬±ê×¼»¯(¿ª·¢¿ò¼Ü,CI/CD,×Ô¶¯²âÊÔ)
+3.¿ìËÙµü´ú,ÈÃÓÃ»§¾¡Ôç¿´µ½(mock,´¿page)£¬ ÏÈÊµÏÖºËÐÄ¹¦ÄÜ£¬¿ìËÙÉÏÏß£¬¿ìËÙµü´ú
+4. ¹µÍ¨£¬Ð­µ÷£¬¹ÜÀíÓÃ»§Ô¤ÆÚ£¬×¥´ó·ÅÐ¡£¬¼¯ÖÐÔÚ¿äteamµÄ½Ó¿ÚºÍ¹«¹²²¿·Ö,ÈÎÎñÏ¸»¯µ½°ëÖÜÒ»ÖÜ,daily ¼¯³Ébuild£¬¼°Ê±review ½ø¶È£¬½â¾ö¼¼ÊõÄÑÌâ£¬
+5.Ìá¸ßÍÅ¶Ó×÷Õ½ÄÜÁ¦,full stack
+6.ÈßÓà(Ê±¼ä°²ÅÅ£¬ÏµÍ³ÔËÐÐ¶¼ÐèÒª)
+7.Íâ°üÏîÄ¿¸üÒª×¢ÖØÐèÇóµÄ¹ÜÀí,¹æ·¶»¯¿ª·¢,¶¨ÆÚreview½ø¶È£¬ÑÏ¿Ø²âÊÔ
+8.×¨Òµ£¬Ç¿ÊÆ
+ÏîÄ¿¾­Àí×îÖØÒªµÄÒ»ÏîÈÎÎñ¾ÍÊÇ¸ú×ÙÓë¿ØÖÆ£¬Ê±¿Ì°ÑÎÕÏîÄ¿·½Ïò£¬±£Ö¤ÏîÄ¿¼Æ»®µÃÒÔË³ÀûÖ´ÐÐ£¬Æ«²î¿ØÖÆÔÚ¿É¿Ø·çÏÕ·¶Î§ÄÚ¡£
+10¸öÏîÄ¿ËÀÍöµÄÐÅºÅ£º£¨1£©µÚÒ»°æ×öÌ«¶à¹¦ÄÜ£»£¨2£©Ì«ÒÀÀµÐÂ¼¼ÊõÆ½Ì¨£»£¨3£©Óë¹«Ë¾ÁíÒ»¸öÓÐ·ÝÁ¿µÄ²úÆ·¾ºÕù£»£¨4£©ÍÅ¶ÓÈËÊÖ²»×ã£»£¨5£©¸´ÔÓµÄÎÊÌâ£¬ÐèÒª¸´ÔÓµÄ½â·¨£»£¨6£©³ÉÔ±¿ªÊ¼Òþ²Ø½ø¶ÈÂäºóµÄÊÂÊµºÍÔ­Òò£»£¨7£©²»¶Ï¸ü¸Ä¡¢Ôö¼ÓµÄÐèÇó£»£¨8£©2.0 Ö¢ºòÈº¡ª·ÇÒª¸ü´ó¡¢¸üÇ¿¡¢¸üÃÀ£»£¨9£©²úÆ·Ã»ÓÐÊÐ³¡Á¢×ãµã£»£¨10£©Äã¸ù±¾ÎÞ·¨½â¾öµÄ´óÎÊÌâ
+
+
+
+
+DevOpsµÄ±¾ÖÊÔÚÓÚÈÃ²»Í¬±³¾°µÄÈË¹²Í¬Ð­×÷£¬ÒÔÊµÏÖ¿ìËÙ¿É¿¿µÄÈí¼þ·¢²¼¡£Õâ
+DevOpsÊÇÖ¼ÔÚ´òÆÆ¿ª·¢ÍÅ¶ÓÓëÔËÎ¬ÍÅ¶ÓÖ®¼äµÄ±ÚÀÝµÄÒ»´Î³¢ÊÔ£¬ÕâÁ½Õß¶ÔÓÚ³É¹¦µÄÈí¼þ½»¸¶À´Ëµ¶¼ÊÇ±Ø²»¿ÉÉÙµÄ£¬µ«ËûÃÇÍ¨³£»á±»»®·ÖÔÚ²»Í¬µÄ×éÖ¯µ¥ÔªÖÐ£¬
+²¢ÓÐ×ÅÏà»¥µÖ´¥µÄÄ¿±ê¡£ÔÚ¿ª·¢Õß¸ºÔð½»¸¶ÐÂÌØÐÔÒÔ¼°¶Ô±ä¸ü³Ðµ£ÔðÈÎÊ±£¬ÔËÎ¬ÈËÔ±ÔòÊÔÍ¼±£³ÖËùÓÐ¹¦ÄÜÆ½ÎÈÔËÐÐ£¬¶ø±ÜÃâ±ä¸üÕýÊÇ½µµÍ·çÏÕµÄÒ»ÖÖÓÐÐ§ÊÖ¶Î¡£
+
+consul ÊÇÒ»¸ögoÓïÑÔÐ´µÄRaftÊµÏÖ(Raft Ëã·¨À´±£Ö¤Ò»ÖÂÐÔ, ±È¸´ÔÓµÄ Paxos Ëã·¨¸üÖ±½Ó)£¬ÄÜ¹»¿äÊý¾ÝÖÐÐÄ£¬ZK²»Ö§³Ö¿äÊý¾ÝÖÐÐÄ£¬ÒòÎªÐ´Ð§ÂÊµÍ
+ÔÚ·Ö²¼Ê½ÏµÍ³ÖÐ£¬ÈçºÎ¹ÜÀí½Úµã¼äµÄ×´Ì¬Ò»Ö±ÊÇÒ»¸öÄÑÌâ£¬etcdÏñÊÇ×¨ÃÅÎª¼¯Èº»·¾³µÄ·þÎñ·¢ÏÖºÍ×¢²á¶øÉè¼Æ£¬ËüÌá¹©ÁËÊý¾ÝTTLÊ§Ð§¡¢Êý¾Ý¸Ä±ä¼àÊÓ¡¢¶àÖµ¡¢Ä¿Â¼¼àÌý¡¢·Ö²¼Ê½ËøÔ­×Ó²Ù×÷µÈ¹¦ÄÜ£¬
+¿ÉÒÔ·½±ãµÄ¸ú×Ù²¢¹ÜÀí¼¯Èº½ÚµãµÄ×´Ì¬¡£etcdÄ¿Ç°µÄ°æ±¾ÊÇ0.4.5£¬ËäÈ»Î´·¢²¼1.0°æ±¾£¨½ñÄê»á·¢²¼£©£¬µ«ÆäÒÑ¾­Ê¹ÓÃÔÚ¶à¸öÉú²úÏµÍ³ÖÐ£¬¿É¼ûÆä»ðÈÈ³Ì¶È¡£
+etcdÊÇCoreOSµÄºËÐÄ×é¼þ£¬¸ºÔð½Úµã¼äµÄ·þÎñ·¢ÏÖºÍÅäÖÃ¹²Ïí
+
+Ò»¸ö¼òµ¥µÄÊµ¼ùÊÇ½«ËùÓÐ¶«Î÷·ÅÔÚÔ´´úÂë¿ØÖÆÏµÍ³ÖÐ£¬ÕâÑù¿ÉÊ¹Ó¦ÓÃ³ÌÐòÓë»ù´¡ÉèÊ©µÄ±ä¸ü¿ÉÉó¼Æ¡¢¿É×·×Ù¡£Í¬Ê±ÒªÍ¨¹ý×Ô¶¯»¯²âÊÔÑéÖ¤ÕâÐ©±ä¸üµÄÖÊÁ¿£¬Í¨¹ýÑéÖ¤ºó²Å¿É·¢²¼µ½Éú²ú»·¾³ÖÐ¡£
+
+Hedwig Ìá¹©ÁË·þÎñ×Ô¶¯×¢²á·¢ÏÖ¡¢Èí¸ºÔØ¾ùºâ¡¢½ÚµãÌß³öÓë¸´»î¡¢·þÎñ¶¯Ì¬Âß¼­·Ö×é¡¢ÇëÇó×Ô¶¯ÖØÊÔµÈÖÚ¶àSOA¿ò¼ÜËùÐèµÄÇ¿´ó¹¦ÄÜ£¬Ö§³Ö²¢ÐÐÇëÇó¡¢»Ò¶È·¢²¼£¬Æä±³ºóÌá¹©µÄµ÷ÓÃÁ´Â·¼°²ã´Î¹ØÏµ¡¢
+ÈÕÖ¾·ÖÎö¡¢¼à¿ØÔ¤¾¯µÈ¸üÊÇÎªSOAÖÎÀíÌá¹©ÁËÇ¿´óµÄºóÇÚ±£ÕÏ¡£
+
+ÎªÓ¦ÓÃ³ÌÐòµÄ¹¹½¨Óë²¿Êð¹ý³ÌÊµÏÖ×Ô¶¯»¯Í¬ÑùÒ²ÊÇÊ®·ÖÖØÒªµÄ£¬Ëü²»½öÄÜ¼Ó¿ìÕû¸öÁ÷³ÌµÄÔËÐÐ£¬»¹ÄÜ¹»½µµÍ½«Èí¼þ²¿Êðµ½Éú²ú»·¾³Ê±²úÉúÈËÎª´íÎóµÄ·çÏÕ¡£
+
+»¹ÓÐÒ»ÖÖÊµ¼ùÊÇÎÒÏ£ÍûÔÚÍÅ¶ÓÖÐÊµÏÖµÄ£¬¼´´î½¨Ò»ÖÖÓëÉú²ú»·¾³ÏàËÆµÄ±¾µØ»·¾³¡£Í¨¹ý¼õÉÙ¿ª·¢ÓëÉú²ú»·¾³µÄ²îÒì£¬ÈÃ¿ª·¢ÕßÄÜ¹»¸ü¿ìµØÕÒµ½ÎÊÌâËùÔÚ¡£ÎÒËù¼û¹ýµÄ»áÔì³ÉÎÊÌâµÄ²îÒìÓÐÕâÑùÒ»Ð©Àý×Ó£º
+ÔÚWindows»úÆ÷ÉÏ¿ª·¢¡¢¶øÔÚÉú²ú»·¾³ÖÐµÄLinux·þÎñÆ÷ÉÏ²¿Êð£»»ùÓÚ²»Í¬µÄÊý¾Ý¿âÏµÍ³»òÓ¦ÓÃ·þÎñÆ÷ÔËÐÐÈí¼þ£»Ê¹ÓÃ²»Í¬°æ±¾µÄ¿â¼°ÒÀÀµ¡£
+DevOps=³ÖÐø½»¸¶Êµ¼ù Ö÷ÒªÊÇCI(continous integration)/CD (continous deploy)
+Ò»µ©Äã½«»ù´¡ÉèÊ©´úÂë»¯£¬Äã¾ÍÄÜ¹»Ê¹ÓÃ°æ±¾¿ØÖÆ¶Ô»ù´¡ÉèÊ©µÄ±ä¸ü½øÐÐ×·×Ù¡£Äã»¹¿ÉÒÔÔÚ²¿Êð¹ÜµÀÖÐ¼ÓÈëÖÊÁ¿¼ì²éµÄ²½Öè£¬ÒÔÊµÏÖ½«Èí¼þ´Ó¿ª·¢ÖÁÉú²ú»·¾³µÄÕû¸ö·¢²¼Á÷³ÌµÄ×Ô¶¯»¯¡£
+
+Ïà¶ÔÓÚÆÙ²¼¿ª·¢Ä£Ê½,Ãô½Ý¿ª·¢¹ý³ÌµÄÒ»¸ö»ù±¾Ô­Ôò¾ÍÊÇÒÔ¸ü¿ìµÄÆµÂÊ½»¸¶×îÐ¡»¯¿É,ÓÃµÄÈí¼þÔÚÃô½ÝµÄÄ¿±êÀï×îÃ÷ÏÔµÄÊÇÔÚÃ¿¸öSprintµÄµü´úÖÜÆÚÄ©Î²£¬¶¼¾ß±¸¿ÉÒÔ½»¸¶µÄ¹¦ÄÜ¡£
+²¿ÊðµÄ¸ßÆµÂÊ¾­³£»áµ¼ÖÂ²¿Êð¶Ñ»ýÔÚITÔËÎ¬µÄÃæÇ°
+DevOpsÊÇAgileµÄÑÓÉì£¬AilgeÒÀ¿¿Dev & Biz²¿ÃÅ½ôÃÜÐ­×÷£¬Í¨¹ýÔöÁ¿½»¸¶µÄ·½Ê½À´½â¾öÐèÇó¶à±äµÄÄÑÌâ¡£DevOpsÔò½øÒ»²½ÑÓÉìµ½ITÔËÎ¬£¬Í¨¹ýDev & OpsµÄ½ôÃÜÐ­×÷Ìá¸ßÈí¼þ½»¸¶µÄÖÊÁ¿ºÍÆµÂÊ¡£
+
+DevOpsÄ¿µÄÊÇ´òÔì±ê×¼»¯µÄ¡¢¿ÉÖØ¸´µÄ¡¢ÍêÈ«×Ô¶¯»¯µÄDelivery Pipeline,Æä·¶Î§º­¸ÇÐèÇó£¬Éè¼Æ£¬¿ª·¢£¬¹¹½¨£¬²¿Êð£¬²âÊÔºÍ·¢²¼¡£³ýÁËÐèÇó¡¢Éè¼ÆºÍ¿ª·¢Íâ£¬ÆäËûµÄËÄ¸ö²½Öè¶¼ÊÇ¿ÉÒÔ×Ô¶¯»¯µÄ¡£
+×Ô¶¯»¯ÊÇÌá¸ß¿É²âÊÔÐÔ£¬Ò»ÖÂÐÔ£¬ÎÈ¶¨ÐÔºÍ½»¸¶ÆµÂÊµÄºËÐÄ
+¿Í»§¶Ë¸ºÔØ¾ùºâ²¢²»ÊÇNetflix·¢Ã÷µÄ¡£µ«ÊÇ£¬ËüÊÇÓÐÃûµÄ¹«Ë¾ÀïµÚÒ»¸öÔÚ»ù´¡¼Ü¹¹ÖÐÍêÈ«Ê¹ÓÃÕâÖÖ¼¼ÊõµÄ
+
+ÈçºÎDevOps
+¡°Configuration in code¡±
+? Standardized environments
+? Linux containers
+? Automated provisioning
+ Continuous integration/ Continuous delivery
+ 
+ Ãô½ÝºÍ³ÖÐø¼¯³ÉÒÔ¼°³ÖÐø·¢²¼ÊÇ¿ª·¢µÄÊä³ö£¬ÕâÐ©Êä³öÍ¬Ê±×÷ÎªITÔËÎ¬µÄÊäÈë£¬ÎªÁËÊÊÓÃ¸úDevOpsÏà¹ØµÄ¿ìËÙ²¿ÊðµÄ½Ú×à£¬ITILÁ÷³ÌµÄºÜ¶à·½Ãæ£¬ÌØ±ðÊÇÎ§ÈÆ×Å±ä¸ü¡¢ÅäÖÃºÍ·¢²¼Á÷³Ì·½Ãæ£¬ÐèÒª×Ô¶¯»¯¡£
+ ³ÖÐø¼¯³ÉµÄºËÐÄÊÇ¼õÉÙÈ±ÏÝÒýÈë£¬·¢ÏÖºÍÐÞ¸´Ö®¼äµÄÊ±¼ä¼ä¸ô
+ 1. ³ÖÐø¼¯³ÉµÚÒ»½ø½×£¬´úÂë¼¶±ðµÄ¼¯³É¡£Õâ¸ö¼¶±ðµÄ¼¯³É²»ÒÀÀµ¶ÀÁ¢µÄ³ÖÐø¼¯³É¹¤¾ßÒ²¿ÉÒÔÊµÏÖ£¬Ò»°ãÓïÑÔµÄbuild¹¤¾ß»ù±¾ÄÚÖÃ£¬±ÈÈçjavaµÄmaven£¬gradle£¬goÄÚÖÃµÄbuild¹¤¾ß 
+   µ«ºóÀ´·¢ÏÖÖ»±àÒë»¹½â¾ö²»ÁËÎÊÌâ£¬ËùÒÔÖð½¥Ôö¼ÓÁË´úÂë·ç¸ñ¼ì²é£¬¾²Ì¬´úÂë·ÖÎö£¬µ¥Ôª²âÊÔµ÷ÓÃ£¬²âÊÔ¸²¸ÇÂÊ¼ì²éµÈµÈÔöÇ¿¹¦ÄÜ¡£
+ 2.³ÖÐø¼¯³ÉµÄµÚ¶þ½ø½×£¬¼¯³Éworkflow£¬Õâ²Å»ù±¾ÊµÏÖÁËÕæÕýµÄ³ÖÐø¼¯³É¡£ ¼¯³É²âÊÔ unit/functional
+ 3.³ÖÐø¼¯³ÉµÄµÚÈý½ø½×£¬³ÖÐø²¿ÊðÓë½»¸¶
+ 
+ ¹úÍâ¹ãÎªÁ÷´«µÄÒ»¸ö±ÈÓ÷ÊÇ£ºÔÚ´«Í³·þÎñÄ£Ê½ÏÂ£¬¿ÉÒÔÏëÏó·þÎñÆ÷¾ÍÊÇITµÄ³èÎï£¨Pets£©£¬¸øËüÃÇÈ¡Ãû×Ö£¬²¢¾«ÐÄ¸§Ñø³¤´ó£¬µ±ËüÃÇÉú²¡ÁË£¬ÄãµÃÎªËûËüÃÇÖÎ²¡¡£
+ ¶øÔÚÐÂÐÎÌ¬µÄÓ¦ÓÃ·þÎñÄ£ÐÍÖÐ£¬ÐéÄâ»ú±»¿´×öÊÇÅ©³¡ÖÐµÄ¹«Å££¬Ãû×ÖÍ¨³£¶¼ÊÇ±àºÅ£¬µ±ËûÃÇÉú²¡ÁË£¬Äã¾ÍÉ±µôËû£¬ÓÃÒ»Í·ÐÂÅ£´úÌæ
+Èç¹ûÊÂÇéºÜÍ´¿à£¬¾Í×öµÄÆµ·±µã
+
+
+ScrumµÄ¾«»ªÓÐÁ½µã£¬µÚÒ»ÊÇ¶Ìµü´ú£¬µÚ¶þÊÇ×Ô×éÖ¯¡£
+¶Ìµü´úÈÃÍÅ¶Ó¿ÉÒÔÐÎ³É½Ú×à¸Ð£¬²¢ÔÚÃ¿¸öµü´úºóÓÐ»ú»á½øÐÐ»Ø¹é£¬²¢ÔÚÏÂÒ»¸öµü´úÖÐÌá¸ß¡£Ïà±È´«Í³µÄÆÙ²¼Á÷³Ì£¬ÒòÎªÈ±·¦ÕâÑùµÄ·´À¡»úÖÆ£¬ÍÅ¶ÓµÄ¸Ä½øÏà¶ÔÀ§ÄÑ¡£
+×Ô×éÖ¯µÄÄ¿µÄÊÇÈÃÍÅ¶Ó¶ÔÄ¿±ê½øÐÐ×ÔÎÒ³ÐÅµ£¬¼¤·¢ÍÅ¶Ó×î´óµÄÄÜÁ¿ÒÔ´ï³ÉÄ¿±ê¡£ÕâÊÇÔÚ¹«Ë¾ÕâÖÖÈ¨Íþ×éÖ¯ÖÐÊµÐÐµÄÐ¡¹æÄ£ÃñÖ÷¼¤Àø¡£¶ÔÓÚ×Ô×ðÐÄ½ÏÇ¿µÄ¹¤³ÌÊ¦ÍÅ¶Ó£¬Ïàµ±ÓÐÐ§¡£²»¹ýÒ²ÓÐÈ±µã£¬
+ÄÇ¾ÍÊÇÍÅ¶Ó×ÔÎÒÒâÊ¶¿ÉÄÜ¹ýÇ¿£¬µ¼ÖÂ¿çÍÅ¶ÓºÏ×÷³öÏÖÎÊÌâ¡£
+
+µ«Èç¹û½ö½öÊµÏÖÕâÁ½µã£¬ScrumµÄ½á¹û¿ÉÄÜÊÇ·Ç³£Ôã¸âµÄ¡£ÌØ±ðÊÇ¶Ìµü´úÔì³ÉÁ½¸ö¸ºÃæºó¹û£º
+µÚÒ»£¬¶Ìµü´úÇãÏòÓÚ²úÉú¶ÌÆÚÉè¼Æ£¬ÔÚ½«À´µÄµü´úÖÐÐèÒª¾­³£ÖØÐ´¡£
+µÚ¶þ£¬¶Ìµü´úµ¼ÖÂÃ»ÓÐÊ±¼ä½øÐÐÈ«ÃæµÄ»Ø¹é²âÊÔ£¬µ¼ÖÂbugÊýÁ¿ÉÏÉý¡£
+
+ÎªÁËÓÐÐ§µÄ½â¾öÕâÁ½¸öÎÊÌâ£¬Scrum±ØÐë°éËæÒ»Ð©¹Ø¼üµÄ¹¤³ÌÊµ¼ù¡£
+µÚÒ»£¬×îÖØÒªµÄ£¬ÊÇ²âÊÔ×Ô¶¯»¯¡£ÎÞÂÛÊÇµ¥Ôª²âÊÔ»¹ÊÇ¹¦ÄÜ²âÊÔ£¬¶¼ÊÇÔÚ¶Ìµü´úÏÂ±£Ö¤ÖÊÁ¿µÄÖØÒª£¬ÉõÖÁÊÇÎ¨Ò»ÊÖ¶Î¡£
+µÚ¶þ£¬ÖØ¹¹¡£ÓÐÁË×Ô¶¯»¯²âÊÔ£¬Ãô½ÝÍÅ¶ÓÓ¦¸ÃÓÂ¸ÒµÄ²»¶ÏÖØ¹¹´úÂë£¬Ïû³ý¼¼ÊõÕ®Îñ
+µÚÈý£¬³ÖÐø¼¯³É¡£ÓÐÁË×Ô¶¯»¯²âÊÔ£¬³ÖÐø¼¯³É¿ÉÒÔÔÚ×î¶ÌµÄÊ±¼äÄÚ±¨¸æÎÊÌâ£¬²¢ÒªÇóÍÅ¶Ó½«CIµÄ´íÎó×÷Îª×î¸ßÓÅÏÈ¼¶Á¢¼´´¦Àí¡£
+ 
+HadoopÉúÌ¬»·¾³¶¼ÒÑ¾­×ªÒÆµ½YarnÉÏ¡£Yarn²»Ì«ÊÊºÏ·ÇHadoop»¯µÄ»·¾³
+ 
+Ê¹ÓÃDockerfileÀ´±àÒëDocker¾µÏñÊÇÒ»ÖÖÄ¿Ç°Î¨Ò»¿ÉÐÐµÄ·½·¨¡£Èç¹ûÄãÁ¬½Ó»òÕßSSHµ½Ò»¸öÏ¸ÐÄµñ×ÁµÄ¾µÏñ£¬×îºóÓÃ¡®docker push¡¯À´´´½¨Ëý£¬ÕâÊÇÒ»Ö»³èÎï£¬Ò»¸öDocker³èÎï£¬ÔÚÄ³Ð©µØ·½£¬
+ËûÃÇ»¹ÊÇ±È½ÏÂé·³¡£ÊÖ¶¯´´½¨¾µÏñ£¿²»ÊÇ°É£¿µ«ÊÇÈç¹ûÄã²»ÄÜ»ØÍË20ÌõÃüÁîÇ°µÄÅäÖÃ£¬»òÕßÖ»ÄÜÍ¨¹ý¸Ä±ä´úÂë»Øµ½»ù´¡OS£¬ÄãÓÖÔÚÈÃDockerµÈÍ¬ÓÚÒ»Ö»³èÎïÁË¡£ 
+
+
+ Mesos=Google·Ö²¼Ê½ÏµÍ³BorgµÄ¿ªÔ´ÊµÏÖ°æ±¾ ,googleÒ²ÖØÐÂ×öÁËÒ»¸öKubernetes
+
+
+zabbixÏà¶ÔÀ´ËµÅäÖÃ¼òµ¥£¬»ù±¾ÉÏÔÚwebÉÏÅäÖÃ¾ÍÐÐÁË£¬nagiosÏà¶Ô±È½ÏÂé·³¡£zabbix¸ß¶È¼
+agiosÓÉºÜ¶à×é¼þ×é³É¡£Òª¼à¿ØµÄ»°£¬Á½¸öÆäÊµ¶¼ÄÜÊ¤ÈÎ¡£
+nagiosÅäÖÃÏà¶ÔÁé»î£¬zabbix²»ÈÝÒ×ÉÏÊÖ£¬ÑÐ¾¿³¹µ×Ö®ºóÒ²¾ÍÃ»É¶£¬cacti£¬Ã»×ÐÏ¸ÓÃ¹ý£¬Ï
+ÖÔÚ»ù±¾ÉÏ¾ÍÓÃ»¨Á÷Á¿Í¼
+
+·þÎñÖÎÀí¿ò¼Ü  ·þÎñ¿ò¼ÜµÄÊµÏÖÓÐÈýÖÖ½ÇÉ«£º·þÎñÌá¹©Õß¡¢·þÎñÏû·ÑÕßºÍ×¢²áÖÐÐÄ¡£·þÎñÌá¹©ÕßÔÚ·þÎñ¿ÉÓÃµÄÇ°ÌáÏÂ£¬½«µØÖ·×¢²áµ½×¢²áÖÐÐÄ¡£·þÎñÏû·ÑÕßÆô¶¯Ê±£¬»á¶©ÔÄ×¢²áÖÐÐÄµÄÏà¹Ø·þÎñ£¬»ñÈ¡·þÎñµØÖ·£¬Í¨¹ýÒ»¶¨µÄ¸ºÔØ¾ùºâ²ßÂÔµ÷ÓÃ·þÎñ¡£ÓÉÓÚ×¢²áÖÐÐÄÕâ¸öÈí¸ºÔØ¼¯ÈºµÄ´æÔÚ£¬·þÎñÌá¹©ÕßºÍ·þÎñÏû·ÑÕß¿ÉÒÔÈÎÒâÀ©ÈÝºÍÏÂÏß£¬×¢²áÖÐÐÄ¿ÉÒÔÊµÊ±½«Ìá¹©ÕßµØÖ·µÄ±ä¸üÍÆËÍ¸øÏû·ÑÕß
+·þÎñÖÎÀíÊÇ·þÎñ¿ò¼ÜµÄºËÐÄ¹¦ÄÜ¡£ËùÎ½·þÎñÖÎÀí£¬ÊÇÖ¸·þÎñµÄÌá¹©·½ºÍÏû·Ñ·½´ï³ÉÒ»ÖÂµÄÔ¼¶¨£¬±£Ö¤·þÎñµÄ¸ßÖÊÁ¿¡£·þÎñÖÎÀí¹¦ÄÜ£¬¿ÉÒÔ½â¾ö½«Ä³Ð©ÌØ¶¨Á÷Á¿ÒýÈëÄ³Ò»Åú»úÆ÷£¬ÒÔ¼°ÏÞÖÆÄ³Ð©·Ç·¨Ïû·ÑÕßµÄ¶ñÒâ·ÃÎÊ£¬ºÍÔÚÌá¹©Õß´¦ÀíÁ¿´ïµ½Ò»¶¨³Ì¶ÈÊ±£¬¾Ü¾ø½ÓÊÜÐÂµÄÇëÇóµÈ¹¦ÄÜ¡£
+»¹ÓÐ ·Ö²¼Ê½µ÷ÓÃµÄ¸ú×ÙÕß ·Ö²¼Ê½µ÷ÓÃ¸ú×ÙµÄÒâË¼£¬¾ÍÊÇ¶ÔÒ»´ÎÇ°¶ËÇëÇó²úÉúµÄ·Ö²¼Ê½µ÷ÓÃ¶¼»ã×ÜÆðÀ´×ö·ÖÎö¡£Í¬Ò»´ÎÇëÇóµÄËùÓÐÏà¹Øµ÷ÓÃµÄÇé¿ö£¬ÔÚEagleEyeÀï³Æ×÷µ÷ÓÃÁ´¡£Í¬Ò»¸öÊ±¿ÌÄ³Ò»Ì¨·þÎñÆ÷²¢ÐÐ·¢ÆðµÄÍøÂçµ÷ÓÃÓÐºÜ¶à£¬ÔõÃ´Ê¶±ðÕâ¸öµ÷ÓÃÊÇÊôÓÚÄÄ¸öµ÷ÓÃÁ´µÄÄØ£¿ÎÒÃÇ¿ÉÒÔÔÚ¸÷¸ö·¢ÆðÍøÂçµ÷ÓÃµÄÖÐ¼ä¼þÉÏÏÂÊÖ¡£
+2013ÄêÉÏ°ëÄê£¬°¢Àï°Í°Í¼¯ÍÅÖÐ¼ä¼þ³ÉÁ¢ÁË¶ÀÁ¢µÄÓ¦ÓÃ·þÎñÆ÷ÍÅ¶Ó£¬Ö÷ÒªÃæÏòÕû¸ö¼¯ÍÅ½øÐÐÓ¦ÓÃ·þÎñÆ÷Ïà¹ØµÄ¹¤×÷£¬Ä¿Ç°ÔÚ¹«Ë¾ÄÚ²¿Ö÷ÍÆTomcat·þÎñÆ÷¡£
+
+
+·Ö²¼Ê½Âú×ã¿ÉÀ©Õ¹£¬Áé»îµÄÐèÇó£¬¿ÉÒÔÑ¡Ôñ×îºÏÊÊµÄ½â¾ö·½°¸£¬Í¨¹ýÇáÁ¿¼¶µÄÍ¨Ñ¶·½Ê½Á´½Ó
+ÔËÓª¿ªÏúÔö¼Ó£¬¼à¿ØÁ¦¶È¼Ó´ó,DevOps
+Ò»µ©ÎÒÃÇµÄÏµÍ³ÊÇ·Ö²¼Ê½£¬ÎÒÃÇÒª¿¼ÂÇµÄ¶«Î÷±ÈÎÒÃÇÖ®Ç°µÄ¶àµÃ¶à¡ª¡ªÍøÂçÑÓ³Ù£¬ÈÝ´í£¬ÏûÏ¢ÐòÁÐ»¯£¬²»¿É¿¿µÄÍøÂç£¬Òì²½ÐÔ£¬°æ±¾¿ØÖÆ£¬ÔÚÎÒÃÇµÄÓ¦ÓÃ³ÌÐò²ãµÈ²»Í¬µÄ¸ºÔØ.
+
+ÕâÖÖËùÎ½µÄµ¥¿é¼Ü¹¹ÓÐÒ»¶¨µÄÓÅµã¡£µ¥¿é¼Ü¹¹µÄÓ¦ÓÃ³ÌÐò·Ç³£ÈÝÒ×¿ª·¢£¬ÒòÎªIDE¼°ÆäËü¿ª·¢¹¤¾ß¶¼ÊÊºÏ¿ª·¢µ¥¸öÓ¦ÓÃ³ÌÐò¡£ÕâÐ©³ÌÐòÒ²ºÜÈÝÒ×±»²âÊÔ£¬ÄãÖ»ÐèÆô¶¯Ò»¸ö³ÌÐò¼´¿É¡£µ¥¿é¼Ü¹¹µÄÓ¦ÓÃ³ÌÐòÒ²ºÜÈÝÒ×²¿Êð£¬ÒòÎªÄãÖ»Ðè¸´ÖÆ¿ª·¢µ¥Ôª£¨Ò»¸öÎÄ¼þ»òÄ¿Â¼£©µ½Ò»¸öÔËÐÐÕßÏàÓ¦·þÎñÈÝÆ÷µÄ»úÆ÷¼´¿É¡£
+
+Ïà¶Ô¶øÑÔ¸Ã·½Ê½¸üÊÊÓÃÓÚÐ¡³ÌÐò¡£È»¶ø£¬µ¥¿é¼Ü¹¹ÔÚ¸´ÔÓµÄ³ÌÐòÖÐºÜÄÑ¼ÝÔ¦¡£Ò»¸öÅÓ´óµÄµ¥¿é³ÌÐò¶ÔÓÚ¿ª·¢ÕßÀ´ËµºÜÄÑÀí½âºÍÎ¬»¤¡£Ëü¶ÔÆµ·±¸Ä¶¯µÄ¿ª·¢¹ý³ÌÀ´ËµÒ²ÊÇÒ»ÖÖ×è°­¡£ÎªÁË¶ÔÄ³¸ö³ÌÐò×é¼þ×öÐÞ¸Ä£¬Äã²»µÃ²»¹¹½¨ºÍ²¿ÊðÕû¸ö³ÌÐò£¬ÕâÏàµ±¸´ÔÓ£¬·çÏÕ¼«´ó£¬Ò²±È½ÏºÄÊ±£¬ÐèÒªºÜ¶à¿ª·¢Õß¹²Í¬Ð­×÷£¬»¹ÐèÒª½Ï³¤µÄ²âÊÔÖÜÆÚ¡£
+
+µ¥¿é¼Ü¹¹Ò²Ê¹µÃÊÔÓÃºÍ²ÉÓÃÐÂµÄ¼¼Êõ±äµÃÀ§ÄÑ¡£ÀýÈç£¬³¢ÊÔÒ»¸öÐÂµÄ»ù´¡ÉèÊ©¿ò¼Ü¶ø²»ÖØÐ´Õû¸ö³ÌÐòÊÇ·Ç³£À§ÄÑµÄ£¬·çÏÕÓÖ´óÓÖ²»ÏÖÊµ¡£Òò´Ë£¬Äã¾­³£±»ÏîÄ¿¿ªÊ¼Ê±Äã×öµÄ¼¼ÊõÑ¡ÐÍ×èÈû¡£»»¾ä»°Ëµ£¬µ¥¿é¼Ü¹¹¶ÔÓÚÖ§³Ö´óÐÍµÄ£¬ÖÜÆÚ³¤µÄÓ¦ÓÃ³ÌÐò²¢²»¾ß±¸ÉìËõÐÔ¡£
+
+Ä¿Ç°ÎªÖ¹£¬µ¥ÌåÓ¦ÓÃÒÑ¾­ºÜºÃµØ·þÎñÁËÎÒÃÇ£¬Î´À´ÎÞÒÉ»¹»á¼ÌÐø·¢»ÓÖØÒª×÷ÓÃ¡£µ«ÊÇ£¬²»¹ÜÈçºÎÄ£¿é»¯£¬µ¥ÌåÓ¦ÓÃ×îÖÕ¶¼»áÒòÎªÍÅ¶Ó×³´ó¡¢³ÉÔ±±ä¶¯¡¢Ó¦ÓÃ·¶Î§À©Õ¹µÈ³öÏÖÎÊÌâ¡£ÏÂÃæÊÇµ¥ÌåÓ¦ÓÃµÄÒ»Ð©²»×ã£º
+
+    ²»¹»Áé»î£º¶ÔÓ¦ÓÃ³ÌÐò×öÈÎºÎÏ¸Î¢µÄÐÞ¸Ä¶¼ÐèÒª½«Õû¸öÓ¦ÓÃ³ÌÐòÖØÐÂ¹¹½¨¡¢ÖØÐÂ²¿Êð¡£¿ª·¢ÈËÔ±ÐèÒªµÈµ½Õû¸öÓ¦ÓÃ³ÌÐò²¿ÊðÍê³Éºó²ÅÄÜ¿´µ½±ä»¯¡£Èç¹û¶à¸ö¿ª·¢ÈËÔ±¹²Í¬¿ª·¢Ò»¸öÓ¦ÓÃ³ÌÐò£¬ÄÇÃ´»¹ÒªµÈ´ýÆäËû¿ª·¢ÈËÔ±Íê³ÉÁË¸÷×ÔµÄ¿ª·¢¡£Õâ½µµÍÁËÍÅ¶ÓµÄÁé»îÐÔºÍ¹¦ÄÜ½»¸¶ÆµÂÊ£»
+    ·Á°­³ÖÐø½»¸¶£ºµ¥ÌåÓ¦ÓÃ¿ÉÄÜ»á±È½Ï´ó£¬¹¹½¨ºÍ²¿ÊðÊ±¼äÒ²ÏàÓ¦µØ±È½Ï³¤£¬²»ÀûÓÚÆµ·±²¿Êð£¬×è°­³ÖÐø½»¸¶¡£ÔÚÒÆ¶¯Ó¦ÓÃ¿ª·¢ÖÐ£¬Õâ¸öÎÊÌâ»áÏÔµÃÓÈÎªÑÏÖØ£»
+    ÊÜ¼¼ÊõÕ»ÏÞÖÆ£º¶ÔÓÚÕâÀàÓ¦ÓÃ£¬¼¼ÊõÊÇÔÚ¿ª·¢Ö®Ç°¾­¹ýÉ÷ÖØÆÀ¹ÀºóÑ¡¶¨µÄ£¬Ã¿¸öÍÅ¶Ó³ÉÔ±¶¼±ØÐëÊ¹ÓÃÏàÍ¬µÄ¿ª·¢ÓïÑÔ¡¢³Ö¾Ã»¯´æ´¢¼°ÏûÏ¢ÏµÍ³£¬¶øÇÒÒªÊ¹ÓÃÀàËÆµÄ¹¤¾ß£¬ÎÞ·¨¸ù¾Ý¾ßÌåµÄ³¡¾°×ö³öÆäËüÑ¡Ôñ£»
+    ¼¼ÊõÕ®Îñ£º¡°²»»µ²»ÐÞ£¨Not broken£¬don¡¯t fix£©¡±£¬ÕâÔÚÈí¼þ¿ª·¢ÖÐ·Ç³£³£¼û£¬µ¥ÌåÓ¦ÓÃÓÈÆäÈç´Ë¡£ÏµÍ³Éè¼Æ»òÐ´ºÃµÄ´úÂëÄÑÒÔÐÞ¸Ä£¬ÒòÎªÓ¦ÓÃ³ÌÐòµÄÆäËü²¿·Ö¿ÉÄÜ»áÒÔÒâÁÏÖ®ÍâµÄ·½Ê½Ê¹ÓÃËü¡£Ëæ×ÅÊ±¼äÍÆÒÆ¡¢ÈËÔ±¸üµü£¬Õâ±ØÈ»»áÔö¼ÓÓ¦ÓÃ³ÌÐòµÄ¼¼ÊõÕ®Îñ¡£
+
+¶øËæ×ÅÒµÎñÐèÇóµÄ¿ìËÙ·¢Õ¹±ä»¯£¬Ãô½ÝÐÔ¡¢Áé»îÐÔºÍ¿ÉÀ©Õ¹ÐÔÐèÇó²»¶ÏÔö³¤£¬ÆÈÇÐÐèÒªÒ»ÖÖ¸ü¼Ó¿ìËÙ¸ßÐ§µÄÈí¼þ½»¸¶·½Ê½¡£Î¢·þÎñ¾ÍÊÇÒ»ÖÖ¿ÉÒÔÂú×ãÕâÖÖÐèÇóµÄÈí¼þ¼Ü¹¹·ç¸ñ¡£µ¥ÌåÓ¦ÓÃ±»·Ö½â³É¶à¸ö¸üÐ¡µÄ·þÎñ£¬Ã¿¸ö·þÎñÓÐ×Ô¼ºµÄ¹éµµÎÄ¼þ£¬µ¥¶À²¿Êð£¬È»ºó¹²Í¬×é³ÉÒ»¸öÓ¦ÓÃ³ÌÐò¡£ÕâÀïµÄ¡°Î¢¡±²»ÊÇÕë¶Ô´úÂëÐÐÊý¶øÑÔ£¬¶øÊÇËµ·þÎñµÄ·¶Î§ÏÞ¶¨µ½µ¥¸ö¹¦ÄÜ¡£Î¢·þÎñÓÐÈçÏÂÌØµã£º
+
+    ÁìÓòÇý¶¯Éè¼Æ£ºÓ¦ÓÃ³ÌÐò¹¦ÄÜ·Ö½â¿ÉÒÔÍ¨¹ýEric EvansÔÚ¡¶ÁìÓòÇý¶¯Éè¼Æ¡·ÖÐÃ÷È·¶¨ÒåµÄ¹æÔòÊµÏÖ£»Ã¿¸öÍÅ¶Ó¸ºÔðÓëÒ»¸öÁìÓò»òÒµÎñ¹¦ÄÜÏà¹ØµÄÈ«²¿¿ª·¢£»ÍÅ¶ÓÓµÓÐÈ«ÏµÁÐµÄ¿ª·¢ÈËÔ±£¬¾ß±¸ÓÃ»§½çÃæ¡¢ÒµÎñÂß¼­ºÍ³Ö¾Ã»¯´æ´¢µÈ·½ÃæµÄ¿ª·¢¼¼ÄÜ£»
+    µ¥Ò»Ö°ÔðÔ­Ôò£ºÃ¿¸ö·þÎñÓ¦¸Ã¸ºÔð¸Ã¹¦ÄÜµÄÒ»¸öµ¥¶ÀµÄ²¿·Ö£¬ÕâÊÇSOLIDÔ­ÔòÖ®Ò»£»
+    Ã÷È··¢²¼½Ó¿Ú£ºÃ¿¸ö·þÎñ¶¼»á·¢²¼Ò»¸ö¶¨ÒåÃ÷È·µÄ½Ó¿Ú£¬¶øÇÒ±£³Ö²»±ä£»·þÎñÏû·ÑÕßÖ»¹ØÐÄ½Ó¿Ú£¬¶ø¶ÔÓÚ±»Ïû·ÑµÄ·þÎñÃ»ÓÐÈÎºÎÔËÐÐÒÀÀµ£»
+    ¶ÀÁ¢²¿Êð¡¢Éý¼¶¡¢À©Õ¹ºÍÌæ»»£ºÃ¿¸ö·þÎñ¶¼¿ÉÒÔµ¥¶À²¿Êð¼°ÖØÐÂ²¿Êð¶ø²»Ó°ÏìÕû¸öÏµÍ³¡£ÕâÊ¹µÃ·þÎñºÜÈÝÒ×Éý¼¶£¬Ã¿¸ö·þÎñ¶¼¿ÉÒÔÑØ×Å¡¶Art of Scalability¡·Ò»Êé¶¨ÒåµÄXÖáºÍZÖá½øÐÐÀ©Õ¹£»
+    ¿ÉÒÔÒì¹¹/²ÉÓÃ¶àÖÖÓïÑÔ£ºÃ¿¸ö·þÎñµÄÊµÏÖÏ¸½Ú¶¼ÓëÆäËü·þÎñÎÞ¹Ø£¬ÕâÊ¹µÃ·þÎñÖ®¼äÄÜ¹»½âñî£¬ÍÅ¶Ó¿ÉÒÔÕë¶ÔÃ¿¸ö·þÎñÑ¡Ôñ×îºÏÊÊµÄ¿ª·¢ÓïÑÔ¡¢³Ö¾Ã»¯´æ´¢¡¢¹¤¾ßºÍ·½·¨£»
+    ÇáÁ¿¼¶Í¨ÐÅ£º·þÎñÍ¨ÐÅÊ¹ÓÃÇáÁ¿¼¶µÄÍ¨ÐÅÐ­Òé£¬ÀýÈç£¬Í¬²½µÄREST£¬Òì²½µÄAMQP¡¢STOMP¡¢MQTTµÈ¡£
+
+ÏàÓ¦µØ£¬Î¢·þÎñ¾ßÓÐÈçÏÂÓÅµã£º
+
+    Ò×ÓÚ¿ª·¢¡¢Àí½âºÍÎ¬»¤£»
+    ±Èµ¥ÌåÓ¦ÓÃÆô¶¯¿ì£»
+    ¾Ö²¿ÐÞ¸ÄºÜÈÝÒ×²¿Êð£¬ÓÐÀûÓÚ³ÖÐø¼¯³ÉºÍ³ÖÐø½»¸¶£»
+    ¹ÊÕÏ¸ôÀë£¬Ò»¸ö·þÎñ³öÏÖÎÊÌâ²»»áÓ°ÏìÕû¸öÓ¦ÓÃ£»
+    ²»»áÊÜÏÞÓÚÈÎºÎ¼¼ÊõÕ»·þÎñ¶Ô»ù´¡ÉèÊ©Ìá³öÁËÒ»Ð©¶îÍâµÄÐèÇó¡£Í¨³££¬ÎÒÃÇ½«ËüÃÇ×Ü³ÆÎªNoOps£¬±¾ÖÊÉÏ½²£¬¾ÍÊÇÒ»×é·þÎñ£¬Ìá¹©Ò»¸ö¸üºÃµÄÓ¦ÓÃ³ÌÐò²¿ÊðÁ÷³Ì²¢È·±£ÆäÔËÐÐ£¬°üÀ¨·þÎñ¸´ÖÆ¡¢·þÎñ·¢ÏÖ¡¢·þÎñ»Ö¸´ºÍ·þÎñ¼à¿Ø¡£
+    
+http://www.ebaytechblog.com/
+http://rdc.taobao.com/team/jm/
+
+
+20150228
+   Python±ÈÆäËüÓïÑÔÓÐ¸ü¶àÀ©Õ¹Ä£¿é£¬×ÊÁÏ¶à£¬Óï·¨ÇåÎúÒ×¶Á£¬Ö§³Ö¿âÉÏ´óÕ¼ÓÅÊÆ£¬µ÷ÊÔÆ÷¹îÒì¶øÇÒÐ§ÂÊµÍÏÂ£¬ÄÑÒÔÓëÆäËüÓïÑÔ¼¯³É£¬ËüÓÐÌ«¶àµÄ¶þ½øÖÆDLL ÓÐÊ±ºò»áÂýµÃÄÑÒÔÈÌÊÜ
+ LuaÔÚÕâÈýÖÖÓïÑÔÖÐÊÇÔËÐÐÊ±ËÙ¶È×î¿ì¶øÇÒÕ¼ÄÚÔÚ×îÉÙµÄ Lua¿ÉÄÜÊÇÎÄµµ×îÉÙµÄ   LuaÄÚ½¨µÄ¹¦ÄÜºÜÉÙ
+ RubyÓÐ¼«ºÃµÄ¸ß¼¶µ÷ÊÔÆ÷  RubyÊÇ×î³¹µ×µÄÃæÏò¶ÔÏóÓïÑÔ RubyµÄÓï·¨¼«Îª¼òµ¥ ÎÄµµ¼«¶ÈÈ±·¦
+ Lua µÄÐÔÄÜÔÚ¸÷ÖÖ²âÊÔÀï¶¼±È JavaScript ¿ì²»ÉÙ Lua Ô­±¾¾ÍÊÇ×÷ÎªÇ¶ÈëÊ½ÓïÑÔÀ´Éè¼ÆµÄ£¬ËùÒÔÌìÈ»ºÍ C/C++ ºÜÈÝÒ×½»»¥ ¿É±àÒë£¬Ð§ÂÊ¸ß
+20141121
+µÂÒâÖ¾½»Ò×ËùÊ¹ÓÃ IBM LLM(red hat)
+20141112
+SPDYÐ­ÒéÀàËÆÓÚHTTP£¬µ«Ö¼ÔÚËõ¶ÌÍøÒ³µÄ¼ÓÔØÊ±¼äºÍÌá¸ß°²È«ÐÔ¡£
+SPDYÐ­ÒéÍ¨¹ýÑ¹Ëõ¡¢¶àÂ·¸´ÓÃºÍÓÅÏÈ¼¶À´Ëõ¶Ì¼ÓÔØÊ±¼ä[1]¡£SPDY²¢²»ÊÇÊ××ÖÄ¸ËõÂÔ×Ö£¬¶ø½ö½öÊÇ"speedy"µÄËõÐ´¡£
+SPDYÏÖÎªGoogleµÄÉÌ±ê[5]¡£
+
+Êý¾Ý½á¹¹64Î»¶ÔÆëÐÔÄÜ»áÌáÉý
+Í¨ÐÅ²ÉÓÃÁ÷¿Ø´°¿Ú£¬Ò»Ö±·¢£¬Èç¹ûACK¼ä¸ô´óÓÚÄ³¸ö·§Öµ¾Í¿ªÊ¼hold Èç¹û´°¿ÚÖµÎª1¾ÍÊÇFIXµÄË³Ðò £¬»º´æ´°¿Ú£¬Èç¹ûbufferÂú¾Í¿ªÊ¼¶ªÆú
+Disruptor Ò»¸ö¿ªÔ´µÄ²¢·¢¿ò¼Ü ÄÜ¹»ÎÞËøÊµÏÖ²¢ÐÐ²Ù×÷£¬ºÜ¿ì£¬·Ç³£¿ì ÎÞËøµÄRing buffer£¬µ¥Ïß³Ì´¦Àí£¬¾¡Á¿ÀûÓÃcache , RingBufferµÄÖ¸Õë(cursor)£¨Òë×¢£ºÖ¸Ïò¶ÓÎ²ÔªËØ£©ÊôÓÚÒ»¸öÉñÆæµÄvolatile
+Disruptor±È ArrayBlockingQueue ¿ì5±¶×óÓÒÈç¹û¶àÏû·ÑÕßÉú²úÕâ¿ÉÄÜ²î8±¶£¬latency²î600±¶...
+
+Actorµ±×÷ÊÇÒ»ÈºÈË£¬ËûÃÇ»¥ÏàÖ®¼ä²»»áÃæ¶ÔÃæµØ½»Á÷£¬¶øÖ»ÊÇÍ¨¹ýÓÊ¼þµÄ·½Ê½½øÐÐ¹µÍ¨¡£
+ÔÚ´¦Àí¶àÌõÏûÏ¢Ê±£¬Ò»¸öActor°üº¬¶à¸öÊµÀý±äÁ¿À´±£³Ö×´Ì¬¡£AkkaÈ·±£ActorµÄÃ¿¸öÊµÀý¶¼ÔËÐÐÔÚ×Ô¼ºµÄÇáÁ¿¼¶Ïß³ÌÀï£¬²¢±£Ö¤Ã¿´ÎÖ»´¦ÀíÒ»ÌõÏûÏ¢¡£ÕâÑùÒ»À´£¬¿ª·¢Õß²»±Øµ£ÐÄÍ¬²½»ò¾ºÌ¬Ìõ¼þ£¬¶øÃ¿¸öActorµÄ×´Ì¬¶¼¿ÉÒÔ±»¿É¿¿µØ±£³Ö¡£
+ÔÚActorÏµÍ³Àï£¬Ã¿¸öActor¶¼ÊÇÆä×ÓËïµÄ¼à¹ÜÕß¡£Èç¹ûActor´¦ÀíÏûÏ¢Ê±Ê§°Ü£¬Ëü¾Í»áÔÝÍ£×Ô¼º¼°Æä×ÓËï²¢·¢ËÍÒ»¸öÏûÏ¢¸øËüµÄ¼à¹ÜÕß£¬Í¨³£ÊÇÒÔÒì³£µÄÐÎÊ½¡£
+Akka¼Ü¹¹Ö§³Ö±¾µØÍ¸Ã÷ÐÔ£¬Ê¹µÃActorÍêÈ«²»ÖªµÀËûÃÇ½ÓÊÜµÄÏûÏ¢ÊÇ´ÓÄÄÀï·¢³öÀ´µÄ , Ö§³Öcrash-recover  ·Ö²¼Ê½µÄ¼Ü¹¹ £¬ÏûÏ¢¿ÉÒÔreplay
+Akka ÏûÏ¢¿ÉÒÔÊÇFIFO£¬Ò²¿ÉÒÔ´øÓÅÏÈ¼¶  ÏûÏ¢Ö§³ÖÔÚ·¢ËÍÕß¼¶±ðË³Ðò´¦Àí£¬±£Ö¤Ã¿¸öÏûÏ¢×î¶à´«ÊäÒ»´Î(¿ÉÄÜ»á¶ª?)
+Storm Ò²ÓÐÒ»¸öÖØÒªµÄÌØÐÔ£¬ÓÐÔÚAkkaÖÐËùÃ»ÓÐµÄ£º±£Ö¤ÏûÏ¢´«µÝ
+Apache Spark is actually built on Akka
+
+ ÊµÊ±´¦ÀíÏµÍ³£¨ÀàËÆs4, storm£©¶Ô±ÈÖ±½ÓÓÃMQÀ´×öºÃ´¦ÔÚÄÄÀï£¿  ´ð£ººÃ´¦ÊÇËü°ïÄã×öÁË£º 1) ¼¯Èº¿ØÖÆ¡£2) ÈÎÎñ·ÖÅä¡£3) ÈÎÎñ·Ö·¢ 4) ¼à¿Ø µÈµÈ¡£
+
+ÐèÒªÖªµÀStorm²»ÊÇÒ»¸öÍêÕûµÄ½â¾ö·½°¸¡£Ê¹ÓÃStormÄãÐèÒª¼ÓÈëÏûÏ¢¶ÓÁÐ×öÊý¾ÝÈë¿Ú£¬
+¿¼ÂÇÈçºÎÔÚÁ÷ÖÐ±£´æ×´Ì¬£¬¿¼ÂÇÔõÑù½«´óÎÊÌâÓÃ·Ö²¼Ê½È¥½â¾ö¡£½â¾öÕâÐ©ÎÊÌâµÄ³É±¾¿ÉÄÜ±ÈÔö¼ÓÒ»¸ö·þÎñÆ÷µÄ³É±¾»¹¸ß¡£
+µ«ÊÇ£¬Ò»µ©ÏÂ¶¨¾ö¶¨Ê¹ÓÃÁËStorm²¢½â¾öÁËÄÇÐ©ÄÕÈËµÄÏ¸½Ú£¬Äã¾ÍÄÜÏíÊÜµ½Storm¸øÄã´øÀ´µÄ¼òµ¥£¬¿ÉÍØÕ¹µÈÓÅÊÆÁË¡£
+supervisord ÓÃÀ´×Ô¶¯Æô¶¯Ä³¸ö³ÌÐò£¬Èç¹û±»killµÄ»°
+
+RESTºÍSOAÓ¦ÓÃ×î´óµÄÇø±ðÒ²ÐíÔÚÓÚ¿ØÖÆ×´Ì¬£¨¼´ÔÚ¹¤ÈËÊÂÎñ»òÇëÇóµÄÕûÌåÁ÷³ÌÖÐ¸ø¶¨ÏûÏ¢µÄÉÏÏÂÎÄ£©µÄ»úÖÆ¡£ÐèÒªÖ§³ÖÕâÁ½Àà×´Ì¬¿ØÖÆ²ßÂÔµÄÈí¼þÉè¼ÆÊÇºÜ²»Ò»ÑùµÄ¡£¼Ü¹¹Ê¦Ê×ÏÈÒªÎÊµÄÎÊÌâÊÇÈí¼þÊÇ·ñÄ¬ÈÏÒÑ¾­×ö³öREST»òSOAµÄÑ¡Ôñ¡£ÔÚSOAÖÐ£¬×´Ì¬¿ØÖÆÍùÍù×¤ÁôÔÚÃ¿Ò»¸ö×é¼þÉÏ¡£×é¼þÖ®¼äµÄ¹ØÏµ±ØÐëÍ¨¹ýÂß¼­Á÷³ÌÎ¬»¤ÒÔ±ãÏûÏ¢¸öÌå²»ÔÚÉÏÏÂÎÄÒÔÍâ½øÐÐ½âÊÍ¡£¶øRESTÖÐ×´Ì¬ÔòÊÇ×÷ÎªÏûÏ¢µÄÒ»²¿·Ö´ÓÒ»¸ö×é¼þ´«¸øÁíÒ»¸ö×é¼þ¡£
+RESTºÍSOAÓ¦ÓÃµÄµÚ¶þ´óÇø±ðÊÇºóÕßÔÚÃèÊö×é¼þ¼ä½Ó¿Ú¡¢»ùÓÚ½Ó¿ÚµÄ°ó¶¨£¬ÒÔ¼°¹¦ÄÜÐÔ·½ÃæÍùÍùÓÐ×Å¸üÇ¿´óµÄ¹¤¾ß¡£¾¡¹ÜÍ¨¹ýRESTfulÁ÷³Ì¹ÜÀí×é¼þ°ó¶¨»¹ÊÇÓÐ¿ÉÄÜµÄ£¬ÉõÖÁ»¹¿ÉÒÔ½øÐÐä¯ÀÀºÍ¶¯Ì¬°ó¶¨£¬µ«ÊÇÕâÐ©¹¤¾ßÏÞÖÆ¸ü¶à£¬Ô¶Î´±ê×¼»¯¡£ÕâÒâÎ¶×Å¶ÔÓÚ¸ß¶È¶¯Ì¬µÄ×é¼þ¹¤×÷Á÷À´Ëµ£¬SOAÒ²Ðí»á¸üºÃ¡£
+È»¶ø£¬ÔÚÊÂÎñÐèÒª¶Ô¶à¸öÊý¾Ý¿â½øÐÐ¸üÐÂµÄÇé¿öÏÂ£¬SOA¾ÍÄÜ´ó·ÅÒì²Ê¡£SOA´¦Àí¶à½×¶ÎÌá½»£¨ÊÂÎñ½öÔÚËùÓÐ¶ÔÊý¾Ý¿âµÄÓ°Ïì¾ùÒÑ¸üÐÂµÄÇé¿öÏÂ²Å½áÊø£©¾ÍºÜÈÝÒ×£¬µ«ÊÇREST¾ÍÐèÒªÒ»Ð©Éè¼Æ²ßÂÔ¡£Ã»ÓÐÒ»Ð©ÓÐ×´Ì¬×é¼þµÄÇé¿öÏÂ½øÐÐ¿É¿¿ÊÂÎñ´¦ÀíÊÇ²»¿ÉÄÜµÄ£¬Òò´ËRESTºÍSOA»ìºÏÓ¦ÓÃÆðÂëÊÇ±ØÒªµÄ£¬ÉõÖÁ¿ÉÄÜ»¹ÐèÒªÒ»¸öÍêÈ«µÄSOAÊµÏÖ¡£
+ÓÈÆäÊÇ¶ÔÔÆ¼ÆËã¶øÑÔ¡£´ó²¿·Ö¹¤×÷ÈËÔ±ÊÇÍ¨¹ýÔÆÓ¦ÓÃ³ÌÐò·ÃÎÊ»¥ÁªÍøºÍVPNÍøÂçµÄ£¬Õâ¶ÔRESTful½Ó¿Ú²úÉúÁËºÜ´óµÄ´Ù½ø×÷ÓÃ
+RPC ËùÎ½µÄÔ¶³Ì¹ý³Ìµ÷ÓÃ (ÃæÏò·½·¨)
+SOA ËùÎ½µÄÃæÏò·þÎñµÄ¼Ü¹¹(ÃæÏòÏûÏ¢)
+REST ËùÎ½µÄ Representational state transfer (ÃæÏò×ÊÔ´)
+ RPCÊÇÒÔ¶¯´ÊÎªÖÐÐÄµÄ, RESTÊÇÒÔÃû´ÊÎªÖÐÐÄµÄ
+Í¨¹ýÊ¹ÓÃ Netty4 + Thrift Ñ¹Ëõ¶þ½øÖÆ±à½âÂë¼¼Êõ£¬ËûÃÇÊµÏÖÁË10W TPS£¨1KµÄ¸´ÔÓPOJO¶ÔÏó£©µÄ¿ç½ÚµãÔ¶³Ì·þÎñµ÷ÓÃ¡£
+
+
+
+ÔÚRPC·þÎñ»¯Õâ¸öÊÂÇéÉÏ£¬Î¢²©Æ½Ì¨²»ÊÇµÚÒ»¸ö³Ôó¦Ð·µÄ£ºÔçµÄÓÐÑÇÂíÑ·ºÍeBayµÈ¹úÍâÏÈÇý£¬½üµÄÓÐTwitterµÄfinagle£¬ÌÔ±¦µÄdubboµÈµÈ£¬
+Î¢²©Æ½Ì¨´Ó2011ÄêÒýÈëÁË PB ÐòÁÐ»¯·½Ê½£¬ÒÔÌæ´ú cache ºÍ db ÖÐµÄ json ÎÄ±¾¡£µ«ÔÚ RPC ¿ò¼ÜÉÏÏß¹ý³ÌÖÐ£¬ÎÒÃÇÑ¡ÔñÁË¶Ô Java ¶ÔÏó¸üÎªÓÑºÃµÄ Hessian2 
+hessianÊÇÒ»Ì×ÓÃÓÚ½¨Á¢web serviceµÄ¼òµ¥µÄ¶þ½øÖÆÐ­Òé£¬ÓÃÓÚÌæ´ú»ùÓÚXMLµÄweb service£¬ÊÇ½¨Á¢ÔÚrpcÉÏµÄ£¬hessianÓÐÒ»Ì××Ô¼ºµÄÐòÁÐ»¯¸ñÊ½½«Êý¾ÝÐòÁÐ»¯³ÉÁ÷£¬È»ºóÍ¨¹ýhttpÐ­Òé·¢ËÍ¸ø·þÎñÆ÷£¬¿´Ô´Âë·¢ÏÖÆäÊµÊÇÊ¹ÓÃ
+RMIÊ¹ÓÃJavaµÄÐòÁÐ»¯£¬¶øHessian/BurlapÔòÎªÁË²»Í¬ÓïÑÔÖ®¼äÍ¨ÐÅ¶øÊ¹ÓÃË½ÓÐµÄÐòÁÐ»¯¡£
+
+Kryo ÊÇÒ»¸ö¿ìËÙ¸ßÐ§µÄJava¶ÔÏóÍ¼ÐÎÐòÁÐ»¯¿ò¼Ü£¬ËüÔ­ÉúÖ§³Öjava£¬ÇÒÔÚjavaµÄÐòÁÐ»¯ÉÏÉõÖÁÓÅÓÚgoogleÖøÃûµÄÐòÁÐ»¯¿ò¼Üprotobuf
+
+sqlite android²»Ö§³Öunicode  
+h2Ö§³Ötrigger/index/mvcc/row lock ²»Ö§³Ö¶àÏß³Ì²¢·¢
+SQLiteÊÇÒ»¸öÐ¡ÐÍµÄC³ÌÐò¿â£¬ÊµÏÖÁË¶ÀÁ¢µÄ£¬¿ÉÇ¶ÈëµÄ£¬ÁãÅäÖÃµÄSQLÊý¾Ý¿âÒýÇæ¡£ÌØÐÔ°üÀ¨
+´¿ Java °æ Berkeley DB
+h2ÊÇThomas MuellerÌá¹©µÄÒ»¸ö¿ªÔ´µÄ¡¢´¿javaÊµÏÖµÄ¹ØÏµÊý¾Ý¿â
+SQLiteÔÚ²¢·¢£¨°üÀ¨¶à½ø³ÌºÍ¶àÏß³Ì£©¶ÁÐ´·½ÃæµÄÐÔÄÜÒ»Ö±²»Ì«ÀíÏë
+h2ºÃÒ»µã
+Berkeley DB ²»ÊÇÒ»¸ö´¿sql²Ù×÷µÄ
+H2ÊÇ¼æÈÝMYSQL Ìá¹©ÁËÒ»¸öÊ®·Ö·½±ãµÄweb¿ØÖÆÌ¨,Ö§³Ö¶à°æ±¾²¢·¢·ÃÎÊ
+É¾³ýÐÔÄÜ£ºÉ¾³ýÒ»Ìõ¼ÇÂ¼.SQLite¡¾·Ç³£Ð¡¡¿µÄÐÔÄÜÂÔºÃÓÚH2¡¾·Ç³£Ð¡¡¿¡£É¾³ý¶àÌõ¼ÇÂ¼£¬SQLite¡¾0.078s¡¿ºÃÓÚH2
+²éÑ¯Ò»Ìõ¼ÇÂ¼ SQLiteµÄÐÔÄÜÒªÓÅÓÚH2¡£²éÑ¯£¨5000»ò10000£©Ìõ H2µÄÐÔÄÜÒªºÃÓÚSQLite
+²¢·¢ÐÔÄÜ£ºH2µÄ²éÑ¯Ö§³ÖÒ»¶¨µÄ²¢·¢ÐÔ£¬ÒªÇ¿ÓÚSQLite¡£
+×ÜµÄ¿´À´£¬SQLiteµÄÐÔÄÜÒªºÃÓÚH2£¬µ«²¢·¢ÐÔ²»Èç¡£
+ÁíÍâSQLiteÒ»°ãÊ¹ÓÃCµÄAPI½Ó¿Ú·ÃÎÊ£¬¶øH2Ö§³ÖJDBC¡£
+²¢ÇÒ¶¼¿ÉÒÔ´ó¶àÊýÖ÷Á÷Æ½Ì¨ÉÏ
+mysql in memory engine ²»Ö§³ÖÐÐËø£¬²»Ö§³ÖÊÂÎï¼°MVCCºÍMyiasmÐÔÄÜ²î²»¶à
+
+    Thrift ÊÊÓÃÓÚ³ÌÐò¶Ô³ÌÐò¾²Ì¬µÄÊý¾Ý½»»»£¬ÒªÇóschemaÔ¤Öª²¢Ïà¶Ô¹Ì¶¨¡£
+    Avro  ÔÚThrift»ù´¡ÉÏÔö¼ÓÁË¶Ôschema¶¯Ì¬µÄÖ§³ÖÇÒÐÔÄÜÉÏ²»ÊäÓÚThrift¡£ Avro³ö×ÔHadoopÖ®¸¸Doug Cutting Ö§³ÖhttpºÍtcp ,Avro¿ÉÒÔÖ»¶¨ÒåavroÎÄ¼þ£¬ ²»Éú³Éclass
+    Avro  ÏÔÊ½schemaÉè¼ÆÊ¹Ëü¸üÊÊÓÃÓÚ´î½¨Êý¾Ý½»»»¼°´æ´¢µÄÍ¨ÓÃ¹¤¾ßºÍÆ½Ì¨,ÌØ±ðÊÇÔÚºóÌ¨¡£
+    Ä¿Ç°ThriftµÄÓÅÊÆÔÚÓÚ¸ü¶àµÄÓïÑÔÖ§³ÖºÍÏà¶Ô³ÉÊì¡£
+    Overall, I think Thrift wins on features and Protocol Buffers win on documentation. Implementation-wise, they¡¯re quite similar. 
+The major difference is that Thrift provides a full client/server RPC implementation, whereas Protocol Buffers only generate stubs to use in your own RPC system.
+AvroÖ§³ÖÁ½ÖÖÐòÁÐ»¯±àÂë·½Ê½£º¶þ½øÖÆ±àÂëºÍJSON±àÂë¡£Ê¹ÓÃ¶þ½øÖÆ±àÂë»á¸ßÐ§ÐòÁÐ»¯£¬²¢ÇÒÐòÁÐ»¯ºóµÃµ½µÄ½á¹û»á±È½ÏÐ¡£»
+  avro-rpc ÍøÂç´«Êä²ã¡£Ê¹ÓÃNettyµÄNioÊµÏÖ ¿ÉÀ©Õ¹Ä¿Ç°Ö§³ÖµÄÊý¾ÝÐòÁÐ»¯·½Ê½ÓÐAvro£¬Json, Hessian,JavaÐòÁÐ»¯
+  ThriftÏà±ÈProtocol BuffersÖ§³Ö¸ü¶àµÄÓïÑÔ£¬¿ò¼ÜÂß¼­¸ü¼ÓÇåÎú£¬Ò×ÓÚ¶¨ÖÆÀ©Õ¹£¬ÐÔÄÜÓëProtocol Buffers²»ÏàÉÏÏÂ£¬Ä¿Ç°À´ËµÓ¦¸ÃÊÇ×î¼ÑµÄÑ¡Ôñ
+  thrift RPC¿ÉÒÔ´ïµ½Ã¿Ãë2Íò´Î×óÓÒµÄµ÷ÓÃ±ÈgRPCÇ¿
+  
+  
+
+NYSE µÄData Fabric ÔÚ¿ª·¢ºÍÉè¼ÆÖÐ×ñÑ­ÁËÒÑÈÕÒæ±ê×¼»¯µÄLDMA£¨Local Direct Memory Access£©ºÍ
+RDMA£¬µ«ÊÇ²¢Ã»ÓÐÖ±½ÓÔËÓÃÀàÐÍInfiBand£¬10GigE µÈ¼¼Êõ»ò²úÆ·¡£ËùÒÔ£¬Data Fabric µÄ¼¼ÊõÔÚÌá¹©¸ßÐÔ
+ÄÜµÄÐÅÏ¢ÍÌÍÂµÄÍ¬Ê±£¬Ò²¿ÉÒÔºÜ·½±ãµÄºÍÏÖÓÐµÄÆäËûÍøÂç½â¾ö·½°¸ÎÞ·ìÕûºÏ¡£×îÐÂ°æ±¾µÄData Fabric ¶ÔÓÚ
+LDMA ¿ÉÒÔÖ§³ÖÃ¿Ãë800 ÍòÌõ200 ×Ö½ÚµÄÏûÏ¢£¬¶ÔÓÚRDMA ¿ÉÒÔÖ§³ÖÃ¿Ãë160 ÍòÌõ200 ×Ö½ÚµÄÏûÏ¢¡£
+¡£»ùÓÚ¿É¿¿UDP µÄ¶à²¥´«ÊäÒ²ÂýÂý³ÉÎª
+½»Ò×Ëù½»Ò×ÏµÍ³µÄÑ¡Ôñ£¬ÌØ±ðÊÇMulticast Ð­ÒéÆä±¾Éí¿ÉÒÔ¸ù¾Ý²»Í¬µÄ¶à²¥µØÖ·£¬¶à²¥¶Ë¿Ú½øÐÐ·¢²¼£¬Ê¹µÃ
+Æä¾ßÓÐÌìÈ»·¢²¼ºÍ¶©ÔÄµÄÌØÐÔ¡£ÔÚÁ¼ºÃµÄ½»Ò×ÄÚÍø»·¾³ÏÂ£¬UDP µÄ¿É¿¿ÐÔºÜ¸ß£¬¶ª°üÂÊ²¢²»¸ß£¬ÕâÊ¹µÃÒ»
+Ð©»ùÓÚUDP µÄÍ¨ÐÅÐ­ÒéÀýÈç£¬Reliable UDP ¿ÉÒÔÓ¦ÓÃÔÚ½»Ò×ÏµÍ³ÄÚ¡£
+
+Block IO ¼¼Êõ
+ÎÄ¼þ½Ó¿ÚÒÑ¾­²»ÄÜ´ïµ½ÐÔÄÜÒªÇó£¬ÉÏÖ¤ËùÍ¨¹ýÖ±½Ó¶ÔÎïÀíÎÄ¼þµÄ¿é½øÐÐ¶ÁÐ´£¬ºöÂÔÎÄ
+¼þµÄ½á¹¹Ö±½Ó½øÐÐÊý¾Ý¿é²Ù×÷£¬ÕâÑù¿ÉÒÔ´ó´óÌá¸ßÎÄ¼þµÄ¶ÁÐ´Ð§ÂÊ£» 
+2. ÅúÁ¿³Ö¾Ã»¯
+Æµ·±µÄ´ÅÅÌ IO ²Ù×÷±ØÈ»µ¼ÖÂµ¥´ÎÊý¾Ý¶ÁÐ´µÄ³É±¾Ìá¸ß£¬ËùÒÔÕâÀïÉÏÖ¤ËùÍ¨¹ýÅúÁ¿³Ö¾Ã»¯£¬½«²¿·Ö
+Êý¾Ý»º´æ£¬ÅúÁ¿ÂäµØ£¬ÕâÑùÔÚÎþÉüÒ»²¿·ÖÑÓÊ±µÄÇé¿öÏÂ£¬Ìá¸ß´ÅÅÌ¶ÁÐ´Ð§ÂÊ£»
+
+fastDBÊÇÒ»¸öÇ¶ÈëÊ½C/C++ÄÚ´æÊý¾Ý¿â  JAVA RTSÊÇÊµÊ±java,ÔÚÏß³Ìµ÷¶ÈºÍÄÚ´æ·½Ãæ×öÁËºÜ¶àÓÅ»¯
+RedHAT MRGÊÇÊµÊ±linux  MGR°üº¬Èý²¿·Ö£ºMessaging¡¢RealtimeºÍGrid£¬
+
+
+20140811
+¹ãÓòÍø¸ºÔØ¾ùºâ
+DNS(F5 3DNS)/http¶¯Ì¬ÖØ¶¨Ïò/BGP(Border Gateway Protocol)Ò²¿ÉÒÔÊµÏÖ¶ÔÒ»¸övipÔÚ¶à¸öµØ·½²¿ÊðµÄ¸ß¿ÉÓÃ
+BGPÖ÷ÒªÓÃÓÚ»¥ÁªÍøAS£¨×ÔÖÎÏµÍ³£©Ö®¼äµÄ»¥Áª£¬BGPµÄ×îÖ÷Òª¹¦ÄÜÔÚÓÚ¿ØÖÆÂ·ÓÉµÄ´«²¥ºÍÑ¡Ôñ×îºÃµÄÂ·ÓÉ
+Ê¹ÓÃBGPÐ­Òé»¥Áªºó£¬ÍøÂçÔËÓªÉÌµÄËùÓÐ¹Ç¸ÉÂ· ÓÉÉè±¸½«»áÅÐ¶Ïµ½IDC»ú·¿IP¶ÎµÄ×î¼ÑÂ·ÓÉ£¬ÒÔ±£Ö¤²»Í¬ÍøÂçÔËÓªÉÌÓÃ»§µÄ¸ßËÙ·ÃÎÊ
+
+Ali RDSÕû¸öµÄÊý¾ÝÍ¨µÀÊÇÓÉerlang×öµÄ£¬Erlang¿ÉÄÜÀúÊ·±È´ó²¿·ÖÈËµÄÄê¼Í¶¼´ó£¬Ëü×öÁË¶þÈýÊ®ÄêÁË£¬ËüÒÔÇ°ºÅ³ÆËÄ¸ö9
+
+Amazon¾­Ñé
+´óÁ¿µÄ¹¹½¨·þÎñ£¬Í¨¹ýrestfulµÄ·½Ê½£¬·þÎñ¿ª·¢Íê³ÉÖ®ºó¾ÍÊÇÒ»¸ö¸öµÄÐéÄâ»ú
+8-10ÈËµÄ2¸öpizzaÄÜ¹»Âú×ãµÄteam
+KISSÔ­Ôò=keep it simple and stupid 
+±ØÐëÊÇshared nothingµÄ¼Ü¹¹£¬²ÅÄÜ¸üºÃµØÀ©Õ¹
+Èç¹û¿ÉÄÜ×Ô¼º¹¹½¨»ù´¡¼Ü¹¹£¬ÒÔÂú×ãÐÔÄÜÎÈ¶¨ÐÔºÍ¿É¿ØµÄÐèÇó
+´´½¨Í³Ò»µÄ·þÎñ·ÃÎÊ»úÖÆ
+²»Òª¹ý¶àµÄÏÞÖÆ¹¤³ÌÊ¦£¬Ö»ÒªÌá¹©»ù±¾µÄ¼à¿ØÒÔ¼°»ù´¡¼Ü¹¹µÄ¶«Î÷¾ÍÐÐÁË
+Ë­¿ª·¢µÄ·þÎñ£¬Ë­À´¸ºÔðÔËÐÐ¡£ºÍ¿Í»§¶à¹µÍ¨£¬ÕâÑù²ÅÄÜ¸üºÃµØÌá¹©²úÆ·ÖÊÁ¿
+¾¡¿ì¿ª·¢³öÔ­ÐÍ£¬È»ºóÒ»´Î´ÎµÄÑ­»·ÐÞ¸ÄÌá¸ß
+ÏûÏ¢´«Êä/Òì²½´¦Àí/·Ö¸î(Ë®Æ½´¹Ö±)/·þÎñ»¯/Í³Ò»µÄ·þÎñ·ÃÎÊ½Ó¿Ú/»º´æ/batch´«Êä´¦Àí/¼à¿Ø ²ÅÊÇÕæÕýµÄ·Ö²¼Ê½ÏµÍ³
+
+°¢ÀïÔÆ
+TengineÊÇÓÉÌÔ±¦Íø·¢ÆðµÄWeb·þÎñÆ÷ÏîÄ¿¡£ËüÔÚNginxµÄ»ù´¡£¬Õë¶Ô´ó·ÃÎÊÁ¿ÍøÕ¾µÄÐèÇó£¬Ìí¼ÓÁËºÜ¶à¸ß¼¶¹¦ÄÜºÍÌØÐÔ
+°¢ÀïÔÆµÄ¸ºÔØ¾ùºâ²úÆ·½ÐSLB£¬Æß²ã¸ºÔØ¾ùºâÓÃµÄÊÇLVS+Tengine£¬ËÄ²ã¸ºÔØ¾ùºâÓÃµÄÊÇLVS
+
+ÔÚÔÆ¼ÆËã´ó¹æÄ£ÍøÂç»·¾³ÏÂ£¬¹Ù·½LVS´æÔÚÈçÏÂÎÊÌâ£»
+    ÎÊÌâ1£ºLVSÖ§³ÖNAT/DR/TUNNELÈýÖÖ×ª·¢Ä£Ê½£¬ÉÏÊöÄ£Ê½ÔÚ¶àvlanÍøÂç»·¾³ÏÂ²¿ÊðÊ±£¬´æÔÚÍøÂçÍØÆË¸´ÔÓ£¬ÔËÎ¬³É±¾¸ßµÄÎÊÌâ£»
+    ÎÊÌâ2£ººÍÉÌÓÃ¸ºÔØ¾ùºâÉè±¸£¨Èç£¬F5£©Ïà±È£¬LVSÈ±ÉÙDDOS¹¥»÷·ÀÓù¹¦ÄÜ£»
+    ÎÊÌâ3£ºLVS²ÉÓÃPC·þÎñÆ÷£¬³£ÓÃkeepalivedÈí¼þµÄVRRPÐÄÌøÐ­Òé½øÐÐÖ÷±¸²¿Êð£¬ÆäÐÔÄÜÎÞ·¨À©Õ¹£»
+    ÎÊÌâ4£ºLVS³£ÓÃ¹ÜÀíÈí¼þkeepalivedµÄÅäÖÃºÍ½¡¿µ¼ì²éÐÔÄÜ²»×ã£»
+ÎªÁË½â¾öÉÏÊöÎÊÌâ£¬ÎÒÃÇÔÚ¹Ù·½LVS»ù´¡ÉÏ½øÐÐÁË¶¨ÖÆ»¯£»
+    ½â¾ö1£ºÐÂÔö×ª·¢Ä£Ê½FULLNAT£¬ÊµÏÖLVS-RealServer¼ä¿çvlanÍ¨Ñ¶£»
+    ½â¾ö2£ºÐÂÔösynproxyµÈ¹¥»÷TCP±êÖ¾Î»DDOS¹¥»÷·ÀÓù¹¦ÄÜ£¬£»
+    ½â¾ö3£º²ÉÓÃLVS¼¯Èº²¿Êð·½Ê½£»
+    ½â¾ö4£ºÓÅ»¯keepalivedÐÔÄÜ£»
+
+FULLNATÊµÏÖÖ÷ÒªË¼Ïë£ºÒýÈëlocal address£¨ÄÚÍøipµØÖ·£©£¬cip-vip×ª»»Îªlip->rip£¬¶ø lipºÍrip¾ùÎªIDCÄÚÍøip£¬¿ÉÒÔ¿çvlanÍ¨Ñ¶£»
+IN/OUTµÄÊý¾ÝÁ÷È«²¿¾­¹ýLVS£¬ÎªÁË±£Ö¤´ø¿í£¬²ÉÓÃÍòÕ×£¨10G£©Íø¿¨£»
+FULLNAT×ª·¢Ä£Ê½£¬µ±Ç°½öÖ§³ÖTCPÐ­Òé£»
+NATÄ£Ê½ÏÂcip->vip ÊÇcip->rip £¬È»ºórip»Ø°üµ½Íø¹ÜÒ²¾ÍÊÇNAT server
+
+LVS¼¯Èº²¿Êð·½Ê½ÊµÏÖµÄÖ÷ÒªË¼Ïë£ºLVSºÍÉÏÁª½»»»»ú¼äÔËÐÐOSPFÐ­Òé£¬ÉÏÁª½»»»»úÍ¨¹ýECMPµÈ¼ÛÂ·ÓÉ£¬½«Êý¾ÝÁ÷·Ö·¢¸øLVS¼¯Èº£¬LVS¼¯ÈºÔÙ×ª·¢¸øÒµÎñ·þÎñÆ÷£»
+½¡×³ÐÔ£ºlvsºÍ½»»»»ú¼äÔËÐÐospfÐÄÌø£¬1¸övipÅäÖÃÔÚ¼¯ÈºµÄËùÓÐLVSÉÏ£¬µ±Ò»Ì¨LVS down£¬½»»»»ú»á×Ô¶¯·¢ÏÖ²¢½«Æä´ÓECMPµÈ¼ÛÂ·ÓÉÖÐÌÞ³ý£»
+¿ÉÀ©Õ¹£ºÈç¹ûµ±Ç°LVS¼¯ÈºÎÞ·¨Ö§³ÅÄ³¸övipµÄÁ÷Á¿£¬LVS¼¯Èº¿ÉÒÔ½øÐÐË®Æ½À©ÈÝ£»
+¼¯Èº²¿Êð·½Ê½¼«´óµÄ±£Ö¤ÁËÒì³£Çé¿öÏÂ£¬¸ºÔØ¾ùºâ·þÎñµÄÎÈ¶¨ÐÔ£»
+
+¶ÔLVS¹ÜÀíÈí¼þkeepalived½øÐÐÁËÈ«ÃæÓÅ»¯£»
+   ÓÅ»¯ÁËÍøÂçÒì²½Ä£ÐÍ£¬select¸ÄÎªepool·½Ê½£»
+   ÓÅ»¯ÁËreload¹ý³Ì£»
+
+
+ECMP£¨Equal-CostMultipathRouting£©µÈ¼Û¶àÂ·¾¶£¬´æÔÚ¶àÌõ²»Í¬Á´Â·µ½´ïÍ¬Ò»Ä¿µÄµØÖ·µÄÍøÂç»·¾³ÖÐ£¬Èç¹ûÊ¹ÓÃ´«Í³µÄÂ·ÓÉ¼¼Êõ£¬·¢Íù¸ÃÄ¿µÄµØÖ·µÄÊý¾Ý°üÖ»ÄÜÀûÓÃÆäÖÐµÄÒ»ÌõÁ´Â·£¬ÆäËüÁ´Â·´¦ÓÚ±¸·Ý×´Ì¬»òÎÞÐ§×´Ì¬£¬²¢ÇÒÔÚ¶¯Ì¬Â·ÓÉ»·¾³ÏÂÏà»¥µÄÇÐ»»ÐèÒªÒ»¶¨Ê±¼ä£¬¶øµÈÖµ¶àÂ·¾¶Â·ÓÉÐ­Òé¿ÉÒÔÔÚ¸ÃÍøÂç»·¾³ÏÂÍ¬Ê±Ê¹ÓÃ¶àÌõÁ´Â·£¬²»½öÔö¼ÓÁË´«Êä´ø¿í£¬²¢ÇÒ¿ÉÒÔÎÞÊ±ÑÓÎÞ¶ª°üµØ±¸·ÝÊ§Ð§Á´Â·µÄÊý¾Ý´«Êä¡£
+ÈçºÎÊµÏÖ¶Ô¶à¸öDirector µÄ¸ºÔØ¾ùºâ£¿ÏàÐÅ¿´µ½ÕâÀï£¬Ó¦¸Ã¶¼Çå³þÁË£¬Ã»´í£¬¾ÍÊÇÀûÓÃOSFPµÄµÈ¼Û¶àÂ·¾¶À´ÊµÏÖ¡£ÄÇÃ´ÐÂµÄÎÊÌâÓÖÀ´ÁË£ºÎÒÃÇÖªµÀDirector ÊÇÒ»Ì¨LINUX/Unix»úÆ÷£¬²»ÊÇÂ·ÓÉÆ÷£¬ÄÇËüÈçºÎÅÜOSPFÐ­Òé£¿ÈçºÎÊµÏÖµÈ¼Û¶àÂ·¾¶£¿
+Êµ¼ÊÉÏ¾ÍÊÇ½«µ÷¶ÈÆ÷Ä£Äâ³ÉÂ·ÓÉÆ÷£¬½«¶àÌ¨µ÷¶ÈÆ÷ÓëÕæÊµµÄÂ·ÓÉÆ÷×é³ÉOSPFÍøÂç£¬ÐèÒª×öµÄ¾ÍÊÇÎªµ÷¶ÈÆ÷°²×°quaggaÕâ¸öÈí¼þ£¬²¢½øÐÐÏà¹ØµÄÅäÖÃ¼´¿É
+
+ÌØµã£º
+1£®4²ã¸ºÔØ¾ùºâ£¬Ð§ÂÊ¸ß
+2.  ÅäÖÃ¼òµ¥£¬Ö»Ðè°²×°»ùÓÚlinuxµÄÂ·ÓÉÈí¼þquagga
+3.  ÎÞ·¨½øÐÐ¼à¿Ø¼ì²é£¬·þÎñÒì³£ÎÞ·¨´¦Àí
+4.  ÎÞsession±£³ÖµÈ£¬¹¦ÄÜ¹ýÓÚ¼òµ¥
+
+
+
+http://highscalability.com
+
+¶ÔÓÚ´ó²¿·ÖÓ¦ÓÃ³¡¾°
+samba>nfs>glusterfs
+
+mongodb GridFS  »ùÓÚmongodbµÄ·Ö²¼Ê½ÎÄ¼þÏµÍ³£¬Í¨¹ýAPIµ÷ÓÃ£¬Ò²ÄÜÍ¨¹ýfuseÊ¹ÓÃ
+nginxÖ±½Ó·ÃÎÊ¶ÁÈ¡mongo gridfs
+GleasyÑ¡Ôñ´Ë¾ÙÊôÎÞÄÎ¡£×î³õÑ¡ÓÃµÄÊÇMongoDB(Gridfs)£¬Í¼µÄÊÇËü³¬¼¶·½±ã£¬ÓÃÒ»¶ÎÊ±¼ä·¢ÏÖÖ§³Ö²»ÁË¶ÏµãÐø´«£¨ÓÉÓÚ·ÖÆ¬±£´æµÄÊ±ºòÒª¶ÔËùÓÐÄÚÈÝÉú³ÉHASH£©£¬¶øÇÒIOPS¼«µÍ£¬Ñ¹Á¦Ò»ÉÏÏÂCPU¾Í¿ñÉý100%£¬¹û¶ÏÅ×Æú¡£ºóÀ´»»³ÉFASTDFS£¬È·Êµ¿ÉÒÔÖ§³Ö¶ÏµãÐø´«ÁË£¬ÓÃÒ»¶ÎÊ±¼äÎª½ÚÊ¡¿Õ¼äÏëÒýÈëÎÄ¼þÈ¥ÖØÄÜÁ¦£¨Õû¸öÎÄ¼þÏµÍ³ÏàÍ¬ÄÚÈÝÎÄ¼þÖ»ÁôÒ»·Ý£©£¬½á¹ûÁîÈËÊ§Íû£¬¼ÓÉÏÊ¹ÓÃ¹ý³ÌÖÐ»¹Óöµ½1SÖ»ÄÜ½¨Ò»¸ö¿ÕÎÄ¼þµÄÏÞÖÆ£¬ÊµÔÚÃ»°ì·¨Âú×ãGleasyÕâÖÖÐ­Í¬¶ÁÐ´»·¾³£¬Ïë¸Ä´úÂëÓÖ¾õµÃÎ¬»¤³É±¾Ì«¸ß£¬ÈÌÍ´ÆúÖ®¡£¿ªÊ¼ÑÐ¾¿TFS,HDFS£¬MogileFS£¬¾­¹ý´óÁ¿ÊµÑé£¬¶Ô±È£¬×Ü½á£¬Gleasy¸ö¸ö¶¼ÊÇÍêÃÀÖ÷ÒåÕß£¬ã¶ÊÇ·¢ÏÖÃ»ÓÐÒ»¸ö¼«ÎªÊÊºÏÎÒÃÇ¡£Ã»°ì·¨ÁË£¬
+Mongo GridFSÔÚ¸ß²¢·¢£¨Ã¿ÃëÐ´Èë10M£¬³ÖÐø°ëÐ¡Ê±µ½Ò»¸öÐ¡Ê±£©µÄÇé¿öÏÂsecondary»áÎÞ·¨catch up with primary¡£
+Mongo GridFS²»ÊÇÎª·Ö²¼Ê½´æ´¢¶øÉè¼ÆµÄ£¬Ëü½â¾öµÄÎÊÌâÁìÓòÊÇÐ¡ÐÍÒµÎñÒÑ¾­Ê¹MONOGODB£¬µ«ÊÇÓÖÐèÒª´æ´¢Ò»Ð©ÎÄ¼þ£¬¶øÇÒÐèÒª¸øÕâÐ©ÎÄ¼þ¼ÓÒ»Ð©ÔªÐÅÏ¢¡£
+
+¶ÔÓÚ¶àÊý¾ÝÔ´µÄÊÂÎï´¦Àí£¬Ô­ÔòÉÏ¾¡Á¿±ÜÃâ·Ö²¼Ê½ÊÂÎï(ÐÔÄÜÌ«µÍ)£¬¿ÉÒÔ²ÉÓÃ1pc·½Ê½À´´¦Àí£¬
+±ÈÈç¶ÔÓÚ³£ÓÃµÄ·¢ËÍÏûÏ¢£¬È»ºóinsertµ½Êý¾Ý¿âµÄ·½Ê½£¬»òÕßÏû·ÑÏûÏ¢£¬È»ºóinsertµ½Êý¾Ý¿âµÄ·½Ê½
+¿ÉÒÔÏÈ¿ªÊ¼ÏûÏ¢µÄÊÂÎï£¬È»ºó¿ªÊ¼Êý¾Ý¿âµÄÊÂÎï£¬È»ºóÌá½»Êý¾Ý¿âµÄÊÂÎï£¬½Ó×ÅÌá½»ÏûÏ¢µÄÊÂÎï£¬
+Èç¹ûÊý¾Ý¿âÊ§°Ü£¬Å×³öÒì³££¬ÔòÏûÏ¢Ò²×Ô¶¯»Ø¹ö£¬Î¨Ò»µÄ·çÏÕ¾ÍÊÇÊý¾Ý¿âÕý³£commit,µ«ÊÇÏûÏ¢rollbackµ¼ÖÂ
+ÏûÏ¢ÖØ¸´·¢ËÍ£¬Ö»Òª´¦ÀíµÄÊ±ºò¼ÓÉÏÖØ¸´¼ì²é¾ÍÐÐÁË¡£
+
+2pc 1.ËùÓÐ½ÚµãËø×¡×ÊÔ´£¬×ö²Ù×÷£¬Èç¹û¶¼Ëø×¡³É¹¦£¬»Ø¸´¿ÉÒÔÌá½» 2.Ìá½» ¿ÉÄÜ»áÒòÎªÐ­µ÷Õßcrash»òÕßÄ³½Úµã³¬Ê±µ¼ÖÂ³öÏÖÊÂÎïÒ»Ö±pending
+3pc 1.ÏÈÑ¯ÎÊÊÇ·ñ¿ÉÒÔÌá½» 2.Èç¹û¶¼¿ÉÒÔÌá½»£¬Ôò·¢³öprecommit 3.µ±ËùÓÐ½Úµã¶¼ack precommitºó·¢³ödocommitÖ¸Áî£¬
+Èç¹ûµÚ¶þ½Úµã³¬Ê±£¬Ôò×Ô¶¯Ìá½»£¬±ÜÃâÁËÊÂÎïpending
+
+Èý¶ÎÌá½»µÄºËÐÄÀíÄîÊÇ£ºÔÚÑ¯ÎÊµÄÊ±ºò²¢²»Ëø¶¨×ÊÔ´£¬³ý·ÇËùÓÐÈË¶¼Í¬ÒâÁË£¬²Å¿ªÊ¼Ëø×ÊÔ´¡£
+
+GoogleµÄ¹ØÓÚ·Ö²¼Ê½ÊÂÎñµÄÎÄÕÂ(¡°Large-scale Incremental Processing Using Distributed Transactions and Notifications¡±)£¬¸ÐÊÜÁËÆäÓÅÐãµÄÉè¼Æ£¬Ò²Ìå»áÁËËüµÄ¸´ÔÓ¶È£¬Í¬Ê±Ò²·¢ÏÖ£¬ËäÈ»ËüÍ¨¹ýÊ¹ÓÃ
+15000¸öCPUºË´ïµ½ÁË´´¼ÍÂ¼µÄ11200 tps (TPC-E benchmark)£¬µ«ËüµÄÆ½¾ùÊÂÎñÏìÓ¦Ê±¼äÎª2s-5s
+
+Werner VogelsÌá³öÁËNWRÄ£ÐÍ(Eventually Consistent - Revisited, By Werner Vogels on December 23, 2008 12:15 AM,   http://www.allthingsdistributed.com/2008/12/eventually_consistent.html)£º
+
+    N£ºÊý¾Ý¸´ÖÆµÄ·ÝÊý(the number of nodes that store replicas of the data)
+    W£ºÊý¾Ý¸üÐÂÍê³ÉÇ°ÐèÒªµ½´ïµÄ½ÚµãÊý(the number of replicas that need to acknowledge the receipt of the update before the update completes)
+    R£ºÎªÁË¶ÁÈ¡ÕýÈ·Êý¾ÝÐèÒª¶ÁÈ¡µÄ½ÚµãÊý(the number of replicas that are contacted when a data object is accessed through a read operation)
+
+Werner Vogels »¹Ð´µ½£¬Èç¹ûW+R > N£¬ÄÇÃ´¶ÁÐ´½ÚµãÓÐÖØµþ£¬¶Á×ÜÊÇÄÜ¹»µÃµ½×îÐÂµÄÊý¾Ý£¬Õâ¾ÍÊÇÇ¿Ò»ÖÂÐÔ¡£ÔÚ´«Í³µÄÒ»Ö÷Ò»±¸Í¬²½¸´ÖÆµÄ¹ØÏµÊý¾Ý¿âÖÐ£¬N=2£¬W=2£¬R=1£»ÔÚ·ÇÍ¬²½¸´ÖÆÄ£ÐÍÖÐ£¬W±ä³É1£¬´ËÊ±W+R=N£¬Ò»ÖÂÐÔÒ²¾ÍÎÞ·¨±£Ö¤¡£
+
+KISSÔ­ÔòÊÇÓ¢ÓïKeep It Simple, Stupid 
+
+
+¼òµ¥ËµÀ´£¬ Paxos µÄ Ä¿µÄÊÇÈÃÕû¸ö¼¯ÈºµÄ½áµã¶ÔÄ³¸öÖµµÄ±ä¸ü´ï³ÉÒ»ÖÂ¡£PaxosËã·¨»ù±¾ÉÏÀ´ËµÊÇ¸öÃñÖ÷Ñ¡¾ÙµÄËã·¨¡ª¡ª´ó¶àÊýµÄ¾ö¶¨»á³É¸öÕû¸ö¼¯ÈºµÄÍ³Ò»¾ö¶¨¡£ÈÎºÎÒ»¸öµã¶¼¿ÉÒÔÌá³öÒªÐÞ¸ÄÄ³¸öÊý¾ÝµÄÌá°¸£¬ÊÇ·ñÍ¨¹ýÕâ¸öÌá°¸È¡¾öÓÚÕâ¸ö¼¯ÈºÖÐÊÇ·ñÓÐ³¬¹ý°ëÊýµÄ½áµãÍ¬Òâ£¨ËùÒÔPaxosËã·¨ÐèÒª¼¯ÈºÖÐµÄ½áµãÊÇµ¥Êý£©
+ÎÒÃÇ¿ÉÒÔ¿´ÒÔ£¬ÕâËÆºõ¾ÍÊÇÒ»¸ö¡°Á½¶ÎÌá½»¡±µÄÓÅ»¯¡£ÆäÊµ£¬2PC/3PC¶¼ÊÇ·Ö²¼Ê½Ò»ÖÂÐÔËã·¨µÄ²Ð´Î°æ±¾£¬Google ChubbyµÄ×÷ÕßMike BurrowsËµ¹ýÕâ¸öÊÀ½çÉÏÖ»ÓÐÒ»ÖÖÒ»ÖÂÐÔËã·¨£¬ÄÇ¾ÍÊÇ Paxos £¬ÆäËüµÄËã·¨¶¼ÊÇ²Ð´ÎÆ·¡£
+Ò»°ã²ÉÓÃcopy-on-writeµÄ·½Ê½À´±ÜÃâ¶ÁÐ´³åÍ»£¬Ð´Ö®Ç°ÏÈcopy,È»ºóÐÞ¸ÄcopyµÄ£¬È»ºóÔÚÐÞ¸ÄÖ¸ÕëÊ¹ÆäÖ¸ÏòÐÂµÄblock
+
+×îÖÕÒ»ÖÂÐÔÏµÍ³ £¬ÈÎÒâÊ±¿ÌÖ»ÓÐÒ»¸öÐ´½Úµã£¬Ð´½Úµãå´»ú¿ÉÄÜµ¼ÖÂ10S×óÓÒµÄÐ´²»¿ÉÓÃ
+ÈõÒ»ÖÂÐÔÏµÍ³Ö¸DynamoºÍCassandraÖ®ÀàµÄÏµÍ³£¬ÐèÒªÈË¹¤½â¾öÊý¾Ý³åÍ»£¬ÓÅµãÊÇÃ»ÓÐµ¥µã
+
+³£ÓÃÑÓ³Ù
+L1 cache 0.5ns
+L2 cache 7ns 
+RAM    100ns 
+Send 1M over 	10G network 10ms
+Read 1M from RAM 0.25ms
+Round trip within datacenter 0.5ms Ã¿ÃëÍøÂç2000¸ö
+ms=millsecond(10^3) ¦Ìs=microsecond(10^6) ns=nanosecond (10^9)
+disk seek 8-10ms 
+disk access/ssd access 8-12/0.1ms
+ssd 70us iops Ëæ»ú¶Á 35000 iops Ëæ»úÐ´ 5000iops  Á¬Ðø¶Á250MÁ¬ÐøÐ´170M ¸ÄÐ´=¶ÁÈ¡+²Á³ý(512KÎªµ¥Î»)+Ð´Èë£¬ËùÒÔ»áÓÐÐ´·Å´ó
+¶øÇÒ²Á³ýÑÓÊ±ºÜ¸ß£¬2ms
+dellµÄ²âÊÔµ± 75%ÂúµÄÊ±ºòÔÚÐ´£¬ÐÔÄÜÏÂ½µÎª1.5ms£¬Èç¹ûÈ«¿ÕµÄÊ±ºò 0.25ms,25% full 0.6 ms 
+ÓÃssd×öredoÐ§¹û²»ÊÇºÜÀíÏëºÍSAS²î²»¶à,commitµÄÏìÓ¦Ê±¼ä¼õÉÙ1°ëÒÔÉÏ£¬µ«¶ÁÈ¡ÐÔÄÜºÃºÜ¶à ÓÃÀ´´æ·ÅdataºÜºÃ
+
+SSDµÄÐ´²Ù×÷±È½ÏÌØÊâ£¬SSDµÄ×îÐ¡Ð´Èëµ¥ÔªÎª4KB£¬³ÆÎªÒ³(page)£¬µ±Ð´Èë¿Õ°×Î»ÖÃÊ±¿ÉÒÔ°´ÕÕ4KBµÄµ¥Î»Ð´Èë£¬µ«ÊÇÈç¹ûÐèÒª¸ÄÐ´Ä³¸öµ¥ÔªÊ±£¬ÔòÐèÒªÒ»¸ö¶îÍâµÄ²Á³ý£¨erase£©¶¯×÷£¬²Á³ýµÄµ¥Î»Ò»°ãÊÇ128¸öpage£¨512KB£©£¬Ã¿¸ö²Á³ýµ¥Ôª³ÆÎª¿é£¨block£©¡£Èç¹ûÏòÒ»¸ö¿Õ°×µÄpageÐ´ÈëÐÅÏ¢Ê±£¬¿ÉÒÔÖ±½ÓÐ´Èë¶øÎÞÐè²Á³ý£¬µ«ÊÇÈç¹ûÐèÒª¸ÄÐ´Ä³¸ö´æ´¢µ¥Ôª£¨page£©µÄÊý¾Ý£¬±ØÐëÊ×ÏÈ½«Õû¸öblock¶ÁÈë»º´æ£¬È»ºóÐÞ¸ÄÊý¾Ý£¬²¢²Á³ýÕû¸öblockµÄÊý¾Ý£¬×îºó½«Õû¸öblockÐ´Èë£¬ºÜÏÔÈ»£¬SSD¸ÄÐ´Êý¾ÝµÄ´ú¼ÛºÜ¸ß£¬SSDµÄÕâ¸öÌØÐÔ£¬ÎÒÃÇ³ÆÖ®Îªerase-before-write¡£
+SLCÒòÎªÖ»±£ÁôÒ»Î»ÐÅÏ¢£¬ËùÒÔ²ÁÐ´¿ì£¬ÎÈ¶¨£¬MLC±£´æ2Î»ÐÅÏ¢£¬ËùÒÔ²ÁÐ´¶ÁÈ¡¶¼±È½ÏÂý£¬TLCÊÇ±£Áô3Î»ÐÅÏ¢£¬ËùÒÔ¸üÂý£¬¸ü²»ÎÈ¶¨
+ÔÚ³¤Ê±¼äÐ´Èëºó£¬MLCËæ»úÐ´IOÏÂ½µµÃ·Ç³£À÷º¦£¬¶øSLC±íÏÖÔò±È½ÏÎÈ¶¨ SLCµÄ×´Ì¬¼òµ¥£¬ËùÒÔ¶ÁÈ¡ºÜÈÝÒ×£¬MLCÓÐ¶àÖÖ×´Ì¬£¬¶ÁÈ¡Ê±£¬ÈÝÒ×³ö´í£¬ÐèÒªÐ£Ñé£¬ËÙ¶ÈÏà¶Ô½ÏÂý
+ÒòÎªSSD´æÔÚ¡°Ð´Ä¥Ëð¡±µÄÎÊÌâ£¬µ±Ä³¸öµ¥Ôª³¤Ê±¼ä±»·´¸´²ÁÐ´Ê±£¨±ÈÈçOracle redo£©£¬²»½ö»áÔì³ÉÐ´ÈëµÄÐÔÄÜÎÊÌâ£¬¶øÇÒ»á´ó´óËõ¶ÌSSDµÄÊ¹ÓÃÊÙÃü£¬ËùÒÔ±ØÐëÉè¼ÆÒ»¸ö¾ùºâ¸ºÔØµÄËã·¨À´±£Ö¤SSDµÄÃ¿¸öµ¥ÔªÄÜ¹»±»¾ùºâµÄÊ¹ÓÃ£¬Õâ¾ÍÊÇwear leveling£¬³ÆÎªËðºÄ¾ùºâËã·¨
+Wear levelingÒ²ÊÇSSDÄÚ²¿µÄFTLÊµÏÖµÄ£¬ËüÍ¨¹ýÊý¾ÝÇ¨ÒÆÀ´´ïµ½¾ùºâËðºÄµÄÄ¿µÄ¡£Wear levelingÒÀÀµÓÚSSDÖÐµÄÒ»²¿·Ö±£Áô¿Õ¼ä£¬»ù±¾Ô­ÀíÊÇÔÚSSDÖÐÉèÖÃÁËÁ½¸öblock pool£¬Ò»¸öÊÇfree block pool£¨¿ÕÏÐ³Ø£©£¬Ò»¸öÊÇÊý¾Ý³Ø£¨data block pool£©£¬µ±ÐèÒª¸ÄÐ´Ä³¸öpageÊ±£¨Èç¹ûÐ´ÈëÔ­ÓÐÎ»ÖÃ£¬±ØÐëÏÈ²Á³ýÕû¸öblock£¬È»ºó²ÅÄÜÐ´ÈëÊý¾Ý£©£¬²¢²»Ð´ÈëÔ­ÓÐÎ»ÖÃ£¨²»ÐèÒª²Á³ýµÄ¶¯×÷£©£¬¶øÊÇ´Ó¿ÕÏÐ³ØÖÐÈ¡³öÐÂµÄblock£¬½«ÏÖÓÐµÄÊý¾ÝºÍÐèÒª¸ÄÐ´µÄÊý¾ÝºÏ²¢ÎªÐÂµÄblock£¬Ò»ÆðÐ´ÈëÐÂµÄ¿Õ°×block£¬Ô­ÓÐµÄblock±»±êÊ¶Îªinvalid×´Ì¬£¨µÈ´ý±»²Á³ý»ØÊÕ£©£¬ÐÂµÄblockÔò½øÈëÊý¾Ý³Ø¡£ºóÌ¨ÈÎÎñ»á¶¨Ê±´Ódata blockÖÐÈ¡³öÎÞÐ§Êý¾ÝµÄblock£¬²Á³ýºó»ØÊÕµ½¿ÕÏÐ³ØÖÐ¡£ÕâÑù×öµÄºÃ´¦ÔÚÓÚ£¬Ò»ÊÇ²»»á·´¸´²ÁÐ´Í¬Ò»¸öblock£¬¶þÊÇÐ´ÈëµÄËÙ¶È»á±È½Ï¿ì(Ê¡ÂÔÁË²Á³ýµÄ¶¯×÷)¡£
+trimÊÇosÉ¾³ýÎÄ¼þµÄÊ±ºò£¬Í¬Ê±·¢³ötrimÖ¸Áî¸øssd ¿ØÖÆ£¬ÕâÑùssd¾Í»á±ê¼Ç³öÄÇÐ©pageÒÑ¾­É¾³ý£¬ÏÂ´Î¾ÍÓÃµÄÊ±ºò¾ÍÖ±½Ó²ÁÐ´¾ÍÐÐÁË£¬²»ÓÃÏÈcopy³öÀ´µ½±ðµÄµØ·½ÔÚ²ÁÐ¬¡£
+gcÊÇºóÌ¨×öÇåÀí¹¤×÷
+
+
+
+15k/m iops >100 ,seek time=10ms  
+7.2k/m iops <70 ,seek time=10ms 
+non-sqlÖ»ÓÐgoogleÊµÏÖÁË·Ö²¼Ê½Ëø
+
+Amazon DynamoÕâÖÖÐèÒªÒÀÀµ²Ù×÷ºÏ²¢£¬¿ÉÄÜ»á¶ªÊ§Êý¾ÝµÄÄ£ÐÍ´Ó×îÖÕÒ»ÖÂÐÔÄ£ÐÍÖÐÅÅ³ý³öÈ¥¡£
+
+
+
+
+
+ESB¾ÍÊÇÒ»¸ö·þÎñµÄÖÐ½é£¬ÐÎ³É·þÎñÊ¹ÓÃÕß->ESB·þÎñProxy->·þÎñÌá¹©ÕßµÄÉúÎïÁ´£¬ÖÐ½éµÄ×÷ÓÃÔÚ²»Í¬Ó¦ÓÃÖÐ¸÷ÓÐ²»Í¬£º
+
+    ½âñîÖÐ½é £º¿Í»§¶ÔÊµ¼Ê·þÎñÌá¹©ÕßµÄÉí·Ý¡¢ÎïÀíÎ»ÖÃ¡¢´«ÊäÐ­ÒéºÍ½Ó¿Ú¶¨Òå¶¼ÊÇ²»ÖªµÀÒ²²»¹ØÐÄµÄ£¬½»»¥¼¯³É´úÂëÌáÈ¡µ½ÁËÒµÎñÂß¼­Ö®Íâ£¬ÓÉESBÆ½Ì¨½øÐÐÖÐÑëµÄÐû¸æÊ½¶¨Òå¡£ESBÆ½Ì¨ÊµÏÖÐ­Òé×ª»» (WebService£¬Http£¬JMS...)£¬ÏûÏ¢×ª»» (×ª»»¡¢³äÊµ¡¢¹ýÂË)£¬ÏûÏ¢Â·ÓÉ (Í¬²½/Òì²½¡¢·¢²¼/¶©ÔÄ¡¢»ùÓÚÄÚÈÝÂ·ÓÉ¡¢·ÖÖ§Óë¾ÛºÏ...)¡£
+    ·þÎñÖÐ½é £ºESBÆ½Ì¨×÷ÎªÖÐ½éÌá¹©·þÎñ½»»¥ÖÐµÄ»ù´¡·þÎñ¡£ESBÆ½Ì¨ÊµÏÖSLA (¿É¿¿ÐÔ±£Ö¤£¬¸ºÔØ¾ùºâ£¬Á÷Á¿¿ØÖÆ£¬»º´æ£¬ÊÂÎñ¿ØÖÆ£¬¼ÓÃÜ´«Êä)£¬·þÎñ¹ÜÀí¼à¿Ø (Òì³£´¦Àí£¬·þÎñµ÷ÓÃ¼°ÏûÏ¢Êý¾Ý¼ÇÂ¼£¬ÏµÍ³¼°·þÎñµÄ×´Ì¬¼à¿Ø£¬ESBÅäÖÃ¹ÜÀí)£¬Í³Ò»°²È«¹ÜÀí (Õâ¸öÓÐµãÀíÏëÖ÷Òå)¡£
+    ·þÎñ±àÅÅ £º¶à¸ö·þÎñ½øÐÐ±àÅÅÐÎ³ÉÐÂµÄ·þÎñ¡£ESBÖ§³ÖÒ»¸öÖ±¹ÛµÄÐÎÊ½¶¨ÒåÐÂ×éºÏ·þÎñµÄÁ÷³Ì(¹¤×÷Á÷¡¢BPEL »ò ´úÂë¼¶±àÅÅ)¡£
+
+
+
+
+
+ICA CtrixµÄÐ­Òé ¸üÇ¿£¬¸üÐ¡´ø¿í
+RDP MSµÄ
+SPICE redhat
+ÐéÄâ»¯¼¼ÊõµÄ·¢Õ¹Ê¹ÐéÄâ×ÀÃæ»ñµÃÁË³¤×ãµÄ·¢Õ¹£¬µ±Ç°ÐéÄâ×ÀÃæ½â¾ö·½°¸Ö÷Òª·ÖÎªÁ½´óÀà£ºVDI£¨Virtual?Desktop?Infrastructure£©ºÍSBC£¨Server-Based?Computing£©¡£
+»ùÓÚSBCµÄÐéÄâ×ÀÃæ½â¾ö·½°¸£¬ÆäÔ­ÀíÊÇ½«Ó¦ÓÃÈí¼þÍ³Ò»°²×°ÔÚÔ¶³Ì·þÎñÆ÷ÉÏ£¬ÓÃ»§Í¨¹ýºÍ·þÎñÆ÷½¨Á¢µÄ»á»°¶Ô·þÎñÆ÷×ÀÃæ¼°Ïà¹ØÓ¦ÓÃ½øÐÐ·ÃÎÊºÍ²Ù×÷£¬¶ø²»Í¬ÓÃ»§Ö®¼äµÄ»á»°ÊÇ±Ë´Ë¸ôÀëµÄ¡£
+Òò´Ë£¬»ùÓÚVDIµÄÐéÄâ×ÀÃæ±È½ÏÊÊºÏÓÚ¶Ô×ÀÃæ¹¦ÄÜÐèÇóÍêÉÆµÄÓÃ»§Ê¹ÓÃ¡£²ÉÓÃ»ùÓÚSBCµÄ½â¾ö·½°¸£¬Ó¦ÓÃÈí¼þ¿ÉÒÔÏñ´«Í³·½Ê½Ò»Ñù°²×°ºÍ²¿Êðµ½·þÎñÆ÷ÉÏ£¬È»ºóÍ¬Ê±Ìá¹©¸ø¶à¸öÓÃ»§Ê¹ÓÃ£¬¾ßÓÐ½ÏµÍµÄ×ÊÔ´ÐèÇó£¬µ«ÊÇÔÚÐÔÄÜ¸ôÀëºÍ°²È«¸ôÀë·½ÃæÖ»ÄÜ¹»ÒÀÀµÓÚµ×²ãµÄWindows²Ù×÷ÏµÍ³
+PCoIP  Vmware 
+
+1. VDIÁ¬½ÓÐ­ÒéµÄÎÊÌâÐèÒª½â¾ö¡£ Ä¿Ç°OpenStack¿ÉÒÔÖ§³ÖVNCÁ¬½Óµ½ÐéÄâ»ú»òÕßRDPÁ¬½Óµ½ÐéÄâ»úÀïÃæ.VNCÐ­Òé±¾ÉíÎÞ·¨½â¾öUSBÍ¸´«¡¢ÉùÒô¡¢´òÓ¡µÈÎÊÌâ£¬RDPËäÈ»Ö§³ÖUSB¡¢ÉùÒôÍ¸´«£¬µ«ÊÇ¶ÔÄ³Ð©USBÉè±¸£¬ÀýÈçU¶Ü¡¢¼ÓÃÜÉè±¸µÈÖ§³ÖµÄ²»ºÃ£¬Èç¹ûÐéÄâ»úµÄÍøÂç³öÏÖÎÊÌâ£¬»áµ¼ÖÂÁ¬½ÓÖÐ¶Ï¡£ Ä¿Ç°ÓÃµÄ±È½Ï¶àµÄÐ­ÒéÊÇCitrix ICA¡¢PCoIP¡¢RedHat Spice£¬Ä¿Ç°Ö»ÓÐSpiceÊÇ¿ªÔ´µÄ¡£ RHEL6ÀïÃæSpiceºÍLibvirtÒÑ¾­×öºÃÕûºÏ£¬µ«ÊÇ¿ªÔ´°æ±¾µÄUSBÍ¸´«»¹Ðè¼ÓÇ¿.
+
+CAPÔ­ÔòÊÇNOSQLÊý¾Ý¿âµÄ»ùÊ¯¡£Consistency£¨Ò»ÖÂÐÔ£©¡£Availability£¨¿ÉÓÃÐÔ£©¡£Partitiontolerance£¨·ÖÇøÈÝ´íÐÔ£©
+
+¡¡¡¤·ÖÇøÈÝ´íÐÔ(Partition Tolerance)¡£·ÖÇøÈÝ´íÐÔ¿ÉÒÔÀí½âÎªÏµÍ³ÔÚ´æÔÚÍøÂç·ÖÇøµÄÇé¿öÏÂÈÔÈ»¿ÉÒÔ½ÓÊÜÇëÇó(Âú×ãÒ»ÖÂÐÔºÍ¿ÉÓÃÐÔ)¡£
+ÕâÀïÍøÂç·ÖÇøÊÇÖ¸ÓÉÓÚÄ³ÖÖÔ­ÒòÍøÂç±»·Ö³ÉÈô¸É¸ö¹ÂÁ¢µÄÇøÓò£¬¶øÇøÓòÖ®¼ä»¥²»ÏàÍ¨¡£»¹ÓÐÒ»Ð©ÈË½«·ÖÇøÈÝ´íÐÔÀí½âÎªÏµÍ³¶Ô½Úµã¶¯Ì¬¼ÓÈëºÍÀë¿ªµÄ´¦ÀíÄÜÁ¦£¬ÒòÎª½ÚµãµÄ¼ÓÈëºÍÀë¿ª¿ÉÒÔÈÏÎªÊÇ¼¯ÈºÄÚ²¿µÄÍøÂç·ÖÇø¡£
+
+¶ÔÓÚ´øÓÐ×Ü¿Ø½ÚµãµÄÏµÍ³£¬½«CAPÀíÂÛµÄ¶¨Òå×ö³öÊÊµ±µÄµ÷ÕûÈçÏÂ£º
+
+    Ò»ÖÂÐÔ£º¶Á²Ù×÷×ÜÊÇÄÜ¶ÁÈ¡µ½Ö®Ç°Íê³ÉµÄÐ´²Ù×÷½á¹û£¬ÇÒ²»ÐèÒªÒÀÀµÓÚ²Ù×÷ºÏ²¢£»
+    ¿ÉÓÃÐÔ£º¶ÁÐ´²Ù×÷×ÜÊÇÄÜ¹»ÔÚºÜ¶ÌµÄÊ±¼äÄÚ·µ»Ø£¬¼´Ê¹Ä³Ì¨»úÆ÷·¢ÉúÁË¹ÊÕÏ£¬Ò²ÄÜ¹»Í¨¹ýÆäËü¸±±¾Õý³£Ö´ÐÐ£¬¶ø²»ÐèÒªµÈµ½»úÆ÷ÖØÆô»òÕß»úÆ÷ÉÏµÄ·þÎñ·ÖÅä¸øÆäËü»úÆ÷ÒÔºó²ÅÄÜ³É¹¦£»
+    ·ÖÇø¿ÉÈÝÈÌÐÔ£ºÄÜ¹»´¦Àí»úÆ÷å´»ú£¬»ú·¿Í£µç»òÕß³öÏÖ»ú·¿Ö®¼äÍøÂç¹ÊÕÏµÈÒì³£Çé¿ö£»
+
+´øÓÐ×Ü¿Ø½ÚµãµÄNOSQLÏµÍ³Ò»°ãÊÇ×îÖÕÒ»ÖÂÐÔÏµÍ³£¬ÔÊÐí»úÆ÷å´»úÊ±Í£Ö¹ºÜ¶ÌÊ±¼ä£¬±ÈÈç10sµÄ²¿·ÖÊý¾ÝÐ´·þÎñ£¬µ«ÊÇ²»ÔÊÐíÍ£¶Á·þÎñ£¬ÇÒ·þÎñ»Ö¸´Ê±¼äÔ½¶ÌÔ½ºÃ¡£´ó¶àÊýNOSQLÏµÍ³¶¼ÊÇ¶ÔÒ»·ÝÊý¾Ý±£Áô¶à¸ö±¸·Ý£¬Í¬Ò»Ê±¿ÌÖ»ÓÐÒ»¸ö±¸·ÝÎªÖ÷£¬Ìá¹©Ð´·þÎñ£¬ÆäËü±¸·ÝÎª¸¨£¬Í¬²½Ö÷±¸·ÝµÄÐ´²Ù×÷£¬ËùÓÐµÄ±¸·Ý¶¼¿ÉÒÔÌá¹©¶ÁÈ¡·þÎñ£¬ÇÒÖ÷±¸·ÝÌá¹©±£Ö¤Ç¿Ò»ÖÂÐÔµÄ¶Á·þÎñ¡£µ±Ö÷±¸·ÝËùÔÚ»úÆ÷·¢Éú¹ÊÕÏÊ±£¬ÐèÒªµÈÒ»¶ÎÊ±¼ä²ÅÄÜÓÉÔ­À´µÄ¸¨±¸·Ý½ÓÌæÖ÷±¸·ÝÌá¹©Ð´·þÎñ¡£
+
+ÀàËÆAmazonµÄP2PÈ¥ÖÐÐÄ»¯ÏµÍ³Ìá¹©ÐèÒªÒÀÀµ³åÍ»ºÏ²¢µÄÒ»ÖÂÐÔ£¬±ÈÈçCassandraÖÐµÄ¡°last write wins¡±³åÍ»ºÏ²¢²ßÂÔ£¬ËäÈ»²¢²»ÍêÃÀµ«È·ÊµÄÜ¹»½â¾öºÜ¶àÎÊÌâ¡£ÕâÑùµÄÏµÍ³ÄÜ¹»Í¨¹ýÓÃ»§ÅäÖÃNWR²ßÂÔÀ´È¨ºâÒ»ÖÂÐÔºÍ¿ÉÓÃÐÔ£¬¿ÉÒÔ×öµ½µ¥Ì¨»úÆ÷å´»úÊ±¶ÁÐ´·þÎñ¶¼²»Í£Ö¹¡£
+
+
+LXCÎªLinux ContainerµÄ¼òÐ´¡£Linux ContainerÈÝÆ÷ÊÇÒ»ÖÖÄÚºËÐéÄâ»¯¼¼Êõ£¬¿ÉÒÔÌá¹©ÇáÁ¿¼¶µÄÐéÄâ»¯£¬ÒÔ±ã¸ôÀë½ø³ÌºÍ×ÊÔ´£¬¶øÇÒ²»ÐèÒªÌá¹©Ö¸Áî½âÊÍ»úÖÆÒÔ¼°È«ÐéÄâ»¯µÄÆäËû¸´ÔÓÐÔ¡£Ïàµ±ÓÚC++ÖÐµÄNameSpace¡£ÈÝÆ÷ÓÐÐ§µØ½«ÓÉµ¥¸ö²Ù×÷ÏµÍ³¹ÜÀíµÄ×ÊÔ´»®·Öµ½¹ÂÁ¢µÄ×éÖÐ£¬ÒÔ¸üºÃµØÔÚ¹ÂÁ¢µÄ×éÖ®¼äÆ½ºâÓÐ³åÍ»µÄ×ÊÔ´Ê¹ÓÃÐèÇó¡£Óë´«Í³ÐéÄâ»¯¼¼ÊõÏà±È£¬ËüµÄÓÅÊÆÔÚÓÚ£º
+£¨1£©ÓëËÞÖ÷»úÊ¹ÓÃÍ¬Ò»¸öÄÚºË£¬ÐÔÄÜËðºÄÐ¡£»
+£¨2£©²»ÐèÒªÖ¸Áî¼¶Ä£Äâ£»
+£¨3£©²»ÐèÒª¼´Ê±(Just-in-time)±àÒë£»
+£¨4£©ÈÝÆ÷¿ÉÒÔÔÚCPUºËÐÄµÄ±¾µØÔËÐÐÖ¸Áî£¬²»ÐèÒªÈÎºÎ×¨ÃÅµÄ½âÊÍ»úÖÆ£»
+£¨5£©±ÜÃâÁË×¼ÐéÄâ»¯ºÍÏµÍ³µ÷ÓÃÌæ»»ÖÐµÄ¸´ÔÓÐÔ£»
+£¨6£©ÇáÁ¿¼¶¸ôÀë£¬ÔÚ¸ôÀëµÄÍ¬Ê±»¹Ìá¹©¹²Ïí»úÖÆ£¬ÒÔÊµÏÖÈÝÆ÷ÓëËÞÖ÷»úµÄ×ÊÔ´¹²Ïí¡£
+×Ü½á£ºLinux ContainerÊÇÒ»ÖÖÇáÁ¿¼¶µÄÐéÄâ»¯µÄÊÖ¶Î¡£
+Linux ContainerÌá¹©ÁËÔÚµ¥Ò»¿É¿ØÖ÷»ú½ÚµãÉÏÖ§³Ö¶à¸öÏà»¥¸ôÀëµÄserver containerÍ¬Ê±Ö´ÐÐµÄ»úÖÆ¡£Linux ContainerÓÐµãÏñchroot£¬Ìá¹©ÁËÒ»¸öÓµÓÐ×Ô¼º½ø³ÌºÍÍøÂç¿Õ¼äµÄÐéÄâ»·¾³£¬µ«ÓÖÓÐ±ðÓÚÐéÄâ»ú£¬ÒòÎªlxcÊÇÒ»ÖÖ²Ù×÷ÏµÍ³²ã´ÎÉÏµÄ×ÊÔ´µÄÐéÄâ»¯¡£ 
+	ÐéÄâ»úµÄºÃ´¦ÔÚÓÚ¿ÉÒÔÉÏÏÂÀ©Õ¹£¬¿É¿ØµÄ¼ÆËã×ÊÔ´£¬°²È«¸ôÀë£¬²¢¿ÉÒÔÍ¨¹ýAPI½øÐÐ²¿Êð£»µ«ÆäÈ±µãÔÚÓÚ£¬Ã¿Ò»Ì¨ÐéÄâ»ú¶¼ÏûºÄÁËÒ»²¿·Ö×ÊÔ´ÓÃÓÚÔË×ªÒ»¸öÍêÕûµÄ²Ù×÷ÏµÍ³
+
+ÎÞ×´Ì¬µÄÇëÇó£¬°Ñ¿Í»§¶Ë×´Ì¬Í¨¹ýcookie´«¹ýÀ´£¬ÕâÑù·þÎñÆ÷ÎÞ×´Ì¬£¬ÉìËõÐÔ×îºÃ
+Ê¹ÓÃmemcached»òÕß cassandra À´ÊµÏÖdistriubte session  
+
+Cassandra does not support joins or subqueries, except for batch analysis through Hadoop
+
+No join or subquery support, and limited support for aggregation. This is by design, to force you to denormalize into partitions that can be efficiently queried from a single replica, instead of having to gather data from across the entire cluster.
+
+   Java for the big enterprise systems, back end trading platforms etc.
+   C++ for the low latency / high performance stuff C/C++ for the analytics
+   C# for front-end / desktop apps
+   R for ·ÖÎöÖ®ÀàµÄ
+   
+   infiniband based RDMA. In the order of 10usec rather than around 70usec for 10GigE for a transfer
+   C++ more reliable. 
+    How much faster is C++ than Java for your application
+    
+    cs°ü×°bs webkit
+    
+Êµ¼ÊÉÏÔÚ´¦ÀíÒ»ÏµÁÐÏÖÊµÖÐµÄÐÔÄÜÎÊÌâÊ±£¬ÈËÃÇ·¢ÏÖËã·¨Éè¼ÆÊÇ¸ù±¾ÎÊÌâµÄ¼¸ÂÊ²»×ã10%¡£
+Ïà·´£¬ÓëËã·¨Ïà±È£¬À¬»øÊÕ¼¯¡¢Êý¾Ý¿â·ÃÎÊºÍÅäÖÃ´íÎóµ¼ÖÂÓ¦ÓÃ³ÌÐò»ºÂýµÄ¿ÉÄÜÐÔ¸ü´ó
+TCP¸ü¶àµÄÊÇÁ÷Á¿¿ØÖÆºÍ¿É¿¿ÐÔ£¬ËùÒÔÐÔÄÜ±È½Ï²î£¬¶øUDP²»ÐèÒªÈ·ÈÏ£¬²»ÐèÒª½¨Á¢¸´ÔÓµÄÁ¬½Ó£¬ËùÒÔ¿ì
+UDP/TCPÍ¬Ê±ÅÜµÄÊ±ºò£¬udp»áÇÀÕ¼¸ü¶àµÄÁ÷Á¿
+
+
+ÒòÎª¶þÕßµÄÐÔÄÜ¶¼ÒÑ¾­×ã¹»¸ßÁË¡£ÓÉÓÚRedisÖ»Ê¹ÓÃµ¥ºË£¬¶øMemcached¿ÉÒÔÊ¹ÓÃ¶àºË£¬ËùÒÔÔÚ±È½ÏÉÏ£¬Æ½¾ùÃ¿Ò»¸öºËÉÏRedisÔÚ´æ´¢Ð¡Êý¾ÝÊ±±ÈMemcachedÐÔÄÜ¸ü¸ß¡£¶øÔÚ100kÒÔÉÏµÄÊý¾ÝÖÐ£¬MemcachedÐÔÄÜÒª¸ßÓÚRedis£¬ËäÈ»Redis×î½üÒ²ÔÚ´æ´¢´óÊý¾ÝµÄÐÔÄÜÉÏ½øÐÐÓÅ»¯£¬µ«ÊÇ±ÈÆðMemcached£¬
+Èç¹ûÄã¶ÔÊý¾Ý³Ö¾Ã»¯ºÍÊý¾ÝÍ¬²½ÓÐËùÒªÇó£¬ÄÇÃ´ÍÆ¼öÄãÑ¡ÔñRedis£¬
+redis×îÇ¿µÄµØ·½ÊÇÓÐ±È½Ï·á¸»µÄÊý¾Ý½á¹¹£¬¿ÉÒÔÔÚ»º´æ²ãÍæ³öºÜ¶à»¨Ñù
+memcacheµÄÇ¿ÏîÊÇ·Ö²¼Ê½±È½Ï³ÉÊì£¬¶Ô¶àºËcpuµÄÓ¦ÓÃ ±È½Ï³ÉÊì£¬ÎÈ¶¨
+
+
+¼Ü¹¹±È½Ï
+´Ó¼Ü¹¹ÉÏÀ´Ëµ£¬ÏÔÈ» Jetty ±È Tomcat ¸ü¼Ó¼òµ¥£¬Èç¹ûÄã¶Ô Tomcat µÄ¼Ü¹¹»¹²»ÊÇºÜÁË½âµÄ»°£¬½¨ÒéÄãÏÈ¿´Ò»ÏÂ ¡¶TomcatÏµÍ³¼Ü¹¹ÓëÉè¼ÆÄ£Ê½¡·ÕâÆªÎÄÕÂ¡£
+Jetty µÄ¼Ü¹¹´ÓÇ°ÃæµÄ·ÖÎö¿ÉÖª£¬ËüµÄËùÓÐ×é¼þ¶¼ÊÇ»ùÓÚ Handler À´ÊµÏÖ£¬µ±È»ËüÒ²Ö§³Ö JMX¡£µ«ÊÇÖ÷ÒªµÄ¹¦ÄÜÀ©Õ¹¶¼¿ÉÒÔÓÃ Handler À´ÊµÏÖ¡£¿ÉÒÔËµ Jetty ÊÇÃæÏò Handler µÄ¼Ü¹¹£¬¾ÍÏñ Spring ÊÇÃæÏò Bean µÄ¼Ü¹¹£¬iBATIS ÊÇÃæÏò statement Ò»Ñù£¬¶ø Tomcat ÊÇÒÔ¶à¼¶ÈÝÆ÷¹¹½¨ÆðÀ´µÄ£¬ËüÃÇµÄ¼Ü¹¹Éè¼Æ±ØÈ»¶¼ÓÐÒ»¸ö¡°ÔªÉñ¡±£¬ËùÓÐÒÔÕâ¸ö¡°ÔªÉñ¡°¹¹½¨µÄÆäËü×é¼þ¶¼ÊÇÈâÉí¡£
+´ÓÉè¼ÆÄ£°å½Ç¶ÈÀ´¿´ Handler µÄÉè¼ÆÊµ¼ÊÉÏ¾ÍÊÇÒ»¸öÔðÈÎÁ´Ä£Ê½£¬½Ó¿ÚÀà HandlerCollection ¿ÉÒÔ°ïÖú¿ª·¢Õß¹¹½¨Ò»¸öÁ´£¬¶øÁíÒ»¸ö½Ó¿ÚÀà ScopeHandler ¿ÉÒÔ°ïÖúÄã¿ØÖÆÕâ¸öÁ´µÄ·ÃÎÊË³Ðò¡£ÁíÍâÒ»¸öÓÃµ½µÄÉè¼ÆÄ£°å¾ÍÊÇ¹Û²ìÕßÄ£Ê½£¬ÓÃÕâ¸öÉè¼ÆÄ£Ê½¿ØÖÆÁËÕû¸ö Jetty µÄÉúÃüÖÜÆÚ£¬Ö»Òª¼Ì³ÐÁË LifeCycle ½Ó¿Ú£¬ÄãµÄ¶ÔÏó¾Í¿ÉÒÔ½»¸ø Jetty À´Í³Ò»¹ÜÀíÁË¡£ËùÒÔÀ©Õ¹ Jetty ·Ç³£¼òµ¥£¬Ò²ºÜÈÝÒ×ÈÃÈËÀí½â£¬ÕûÌå¼Ü¹¹ÉÏµÄ¼òµ¥Ò²´øÀ´ÁËÎÞ±ÈµÄºÃ´¦£¬Jetty ¿ÉÒÔºÜÈÝÒ×±»À©Õ¹ºÍ²Ã¼ô¡£
+Ïà±ÈÖ®ÏÂ£¬Tomcat ÒªÓ·Ö×ºÜ¶à£¬Tomcat µÄÕûÌåÉè¼ÆÉÏºÜ¸´ÔÓ£¬Ç°ÃæËµÁË Tomcat µÄºËÐÄÊÇËüµÄÈÝÆ÷µÄÉè¼Æ£¬´Ó Server µ½ Service ÔÙµ½ engine µÈ container ÈÝÆ÷¡£×÷ÎªÒ»¸öÓ¦ÓÃ·þÎñÆ÷ÕâÑùÉè¼ÆÎÞ¿Úºñ·Ç£¬ÈÝÆ÷µÄ·Ö²ãÉè¼ÆÒ²ÊÇÎªÁË¸üºÃµÄÀ©Õ¹£¬ÕâÊÇÕâÖÖÀ©Õ¹µÄ·½Ê½ÊÇ½«Ó¦ÓÃ·þÎñÆ÷µÄÄÚ²¿½á¹¹±©Â¶¸øÍâ²¿Ê¹ÓÃÕß£¬Ê¹µÃÈç¹ûÏëÀ©Õ¹ Tomcat£¬¿ª·¢ÈËÔ±±ØÐëÒªÊ×ÏÈÁË½â Tomcat µÄÕûÌåÉè¼Æ½á¹¹£¬È»ºó²ÅÄÜÖªµÀÈçºÎ°´ÕÕËüµÄ¹æ·¶À´×öÀ©Õ¹¡£ÕâÑùÎÞÐÎ¾ÍÔö¼ÓÁË¶Ô Tomcat µÄÑ§Ï°³É±¾¡£²»½ö½öÊÇÈÝÆ÷£¬Êµ¼ÊÉÏ Tomcat Ò²ÓÐ»ùÓÚÔðÈÎÁ´µÄÉè¼Æ·½Ê½£¬Ïñ´®Áª Pipeline µÄ Vavle Éè¼ÆÒ²ÊÇÓë Jetty µÄ Handler ÀàËÆµÄ·½Ê½¡£Òª×Ô¼ºÊµÏÖÒ»¸ö Vavle ÓëÐ´Ò»¸ö Handler µÄÄÑ¶È²»ÏàÉÏÏÂ¡£±íÃæÉÏ¿´£¬Tomcat µÄ¹¦ÄÜÒª±È Jetty Ç¿´ó£¬ÒòÎª Tomcat ÒÑ¾­°ïÄã×öÁËºÜ¶à¹¤×÷ÁË£¬¶ø Jetty Ö»¸æËß£¬ÄãÄÜÔõÃ´×ö£¬ÈçºÎ×ö£¬ÓÐÄãÈ¥ÊµÏÖ¡£
+´ò¸ö±È·½£¬¾ÍÏñÐ¡º¢×ÓÑ§ÊýÑ§£¬Tomcat ¸æËßÄã 1+1=2£¬1+2=3£¬2+2=4 Õâ¸ö½á¹û£¬È»ºóÄã¿ÉÒÔ¸ù¾ÝÕâ¸ö·½Ê½µÃ³ö 1+1+2=4£¬ÄãÒª¼ÆËãÆäËüÊý±ØÐë¸ù¾ÝËü¸øÄãµÄ¹«Ê½²ÅÄÜ¼ÆËã£¬¶ø Jetty ÊÇ¸æËßÄã¼Ó¼õ³Ë³ýµÄËã·¨¹æÔò£¬È»ºóÄã¾Í¿ÉÒÔ¸ù¾ÝÕâ¸ö¹æÔò×Ô¼º×öÔËËãÁË¡£ËùÒÔÄãÒ»µ©ÕÆÎÕÁË Jetty£¬Jetty ½«±äµÃÒì³£Ç¿´ó¡£
+ÐÔÄÜ±È½Ï
+µ¥´¿±È½Ï Tomcat Óë Jetty µÄÐÔÄÜÒâÒå²»ÊÇºÜ´ó£¬Ö»ÄÜËµÔÚÄ³ÖÖÊ¹ÓÃ³¡¾°ÏÂ£¬Ëü±íÏÖµÄ¸÷ÓÐ²îÒì¡£ÒòÎªËüÃÇÃæÏòµÄÊ¹ÓÃ³¡¾°²»¾¡ÏàÍ¬¡£´Ó¼Ü¹¹ÉÏÀ´¿´ Tomcat ÔÚ´¦ÀíÉÙÊý·Ç³£·±Ã¦µÄÁ¬½ÓÉÏ¸üÓÐÓÅÊÆ£¬Ò²¾ÍÊÇËµÁ¬½ÓµÄÉúÃüÖÜÆÚÈç¹û¶ÌµÄ»°£¬Tomcat µÄ×ÜÌåÐÔÄÜ¸ü¸ß¡£
+¶ø Jetty ¸ÕºÃÏà·´£¬Jetty ¿ÉÒÔÍ¬Ê±´¦Àí´óÁ¿Á¬½Ó¶øÇÒ¿ÉÒÔ³¤Ê±¼ä±£³ÖÕâÐ©Á¬½Ó¡£ÀýÈçÏñÒ»Ð© web ÁÄÌìÓ¦ÓÃ·Ç³£ÊÊºÏÓÃ Jetty ×ö·þÎñÆ÷£¬ÏñÌÔ±¦µÄ web ÍúÍú¾ÍÊÇÓÃ Jetty ×÷Îª Servlet ÒýÇæ¡£
+ÁíÍâÓÉÓÚ Jetty µÄ¼Ü¹¹·Ç³£¼òµ¥£¬×÷Îª·þÎñÆ÷Ëü¿ÉÒÔ°´Ðè¼ÓÔØ×é¼þ£¬ÕâÑù²»ÐèÒªµÄ×é¼þ¿ÉÒÔÈ¥µô£¬ÕâÑùÎÞÐÎ¿ÉÒÔ¼õÉÙ·þÎñÆ÷±¾ÉíµÄÄÚ´æ¿ªÏú£¬´¦ÀíÒ»´ÎÇëÇóÒ²ÊÇ¿ÉÒÔ¼õÉÙ²úÉúµÄÁÙÊ±¶ÔÏó£¬ÕâÑùÐÔÄÜÒ²»áÌá¸ß¡£ÁíÍâ Jetty Ä¬ÈÏÊ¹ÓÃµÄÊÇ NIO ¼¼ÊõÔÚ´¦Àí I/O ÇëÇóÉÏ¸üÕ¼ÓÅÊÆ£¬Tomcat Ä¬ÈÏÊ¹ÓÃµÄÊÇ BIO£¬ÔÚ´¦Àí¾²Ì¬×ÊÔ´Ê±£¬Tomcat µÄÐÔÄÜ²»Èç Jetty¡£
+
+
+ OpenAPI Òò´ËÏÖÔÚ´ó²¿·ÖµÄ·þÎñÌá¹©ÉÌ²ÉÈ¡µÄÊÇ OAuth ·½Ê½µÄÈÏÖ¤ 
+ OpenAPI·ÖÎª Êý¾ÝÐÍºÍ·þÎñÐÔºÍÄÜÁ¦ÐÍ¼¸Àà£¬ÏÖÔÚÖ÷ÒªÊÇRPCºÍRESTÁ½ÖÖ·½Ê½,ÒÔJSON¾Ó¶à
+ 
+ LVSÊÇ´ÓËÄ²ã¶ÔÏûÏ¢½øÐÐ¸ºÔØ×ª·¢µÄ£¬ºÜ´ó³Ì¶ÈÉÏÊÇÖ±½ÓÀûÓÃ²Ù×÷ÏµÍ³µÄÌØÐÔÀ´ÊµÏÖÏûÏ¢×ª·¢£¬Òò´Ë×ª·¢ËðºÄÓÐÏÞ£¬µ«ÊÇNATÄ£Ê½ÖÐLoad Balancer¶ÔÓÚÐÔÄÜµÄÓ°ÏìºÜ´ó£¬Í¬Ê±¶ÔÓÚ¸ºÔØÑ¹Á¦±¾ÉíÒÔ¼°ºóÌ¨½ÚµãÊýÄ¿ÓÐÏÞÖÆ¡£ÔÚLVS»ù´¡ÉÏÓÐºÜ¶àÆäËûµÄ¿ªÔ´Èí¼þ£¬Ôö¼ÓÁËÐÄÌøµÈ»úÖÆÀ´±£Ö¤¼¯ÈºµÄ½¡×³ÐÔ¡£¶øLVS²¢²»ÄÜÂú×ã¸ù¾ÝÓ¦ÓÃ²ÎÊý»ò°üÌåÄÚÈÝ×ª·¢ÇëÇóµÄ³¡¾°£¬Òò´Ë½øÒ»²½ÑÐ¾¿HA-Proxy£¬ÕâÖÖ»ùÓÚ»ùÓÚÓ¦ÓÃ¼¶±ðÔÚ7²ã¶ÔÏûÏ¢×÷·ÖÎö×ª·¢µÄ¸ºÔØ¾ùºâ·½°¸¡£
+ Oauth ÊÇ¶ÔÈý·½Ó¦ÓÃÊÚÈ¨£¬SSOÖ÷ÒªÊÇÄÚ²¿Ê¹ÓÃ(opensso from sun ,cas from Yale)
+ 
+ Ê¹ÓÃOAuth½øÐÐÈÏÖ¤ºÍÊÚÈ¨µÄ¹ý³ÌÈçÏÂËùÊ¾:
+
+    ÓÃ»§·ÃÎÊ¿Í»§¶ËµÄÍøÕ¾£¬Ïë²Ù×÷×Ô¼º´æ·ÅÔÚ·þÎñÌá¹©·½µÄ×ÊÔ´¡£
+    ¿Í»§¶ËÏò·þÎñÌá¹©·½ÇëÇóÒ»¸öÁÙÊ±ÁîÅÆ¡£
+    ·þÎñÌá¹©·½ÑéÖ¤¿Í»§¶ËµÄÉí·Ýºó£¬ÊÚÓèÒ»¸öÁÙÊ±ÁîÅÆ¡£
+    ¿Í»§¶Ë»ñµÃÁÙÊ±ÁîÅÆºó£¬½«ÓÃ»§Òýµ¼ÖÁ·þÎñÌá¹©·½µÄÊÚÈ¨Ò³ÃæÇëÇóÓÃ»§ÊÚÈ¨¡£ÔÚÕâ¸ö¹ý³ÌÖÐ½«ÁÙÊ±ÁîÅÆºÍ¿Í»§¶ËµÄ»Øµ÷Á¬½Ó·¢ËÍ¸ø·þÎñÌá¹©·½¡£
+    ÓÃ»§ÔÚ·þÎñÌá¹©·½µÄÍøÒ³ÉÏÊäÈëÓÃ»§ÃûºÍÃÜÂë£¬È»ºóÊÚÈ¨¸Ã¿Í»§¶Ë·ÃÎÊËùÇëÇóµÄ×ÊÔ´¡£
+    ÊÚÈ¨³É¹¦ºó£¬·þÎñÌá¹©·½Òýµ¼ÓÃ»§·µ»Ø¿Í»§¶ËµÄÍøÒ³¡£
+    ¿Í»§¶Ë¸ù¾ÝÁÙÊ±ÁîÅÆ´Ó·þÎñÌá¹©·½ÄÇÀï»ñÈ¡·ÃÎÊÁîÅÆ ¡£
+    ·þÎñÌá¹©·½¸ù¾ÝÁÙÊ±ÁîÅÆºÍÓÃ»§µÄÊÚÈ¨Çé¿öÊÚÓè¿Í»§¶Ë·ÃÎÊÁîÅÆ¡£
+    ¿Í»§¶ËÊ¹ÓÃ»ñÈ¡µÄ·ÃÎÊÁîÅÆ·ÃÎÊ´æ·ÅÔÚ·þÎñÌá¹©·½ÉÏµÄÊÜ±£»¤µÄ×ÊÔ´¡£
+ ÓÃ°×»°ÎÄÀ´Ëµ¾ÍÊÇ£º¡°AÌá¹©ÁË»ùÓÚOAUTHÐ­ÒéµÄ·þÎñ£¬ÏÖÔÚBÏëÒª·ÃÎÊÓÃ»§R·ÅÔÚAÉÏÃæµÄ×ÊÔ´£¬BÐèÒªÏòAÉêÇë£¬¶øAÐèÒªÑ¯ÎÊÓÃ»§RÊÇ·ñÍ¬ÒâB·ÃÎÊÕâ¸ö×ÊÔ´£¬Õâ¸öÊ±ºòAÊÇÐèÒªRÍ¨¹ýÓÃ»§ÃûºÍÃÜÂëµÇÂ¼µÄ£¨Õâ¸öÓÃ»§ÃûÖ»ÊÇÓÃ»§RÔÚAÉÏ×¢²áµÄ£¬¸úBÃ»ÓÐÒ»µã¹ØÏµ£©,Èç¹ûÓÃ»§RÍ¬ÒâÁË£¬ÄÇÃ´ÒÔºóB¾Í¿ÉÒÔ·ÃÎÊÕâ¸ö×ÊÔ´ÁË¡£Õû¸ö¹ý³ÌR¶¼Ã»ÓÐÏòBÍ¸Â¶Ò»µãÏà¹ØµÄÓÃ»§ÐÅÏ¢¡£¡±
+
+SSOÊÇÔÚ¶à¸öÓ¦ÓÃÏµÍ³ÖÐ£¬ÓÃ»§Ö»ÐèÒªµÇÂ¼Ò»´Î¾Í¿ÉÒÔ·ÃÎÊËùÓÐÏà»¥ÐÅÈÎµÄÓ¦ÓÃÏµÍ³¡£Ëü°üÀ¨¿ÉÒÔ½«Õâ´ÎÖ÷ÒªµÄµÇÂ¼Ó³Éäµ½ÆäËûÓ¦ÓÃÖÐÓÃÓÚÍ¬Ò»¸öÓÃ»§µÄµÇÂ¼µÄ»úÖÆ¡£ËüÊÇÄ¿Ç°±È½ÏÁ÷ÐÐµÄÆóÒµÒµÎñÕûºÏµÄ½â¾ö·½°¸Ö®Ò»¡£
+
+ 
+ mysql¸´ÖÆ¿ÉÒÔ¿äÆ½Ì¨£¬5.6Ö§³Ö°ëÍ¬²½(Ö»ÒªÒ»¸ösalveÈ·ÈÏÊÕµ½Ð´Èë¼´¿É)
+ Ö»ÄÜÊÇÒì²½Ö´ÐÐ £¬¿ÉÒÔ¸´ÖÆÊý¾Ý¿â£¬¸´ÖÆ±í ¸´ÖÆÊÇÍ¨¹ý¶þ½øÖÆµÄÐÞ¸ÄÈÕÖ¾Íê³ÉµÄ
+ 
+ NDB cluster Ö§³ÖÍ¬²½¸´ÖÆ
+ 
+ Maria DB mysql µÄ¿ªÔ´·ÖÖ§£¬ÓÉ mysql ´´Ê¼ÈË½¨Á¢
+ 
+ 
+1.ÎïÀí²ã£ºÖ÷Òª¶¨ÒåÎïÀíÉè±¸±ê×¼£¬ÈçÍøÏßµÄ½Ó¿ÚÀàÐÍ¡¢¹âÏËµÄ½Ó¿ÚÀàÐÍ¡¢¸÷ÖÖ´«Êä½éÖÊµÄ´«ÊäËÙÂÊµÈ¡£ËüµÄÖ÷Òª×÷ÓÃÊÇ´«Êä±ÈÌØÁ÷(¾ÍÊÇÓÉ1¡¢0×ª»¯ÎªµçÁ÷Ç¿ÈõÀ´½øÐÐ´«Êä£¬µ½´ïÄ¿µÄµØºóÔÚ×ª»¯Îª1¡¢0£¬Ò²¾ÍÊÇÎÒÃÇ³£ËµµÄÊýÄ£×ª»»ÓëÄ£Êý×ª»»)¡£ÕâÒ»²ãµÄÊý¾Ý½Ð×ö±ÈÌØ¡£
+2.Êý¾ÝÁ´Â·²ã£º¶¨ÒåÁËÈçºÎÈÃ¸ñÊ½»¯Êý¾ÝÒÔ½øÐÐ´«Êä£¬ÒÔ¼°ÈçºÎÈÃ¿ØÖÆ¶ÔÎïÀí½éÖÊµÄ·ÃÎÊ¡£ÕâÒ»²ãÍ¨³£»¹Ìá¹©´íÎó¼ì²âºÍ¾ÀÕý£¬ÒÔÈ·±£Êý¾ÝµÄ¿É¿¿´«Êä¡£
+3.ÍøÂç²ã£ºÔÚÎ»ÓÚ²»Í¬µØÀíÎ»ÖÃµÄÍøÂçÖÐµÄÁ½¸öÖ÷»úÏµÍ³Ö®¼äÌá¹©Á¬½ÓºÍÂ·¾¶Ñ¡Ôñ¡£InternetµÄ·¢Õ¹Ê¹µÃ´ÓÊÀ½ç¸÷Õ¾µã·ÃÎÊÐÅÏ¢µÄÓÃ»§Êý´ó´óÔö¼Ó£¬¶øÍøÂç²ãÕýÊÇ¹ÜÀíÕâÖÖÁ¬½ÓµÄ²ã¡£
+4.´«Êä²ã£º¶¨ÒåÁËÒ»Ð©´«ÊäÊý¾ÝµÄÐ­ÒéºÍ¶Ë¿ÚºÅ(WWW¶Ë¿Ú80µÈ)£¬Èç£ºTCP(´«Êä¿ØÖÆÐ­Òé£¬´«ÊäÐ§ÂÊµÍ£¬¿É¿¿ÐÔÇ¿£¬ÓÃÓÚ´«Êä¿É¿¿ÐÔÒªÇó¸ß£¬Êý¾ÝÁ¿´óµÄÊý¾Ý)£¬UDP(ÓÃ»§Êý¾Ý±¨Ð­Òé£¬ÓëTCPÌØÐÔÇ¡Ç¡Ïà·´£¬ÓÃÓÚ´«Êä¿É¿¿ÐÔÒªÇó²»¸ß£¬Êý¾ÝÁ¿Ð¡µÄÊý¾Ý£¬ÈçQQÁÄÌìÊý¾Ý¾ÍÊÇÍ¨¹ýÕâÖÖ·½Ê½´«ÊäµÄ£©¡£ Ö÷ÒªÊÇ½«´ÓÏÂ²ã½ÓÊÕµÄÊý¾Ý½øÐÐ·Ö¶ÎºÍ´«Êä£¬µ½´ïÄ¿µÄµØÖ·ºóÔÙ½øÐÐÖØ×é¡£³£³£°ÑÕâÒ»²ãÊý¾Ý½Ð×ö¶Î¡£
+5.»á»°²ã£ºÍ¨¹ý´«Êä²ã(¶Ë¿ÚºÅ£º´«Êä¶Ë¿ÚÓë½ÓÊÕ¶Ë¿Ú)½¨Á¢Êý¾Ý´«ÊäµÄÍ¨Â·¡£Ö÷ÒªÔÚÄãµÄÏµÍ³Ö®¼ä·¢Æð»á»°»òÕß½ÓÊÜ»á»°ÇëÇó(Éè±¸Ö®¼äÐèÒª»¥ÏàÈÏÊ¶¿ÉÒÔÊÇIPÒ²¿ÉÒÔÊÇMAC»òÕßÊÇÖ÷»úÃû)¡£
+6.±íÊ¾²ã£º¿ÉÈ·±£Ò»¸öÏµÍ³µÄÓ¦ÓÃ²ãËù·¢ËÍµÄÐÅÏ¢¿ÉÒÔ±»ÁíÒ»¸öÏµÍ³µÄÓ¦ÓÃ²ã¶ÁÈ¡¡£ÀýÈç£¬PC³ÌÐòÓëÁíÒ»Ì¨¼ÆËã»ú½øÐÐÍ¨ÐÅ£¬ÆäÖÐÒ»Ì¨¼ÆËã»úÊ¹ÓÃÀ©Õ¹¶þÒ»Ê®½øÖÆ½»»»Âë(EBCDIC)£¬¶øÁíÒ»Ì¨ÔòÊ¹ÓÃÃÀ¹úÐÅÏ¢½»»»±ê×¼Âë£¨ASCII£©À´±íÊ¾ÏàÍ¬µÄ×Ö·û¡£ÈçÓÐ±ØÒª£¬±íÊ¾²ã»áÍ¨¹ýÊ¹ÓÃÒ»ÖÖÍ¨¸ñÊ½À´ÊµÏÖ¶àÖÖÊý¾Ý¸ñÊ½Ö®¼äµÄ×ª»»¡£
+7.Ó¦ÓÃ²ã£ºÊÇ×î¿¿½üÓÃ»§µÄOSI²ã¡£ÕâÒ»²ãÎªÓÃ»§µÄÓ¦ÓÃ³ÌÐò(ÀýÈçµç×ÓÓÊ¼þ¡¢ÎÄ¼þ´«ÊäºÍÖÕ¶Ë·ÂÕæ)Ìá¹©ÍøÂç·þÎñ¡£
+
+
+ 
+ITSM¡ªIT·þÎñ¹ÜÀí ITIL V3 ÅäÖÃ¹ÜÀí+ÊÂ¹Ê¹ÜÀí(Incident Management)+ÎÊÌâ¹ÜÀí(Problem Management)+±ä¸ü¹ÜÀí(Change Management)+·¢²¼¹ÜÀíRelease Management
+·þÎñÌ¨+Capacity Management+Availability Management+IT Service Continuity Management+Financial management of IT Services+Service Level Management
+´ó¼Ò¿´ITILV3£¬×î¸ù±¾µÄÇø±ð¾ÍÊÇV2ÊÇIT²¿ÃÅµÄERP,V3¼ÓÉÏÁËEPM£¬
+¾ÍÊÇÆóÒµ¼¨Ð§¹ÜÀíµÄÀíÄîµ½ÁËIT²¿ÃÅ£¬ËùÒÔÒ»¶¨ÊÇ´ÓÕ½ÂÔ³ö·¢µÄ ITIL V3.¸ü¶àÒª¿´µ½Õ½ÂÔµÄ²¿·Ö£¬ITÕ½ÂÔÒª·ûºÏÒµÎñÕ½ÂÔ
+Infrastructure Technology Infrastructure Library£¨ITIL) Ó¢¹úÕþ¸®×éÖ¯²¢ÓÉÒ»Åú¹ú¼ÊÖªÃûIT³§ÉÌºÍ×¨¼Ò¹²Í¬ÑÐ¾¿¿ª·¢ÐÎ³ÉµÄÒ»Ì×ITÐÐÒµµÄ·þÎñ¹ÜÀí±ê×¼¿â
+
+IT·þÎñ²ÆÎñ¹ÜÀí( IT Service financial Management) , ÊÇ¸ºÔðÔ¤ËãºÍºËËãÌá¹©IT·þÎñËùÐèµÄ³É±¾¡¢²¢Ïò¿Í»§ÊÕÈ¡ÏàÓ¦·þÎñ·ÑÓÃµÄ¹ÜÀíÁ÷³Ì¡£Ëü°üÀ¨ITÍ¶×ÊÔ¤Ëã¡¢IT·þÎñ³É±¾ºËËãºÍ·þÎñ¼Ç·Ñ3¸ö×ÓÁ÷³Ì, ÆäÄ¿±êÊÇÍ¨¹ýÁ¿»¯·þÎñ³É±¾¼õÉÙ³É±¾¿ªÖ§, ¼õÉÙ²»±ØÒªµÄÀË·Ñ, ºÏÀíÒýµ¼¿Í»§ÐÐÎª¡£IT·þÎñ²ÆÎñ¹ÜÀí¿ÉÒÔÎª·þÎñ¼¶±ð¹ÜÀí¡¢ÄÜÁ¦¹ÜÀí¡¢IT·þÎñ³ÖÐøÐÔ¹ÜÀíºÍ±ä¸ü¹ÜÀíµÈÌá¹©¾ö²ßÒÀ¾Ý¡£
+
+°üÀ¨¹úÍâµÄBMC¡¢IBM¡¢HP¡¢CAµÈ£¬Ò²ÓÐ¹úÄÚµÄÉñÖÝÌ©ÔÀ¡¢Æ·Ò×¿Æ¼¼µÈ¹«Ë¾
+   
+
+·þÎñÖ§³Ö£ºÊÂ¼þ¡¢ÎÊÌâ¡¢±ä¸ü¡¢·¢²¼¡¢ÅäÖÃ¹ÜÀíÁ÷³Ì
+·þÎñ½»¸¶£º·þÎñ¼¶±ð¡¢ÄÜÁ¦¡¢¿ÉÓÃÐÔ¡¢Á¬ÐøÐÔ¡¢IT²ÆÎñ¹ÜÀíÁ÷³Ì
+¿ªÔ´Èí¼þ  OTRS £¨Open Ticket Request System£©  iTOP
+
+COBIT(Control Objectives for Information and related Technology) ÊÇÄ¿Ç°¹ú¼ÊÉÏÍ¨ÓÃµÄÐÅÏ¢ÏµÍ³Éó¼ÆµÄ±ê×¼
+
+
+DRBDÈ«³ÆDistributed Replicated Block £¨·Ö²¼Ê½µÄ¸´ÖÆ¿éÉè±¸£©£¬ÊôÓÚDevice¹«Ë¾£¬µ«ÊÇÍêÈ«¿ªÔ´¡£ËüÊÇÒ»¿î»ùÓÚ¿éÉè±¸µÄÎÄ¼þ¸´ÖÆ½â¾ö·½°¸£¬ËÙ¶È±ÈÎÄ¼þ¼¶±ðµÄÈí¼þÈçNFS£¬samba¿ìºÜ¶à£¬ÊÇºÜ¶àÖÐÐ¡ÆóÒµµÄ¹²Ïí´æ´¢Ê×Ñ¡½â¾ö·½°¸¡£
+
+DRBD¹¤×÷ÐèÒªÔÚÁ½¸ö½ÚµãÉÏÍ¬Ê±×¼±¸Ò»¿éÒ»Ä£Ò»ÑùµÄ·ÖÇø×é³É¾µÏñ£¬Õâ¾ÍÊÇÎªÊ²Ã´Ëü½Ð×ö·Ö²¼Ê½¸´ÖÆ¿éÉè±¸£¬ËüÖ÷ÒªÍ¨¹ý¸´ÖÆÊý¾ÝÀ´ÊµÏÖÎÄ¼þÍ¬²½£¨±¸·Ý£©£¬Ö÷ÒªÓÃÓÚ¼¯ÈºÎÄ¼þ¹²Ïí£¬ ÎÒÃÇÍ¨¹ýËüµÄ¹¤×÷Ô­ÀíÀ´ÁË½â¿é¸´ÖÆºÍÎÄ¼þ¸´ÖÆµÄ²»Í¬£¬ÈçÏÂÍ¼£º
+
+Ê×ÏÈ£¬ÄúÐèÒªÖªµÀ£¬DRBDÊÇ¹¤×÷ÔÚÏµÍ³ÄÚºË¿Õ¼ä£¬¶ø²»ÊÇÓÃ»§¿Õ¼ä£¬ËüÖ±½Ó¸´ÖÆµÄÊÇ¶þ½øÖÆÊý¾Ý£¬ÕâÊÇËüËÙ¶È¿ìµÄ¸ù±¾Ô­Òò¡£
+Æä´Î£¬DRBDÖÁÉÙÐèÒªÁ½¸ö½ÚµãÀ´¹¤×÷£¬Ò»Ö÷Ò»´Î¡£
+DRBDÔÚÊý¾Ý½øÈëBuffer CacheÊ±£¬ÏÈ¾­¹ýDRBDÕâÒ»²ã£¬¸´ÖÆÒ»·ÝÊý¾Ý¾­¹ýTCP/IPÐ­Òé·â×°£¬·¢ËÍµ½ÁíÒ»¸ö½ÚµãÉÏ£¬ÁíÒ»¸ö½ÚµãÍ¨¹ýTCP/IPÐ­ÒéÀ´½ÓÊÜ¸´ÖÆ¹ýÀ´µÄÊý¾Ý£¬Í¬²½µ½´Î½ÚµãµÄDRBDÉè±¸ÉÏ¡£
+
+4¡¢ ¶àÖÖÎÄ¼þÏµÍ³ÀàÐÍµÄÖ§³Ö¡£DRBD  ³ýÁËÄÜ¹»Ö§³Ö¸÷ÖÖ³£¹æµÄÎÄ¼þÏµÍ³Ö®Íâ£¬»¹¿ÉÒÔ Ö§³Ö GFS£¬OCFS2 µÈ·Ö²¼Ê½ÎÄ¼þÏµÍ³¡£¶øÇÒ£¬ÔÚÊ¹ÓÃ·Ö²¼Ê½ÎÄ¼þÏµÍ³µÄÊ±ºò£¬»¹¿É ÒÔÊµÏÖ¸÷½á´øÄãÍ¬Ê±Ìá¹©ËùÓÐ IO ²Ù×÷¡£
+5¡¢ Ìá¹©¶Ô LVM  µÄÖ§³Ö¡£DRBD  ¼È¿ÉÒÔÊ¹ÓÃÓÉ LVM  Ìá¹©µÄÂß¼­Éè±¸£¬Ò²¿ÉÒÔ½«×Ô¼º¶Ô ÍâÌá¹©µÄÉè±¸³ÉÎª LVM  µÄÎïÀíÉè±¸£¬Õâ¼«´óµÄ·½±ãµÄÔËÎ¬ÈËÔ±¶Ô´æ´¢Éè±¸µÄ¹ÜÀí¡£
+6¡¢ ËùÓÐ IO ²Ù×÷£¬ÄÜ¹»¾ø¶ÔµÄ±£Ö¤ IO Ë³Ðò¡£ÕâÒ²ÊÇ¶ÔÓÚÊý¾Ý¿âÀ´Ëµ·Ç³£ÖØÒªµÄÒ»¸ö ÌØÐÔÓÈÆäÊÇÒ»Ð©¶ÔÊý¾ÝÒ»ÖÂÐÔÒªÇó·Ç³£¿Á¿ÌµÄÊý¾Ý¿âÈí¼þÀ´Ëµ¡£
+  2¡¢ Split Brain  µÄ½â¾ö¡£ÒòÎªÄ³Ð©ÌØÊâµÄÔ­Òò£¬Ôì³ÉÁ½Ì¨Ö÷»úÖ®¼äµÄ DRBD  Á¬½ÓÖÐ¶Ï Ö®ºóË«·½¶¼ÒÔ Primary ½ÇÉ«À´ÔËÐÐÖ®ºóµÄ´¦Àí»¹²»ÊÇÌ«ÎÈ¶¨¡£ËäÈ» DRBD µÄÅäÖÃ ÎÄ¼þÖÐ¿ÉÒÔÅäÖÃ×Ô¶¯½â¾ö Split Brain£¬µ«ÊÇ´ÓÎÒÖ®Ç°µÄ²âÊÔÇé¿öÀ´¿´£¬²¢²»ÊÇÃ¿ ´ÎµÄ½â¾ö¶¼·Ç³£ÁîÈËÂúÒâ£¬ÔÚÓÐÐ©Çé¿öÏÂ£¬¿ÉÄÜ³öÏÖÄ³¸ö½ÚµãÍêÈ«Ê§Ð§µÄ¿ÉÄÜ¡£
+  
+  ²âÊÔ½á¹ûÏÔÊ¾drbd8.3.2 64bitÐÔÄÜÌáÉýºÜ¶à£¬ºÍ²»×öDRBDÊ±µÄÐÔÄÜÏà±ÈËðÊ§ºÜÐ¡£¨ÍøÂç»·¾³¸Ð¾õ²»´í£©£¬ÔÚÒªÇó¿ÉÓÃÐÔ¸ßµÄ³¡ºÏ£¬¿ÉÒÔ¿¼ÂÇÊ¹ÓÃ£¬Î´À´linux kernel2.6.32»á¼ÓÈëdrbdµÄÖ§³Ö
+  
+  GlusterFS runÔÚOS filesystemÖ®ÉÏ You can use ZFS on Linux with Gluster, although XFS continues to be recommend. 
+
+    Far more scalable
+    replication at a file rather than a block level
+    development funded by Red Hat
+    If you want file level access, no need for a clustered file system (GFS2 sucks),
+    Native support from KVM and Openstack
+    REST access via translators
+
+Cons:
+
+    POSIX access via FUSE potentially lower performance (in theory)
+    Edit: Nah, thought of one, buts it gone
+
+DRDB
+
+Pros:
+
+    Block level replication and proud!
+    We're included in the Linux Kernel as of 2.6.33.
+    Provides your %99.999+ uptime goals for High Availability
+    Disaster Recovery: We replicate perfectly over the WAN.
+    Performance: Your bottleneck is the hardware you're running.
+    Time tested: We've been the best replication solution for over 10 years running.
+    Transaction safe: There's a reason that Oracle recommends using DRBD with MySQL: it's the safest way to replicate data from point a to b.
+    Reputation: Leading industry names rely upon DRBD everyday: Google, IBM, Cisco, Siemens, maybe even reddit.com
+    Industry Accepted: DRBD is an add-on to your existing Red Hat subscription (Red Hat fully supports and recommends DRBD as a solution)
+    Replicates at the block level, not the file system
+    Ability to detect disk hardware errors, and not replicate them
+    Flexibility in replication protocols
+
+Cons:
+
+    DRBD 9 isn't released yet - multi-master replication, multinode replication
+
+
+
+Keepalived ÓëHeartbeat¡¢
+Corosync£¬¸ù±¾²»ÊÇÍ¬Ò»ÀàÐÍµÄ¡£Keepalived
+Ê¹ÓÃµÄvrrp Ð­Òé·½Ê½£¬ÐéÄâÂ·ÓÉÈßÓàÐ­Òé
+(VirtualRouterRedundancyProtocol£¬¼ò³Æ
+VRRP)£»Heartbeat »òCorosync ÊÇ»ùÓÚÖ÷»ú»ò
+ÍøÂç·þÎñµÄ¸ß¿ÉÓÃ·½Ê½£»¼òµ¥µÄËµ¾ÍÊÇ£¬
+Keepalived µÄÄ¿µÄ ÊÇÄ£ÄâÂ·ÓÉÆ÷µÄ¸ß¿ÉÓÃ£¬
+Heartbeat »ò Corosync µÄÄ¿µÄÊÇÊµÏÖService
+µÄ¸ß¿ÉÓÃ¡£
+Keepalived ÖÐÊµÏÖÇáÁ¿¼¶µÄ¸ß¿ÉÓÃ£¬Ò»°ãÓÃÓÚ
+Ç°¶Ë¸ß¿ÉÓÃ£¬ÇÒ²»ÐèÒª¹²Ïí´æ´¢£¬Ò»°ã³£ÓÃÓÚÁ½
+¸ö½ÚµãµÄ¸ß¿ÉÓÃ¡£¶øHeartbeat(»òCorosync)
+Ò»°ãÓÃÓÚ·þÎñµÄ¸ß¿ÉÓÃ£¬ÇÒÐèÒª¹²Ïí´æ´¢£¬Ò»°ã
+ÓÃÓÚ¶à½ÚµãµÄ¸ß¿ÉÓÃ
+ÔÚÒ»¸öÐéÄâÂ·ÓÉ Æ÷ÖÐ£¬²»¹ÜË­ÊÇMASTER£¬¶ÔÍâ¶¼ÊÇÏàÍ¬µÄMAC ºÍIP(³ÆÖ®ÎªVIP)
+
+HAProxy¿ÉÒÔ×÷ÎªMySQL¡¢ÓÊ¼þ»òÆäËüµÄ·ÇwebµÄ¸ºÔØ¾ùºâ£¬ÎÒÃÇ³£ÓÃÓÚËü×÷ÎªMySQL(¶Á)¸ºÔØ¾ùºâ
+
+puppetÊÇÒ»ÖÖLinux¡¢Unix¡¢windowsÆ½Ì¨µÄ¼¯ÖÐÅäÖÃ¹ÜÀíÏµÍ³£¬Ê¹ÓÃ×ÔÓÐµÄpuppetÃèÊöÓïÑÔ£¬¿É¹ÜÀíÅäÖÃÎÄ¼þ¡¢ÓÃ»§¡¢cronÈÎÎñ¡¢Èí¼þ°ü¡¢ÏµÍ³·þÎñµÈ¡£puppet°ÑÕâÐ©ÏµÍ³ÊµÌå³ÆÖ®Îª×ÊÔ´£¬puppetµÄÉè¼ÆÄ¿±êÊÇ¼ò»¯¶ÔÕâÐ©×ÊÔ´µÄ¹ÜÀíÒÔ¼°Í×ÉÆ´¦Àí×ÊÔ´¼äµÄÒÀÀµ¹ØÏµ¡£
+puppet²ÉÓÃC/SÐÇ×´µÄ½á¹¹£¬ËùÓÐµÄ¿Í»§¶ËºÍÒ»¸ö»ò¼¸¸ö·þÎñÆ÷½»»¥¡£Ã¿¸ö¿Í»§¶ËÖÜÆÚµÄ£¨Ä¬ÈÏ°ë¸öÐ¡Ê±£©Ïò·þÎñÆ÷·¢ËÍÇëÇó£¬»ñµÃÆä×îÐÂµÄÅäÖÃÐÅÏ¢£¬±£Ö¤ºÍ¸ÃÅäÖÃÐÅÏ¢Í¬²½¡£Ã¿¸öpuppet¿Í»§¶ËÃ¿°ëÐ¡Ê±(¿ÉÒÔÉèÖÃ)Á¬½ÓÒ»´Î·þÎñÆ÷¶Ë, ÏÂÔØ×îÐÂµÄÅäÖÃÎÄ¼þ,²¢ÇÒÑÏ¸ñ°´ÕÕÅäÖÃÎÄ¼þÀ´ÅäÖÃ·þÎñÆ÷. ÅäÖÃÍê³ÉÒÔºó,puppet¿Í»§¶Ë¿ÉÒÔ·´À¡¸ø·þÎñÆ÷¶ËÒ»¸öÏûÏ¢. Èç¹û³ö´í,Ò²»á¸ø·þÎñÆ÷¶Ë·´À¡Ò»¸öÏûÏ¢.
+
+ChefÊÇÓÉRubyÐ´³ÉµÄÐÎÌ¬¹ÜÀíÈí¼þ
+
+KVM
+¿ÉÒÔÔÚopenstack¹ÜÀíÆ½Ì¨ÖÐ¶Ôkvm½øÐÐÖØÆô£¬É¾³ý£¬ÔÝÍ£/»Ö¸´£¬VNC²Ù×÷
+·´Ïò´úÀí£¨Reverse Proxy£©·½Ê½ÊÇÖ¸ÒÔ´úÀí·þÎñÆ÷À´½ÓÊÜinternetÉÏµÄÁ¬½ÓÇëÇó£¬È»ºó½«ÇëÇó×ª·¢¸øÄÚ²¿ÍøÂçÉÏµÄ·þÎñÆ÷£¬²¢½«´Ó·þÎñÆ÷ÉÏµÃµ½µÄ½á¹û·µ»Ø¸øinternetÉÏÇëÇóÁ¬½ÓµÄ¿Í»§¶Ë£¬´ËÊ±´úÀí·þÎñÆ÷¶ÔÍâ¾Í±íÏÖÎªÒ»¸ö·þÎñÆ÷¡£
+
+Íø¿¨Ö±½Óoffload infini band tcp/off load,Ö±½ÓÈÆ¹ýkernelºËÐÄ´«µÝÊý¾Ý
+
+
+¹¥»÷ÖÖÀà                ·ÀÓùÊÖ¶Î                           Ð§¹û·çÏÕ
+
+SYNflood             ·À»ðÇ½½ÏºÃ£¬¶Ô·À»ðÇ½CPUÒªÇó¸ß      ´ø¿íÒªÇó¸ßÁ÷Á¿¹ý´ó»áÎóÉ±
+TCP flood            ·À»ðÇ½½ÏºÃ£¬¶Ô·À»ðÇ½CPUÒªÇó¸ß£¬       ´ø¿íÒªÇó¸ßÁ÷Á¿¹ý´ó»áÎóÉ±
+http flood              Nginx·ÃÎÊ´ÎÊýÏÞÖÆ£¬ÑéÖ¤ÂëÏÞÖÆ¿ìËÙ£¬  ÏÞÖÆÔ½ÑÏ¸ñ£¬Ô¼ÈÝÒ×²úÉúÎóÉ±¡£µ¼ÖÂÓÃ»§Á÷Ê§
+²ÎÊýÒ×ÓÚµ÷½Ú  
+iops                 ÔöÇ¿cacheÄÜÁ¦£¬²ÉÓÃÑéÖ¤Âë             ÐÔÄÜÌáÉý£¬·ÀÓùÉúÐ§´ø¿íÕ¼ÓÃ²»¼õ
+
+
+Ðí¶àÈË¶¼ÊÇ×Ô¼º¹¹½¨ÄÚºË£¬Xen¿ÉÒÔÔËÐÐÔÚºÜ¶à·þÎñÆ÷ÉÏ£¬´ÓµÍ³É±¾µÄÐéÄâ×¨ÓÃ·þÎñÆ÷£¨Virtual Private Server£¬VPS£©¹©Ó¦ÉÌ£¬ÈçLinode£¬µ½´óÐÍ¹«Ë¾£¬ÈçAmazonµÄEC2£¬ÕâÐ©¹«Ë¾¶¼¼Ó´óÁËÕâ·½ÃæµÄÍ¶Èë£¬²»»áÇáÒ××ª»»µ½ÆäËü¼¼Êõ£¬¼´Ê¹¼¼ÊõÉÏKVM³¬Ô½ÁËXen£¬Ò²²»ÄÜÒ»ÏÂ¾ÍÈ¡´úÏÖÓÐµÄ½â¾ö·½°¸£¬¸üºÎ¿öKVMÔÚ¼¼ÊõÉÏµÄÓÅÊÆ²¢²»Ã÷ÏÔ£¬ÓÐÐ©µØ·½ÉõÖÁ»¹Î´³¬Ô½Xen£¬ÒòÎªXenµÄÀúÊ·±ÈKVM¸üÓÆ¾Ã£¬ËüÒ²±ÈKVM¸ü³ÉÊì£¬Äã»á·¢ÏÖXenÖÐµÄÄ³Ð©¹¦ÄÜÔÚKVM»¹Î´ÊµÏÖ£¬Òò´ËÎÒÃÇ¿´µ½KVMÏîÄ¿µÄTodo ListºÜ³¤£¬KVMµÄÓÅÊÆÒ²½öÏÞÓÚËü½øÈëÁËLinuxÄÚºË¡£´ÓRHEL 5.4¿ªÊ¼£¬RedHat¾ÍÖ§³ÖKVMÁË£¬´ÓRHEL 6.0¿ªÊ¼RedHat¾ÍÍêÈ«Å×ÆúXenÁË¡£
+      KVMÊÇÒ»¸öÈ«ÐéÄâ»¯µÄ½â¾ö·½°¸¡£¿ÉÒÔÔÚx86¼Ü¹¹µÄ¼ÆËã»úÉÏÊµÏÖÐéÄâ»¯¹¦ÄÜ¡£µ«KVMÐèÒªCPUÖÐÐéÄâ»¯¹¦ÄÜµÄÖ§³Ö£¬Ö»¿ÉÔÚ¾ßÓÐÐéÄâ»¯Ö§³ÖµÄCPUÉÏÔËÐÐ£¬¼´¾ßÓÐVT¹¦ÄÜµÄIntel CPUºÍ¾ßÓÐAMD-V¹¦ÄÜµÄAMD CPU¡£
+        XenÊÇLinuxÏÂµÄÒ»¸öÐéÄâ»¯½â¾ö·½°¸£¬µ«ÓÉÓÚ±»CitrixÊÕ¹ººó£¬±ä³ÉÁËºÍºìÃ±ÆóÒµ°æÒ»ÑùÁË£¬Âô·þÎñÊÕÈ¡·ÑÓÃ£¬Redhat´Órhel6.0¿ªÊ¼ÒÑ¾­´ÓÄÚºËÖÐ°ÑXENÌß³öÈ¥ÁË£¬È«ÐÄÍ¶Èë¿ª·¢Ãâ·ÑµÄKVM£¬ËäÈ»ÊÐ³¡ÉÏÀÏÓÃ»§»¹ÔÚÓÃXen,µ«ÏàÐÅkvm»áÖð²½Õ¼Áì´óÃæ»ýµÄÊÐ³¡£¬±Ø¾¹ÓÐredhat×öÎªÇ¿´óÖ§³ÖÔ´¡£
+        
+   Ïà±È½Ï£¬KVM¾Í¼ò»¯µÄ¶àÁË¡£Ëü²»ÐèÒªÖØÐÂ±àÒëÄÚºË£¬Ò²²»ÐèÒª¶Ôµ±Ç°kernel×öÈÎºÎÐÞ¸Ä£¬ËüÖ»ÊÇ¼¸¸ö¿ÉÒÔ¶¯Ì¬¼ÓÔØµÄ.koÄ£¿é¡£Ëü½á¹¹¸ü¼Ó¾«¼ò¡¢´úÂëÁ¿¸üÐ¡¡£ËùÒÔ£¬³ö´íµÄ¿ÉÄÜÐÔ¸üÐ¡¡£²¢ÇÒÔÚÄ³Ð©·½Ãæ£¬ÐÔÄÜ±ÈXen¸üÊ¤Ò»³ï¡£
+   
+
+KVMÐÔÄÜ  ´ÓÁ½·ùÍ¼¿ÉÒÔµÃµ½µÄ½áÂÛÊÇ:Ê¹ÓÃwrite throughÐÔÄÜ×î²î,noneºÍwrite backÏà²î²»´ó
+cpuÐÔÄÜºÍÎïÀícpuÐÔÄÜ²î²»¶à
+CPU,ÄÚ´æ¶¼²»ÊÇÎÊÌâ,¶ÔÓÚÓ²ÅÌ,Í¨¹ýÇ°ÃæÒ»ÏµÁÐµÄ²âÊÔ,ÎÒÍÆ¼öÊ¹ÓÃÒÔÏÂÅäÖÃ:?Ê¹ÓÃExt4×öÎªËÞÖ÷»ú´ÅÅÌ¸ñÊ½?ÐéÄâ»úÓÃqcow2+preallocation,
+»º´æÊ¹ÓÃwriteback
+ÐéÄâ»úÍø¿¨Çý¶¯Ê¹ÓÃvirtio
+
+
+
+   
+OpenStack¼¸ºõÖ§³ÖËùÓÐµÄÐéÄâ»¯¹ÜÀí³ÌÐò£¬²»ÂÛÊÇ¿ªÔ´µÄ(XenÓëKVM)»¹ÊÇ³§ÉÌµÄ(Hyper-VÓëVMware)¡£µ«ÔÚÒÔÇ°£¬Op
+enStackÊÇ»ùÓÚKVM¿ª·¢µÄ£¬KVM³£³£³ÉÎªÄ¬ÈÏµÄÐéÄâ»ú¹ÜÀí³ÌÐò¡£Á½Õß¶¼Ê¹ÓÃÏàÍ¬µÄ¿ª·ÅÔ´ÀíÄîÓë¿ª·¢·½·¨¡£
+- OpenStack Compute(Nova)ÊÇÒ»Ì×¿ØÖÆÆ÷£¬ÓÃÓÚÐéÄâ»ú¼ÆËã»òÊ¹ÓÃÈº×éÆô¶¯ÐéÄâ»úÊµÀý;
+
+- OpenStack¾µÏñ·þÎñ(Glance)ÊÇÒ»Ì×ÐéÄâ»ú¾µÏñ²éÕÒ¼°¼ìË÷ÏµÍ³£¬ÊµÏÖÐéÄâ»ú¾µÏñ¹ÜÀí;
+
+- OpenStack¶ÔÏó´æ´¢(Swift)ÊÇÒ»Ì×ÓÃÓÚÔÚ´ó¹æÄ£¿ÉÀ©Õ¹ÏµÍ³ÖÐÍ¨¹ýÄÚÖÃÈßÓà¼°ÈÝ´í»úÖÆ£¬ÒÔ¶ÔÏóÎªµ¥Î»µÄ´æ´¢ÏµÍ³£¬ÀàËÆÓÚAmazon S3;
+
+- OpenStack Keystone£¬ÓÃÓÚÓÃ»§Éí·Ý·þÎñÓë×ÊÔ´¹ÜÀíÒÔ¼°
+
+- OpenStack Horizon£¬»ùÓÚDjangoµÄÒÇ±í°å½Ó¿Ú£¬ÊÇ¸öÍ¼ÐÎ»¯¹ÜÀíÇ°¶Ë¡£
+ 
+zabbix(c+php) ¿ªÔ´¼à¿ØÏµÍ³ Nagios  Tivoli openview grid controller  
+
+ÎÒÒ»Ö±ÔÚÓÃ Nagios £¬Zabbix ºÜÇ¿´ó£¬ºÜÈ«Ãæ£¬µ«Ïà¶ÔÀ´Ëµ£¬Nagios Òª¸üÇáÁ¿¡¢Áé»î£¬ÌØ±ðÊÇËüµÄ²å¼þ»úÖÆ£¬Äã¿ÉÒÔÓÃ×Ô¼ºÊìÏ¤µÄÓïÑÔÊµÏÖ¼¸ºõÈÎºÎ×Ô¼ºÏëÒªÊµÏÖµÄ¼à¿Ø¡£
+Nagios ÔÚÍ¼±í·½ÃæÏà¶Ô½ÏÈõ£¬Èç¹ûÖ»ÊÇÏ£ÍûÊµÏÖ¼à¿Ø¼°±¨¾¯£¬Nagios ÊÇ¸ö²»´íµÄÑ¡Ôñ£¬ÖÁÓÚÍ¼±í£¬Äã¿ÉÒÔ½»¸ø cacti£¬»òÕßÖ±½ÓÓÃ rrdtool ÊµÏÖ¡£
+
+NagiosµÄ¼à¿ØÏà¶Ô¶ÀÁ¢£¨²å¼þ»úÖÆ£¬Ã¿´ÎÖ´ÐÐÒ»ÌõÃüÁî£©£¬¶øZabbixµÄ¼à¿ØÏà¶Ô¼¯ÖÐ¡£
+ 
+
+¡ñ Èí¼þÊ¹ÓÃ£º
+¨C Nagios ÓÃÓÚ·þÎñ×´Ì¬¼à²â¼°±¨¾¯£¬ÊÇ×Ô¶¯»¯ÔËÎ¬µÄ
+»ù´¡£¬ÈÕ³£Ê¹ÓÃ²àÖØÓÚ±¨¾¯¡£
+¨C Cacti ÓÃÓÚÊý¾Ý¼ÇÂ¼¼°ÀúÊ·Êý¾ÝÕ¹ÏÖ£¬ÊÇ×ÊÔ´µ÷¶È¼°
+Êý¾Ý·ÖÎöµÄ»ù´¡£¬ÈÕ³£Ê¹ÓÃ²àÖØÓÚÊý¾Ý¼ÇÂ¼¡£
+¨C ÓÃRRDTOOL ½áºÏShell ÊµÏÖÁËÒ»Ì×»ù´¡¼à¿ØÈí¼þ
+¨C ÏµÍ³ÈÕÖ¾Í¨¹ýsyslog »ã¾Û´æ·Å£¬¼¯ÖÐÉó²é£¬ÖØÒªÏû
+Ï¢¶àÍ¾¾¶±¨¾¯ Email,IM,SMS etc. ¡£
+
+Ä¿Ç°ÓÉÓÚ5.1µÄ°æ±¾»¹ÓÐºÜ¶àbug,Òò´ËÐÂÀËÑ¡ÔñÁËÊ¹ÓÃºÜ¾ÃµÄmysql5.0.41.
+ÒòÎª»¥ÁªÍøÒµÎñ´ó²¿·ÖÊÇÐ´ÉÙ¶Á¶à£¬ËùÒÔmyisamÊÇ²»¶þµÄÑ¡Ôñ
+ÆÀ¼Û:mysqldump×÷ÎªMySQLµ±Ç°±¸·Ý»Ö¸´²»¿ÉÌæ´úµÄ¹¤¾ß,ÄÜÖ§³ÖÈ«²¿Ä£Ê½ÏÂµÄ±¸·Ý,¶øÇÒ±¸·Ý³öÊý¾ÝÎªÎÄ±¾ÎÄ¼þ,Òò´ËÑ¹Ëõºó´æ´¢¿Õ¼ä×îÓÅ,µ«ÓÉÓÚÎÄ±¾ÎÄ¼þÐèÒªÖØÐÂloadºó²ÅÄÜ»Ö¸´Êý¾Ý,Òò¶øÊý¾Ý»Ö¸´ËÙ¶ÈÊÓÊý¾ÝµÄ¶àÉÙ,µ«ÒÀÈ»ÖµµÃÍÆ¼ö
+
+?MySQLÔöÁ¿±¸·Ý¸úOracleµÄÔöÁ¿±¸·ÝÓÐ±¾ÖÊµÄÇø±ð
+?mysql½øÐÐÔöÁ¿±¸·Ý,´Ó»úÖÆÉÏ¾ö¶¨ÁËËü²»ÄÜ±£Ö¤Êý¾ÝµÄÍêÕûÐÔºÍ°²È«ÐÔ
+?MySQL Binlog VS Oracle ARCHIVELOG
+?È«±¸·Ý+binlogÀíÂÛÉÏÊÇ¿ÉÒÔÖ¸¶¨»Ö¸´µ½¾ßÌåÊ±¼äµÄ
+
+½øÐÐÏÞ¶¨ÏµÍ³ÄÚ´æÍ¨¹ý¶Ôgrub.confÎÄ¼þÌí¼Ómem=1GµÄ²ÎÊý
+
+·Ö²¼Ê½ÎÄ¼þÏµÍ³µÄÖÖÀà
+
+?Hadoop
+?FastDFS
+?MooseFS
+?PNFS£¨Parallel NFS £©
+?PVFS£¬PVFS2
+?Lustre
+?ÆäËû
+
+openfiler  Openfiler ÊÇÒ»¸ö¶¨ÖÆ»¯µÄ²Ù×÷ÏµÍ³£¬ËüÌá¹©ÁË»ùÓÚÎÄ¼þµÄÍøÂç¸½¼Ó´æ´¢ NAS ºÍ»ùÓÚ¿éµÄ´æ´¢ÇøÓòÍøÂç SAN ´æ´¢½â¾ö·½°¸¡£Openfiler ËùÌá¹©µÄÇ¿´óµÄÐéÄâ´æ´¢¹¦ÄÜÌØÐÔ£¬Ê¹ÆäÔÚÒÔ¶¯Ì¬¡¢Áé»î¡¢¿ÉÉìËõÎªÌØÖÊµÄÔÆ¼ÆËã»·¾³ÖÐ£¬³ÉÎªÁËÒ»¸ö·Ç³£ÓÐÁ¦µÄÔÆ¶Ë´æ´¢½â¾ö·½°¸Ö®Ò»
+
+ÊµÊ©ÆðÀ´¼òµ¥¡£MFSµÄ°²×°¡¢²¿Êð¡¢ÅäÖÃÏà¶ÔÓÚÆäËû¼¸ÖÖ¹¤¾ßÀ´Ëµ£¬Òª¼òµ¥ºÍÈÝÒ×µÃ¶à¡£¿´¿´lustre 700¶àÒ³µÄpdfÎÄµµ£¬ÈÃÈËÍ·»è°É
+?²»Í£·þÎñÀ©ÈÝ¡£MFS¿ò¼Ü×öºÃºó£¬ËæÊ±Ôö¼Ó·þÎñÆ÷À©³äÈÝÁ¿£»À©³äºÍ¼õÉÙÈÝÁ¿½Ô²»»áÓ°ÏìÏÖÓÐµÄ·þÎñ
+?»Ö¸´·þÎñÈÝÒ×¡£³ýÁËMFS±¾Éí¾ß±¸¸ß¿ÉÓÃÌØÐÔÍâ£¬ÊÖ¶¯»Ö¸´·þÎñÒ²ÊÇ·Ç³£¿ì½ÝµÄ
+
+
+2012ÔÆ¼ÆËãºÍÊý¾ÝÖÐÐÄ×î¼Ñ¿ªÔ´Èí¼þ
+OpenStack £º±»¸÷´óIT¾ÞÍ·Í¶×ÊµÄ¿ªÔ´ÔÆÆ½Ì¨£¬ÉçÇø»îÔ¾¶È·Ç³£¸ß¡£
+CloudStack £ºÓÉCitrixÍÆ³öµÄ¿ªÔ´ÔÆÆ½Ì¨£¬ÓµÓÐ·Ç³£ºÃµÄWeb UI£¬³ÉÊì¶È½Ï¸ß¡£
+Eucalyptus £ºÕâÊÇÒ»¼Ò³õ´´¹«Ë¾´¿´âµÄÈí¼þ¹«Ë¾£¬½ñÄêÓëAWSÉî¶ÈºÏ×÷£¬ÆäAPI»ñµÃÁËAWS¹Ù·½Ö§³Ö¡£
+Ganeti £ºGoogle¿ª·¢µÄÐ¡ÐÍÐéÄâ»ú¹ÜÀí¹¤¾ß£¬Ö§³ÖXenºÍKVM¡£
+Open vSwitch £ºÒ»¸ö·Ö²¼Ê½µÄÐéÄâ½»»»ÏµÍ³£¬ÆäÐÔÄÜÉõÖÁ³¬Ô½Ä³Ð©ÎïÀí½»»»»ú¡£
+Cloud Foundry £ºÎ¨Ò»Ò»¼ÒÈëÑ¡µÄPaaSÆ½Ì¨£¬ÓÉVMwareÌá³ö¡£
+JBoss AS7£ºÓÉRed Hat×ÊÖúµÄJavaÓ¦ÓÃ·þÎñÆ÷
+Jclouds£ºJclouds½¨Á¢Ò»¸öAPI³éÏó²ã£¬°ïÖú¿ª·¢ÕßÔÚAWS¡¢OpenStack¡¢Windows Azure,»òEucalyptusµÈÔÆÆ½Ì¨ÉÏµ÷ÓÃAPI£¬¼õÇá¿ª·¢ÕßµÄ¹¤×÷Á¿¡£
+Puppet£ºÕâÊÇÒ»¸ö·þÎñÆ÷¼¯Èº¹ÜÀí¹¤×÷£¬°ïÖúÔËÎ¬¹¤³ÌÊ¦¼à¿Ø¡¢×Ô¶¯ÅäÖÃ·þÎñÆ÷µÈ¡£
+Chef£ºÕâÊÇÓÉRubyÐ´³ÉµÄÐÎÌ¬¹ÜÀíÈí¼þ£¬ËüÒÔÒ»ÖÖ´¿RubyµÄÁìÓò×¨ÓÃÓïÑÔ£¨DSL£©±£´æÏµÍ³ÅäÖÃ¡£
+Juju£ºUbuntuÉÏµÄÔÆ¹ÜÀíÆ½Ì¨¡£
+GlusterFS £ºÒ»ÖÖ·Ö²¼Ê½ÎÄ¼þÏµÍ³£¬Ä¿Ç°ÒÑ±»Red HatÊÕ¹º¡£
+Ceph £ºÒ»ÖÖÊÊÓ¦Á¦ºÜÇ¿µÄ·Ö²¼Ê½ÎÄ¼þÏµÍ³,Ä¿Ç°»¹²»Ì«ÊÊºÏproduction¡£  Ceph is hot, hot, hot  Ceph  use of btrfs  ceph making it into the Linux kernel
+FreeNAS£º»ùÓÚFreeBSDµÄ¿ªÔ´´æ´¢Æ½Ì¨¡£
+Openfiler£ºOpenfilerÓëFreeNASºÜÏñ£¬Ö§³Ö¸÷ÖÖSANºÍNAS¡£
+NAS4Free£º»ùÓÚFreeNAS 7µÄÀ©Õ¹ÏîÄ¿¡££¨ÎÄ/°üÑÐ£© 
+
+Hadoop
+looks very stable, mature and scalable solution
+Not fully posix compliance and not the fastest 
+GlusterFS
+Very fast,posix compliant, and easy to manage
+Maybe not as scalable as the others, still have few
+reliability problems 
+
+CEPH:
+Looks very scalable, complete and technological advanced
+Still not very mature and stable, performance issues 
+
+
+
+CephµÄÄ¿±êÊÇÈ«ÃæµÄ·Ö²¼Ê½£¬¶Å¾øÈÎºÎµ¥µã¹ÊÕÏ¡£CephÖ÷ÒªÃæÏòPB¼¶µÄÊý¾Ý´¦Àí£¬ÀíÂÛÉÏÕû¸ö´æ´¢ÏµÍ³¿ÉÒÔÀ©Õ¹ÖÁEB¼¶±ð¡£
+Æä¶ÔÏó´æ´¢¿ÉÍ¨¹ýC£¬C++£¬Java£¬PythonºÍPHP°ó¶¨»òÃûÎªradosgwµÄREST½Ó¿Ú½øÐÐ·ÃÎÊ£¬¸Ã½Ó¿ÚÓëS3ºÍSwift¼æÈÝ¡£
+¿é´æ´¢Ê¹ÓÃCephµÄRADOS Block Device£¨RBD£©£¬Êý¾Ý±»´òÉ¢´æ´¢ÔÚÕû¸ö¼¯ÈºÖÐ¡£RBDÒÑ¾­ÓëKVM½øÐÐÁË¼¯³É¡£
+CephÌá¹©µÄÎÄ¼þÏµÍ³ÓëPOSIXÍøÂçÎÄ¼þÏµÍ³£¨btrfs¡¢ext3¡¢ext4¡¢xfs£©¼æÈÝ¡£
+
+swift,×÷Îª¶ÔÏó´æ´¢£¬ÎÈ¶¨ÐÔ»¹ÊÇÃ»É¶ÎÊÌâ¡£sinaÄÇ±ßÊ¹ÓÃ£¬¶ÔËûµÄÆÀ¼ÛºÜ¸ß¡£
+ÌÔ±¦Ñ¡ÔñÁËsheepdog£¬²»¹ýÎÒ¸öÈË»¹ÊÇ±È½Ï¿´ºÃceph¡£
+
+
+
+Swift²¢²»ÊÇÎÄ¼þÏµÍ³»òÕßÊµÊ±µÄÊý¾Ý´æ´¢ÏµÍ³£¬Ëü³ÆÎª¶ÔÏó´æ´¢ OpenStack Swift(ÓÉRackspace ¿ª·¢) ×÷ÎªÎÈ¶¨ºÍ¸ß¿ÉÓÃµÄ¿ªÔ´¶ÔÏó´æ´¢±»ºÜ¶àÆóÒµ×÷ÎªÉÌÒµ»¯²¿Êð
+redhatµÄGFSÊÇgloble file system,ÒÑ¾­Öð½¥±» GlusterFSÈ¡´ú
+
+SwiftÌá¹©µÄ·þÎñÓëAmazon S3ÏàÍ¬£¬ÊÊÓÃÓÚÐí¶àÓ¦ÓÃ³¡¾°¡£×îµäÐÍµÄÓ¦ÓÃÊÇ×÷ÎªÍøÅÌÀà²úÆ·µÄ´æ´¢ÒýÇæ£¬±ÈÈçDropbox±³ºó¾ÍÊÇÊ¹ÓÃAmazon S3×÷ÎªÖ§³ÅµÄ¡£ÔÚOpenStackÖÐ»¹¿ÉÒÔÓë¾µÏñ·þÎñGlance½áºÏ£¬ÎªÆä´æ´¢¾µÏñÎÄ¼þ¡£ÁíÍâ£¬ÓÉÓÚSwiftµÄÎÞÏÞÀ©Õ¹ÄÜÁ¦£¬Ò²·Ç³£ÊÊºÏÓÃÓÚ´æ´¢ÈÕÖ¾ÎÄ¼þºÍÊý¾Ý±¸·Ý²Ö¿â¡£
+ÍêÈ«¶Ô³ÆµÄÏµÍ³¼Ü¹¹ ¡°¶Ô³Æ¡±ÒâÎ¶×ÅSwiftÖÐ¸÷½Úµã¿ÉÒÔÍêÈ«¶ÔµÈ£¬ÄÜ¼«´óµØ½µµÍÏµÍ³Î¬»¤³É±¾¡£
+ÎÞÏÞµÄ¿ÉÀ©Õ¹ÐÔ  ÕâÀïµÄÀ©Õ¹ÐÔ·ÖÁ½·½Ãæ£¬Ò»ÊÇÊý¾Ý´æ´¢ÈÝÁ¿ÎÞÏÞ¿ÉÀ©Õ¹£»¶þÊÇSwiftÐÔÄÜ£¨ÈçQPS¡¢ÍÌÍÂÁ¿µÈ£©¿ÉÏßÐÔÌáÉý¡£ÒòÎªSwiftÊÇÍêÈ«¶Ô³ÆµÄ¼Ü¹¹£¬À©ÈÝÖ»Ðè¼òµ¥µØÐÂÔö»úÆ÷£¬ÏµÍ³»á×Ô¶¯Íê³ÉÊý¾ÝÇ¨ÒÆµÈ¹¤×÷£¬Ê¹¸÷´æ´¢½ÚµãÖØÐÂ´ïµ½Æ½ºâ×´Ì¬¡£
+ÎÞµ¥µã¹ÊÕÏ 
+
+Õâ´ÎOpenStack SummitÉÏ£¬Ceph³ÉÎª¿ªÔ´´æ´¢ÊµÏÖµÄÃ÷ÐÇ£¬¸ù¾Ý¶Ô¸÷¸ö³§ÉÌµÄ¹Û²ì£¬´ó²¿·Ö¶¼Ñ¡È¡Ceph×÷Îª×Ô¼ºµÄ´æ´¢ºó±¸£¬°üÀ¨Cisco£¬Mirantis£¬eNovance£¬Piston£¬Intel£¬DellµÈµÈ
+CephÓÐ¸ü³ÉÊìµÄblock½Ó¿ÚºÍOpenstackµÄ¼¯³É£¬GlusterfsÓÐ¸üºÃµÄÎÄ¼þÏµÍ³½Ó¿Ú
+ÔÚOpenStackµ±ÖÐ£¬KVMÖ§³Ö¿é´æ´¢Ç¨ÒÆ
+
+SwiftÔÚÐ¡ÎÄ¼þ¶ÔÏó£¨ÈçÍ¼Ïñ£©´æ´¢ÉÏ£¬ÐÔÄÜºÜºÃ
+
+CephÓÃC++±àÐ´¶øSwiftÓÃPython±àÐ´£¬ÐÔÄÜÉÏÓ¦µ±ÊÇCephÕ¼ÓÅ¡£µ«ÊÇÓëCeph²»Í¬£¬Swift×¨×¢ÓÚ¶ÔÏó´æ´¢£¬×÷ÎªOpenStack×é¼þÖ®Ò»¾­¹ý´óÁ¿Éú²úÊµ¼ùµÄÑéÖ¤£¬ÓëOpenStack½áºÏºÜºÃ£¬Ä¿Ç°²»ÉÙÈËÊ¹ÓÃCephÎªOpenStackÌá¹©¿é´æ´¢£¬µ«ÈÔ¾ÉÊ¹ÓÃSwiftÌá¹©¶ÔÏó´æ´¢¡£
+
+
+OpenStackÉÏ×î³£ÔËÐÐµÄÓ¦ÓÃÒÀ´ÎÎªWeb·þÎñ¡¢QA²âÊÔ»·¾³¡¢Êý¾Ý¿â¡¢¿ÆÑÐÆ½Ì¨¡¢³ÖÐø¼¯³ÉºÍ×Ô¶¯»¯²âÊÔÏµÍ³¡¢´æ´¢±¸·ÝÏµÍ³¡¢ÐéÄâ×ÀÃæ¡¢Êý¾ÝÍÚ¾òºÍ´óÊý¾Ý´¦Àí¡¢¹ÜÀí¼à¿ØÏµÍ³¡¢¸ßÐÔÄÜ¼ÆËã¡£
+ÔÚOpenStack²¿Êð¹¤¾ßµ±ÖÐ£¬Ê¹ÓÃPuppetµÄ×î¶à£¬Ö®ºóÒÀ´ÎÊÇDevStack¡¢Chef¡¢PackStackÒÔ¼°CrowbarºÍSaltStack¡£
+
+°´ÕÕ²¿ÊðÀàÐÍ»®·Ö£¬ÓÐ60%µÄOpenStack²¿Êð¶¼ÊÇ×÷ÎªÆóÒµÄÚ²¿Ë½ÓÐÔÆ£¬»¹ÓÐ17%ÊÇÍÐ¹ÜµÄË½ÓÐÔÆ¡£¹«¹²ÔÆ²¿ÊðÕ¼15%£¬»ìºÏÔÆ²¿ÊðÕ¼6%£¬Ê£ÏÂµÄ2%ÊÇÓÃÓÚÎ¬»¤OpenStackÉçÇø×ÔÉíÔË×÷µÄ¡£
+
+´ÓHost OSÀ´¿´£¬ÓÐ55%µÄUbuntu£¬24%µÄCentOS£¬10%µÄRHEL¡£´ÓÐéÄâ»¯À´¿´£¬ÓÐ62%µÄKVM£¬12%µÄXEN£¬8%µÄESX£¬ÁíÍâ»¹ÓÐXenserver£¨4%£©¡¢HyperV£¨3%£©¡¢LXC£¨4%£©¡¢QEMU£¨5%£©¡¢Âã½ðÊô£¨2%£©ÒÔ¼°OpenVZ£¨1%£©¡£
+
+ÍøÂçµÄÊ¹ÓÃÇé¿öÊÇ42%µÄOpen vSwitch£¬28%µÄLinux Bridge£¬10%µÄCisco£¬6%µÄNicira¡£´æ´¢µÄÊ¹ÓÃÇé¿öÊÇ31%µÄLVM£¬17%µÄCeph£¬16%µÄNFC¡£
+Ä¿Ç°Ceph¹Ù·½ÍÆ¼öXFS×÷Îªµ×²ãÎÄ¼þÏµÍ³
+

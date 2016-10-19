@@ -1,0 +1,398 @@
+20160113
+0.9版本新的consumer，
+可以手动控制消息是否已经提交(消费)
+props.put("enable.auto.commit", "false");
+      consumer.commitSync();
+ 手工指定消费特定partition
+  String topic = "foo";
+     TopicPartition partition0 = new TopicPartition(topic, 0);
+         consumer.assign(partition0);     
+可以指定offset  seek(TopicPartition, long) 
+当客户端同时消费多个partition的时候，可以控制某个partition先暂停接受消息   pause(TopicPartition...) and resume(TopicPartition...)           
+
+kfaka  2010年12月份开源
+测试环境
+
+    Intel Xeon 2.5 GHz processor with six cores
+    Six 7200 RPM SATA drives
+    32GB of RAM
+    1Gb Ethernet 
+    
+    0.8版本下，producer缺省使用 producer send() request blocks until the messages sent is committed to the active replicas
+    The consumer has been moved to a "long poll" model where fetch requests block until there is data available
+    offset变成逻辑的0,1,3递增
+    producer和consumer不需要和zookeeper发生联系了
+    鼓励使用一个大的topic然后不同group的方式
+    
+Producer
+ 
+Setup
+bin/kafka-topics.sh --zookeeper localhost:2181 --create --topic test-rep-one --partitions 6 --replication-factor 1
+bin/kafka-topics.sh --zookeeper localhost:2181 --create --topic test --partitions 6 --replication-factor 3
+ 
+Single thread, no replication
+ 
+bin/kafka-run-class.sh org.apache.kafka.clients.tools.ProducerPerformance test7 50000000 100 -1 acks=1 bootstrap.servers=esv4-hcl198.grid.linkedin.com:9092 buffer.memory=67108864 batch.size=8196
+ 
+Single-thread, async 3x replication
+ 
+bin/kafktopics.sh --zookeeper localhost:2181 --create --topic test --partitions 6 --replication-factor 3
+bin/kafka-run-class.sh org.apache.kafka.clients.tools.ProducerPerformance test6 50000000 100 -1 acks=1 bootstrap.servers=esv4-hcl198.grid.linkedin.com:9092 buffer.memory=67108864 batch.size=8196
+ 
+Single-thread, sync 3x replication
+ 
+bin/kafka-run-class.sh org.apache.kafka.clients.tools.ProducerPerformance test 50000000 100 -1 acks=-1 bootstrap.servers=esv4-hcl198.grid.linkedin.com:9092 buffer.memory=67108864 batch.size=64000
+ 
+Three Producers, 3x async replication
+bin/kafka-run-class.sh org.apache.kafka.clients.tools.ProducerPerformance test 50000000 100 -1 acks=1 bootstrap.servers=esv4-hcl198.grid.linkedin.com:9092 buffer.memory=67108864 batch.size=8196
+ 
+Throughput Versus Stored Data
+ 
+bin/kafka-run-class.sh org.apache.kafka.clients.tools.ProducerPerformance test 50000000000 100 -1 acks=1 bootstrap.servers=esv4-hcl198.grid.linkedin.com:9092 buffer.memory=67108864 batch.size=8196
+ 
+Effect of message size
+ 
+for i in 10 100 1000 10000 100000;
+do
+echo ""
+echo $i
+bin/kafka-run-class.sh org.apache.kafka.clients.tools.ProducerPerformance test $((1000*1024*1024/$i)) $i -1 acks=1 bootstrap.servers=esv4-hcl198.grid.linkedin.com:9092 buffer.memory=67108864 batch.size=128000
+done;
+ 
+Consumer
+Consumer throughput
+ 
+bin/kafka-consumer-perf-test.sh --zookeeper localhost:2181 --messages 50000000 --topic test --threads 1
+ 
+3 Consumers
+ 
+On three servers, run:
+bin/kafka-consumer-perf-test.sh --zookeeper localhost:2181 --messages 50000000 --topic test --threads 1
+ 
+End-to-end Latency
+ 
+bin/kafka-run-class.sh kafka.tools.TestEndToEndLatency esv4-hcl198.grid.linkedin.com:9092 localhost:2181 test 5000
+ 
+Producer and consumer
+ 
+bin/kafka-run-class.sh org.apache.kafka.clients.tools.ProducerPerformance test 50000000 100 -1 acks=1 bootstrap.servers=esv4-hcl198.grid.linkedin.com:9092 buffer.memory=67108864 batch.size=8196
+ 
+bin/kafka-consumer-perf-test.sh --zookeeper localhost:2181 --messages 50000000 --top
+
+Single producer thread, no replication
+821,557 records/sec
+(78.3 MB/sec)
+Single producer thread, 3x asynchronous replication
+786,980 records/sec
+(75.1 MB/sec)
+Single producer thread, 3x synchronous replication
+421,823 records/sec
+(40.2 MB/sec)
+Three producers, 3x async replication
+2,024,032 records/sec
+(193.0 MB/sec)
+Single Consumer
+940,521 records/sec
+(89.7 MB/sec)
+Producer and Consumer
+795,064 records/sec
+(75.8 MB/sec)
+
+End-to-end Latency
+2 ms (median)
+3 ms (99th percentile)
+14 ms (99.9th percentile)
+
+消费都是以partition为基础的，一个partition保证只有一个consumer消费,并且保证同一个partition的消息顺序消费
+每个partition也是由某个broker负责，同时实现复制
+同一个group里面的consumer消费同一topic所有的partition(实现jms queue功能)，不同的group消费同一个topic(实现jms topic功能)
+每一个partition有一个leader，有几个follower,如果follower和leader保持同步，则属于in-sync replicas
+
+性能好是因为利用了OS的cache page，同时利用了File的顺序读写能力超强以及socket的sendFile功能避免了数据在kernel和user space copy，
+使用了page cache而不是in process page是避免同一cache 多处存在
+同时大量利用batch 操作整合小的io到大io以及多个消息batch poll的方式,以及consumer poll的方式来实现性能加速，同时由OS来实现对多个Io操作的合并和OS的预取，达到更好地性能
+同时consumer也能在没有消息的时候poll等待到有消息到来再返回，避免没有消息而多次request的性能损失
+所有broker的信息，partition的信息，consumer的信息以及consumer消费的消息位置都放在zookeeper上，一般3个zk就够
+consumer可以reset 消息处理的位置，就能实现消息的replay
+
+复制的分数包含 leader 的分数，follower 也是poll的方式从broker同步消息
+提交消息的时候，只有所有的in-sync broker都确认了，才算消息提交
+同步发送消息那么复制的消息必须写到follower的内存中(没有写到follower的logfile)，leader然后commit,然后ack给procedure,异步的话，只要写到leader的log就行了
+
+当leader crash的时候，会有一个in-sync的replica broker来升级成leader，如果没有，最先起来的变成leader
+会有一个controller 来处理crash的broker上的partition的重新分配问题
+log compaction是对重复出现的消息只保留最后一条修改记录
+
+当同一个consumer group出现consumer变化的时候或者broker数量出现变化的时候，就会trigger consumer rebalance 
+增加topic partition数量，不会导致历史数据出现迁移
+添加新的server的时候，已有的topic的partition也不会自动迁移到新的partition上，除非创建新的topic 
+
+生产系统配置建议
+zookeeper 建议3-5G ram
+使用raid
+使用缺省的flush设置使用OS的flush机制来实现IO，而不是应用程序的设置，通常认为replication比OS写文件更靠谱
+
+jvm 设置
+-Xms3g -Xmx3g -XX:NewSize=256m -XX:MaxNewSize=256m -XX:+UseConcMarkSweepGC -XX:+UseParNewGC -XX:CMSInitiatingOccupancyFraction=30 
+-XX:+UseCMSInitiatingOccupancyOnly -XX:+CMSConcurrentMTEnabled -XX:+CMSScavengeBeforeRemark -XX:+PrintGCDetails -XX:+PrintGCDateStamps 
+-XX:+PrintTenuringDistribution -Xloggc:logs/gc.log
+
+kafka使用同步方式发送能够捕获错误，从而re-try
+
+启动 zookeeper  一般用5个zookeeper 
+bin/zookeeper-server-start.sh config/zookeeper.properties &
+启动 kafka 
+bin/kafka-server-start.sh config/server3.properties &
+创建replica的topic 
+bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 3 --partitions 8 --topic my-replicated-topic3
+检查topic状态
+bin/kafka-topics.sh --describe --zookeeper localhost:2181 --topic my-replicated-topic3
+删除topic,慎用，只会删除zookeeper中的元数据，消息文件须手动删除
+bin/kafka-run-class.sh kafka.admin.DeleteTopicCommand --zookeeper  localhost:2181 --topic my-replicated-topic3  
+消费消息
+bin/kafka-console-consumer.sh --zookeeper localhost:2181 --topic my5 
+检查consumer 位置
+ bin/kafka-run-class.sh kafka.tools.ConsumerOffsetChecker --zkconnect localhost:2181 --group myGroup --topic my4
+导出当前consumer位置
+ bin/kafka-run-class.sh kafka.tools.ExportZkOffsets --zkconnect localhost:2181 --group myGroup  --output-file out.txt
+导如当前consumer位置
+ bin/kafka-run-class.sh kafka.tools.ImportZkOffsets --zkconnect localhost:2181   --input-file out.txt
+
+测试环境 132/136/134
+/ciccdev/kafka
+
+kafka 配置文件
+broker.id=7
+port=9092 
+num.network.threads=2                                            
+num.io.threads=8                                                 
+log.dirs=/tmp/kafka-logs 
+num.partitions=2 
+zookeeper.connect=192.168.193.132:2181,192.168.193.134:2181,192.168.193.136:2181
+
+zookeeper配置文件
+tickTime=2000
+initLimit=5                                                      
+syncLimit=2                                                      
+server.1=192.168.193.132:2182:3181                               
+server.2=192.168.193.134:2182:3181                               
+server.3=192.168.193.136:2182:3181                               
+                                       
+服务器及客户端hosts文件                                       
+192.168.193.136 bjnpdt01 bjnpdt01.site
+192.168.193.134 bjnpif01.site bjnpif01
+192.168.193.132       bjnppb01.site bjnppb01
+
+
+broker断掉的时候，会迅速被另外一个同一个replica组的broker接管，如果该组broker都crash，则leader=-1
+当broker重新起来后，也会被分配去接管未被接管的partition
+一个group的consumer关闭后，会被另外一个consumer接管
+能保证partition均匀的分配到consumer
+procedure连接的broker只是获取metadata用的
+如果没有key，或者使用缺省的partition方式，则可能所有消息都到某一个partition(维持10分钟)
+每一个consumer connector对每一个topic会使用一个内部的queue来分发消息，而且一个broker只会有一个连接(fetcher)来对该broker上的所有
+topic读取，所以如果某个topic消费的很慢，会导致fetcher无法写入到内部的queue从而影响其他的topic的consumer 
+所以建议 为不同的topic 使用不同的consumer connector
+通过设置  advertised.host.name and advertised.port 来改变连接对外的服务地址
+建议使用一个较大的topic而不是多个小的topic 
+建议在同一个consumer connector 里面使用多线程的方式来消费topic
+尽量使用干净的关闭方式来关闭客户端，以便记录 offset 
+
+当异步发送的时候，只保证写到leader的logfile(不一定fsync)，如果同步发送，则会写到所有的ISR的follower上，
+为了保证性能当follower收到数据写到在内存后，就ack给leader 
+复制的时候，leader先写到logfile，然后follower通过socket读取logfile来同步
+读写的时候，都是从leader访问,follower只是用来保证高可用
+
+如果消费者已经连接过，那么及时断掉在重新连接上，在断开期间发送的消息任然有效，连上后可以收到
+
+bin/kafka-console-consumer.sh --zookeeper localhost:2181 --topic my-replicated-topic3 --group g1 
+                                       
+
+
+测试时候，需要把server ip地址加到客户端去，不然会报错(kafka Failed to send messages after 3 tries 问题解决，配置上log4j之后能看出来问题)
+procedure同步发送的时候，速度降为原来的1/5
+使用kafka.javaapi.producer.Producer 的时候，客户端异步情况下4700 message/s ，同步时只有980 messgae/s
+
+9个server,复制份数3份,4个异步发送线程 22735 messgae/s
+
+
+
+
+export KAFKA_HEAP_OPTS="-Xms4g -Xmx4g -XX:PermSize=48m -XX:MaxPermSize=48m -XX:+UseG1GC -XX:MaxGCPauseMillis=20 -XX:InitiatingHeapOccupancyPercent=35"   
+
+
+Zookeeper的核心是原子广播，这个机制保证了各个Server之间的同步。实现这个机制的协议叫做Zab协议。Zab协议有两种模式，它们分别是恢复模式（选主）和广播模式（同步）。当服务启动或者在领导者崩溃后，Zab就进入了恢复模式，当领导者被选举出来，且大多数Server完成了和leader的状态同步以后，恢复模式就结束了。状态同步保证了leader和Server具有相同的系统状态。
+
+为了保证事务的顺序一致性，zookeeper采用了递增的事务id号（zxid）来标识事务。所有的提议（proposal）都在被提出的时候加上了zxid。实现中zxid是一个64位的数字，它高32位是epoch用来标识leader关系是否改变，每次一个leader被选出来，它都会有一个新的epoch，标识当前属于那个leader的统治时期。低32位用于递增计数。
+
+每个Server在工作过程中有三种状态：
+
+    LOOKING：当前Server不知道leader是谁，正在搜寻
+
+    LEADING：当前Server即为选举出来的leader
+
+    FOLLOWING：leader已经选举出来，当前Server与之同步
+    
+    gradle 配置 proxy
+    systemProp.http.proxyHost=192.168.8.26
+    systemProp.http.proxyPort=8080
+    
+    安装performance tool
+    下载source 包，解压后，执行 gradlew  然后 ./gradlew jar_core_2_9_2
+    
+    
+    
+4. kafka性能测试命令用法：
+4.1 创建topic
+bin/kafka-topics.sh --zookeeper localhost:2182,192.168.2.225:2183/config/mobile/mq/mafka02 --create --topic test-rep-one --partitions 6 --replication-factor 1
+
+
+4.2 kafka-producer-perf-test.sh中参数说明：
+messages	生产者发送总的消息数量
+message-size	每条消息大小
+batch-size	每次批量发送消息的数量
+topics	生产者发送的topic
+threads	生产者使用几个线程同时发送
+broker-list	安装kafka服务的机器ip:port列表
+producer-num-retries	一个消息失败发送重试次数
+request-timeout-ms	一个消息请求发送超时时间
+4.3 bin/kafka-consumer-perf-test.sh中参数说明：
+zookeeperzk	配置
+messages	消费者消费消息总数量
+topic	消费者需要消费的topic
+threads	消费者使用几个线程同时消费
+group	消费者组名称
+socket-buffer-sizesocket	缓冲大小
+fetch-size	每次向kafka broker请求消费大小
+consumer.timeout.ms	消费者去kafka broker拿去一条消息超时时间
+
+
+  props.put("queue.buffering.max.ms", "100");
+  props.put("queue.buffering.max.messages", "100");
+  props.put("batch.num.messages", 100"");
+ 3 replica  8 partitions    发送 100,000消息
+1procedure no consumer async           16505 
+1procedure 1 consumer async   					 16388 接收约6k
+2procedure 2 consumer async   					 38724 接收约13k
+4procedure 4 consumer async    				   82335 接收约10k-60k
+8procedure 8 consumer async    			 	  144084
+
+
+1procedure 1  consumer  sync    					  8498  接收约6k
+2procedure 2  consumer  sync    					 11310 
+4procedure 4  consumer  sync    					 26508 接收约3-13k
+8procedure 8  consumer  sync   						 48123 接收约3-13k
+
+  props.put("queue.buffering.max.ms", "10");
+  props.put("queue.buffering.max.messages", "1");
+  props.put("batch.num.messages", "1");
+8 procedure no consumer  sync    				30822
+ 
+ 
+ 3 replica  64  partitions  发送 100,000消息  
+1procedure no consumer async             4449 
+1procedure 1 consumer async   					 4449 单线程接收约5k
+2procedure 2 consumer async   					 8684 单线程接收约4.6k
+4procedure 4 consumer async    				   17595 单线程接收约2k-4.6k
+8procedure 8 consumer async    			     27640 单线程接收约2k-4.6k
+16procedure 16 consumer async    			   24548 单线程接收约2k 
+ 
+ 
+MQ 5.10  Async 发送 100,000消息
+
+topic 1个发送线层，无接受线程 NON_PERSISTENT  发送 70224 
+topic 2个发送线层，无接受线程 NON_PERSISTENT  发送 78402 
+topic 4个发送线层，无接受线程 NON_PERSISTENT  发送 86203 
+topic 8个发送线层，无接受线程 NON_PERSISTENT  发送 94733
+topic 1个发送线层，1接受线程 NON_PERSISTENT   发送 15236 单线程接收约8k-30k
+topic 2个发送线层，2接受线程 NON_PERSISTENT   发送 16711 单线程接收约8k-30k
+topic 4个发送线层，4接受线程 NON_PERSISTENT   发送 15789 单线程接收约 15k
+topic 8个发送线层，8接受线程 NON_PERSISTENT   发送 12245 单线程接收约 10k
+
+MQ 5.10 async 发送 100,000消息,配置为2个MQ为cluster(network of brokers)
+topic 1个发送线层，1接受线程 NON_PERSISTENT   发送 15236 单线程接收约8k-30k  从132发，从134收
+topic 1个发送线层，2接受线程 NON_PERSISTENT   发送 15598 单线程接收约2k  从132发，从134/132收
+topic 2个发送线层，2接受线程 NON_PERSISTENT   发送 18457 单线程接收约2k   从132发，从134/132收
+
+topic 2个发送线层，2接受线程 NON_PERSISTENT   发送 1529 单线程接收约2k  从132收发，从134收发
+topic 4个发送线层，4接受线程 NON_PERSISTENT   发送  ***    单线程接收约0.3k  从132收发，从134收发  MQ直接Hang了...
+
+
+
+ 
+
+MQ 5.10   sync 发送 100,000消息
+topic 2个发送线层，无接受线程 NON_PERSISTENT  发送 75038 
+topic 4个发送线层，无接受线程 NON_PERSISTENT  发送 97038 
+topic 8个发送线层，无接受线程 NON_PERSISTENT  发送 98757
+topic 1个发送线层，1接受线程 NON_PERSISTENT   发送 5351 单线程接收约1k-15k
+topic 2个发送线层，2接受线程 NON_PERSISTENT   发送 17438 单线程接收约20k
+topic 4个发送线层，4接受线程 NON_PERSISTENT   发送 15465 单线程接收约 13k
+topic 8个发送线层，8接受线程 NON_PERSISTENT   发送 11437 单线程接收约 11k
+
+
+
+
+连续发连续收，单线程consumer能到50-100k /s 
+如果消息已经发送，直接收取，能到500k-600k /s
+延迟测试，1个消息 大概200ms,10个100ms,100个10ms,1000个message 3ms
+如果要把延迟降低，则把procedure的batch size降低
+
+4个线程发送，1个线程接受 发送101715/s 接受40k-70k，延迟11ms
+4个线程发送，4个线程接受 发送101715/s 接受单线程20k-30k，延迟11ms
+
+
+
+
+bin/kafka-consumer-perf-test.sh --zookeeper localhost:2181  --messages 50000000 --topic my-replicated-topic2 --threads 1
+
+error 
+kafka.common.ConsumerRebalanceFailedException can't rebalance after 4 retries
+如果没有正常关闭客户端，在zookeeper.session.timeout.ms之内，可能会出现这个错误，
+超过zookeeper.session.timeout.ms就会，就没有问题了
+
+
+bin/kafka-preferred-replica-election.sh 
+moves 2 topics (foo1, foo2) to newly added brokers in a cluster (5,6,7)
+bin/kafka-reassign-partitions.sh --topics-to-move-json-file topics-to-move.json --broker-list "1,2,3" --execute --zookeeper localhost:2181
+cat topics-to-move.json
+{"topics":
+     [{"topic": "my5"}],
+     "version":1
+}
+ 
+
+
+
+moves 1 partition (foo-1) from replicas 1,2,3 to 1,2,4
+ bin/kafka-reassign-partitions.sh --reassignment-json-file  move.json --execute --zookeeper localhost:2181
+ 
+nnarkhed$ cat partitions-to-move.json
+{"partitions":                         
+ [{"topic": "my5",
+ 		"partition": 6,                     
+ 		 "replicas": [1,2,3] }],
+ 		 "version":1
+}         
+
+
+
+
+{"version":1,"partitions":[{"topic":"my5","partition":7,"replicas":[4,9,1]},
+													{"topic":"my5","partition":1,"replicas":[7,3,4]},
+													{"topic":"my5","partition":5,"replicas":[1,2,3]},
+													{"topic":"my5","partition":3,"replicas":[9,5,6]},
+													{"topic":"my5","partition":2,"replicas":[8,4,5]},
+													{"topic":"my5","partition":6,"replicas":[3,8,9]},
+													{"topic":"my5","partition":0,"replicas":[6,2,3]},
+													{"topic":"my5","partition":4,"replicas":[1,6,7]}
+													]
+}
+
+
+{"controller_epoch":11,"leader":6,"version":2,"leader_epoch":33,"isr":[]}
+不work，直接set zookeeper data
+set /brokers/topics/my5/partitions/6/state {"controller_epoch":11,"leader":2,"version":2,"leader_epoch":33,"isr":[]}
+
+
+set  /brokers/topics/my5 {"version":1,"partitions":{4:[1,6,7],5:[1,4,6],6:[1,4,6],1:[7,3,4],0:[6,2,3],2:[8,4,5],7:[4,9,1],3:[9,5,6]}}

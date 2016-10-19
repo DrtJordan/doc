@@ -1,0 +1,279 @@
+AKKA
+有不同的 message  queue ,FIFO/Priority/
+支持监控失败
+远程支持tcp/udp 
+
+同一台机器 远程访问 ，每秒能收到约100万左右的消息
+
+异步 servlet获得请求，然后通过 request Acotr(路由actor)来调用各种服务实现请求，对数据库的访问采用独立的actor来实现，以免阻塞
+
+The language tradeoff is straightforward: it's cheaper and easier to find JS programmers to *create* a Node application, 
+but the bigger and more complex the system, the worse it is to maintain.  Scala scales far better, by design, and it is much easier in the long run to manage a big, complex system written in it.  
+
+a) if your system is very transactional (example a shopping cart, use play / grails and mysql). Note play comes in java and scala flavors.
+b) if your system is not so transactional (example a blog or game), use node.js / express.js and mongoDB
+
+
+尽量减少切换 context,保证性能
+在workstation上，单jvm 每秒能传输 5million消息到Actor(不创建新的actor的情况下) 如果每次创建 新的Actor ，则下降到200万左右 
+用两个独立的actor创建
+
+每个 actor instance 大概需要500Byte
+
+不保证一定传输，保证顺序
+actor模型和对象比较相似，但是设计的时候就是并发的
+
+An actor can subscribe to class akka.actor.DeadLetter 只能接受本地jvm的deadletter
+注册接受deadletter 
+public class DeadLetterActor extends UntypedActor {
+public void onReceive(Object message) {
+if (message instanceof DeadLetter) {
+System.out.println(message);
+}
+}
+}
+final ActorRef actor = system.actorOf(Props.create(DeadLetterActor.class));
+system.eventStream().subscribe(actor, DeadLetter.class);
+
+resume->actor内部状态会保留，消息从失败的消息后接着处理
+restart->actor内部状态不保留，消息从失败的消息后接着处理
+stop->直接停止
+escalate->重启actor，状态不保留，失败消息不重新发送
+缺省处理策略
+When the supervisor strategy is not defined for an actor the following exceptions are handled by default:
+? ActorInitializationException will stop the failing child actor
+? ActorKilledException will stop the failing child actor
+? Exception will restart the failing child actor
+? Other types of Throwable will be escalated to parent actor
+
+
+配置文件查找顺序
+application.conf, application.json and application.properties
+
+
+只能通过 ActorRef 来访问 
+ 
+! (“tell”) – sends the message and returns immediately  快
+? (“ask”) – sends the message and returns a Future representing a possible reply  要跟踪很多信息，慢
+forward message保存原始的发件人等信息 
+target.forward(result, getContext()); 
+停止actor context().stop(child);     ActorSystem.terminate 这个保证停止  
+也可以用这个方法 myActor.tell(akka.actor.PoisonPill.getInstance(), sender);  和正常消息一样，会被停止 
+victim.tell(akka.actor.Kill.getInstance(), ActorRef.noSender());  会 throw ActorKilledException, triggering a failure
+
+使用ask方法 ，会临时创建一个actor用来接受返回消息，有返回或者超时后 Await返回
+
+Duration timeout = Duration.create(5, SECONDS);
+			final Future<Object> future = akka.pattern.Patterns.ask(worker, 1, 3000);
+			Integer returnMsg=(Integer)Await.result(future, timeout);
+		
+设置 receive timeout 
+getContext().setReceiveTimeout(Duration.create("30 seconds"));
+
+hot swap 
+ getContext().become(happy);  还原  getContext().unbecome();
+ stash把当前消息暂停起来不处理(stash  the current message)   unstashAll(); 重新打开处理   
+
+使用 ActorSystem 创建的是top level object,使用  actor’s context will create a child actor 
+final ActorRef myActor = system.actorOf(Props.create(MyUntypedActor.class),"myactor");
+final ActorRef child =getContext().actorOf(Props.create(MyUntypedActor.class), "myChild");  //using an actor’s context will create a child actor
+
+可以通过inbox直接发送给某个target,然后收到消息 就是对ask的包装
+final Inbox inbox = Inbox.create(system);
+inbox.send(target, "hello");
+try {
+assert inbox.receive(Duration.create(1, TimeUnit.SECONDS)).equals("world");
+} catch (java.util.concurrent.TimeoutException e) {
+// timeout
+}
+
+选择已经有的actor 
+getContext().actorSelection(member.address() + "/user/frontend");
+ ActorSelection service = getContext().actorSelection(address + servicePath);   
+getContext().actorSelection("akka.tcp://app@otherhost:1234/user/serviceB");
+
+BalancingDispatcher 只分发到idle的actor里面 但是SmallestMailboxRouter发送给消息最少的actor ,不管他是不是在忙
+BalancingDispatcher makes its decision on which Actor gets the message at message processing time, the SmallestMailboxRouter makes its decision on which Actor gets the message at message delivery time.
+
+配置文件需要加到 classpath里面
+
+当前正在处理的消息，如果出现异常，当前消息丢失 到deadletter 
+发送的时候，如果远程actor crash了，也会导致改消息丢掉，直到cluster member更新后才会不往crash的actor发送消息
+重启actor会产生一个新的actor instance,但是对外的actorref不变  
+重启的时候 constructor 每次都会被调用  preStart() 缺省也是restart会被postRestart(),调用，可以覆盖 postRestart() 实现只在第一次调用
+
+TypedActors 有自己的静态构造函数
+Typed Actor Model is used in order to define strict contracts for actors that can respond to only the predefined set of messages. In this case, every message need not be encapsulated as one object; typed actors allow us to define separate methods that accept multiple inputs as defined by the contract. In Java parlance, typed actors provide the Java interface in the object-oriented world
+If your implementation class of your TypedActor extends akka.actor.TypedActor.Receiver, all messages
+that are not MethodCall instances will be passed into the onReceive-method.
+
+DIspatcher支持 fork-join 
+
+Mailbox Type  UnboundedMailbox/SingleConsumerOnlyUnboundedMailbox/NonBlockingBoundedMailbox/UnboundedControlAwareMailbox/UnboundedPriorityMailbox/UnboundedStablePriorityMailbox
+
+persisten t的时候，在persisten完成之前，不会处理新消息，都会stash起来 而 persistenAsync则在persistent返回之前也会进来新的消息
+persisten也是异步炒作，成功后回调处理函数  
+支持几个消息一起 atomic 持久，异步持久的时候也支持 batch 
+可以在snapshot之后做一个 deletemessage操作
+在使用持久化的时候，建议用显示的消息来关闭自己（if (msg instanceof Shutdown) {
+context().stop(self());），而不是通过 kill/poisonpill来自动处理，避免丢消息
+
+使用UntypedPersistentActorWithAtLeastOnceDelivery保证消息至少传递一次或者多次，不保证顺序，如果重启的话
+在这种情况下，dest actor需要发送confirm信息，src actor收到confirm后，需要调用确认api，这样在重启的时候，没有确认的消息会再次发送出去 通过消息ID来关联
+
+cluster环境下，配置的第一个 seednode必须先启动后才能开始cluster的init， 之后就不用了，只要有活动的node就行
+可以控制一个集群里面至少几个节点起来之后才能用 
+akka.cluster.role {
+frontend.min-nr-of-members = 1
+backend.min-nr-of-members = 2
+}
+
+支持cluster级别的 singleton 支持cluster wide sharding
+singleton会有split brain的情况
+cluster环境下，只要有一个节点检测到有节点crash,crash的节点就自动从集群移除，但是该crash节点如果起来，则需要所有观察到该crash节点的节点都确认ok后，才会up
+通过心跳信息来检查
+
+
+订阅cluster事件
+Cluster cluster = Cluster.get(getContext().system());
+public void preStart() {
+cluster.subscribe(getSelf(), MemberUp.class);
+}
+
+
+Router 相当于一个proxy来分发message,有 RoundRobinRoutingLogic /RandomRoutingLogic/SmallestMailboxRoutingLogic/BroadcastRoutingLogic/ScatterGatherFirstCompletedRoutingLogic/TailChoppingRoutingLogic/ConsistentHashingRoutingLogic
+如果把分发逻辑集成到 ActorRef 性能会更好
+
+route可以和集群一起用，也可以单独用 像这样
+akka.actor.deployment {
+/parent/remotePool {
+router = round-robin-pool
+nr-of-instances = 10
+target.nodes = ["akka.tcp://app@10.0.0.2:2552", "akka://app@10.0.0.3:2552"]
+}
+}
+
+routers 有两种 group  通过selection选择远程的actor,actor可以再不同的router共享
+ Pool  router自己创建 actor(routee) 不能在router之间共享
+ 使用 router ,pool 方式
+akka.actor.deployment {
+/parent/router1 {
+router = round-robin-pool
+nr-of-instances = 5
+}
+}
+ActorRef router1 =
+getContext().actorOf(FromConfig.getInstance().props(Props.create(Worker.class)), 
+"router1");
+会自动启动routee ,新的节点加进去，也会自动启动 routee
+
+使用router ,group方式
+akka.actor.deployment {
+  /statsService/workerRouter {
+    router = consistent-hashing-group
+    routees.paths = ["/user/statsWorker"]
+    cluster {
+      enabled = on
+      allow-local-routees = on
+      use-role = compute
+      min-nr-of-instances-per-node = 3
+    }
+  }
+  
+     system.actorOf(Props.create(StatsWorker.class), "statsWorker");  //需要人工启动 routee
+      system.actorOf(Props.create(StatsService.class), "statsService");
+      
+
+直接有 router1.tell的方式消息就会Roundround到各个routee  ，actor启动的时候，会自动注册到router的routee上，如果crash，会自动删除
+
+public void onReceive(Object msg) {
+if (msg instanceof Work) {
+router.route(msg, getSender());
+} else if (msg instanceof Terminated) {
+router = router.removeRoutee(((Terminated) msg).actor());
+ActorRef r = getContext().actorOf(Props.create(Worker.class));
+getContext().watch(r);
+router = router.addRoutee(new ActorRefRoutee(r));
+}
+}
+
+ 
+ 支持pub/sub方式.... 也支持 point to point like MQ
+ 订阅 对于同一节点的所有subscriber只发送一次，然后内部分发
+ ActorRef mediator =
+DistributedPubSub.get(getContext().system()).mediator();
+mediator.tell(new DistributedPubSubMediator.Subscribe("content", getSelf()),
+getSelf());
+
+发送到topic 
+mediator.tell(new DistributedPubSubMediator.Publish("content", out),
+getSelf());
+
+ 点对点发送 ，像多consumer的queue
+ 注册
+ mediator.tell(new DistributedPubSubMediator.Put(getSelf()), getSelf()); 
+ 发送
+ mediator.tell(new DistributedPubSubMediator.Send("/user/destination", out,
+localAffinity), getSelf());
+ 
+ clusterClient支持从akka cluster外部发送消息到集群里面，发送到注册到DistributedPubSubMediator上的actor  ,如果集群内部广布消息，用 distruibte pub/sub效率更高
+ 可以使用 Hyperic Sigar 来更好的采集 性能信息  Sigar is using a native o/s library
+ 
+ 
+ 
+ 支持 Adaptive Load Balancing  ， 能够根据jvm heap/cpu/或者混合来分发任务
+ 配置为远程deploy  actor 
+ akka {
+actor {
+deployment {
+/sampleActor {
+remote = "akka.tcp://sampleActorSystem@127.0.0.1:2553"
+}
+}
+}
+}
+  
+可以配置为 untrust模式，远程发过来的一些指令 比如kill之类的就不会执行 
+也可以配置使用protobuffer作为 serializer  用pb的类，工作正常
+
+
+actor {
+serializers {
+java = "akka.serialization.JavaSerializer"
+proto = "akka.remote.serialization.ProtobufSerializer"
+myown = "docs.serialization.MyOwnSerializer"
+}
+} 
+定义使用了抽象类或者接口的类使用这个serializer
+serialization-bindings {
+	"com.cicc.pta.TradeMessage" = java
+	"com.google.protobuf.Message" = proto
+			}
+
+有专门的IO来协助 网络操作
+final ActorRef tcpManager = Tcp.get(getContext().system()).manager( );
+支持udp/multicast
+
+能通过 camel支持很多协议交换 能通过camel接受，也能发送到camel 
+
+akka {
+loggers = ["akka.event.slf4j.Slf4jLogger"]
+loglevel = "DEBUG"
+logging-filter = "akka.event.slf4j.Slf4jLoggingFilter"
+}
+
+akka {
+log-dead-letters = 10
+log-dead-letters-during-shutdown = on
+}
+sl4j 缺省是sync的log
+
+
+Cancellable schedule(scala.concurrent.duration.FiniteDuration initialDelay,
+                     scala.concurrent.duration.FiniteDuration interval,
+                     ActorRef receiver,
+                     java.lang.Object message,
+                     scala.concurrent.ExecutionContext executor,
+                     ActorRef sender)
+                     
+                支持 Circuit Breaker 有个专门的 actor 当 Circuit Breaker 处于open状态时，所有的actor调用都抛出  CircuitBreakerOpenException

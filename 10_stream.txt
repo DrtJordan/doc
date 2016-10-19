@@ -1,0 +1,660 @@
+stream
+declare 
+begin
+for i in 1201..1500 loop
+insert into test.t2 values(i,'1');
+commit;
+end loop;
+end ;
+/
+打印队列里面的信息
+declare 
+v_data ANYDATA;
+begin
+select user_data into v_data from  Aq$str_Source_Queue_Table where MSG_ID='15';
+print_any(v_data);
+print_lcr(v_data);
+end ;
+/
+
+20080402 队列
+可以创建有多个消费者的队列，但是在创建的时候需要指定选项
+buffered message 不支持retentation
+
+Oracle Streams AQ deletes buffered messages once they are propagated to the remote
+sites. If the receiving site fails before these messages are consumed, then these
+messages will be lost. The source site will not be able to resend them. Duplicate
+delivery of messages is also possible.
+ 
+ 你好吗
+ 
+查看queue里面的信息
+select count(*) from aq$str_str_queue_table
+
+打开propgatition的trace 
+ alter system set         event="24040 trace name context forever,level 10" scope=spfile;
+ 
+
+问题，出现错误后，是停止，还是继续？
+test case : 建立 环境，表同步，schema同步，添加rule，删除rule ,出现错误处理，重启试验 subset data 
+remap schema    双向 stream 复制  remap table 
+
+设置传输延迟  dbms_aqadm.alter_propagation_schedule('strmadmin.streams_queue','DEST_DB',
+  destination_queue=>'Q1',latency=>5);
+如果reset dbid of source database,所有的capture工作全部废弃，需要重新同步，然后重新建立 capture
+
+directed networks. 代表通过中间库进行连接
+创建remap table，需要指定schema ,否则就缺省用添加rule的用户  
+
+查看从dml提交到被apply的延迟
+dequeue延迟
+SELECT APPLY_NAME,
+(DEQUEUE_TIME-DEQUEUED_MESSAGE_CREATE_TIME)*86400 LATENCY,
+TO_CHAR(DEQUEUED_MESSAGE_CREATE_TIME,'HH24:MI:SS MM/DD/YY') CREATION,
+TO_CHAR(DEQUEUE_TIME,'HH24:MI:SS MM/DD/YY') LAST_DEQUEUE,
+DEQUEUED_MESSAGE_NUMBER
+FROM V$STREAMS_APPLY_READER;
+apply延迟
+
+SELECT APPLY_NAME,
+(APPLY_TIME-APPLIED_MESSAGE_CREATE_TIME)*86400 LATENCY,
+TO_CHAR(APPLIED_MESSAGE_CREATE_TIME,'HH24:MI:SS MM/DD/YY') CREATION,
+TO_CHAR(APPLY_TIME,'HH24:MI:SS MM/DD/YY') LAST_DEQUEUE
+FROM V$streams_Apply_Server;
+
+确定扫描延迟
+capture延迟
+SELECT CAPTURE_NAME,
+((SYSDATE - CAPTURE_MESSAGE_CREATE_TIME)*86400) LATENCY_SECONDS,
+((SYSDATE - CAPTURE_TIME)*86400) LAST_STATUS,
+TO_CHAR(CAPTURE_TIME, 'HH24:MI:SS MM/DD/YY') CAPTURE_TIME,
+TO_CHAR(CAPTURE_MESSAGE_CREATE_TIME, 'HH24:MI:SS MM/DD/YY') CREATE_TIME
+FROM V$STREAMS_CAPTURE;
+enque延迟
+SELECT CAPTURE_NAME,
+(ENQUEUE_TIME-ENQUEUE_MESSAGE_CREATE_TIME)*86400 LATENCY_SECONDS,
+TO_CHAR(ENQUEUE_MESSAGE_CREATE_TIME, 'HH24:MI:SS MM/DD/YY') CREATE_TIME,
+TO_CHAR(ENQUEUE_TIME, 'HH24:MI:SS MM/DD/YY') ENQUEUE_TIME,
+ENQUEUE_MESSAGE_NUMBER
+FROM V$STREAMS_CAPTURE;
+
+A rule must be in a positive rule set for its rule-based
+transformation to be invoked.
+
+tag是在生成redo的时候产生的，可以在steam三个阶段设置如何 去解释
+
+用 imp STREAMS_INSTANTIATION=y 不好使啊
+
+先准备好capture（就是建立rule)，然后在export/import 
+
+The low-watermark for an apply process is the system change number (SCN) up to
+which all LCRs have been applied.
+The high-watermark for an apply process is the SCN beyond which no LCRs have
+been applied.
+
+
+If a trigger's firing property is set to fire once, then it does not fire in the following
+cases:
+ When a relevant change is made by an apply process
+ When a relevant change results from the execution of one or more apply errors
+using the EXECUTE_ERROR or EXECUTE_ALL_ERRORS procedure in the DBMS_
+APPLY_ADM package
+
+new feature
+性能提高比较好
+
+In addition, a single system-created rule can evaluate to TRUE for DML changes or for
+DDL changes, but not both.
+
+
+stream 不能做到实时 ，但是可以夸平台，夸版本
+
+需要打开force logging
+打开 supplement logging 
+看看DBMS_CAPTURE_ADM.PREPARE_SCHEMA_INSTANTIATION是否自动打开 supplement log
+每个capture 进程可以有自己的logminr data dictionary ，也可以共享一个 
+在build capture的时候，可能自动build一个 data dictionary
+如果在 create capture的时候 不指定start_scn，则共享原来的 data dictionary,如果指定，则生成新的data dictionary
+
+rman在删除archived log的时候，如果还需要做capture，不会被删除
+
+So, if parallelism is set
+to 5, then a capture process uses a total of seven parallel execution servers, assuming
+seven parallel execution servers are available: one reader server, five preparer servers,
+and one builder server.
+
+Make sure the PROCESSES and PARALLEL_MAX_SERVERS 设置合适
+
+
+Streams uses job queues to propagate messages.
+queue可以一对多，多对多，但是对任意两个队列来讲，只能有一个功能
+
+queue to queue and queue to database link 
+
+
+Currently, messaging clients cannot dequeue buffered messages.
+
+A buffered queue is System Global Area (SGA) memory
+associated with a queue.
+
+
+A single apply process can apply user-enqueued messages that originated at multiple
+databases. However, a single apply process can apply captured messages from only
+one source database, because processing these LCRs requires knowledge of the
+dependencies, meaningful transaction ordering, and transactional boundaries at the
+source database.
+
+
+
+
+A capture process does not capture some types of DML and DDL changes, and it does not capture changes made in the SYS,SYSTEM, or CTXSYS schemas.
+
+capture  process 分为local capture 和downstream capture
+You can create multiple queues and
+associate a different capture process with each queue.
+
+如果同时有positive和negatitive  rule，优先计算 negatitive rule.
+
+
+A capture process does not capture the results of DML changes to columns of the
+following datatypes: BFILE, ROWID, and user-defined types (including object types,
+REFs, varrays, nested tables, and Oracle-supplied types).
+
+
+A capture process captures the DDL changes that satisfy its rule sets, except for the
+following types of DDL changes:
+ ALTER DATABASE
+ CREATE CONTROLFILE
+ CREATE DATABASE
+ CREATE PFILE
+ CREATE SPFILE
+ FLASHBACK DATABASE
+
+
+可以在standby redo log里面做capture
+
+当创建downstream的时候，datalink link的名字必须和source的 global name一致
+
+每个并行的capture进程需要10m sga空间
+
+Therefore, a separate queue should be used
+for each capture process that captures changes originating at a particular source
+database.
+
+;
+准备stream 初始环境
+检查数据库是否归档，如果没有，打开归档
+
+1.创建单独的stream用表空间
+create tablespace stream datafile 'C:\ORACLE\PRODUCT\10.2.0\ORADATA\roger\stream01.dbf' size 50m;
+create tablespace stream datafile 'C:\ORACLE\PRODUCT\10.2.0\ORADATA\stream2\stream01.dbf' size 50m;
+
+2.创建stream管理用户
+create user streamadmin identified by ftp123 default tablespace stream;
+BEGIN
+  DBMS_STREAMS_AUTH.GRANT_ADMIN_PRIVILEGE(
+   grantee => 'streamadmin',
+   grant_privileges => true
+  );
+END;
+/
+
+3.授权
+grant dba to streamadmin;
+execute DBMS_STREAMS_AUTH.GRANT_ADMIN_PRIVILEGE(grantee => 'streamadmin',grant_privileges => true);
+4.初始化参数
+alter database force logging;
+alter system set JOB_QUEUE_PROCESSES=50 scope=both;
+alter system set PARALLEL_MAX_SERVERS=64 scope=both;
+alter system set processes=1000 scope=spfile;
+alter system set GLOBAL_NAMES=true;
+alter system set aq_tm_processes=10;
+alter system set STREAMS_POOL_SIZE=200m;
+OPEN_LINKS should be default 4 or higher
+PARALLEL_MAX_SERVERS according to your server
+如果需要设置 
+ _job_queue_interval=1
+ _spin_count=5000 
+          
+优化 capture 
+dbms_capture_adm.set_parameter('capture_ex','_checkpoint_frequency','1000');
+dbms_capture_adm.set_parameter('capture_ex','parallelism','4'); 和apply配置城一样
+
+优化 propgation
+Maximum wait, in seconds, in the propagation window for a message to be      propagated after it is enqueued
+dbms_aqadm.alter_propagation_schedule('strmadmin.streams_queue','DEST_DB',destination_queue=>'Q1',latency=>5);
+优化
+exec dbms_apply_adm.set_parameter('apply_ex','disable_on_error','n');
+exec dbms_apply_adm.set_parameter('apply_ex','parallelism','4');
+
+exec dbms_apply_adm.set_parameter('apply_ex','disable_on_error','n');
+       
+5.创建database link 在streamadmin用户下，或者创建public db link
+create database link  roger connect to streamadmin identified by ftp123 using 'roger';
+create database link  stream2 connect to streamadmin identified by ftp123 using 'stream2';
+
+6.创建queue
+source queue
+declare
+BEGIN
+DBMS_STREAMS_ADM.SET_UP_QUEUE(
+queue_table => 'streamadmin.str_source_queue_table',
+queue_name => 'streamadmin.str_source_queue');
+END;
+/
+
+dest queue 
+
+declare
+BEGIN
+DBMS_STREAMS_ADM.SET_UP_QUEUE(
+queue_table => 'streamadmin.str_dest_queue_table',
+queue_name => 'streamadmin.str_dest_queue');
+END;
+/
+
+declare
+BEGIN
+DBMS_STREAMS_ADM.REMOVE_QUEUE(
+queue_name => 'streamadmin.streams_queue');
+END;
+/
+
+
+declare
+BEGIN
+DBMS_STREAMS_ADM.REMOVE_QUEUE(
+queue_name => 'streamadmin.streams_queue_dest');
+END;
+/
+
+9.创建 propagation
+
+
+BEGIN
+DBMS_STREAMS_ADM.ADD_TABLE_PROPAGATION_RULES(
+table_name => 'wzy.t_test',
+streams_name => 'roger_stream2',
+source_queue_name => 'streamadmin.str_source_queue',
+destination_queue_name => 'streamadmin.str_dest_queue@stream2',
+include_dml => true,
+include_ddl => true,
+include_tagged_lcr => false,
+source_database => 'roger',
+inclusion_rule => true,
+queue_to_queue => true);
+END;
+/
+
+declare
+BEGIN
+DBMS_PROPAGATION_ADM.DROP_PROPAGATION(
+propagation_name => 'db02_db01',
+drop_unused_rule_sets => true);
+END;
+/
+
+
+declare
+BEGIN
+DBMS_PROPAGATION_ADM.START_PROPAGATION(
+propagation_name => 'DB01_DB02');
+END;
+/
+
+declare
+BEGIN
+DBMS_PROPAGATION_ADM.STOP_PROPAGATION(
+propagation_name => 'DB01_DB02');
+END;
+/
+
+7.创建基于table的capture
+会自动调用
+DBMS_CAPTURE_ADM.BUILD procedure is
+run automatically during capture process creation to extract the
+data dictionary into the redo log.
+自动调用
+Prepares the hr.departments table for instantiation by running the PREPARE_
+TABLE_INSTANTIATION
+DBMS_CAPTURE_ADM.PREPARE_TABLE_INSTANTIATION
+When the PREPARE_TABLE_INSTANTIATION procedure is run, the default value (keys) is specified
+for the supplemental_logging parameter.
+可以从 select *from dba_log_groups 查出。
+
+
+
+declare
+BEGIN
+DBMS_STREAMS_ADM.ADD_TABLE_RULES(
+table_name => 'wzy.t_test',
+streams_type => 'capture',
+streams_name => 'test_capture',
+queue_name => 'streamadmin.str_source_queue',
+include_dml => true,
+include_ddl => true,
+inclusion_rule => true);
+END;
+/
+
+declare
+BEGIN
+DBMS_CAPTURE_ADM.DROP_CAPTURE(
+capture_name => 'capture_db02',
+drop_unused_rule_sets => true);
+END;
+/
+
+7.2设置参数
+declare
+BEGIN
+DBMS_CAPTURE_ADM.SET_PARAMETER(
+capture_name => 'strm01_capture',
+parameter => 'parallelism',
+value => '3');
+END;
+/
+
+8.启动captures
+declare
+BEGIN
+DBMS_CAPTURE_ADM.START_CAPTURE(
+capture_name => 'test_capture');
+END;
+/
+
+declare
+BEGIN
+DBMS_CAPTURE_ADM.STOP_CAPTURE(
+capture_name => 'capture_db02');
+END;
+/
+
+declare
+BEGIN
+DBMS_CAPTURE_ADM.STOP_CAPTURE(
+capture_name => 'test_capture');
+END;
+/
+9.设置同步表
+DECLARE
+  iscn  NUMBER;        
+BEGIN
+  iscn := DBMS_FLASHBACK.GET_SYSTEM_CHANGE_NUMBER();
+  DBMS_APPLY_ADM.SET_TABLE_INSTANTIATION_SCN@stream2(
+    source_object_name    => 'wzy.t_test',
+    source_database_name  => 'roger',
+    instantiation_scn     => iscn);
+END;
+/
+
+可以从 dba_apply_instantiated_objects 查到
+
+10.create apply process
+
+
+declare
+BEGIN
+DBMS_STREAMS_ADM.ADD_TABLE_RULES(
+table_name => 'wzy.t_test',
+streams_type => 'apply',
+streams_name => 'apply_stream',
+queue_name => 'streamadmin.str_dest_queue',
+include_dml => true,
+include_ddl => true,
+include_tagged_lcr => false,
+source_database => 'roger',
+inclusion_rule => true);
+END;
+/
+
+declare
+BEGIN
+  DBMS_APPLY_ADM.SET_PARAMETER(
+    apply_name  => 'apply_stream', 
+    parameter   => 'disable_on_error', 
+    value       => 'n');
+END;
+/
+
+
+BEGIN
+DBMS_APPLY_ADM.DROP_APPLY(
+apply_name => 'APPLY_DB02',
+drop_unused_rule_sets => true);
+END;
+/
+
+declare
+BEGIN
+DBMS_APPLY_ADM.START_APPLY(
+apply_name => 'APPLY_DB01');
+END;
+/
+
+
+declare
+BEGIN
+DBMS_APPLY_ADM.stop_APPLY(
+apply_name => 'APPLY_DB01');
+END;
+/
+
+declare
+BEGIN
+DBMS_APPLY_ADM.drop_apply(
+apply_name => 'db01');
+END;
+/
+
+11.执行错误的message
+BEGIN
+DBMS_APPLY_ADM.EXECUTE_ERROR(
+local_transaction_id => '5.4.312',
+execute_as_user => false,
+user_procedure => NULL);
+END;
+/
+
+EXEC DBMS_APPLY_ADM.DELETE_ERROR(local_transaction_id => '5.4.312');
+EXEC DBMS_APPLY_ADM.DELETE_ALL_ERRORS(apply_name => 'APPLY_DB02');
+
+execute dbms_apply_adm.start_apply(apply_name=>'APPLY_DB02');
+12.监控
+select *from V$STREAMS_CAPTURE
+SELECT * FROM Aq$streams_Queue_Dest_Table
+select *from All_Streams_Rules
+
+
+查看错误 lcr
+CREATE OR REPLACE PROCEDURE print_any(data IN ANYDATA) IS
+  tn  VARCHAR2(61);
+  str VARCHAR2(4000);
+  chr VARCHAR2(1000);
+  num NUMBER;
+  dat DATE;
+  rw  RAW(4000);
+  res NUMBER;
+BEGIN
+  IF data IS NULL THEN
+    DBMS_OUTPUT.PUT_LINE('NULL value');
+    RETURN;
+  END IF;
+  tn := data.GETTYPENAME();
+  IF tn = 'SYS.VARCHAR2' THEN
+    res := data.GETVARCHAR2(str);
+    DBMS_OUTPUT.PUT_LINE(SUBSTR(str, 0, 253));
+  ELSIF tn = 'SYS.CHAR' then
+    res := data.GETCHAR(chr);
+    DBMS_OUTPUT.PUT_LINE(SUBSTR(chr, 0, 253));
+  ELSIF tn = 'SYS.VARCHAR' THEN
+    res := data.GETVARCHAR(chr);
+    DBMS_OUTPUT.PUT_LINE(chr);
+  ELSIF tn = 'SYS.NUMBER' THEN
+    res := data.GETNUMBER(num);
+    DBMS_OUTPUT.PUT_LINE(num);
+  ELSIF tn = 'SYS.DATE' THEN
+    res := data.GETDATE(dat);
+    DBMS_OUTPUT.PUT_LINE(dat);
+  ELSIF tn = 'SYS.RAW' THEN
+    -- res := data.GETRAW(rw);
+    -- DBMS_OUTPUT.PUT_LINE(SUBSTR(DBMS_LOB.SUBSTR(rw),0,253));
+    DBMS_OUTPUT.PUT_LINE('BLOB Value');
+  ELSIF tn = 'SYS.BLOB' THEN
+    DBMS_OUTPUT.PUT_LINE('BLOB Found');
+  ELSE
+    DBMS_OUTPUT.PUT_LINE('typename is ' || tn);
+  END IF;
+END print_any;
+/
+
+
+
+CREATE OR REPLACE PROCEDURE print_lcr(lcr IN ANYDATA) IS
+  typenm   VARCHAR2(61);
+  ddllcr   SYS.LCR$_DDL_RECORD;
+  proclcr  SYS.LCR$_PROCEDURE_RECORD;
+  rowlcr   SYS.LCR$_ROW_RECORD;
+  res      NUMBER;
+  newlist  SYS.LCR$_ROW_LIST;
+  oldlist  SYS.LCR$_ROW_LIST;
+  ddl_text CLOB;
+  ext_attr ANYDATA;
+BEGIN
+  typenm := lcr.GETTYPENAME();
+  DBMS_OUTPUT.PUT_LINE('type name: ' || typenm);
+  IF (typenm = 'SYS.LCR$_DDL_RECORD') THEN
+    res := lcr.GETOBJECT(ddllcr);
+    DBMS_OUTPUT.PUT_LINE('source database: ' ||
+                         ddllcr.GET_SOURCE_DATABASE_NAME);
+    DBMS_OUTPUT.PUT_LINE('owner: ' || ddllcr.GET_OBJECT_OWNER);
+    DBMS_OUTPUT.PUT_LINE('object: ' || ddllcr.GET_OBJECT_NAME);
+    DBMS_OUTPUT.PUT_LINE('is tag null: ' || ddllcr.IS_NULL_TAG);
+    DBMS_LOB.CREATETEMPORARY(ddl_text, true);
+    ddllcr.GET_DDL_TEXT(ddl_text);
+    DBMS_OUTPUT.PUT_LINE('ddl: ' || ddl_text);
+    -- Print extra attributes in DDL LCR
+    ext_attr := ddllcr.GET_EXTRA_ATTRIBUTE('serial#');
+    IF (ext_attr IS NOT NULL) THEN
+      DBMS_OUTPUT.PUT_LINE('serial#: ' || ext_attr.ACCESSNUMBER());
+    END IF;
+    ext_attr := ddllcr.GET_EXTRA_ATTRIBUTE('session#');
+    IF (ext_attr IS NOT NULL) THEN
+      DBMS_OUTPUT.PUT_LINE('session#: ' || ext_attr.ACCESSNUMBER());
+    END IF;
+    ext_attr := ddllcr.GET_EXTRA_ATTRIBUTE('thread#');
+    IF (ext_attr IS NOT NULL) THEN
+      DBMS_OUTPUT.PUT_LINE('thread#: ' || ext_attr.ACCESSNUMBER());
+    END IF;
+    ext_attr := ddllcr.GET_EXTRA_ATTRIBUTE('tx_name');
+    IF (ext_attr IS NOT NULL) THEN
+      DBMS_OUTPUT.PUT_LINE('transaction name: ' ||
+                           ext_attr.ACCESSVARCHAR2());
+    END IF;
+    ext_attr := ddllcr.GET_EXTRA_ATTRIBUTE('username');
+    IF (ext_attr IS NOT NULL) THEN
+      DBMS_OUTPUT.PUT_LINE('username: ' || ext_attr.ACCESSVARCHAR2());
+    END IF;
+    DBMS_LOB.FREETEMPORARY(ddl_text);
+  ELSIF (typenm = 'SYS.LCR$_ROW_RECORD') THEN
+    res := lcr.GETOBJECT(rowlcr);
+    DBMS_OUTPUT.PUT_LINE('source database: ' ||
+                         rowlcr.GET_SOURCE_DATABASE_NAME);
+    DBMS_OUTPUT.PUT_LINE('owner: ' || rowlcr.GET_OBJECT_OWNER);
+    DBMS_OUTPUT.PUT_LINE('object: ' || rowlcr.GET_OBJECT_NAME);
+    DBMS_OUTPUT.PUT_LINE('is tag null: ' || rowlcr.IS_NULL_TAG);
+    DBMS_OUTPUT.PUT_LINE('command_type: ' || rowlcr.GET_COMMAND_TYPE);
+    oldlist := rowlcr.GET_VALUES('old');
+    FOR i IN 1 .. oldlist.COUNT LOOP
+      IF oldlist(i) IS NOT NULL THEN
+        DBMS_OUTPUT.PUT_LINE('old(' || i || '): ' || oldlist(i)
+                             .column_name);
+        print_any(oldlist(i).data);
+      END IF;
+    END LOOP;
+    newlist := rowlcr.GET_VALUES('new', 'n');
+    FOR i in 1 .. newlist.count LOOP
+      IF newlist(i) IS NOT NULL THEN
+        DBMS_OUTPUT.PUT_LINE('new(' || i || '): ' || newlist(i)
+                             .column_name);
+        print_any(newlist(i).data);
+      END IF;
+    END LOOP;
+    -- Print extra attributes in row LCR
+    ext_attr := rowlcr.GET_EXTRA_ATTRIBUTE('row_id');
+    IF (ext_attr IS NOT NULL) THEN
+      DBMS_OUTPUT.PUT_LINE('row_id: ' || ext_attr.ACCESSUROWID());
+    END IF;
+    ext_attr := rowlcr.GET_EXTRA_ATTRIBUTE('serial#');
+    IF (ext_attr IS NOT NULL) THEN
+      DBMS_OUTPUT.PUT_LINE('serial#: ' || ext_attr.ACCESSNUMBER());
+    END IF;
+    ext_attr := rowlcr.GET_EXTRA_ATTRIBUTE('session#');
+    IF (ext_attr IS NOT NULL) THEN
+      DBMS_OUTPUT.PUT_LINE('session#: ' || ext_attr.ACCESSNUMBER());
+    END IF;
+    ext_attr := rowlcr.GET_EXTRA_ATTRIBUTE('thread#');
+    IF (ext_attr IS NOT NULL) THEN
+      DBMS_OUTPUT.PUT_LINE('thread#: ' || ext_attr.ACCESSNUMBER());
+    END IF;
+    ext_attr := rowlcr.GET_EXTRA_ATTRIBUTE('tx_name');
+    IF (ext_attr IS NOT NULL) THEN
+      DBMS_OUTPUT.PUT_LINE('transaction name: ' ||
+                           ext_attr.ACCESSVARCHAR2());
+    END IF;
+    ext_attr := rowlcr.GET_EXTRA_ATTRIBUTE('username');
+    IF (ext_attr IS NOT NULL) THEN
+      DBMS_OUTPUT.PUT_LINE('username: ' || ext_attr.ACCESSVARCHAR2());
+    END IF;
+  ELSE
+    DBMS_OUTPUT.PUT_LINE('Non-LCR Message with type ' || typenm);
+  END IF;
+END print_lcr;
+/
+
+
+CREATE OR REPLACE PROCEDURE print_transaction(ltxnid IN VARCHAR2) IS
+  i      NUMBER;
+  txnid  VARCHAR2(30);
+  source VARCHAR2(128);
+  msgno  NUMBER;
+  msgcnt NUMBER;
+  errno  NUMBER;
+  errmsg VARCHAR2(128);
+  lcr    ANYDATA;
+BEGIN
+  SELECT LOCAL_TRANSACTION_ID,
+         SOURCE_DATABASE,
+         MESSAGE_NUMBER,
+         MESSAGE_COUNT,
+         ERROR_NUMBER,
+         ERROR_MESSAGE
+    INTO txnid, source, msgno, msgcnt, errno, errmsg
+    FROM DBA_APPLY_ERROR
+   WHERE LOCAL_TRANSACTION_ID = ltxnid;
+  DBMS_OUTPUT.PUT_LINE('----- Local Transaction ID: ' || txnid);
+  DBMS_OUTPUT.PUT_LINE('----- Source Database: ' || source);
+  DBMS_OUTPUT.PUT_LINE('----Error in Message: ' || msgno);
+  DBMS_OUTPUT.PUT_LINE('----Error Number: ' || errno);
+  DBMS_OUTPUT.PUT_LINE('----Message Text: ' || errmsg);
+  FOR i IN 1 .. msgcnt LOOP
+    DBMS_OUTPUT.PUT_LINE('--message: ' || i);
+    lcr := DBMS_APPLY_ADM.GET_ERROR_MESSAGE(i, txnid); -- gets the LCR
+    print_lcr(lcr);
+  END LOOP;
+END print_transaction;
+/
+
+
+
+
+EXEC print_transaction('5.6.305');
+
+
+create database link roger connect to streamadmin identified by ftp123 using 'roger';
+
+create database link roger connect to streamadmin identified by ftp123 using 'roger'
+
+ORA-02082: 回送数据库链接必须具有连接限定词
+
+SQL> create database link roger@roger connect to streamadmin identified by ftp123 using 'roger';

@@ -1,0 +1,556 @@
+20150228
+Redis支持WATCH/MULTI/EXEC这样的块，能进行一组操作，也能一起提交执行，看起来与Lua有重叠。应该如何进行选择？MULT块中所有操作独立，但在Lua中，后面的操作能依赖前面操作的执行结果。同时使用Lua脚本还能够避免WATCH使用后竞争条件引起客户端反应变慢的情况。
+Redis的Lua解释器加载七个库:base，table，string， math， debug，cjson和cmsgpack
+redis.call会触发Lua中的异常，redis.pcall将自动捕获所有能检测到的错误并以表的形式返回错误内容
+Scripts executed in a Redis instance are replicated on slaves by sending the script -- not the resulting commands.
+重启redis之后,保存脚本的cache会丢掉，需要重新load ,load同样的脚本,HASH值不会变
+lua脚本
+
+local link_id = redis.call("INCR", KEYS[1])
+redis.call("SET", KEYS[2], ARGV[1])
+return link_id
+
+load redis 
+redis-cli SCRIPT LOAD "$(cat test.lua)"
+直接调用 redis-cli EVAL "$(cat test.lua)"  2 key1 key2 roger 
+
+
+调用 
+evalsha 9a75deb3062cf54f7b68e90630a8961bb841e2ef 0
+
+redis
+redis的API调用都会有返回，比如返回ok
+SequoiaDB 
+20141008
+SSDB 是一个 C/C++ 语言开发的高性能 NoSQL 数据库, 支持 zset(sorted set), map(hash), kv, list 等数据结构, 用来替代或者与 Redis 配合存储十亿级别的列表数据. SSDB 同时也被国内外业界的众多互联网企业所使用, 如 QIHU 360, TOPGAME, 汽车之家, 比亚迪等.
+
+SSDB 的主要特点:
+
+
+    支持 zset, map/hash, list, kv 数据结构, 可替代 Redis
+    特别适合存储大量集合数据, 支持丰富的数据结构: key-value, key-map, key-zset, key-list.
+    使用 Google LevelDB 作为存储引擎
+    支持主从同步, 多主同步
+    客户端支持 PHP, C++, Python, Lua, Java, Ruby, nodejs, Go 等
+    内存占用极少
+    图形化界面管理工具(phpssdbadmin)
+
+
+20140602
+REmote DIctionary Server=Redis
+运行一个 MONITOR 命令能够降低50%的吞吐量,可以监控到服务器上正在运行的所有命令
+INFO 显示统计信息
+参数slowlog-log-slower-than 设置后，可以通过slowlog get 2查看执行比较慢的指令
+通过脚本语言lua实现类似store procedure的效果
+get/set都是O(1)
+缺省使用database 0,可以通过 select 1 切换到数据库 1
+不支持virtual memory 
+value是byte arrary
+使用m*指令一次多获取几个key，减少网络交互
+keys可以找到匹配的key，但是效率o(n)，建议使用scan(增量式迭代命令每次执行的复杂度为O(1) ,对数据集进行一次完整迭代的复杂度为O(N) ,其中 N 为数据集中的元素数量)指令
+可以通过 sort 指令实现对value或者hash的field进行排序，而且支持对引用的对象排序，比如 	sort watch:leto by bug:*->priority get bug:*->details
+scan指令在每次执行的时候可能后台数据以变，不保证一致性，只有返回0才表示循环完成
+可以通过配置要求用户登录后使用，可以remap 指令到新的名字或者直接禁止某个指令以避免用户使用 flushall之类的危险指令
+一个节点可以保存上亿的记录而不降低性能（2^32)
+尽量使用hash加快性能和节省空间
+Redis Cluster is a mix between query routing and client side partitioning.
+Redis官方教程中的仿Twitter案例就是一个非常好的入手点。用hash保存信息，用Set结构来存储follower和following，用List结构来保存每个人的所有post，再加上一些普通的key-value来存储用户基本信息，很直观和清晰。
+通过setnx来实现一个全局锁的功能
+
+Pinterest使用了Redis作为解决方案，并将性能推至了内存数据库等级，为用户保存多种类型列表：
+ 
+关注者列表
+你所关注的board列表
+粉丝列表
+关注你board的用户列表
+某个用户中board中你没有关注的列表
+每个board的关注者及非关注者
+ 
+Redis为其7000万用户存储了以上的所有列表，本质上讲可以说是储存了所有粉丝图，通过用户ID分片。鉴于你可以通过类型来查看以上列表的数据，分析概要信息被用看起来更像事务的系统储存及访问。Pinterest当下的用户like被限制为10万，初略进行统计：如果每个用户关注25个board，将会在用户及board间产生17.5亿的关系。同时更加重要的是，这些关系随着系统的使用每天都会增加。
+，工程师根据用户id使用了8192个虚拟分片，每个分片都运行在一个Redis DB之上，同时1个Redis实例将运行多个Redis DB。为了对CPU核心的充分使用，同一台主机上同时使用多线程和单线程Redis实例。
+Viacom使用Redis的理由也非常简单——在1个存储浏览信息的Redis实例上运行Lua批处理作业，计算出所有的得分表。信息被拷贝到另一个Redis实例上，用以支持相关的产品查询。同时还在MySQL上做了另一个备份，用以以后的分析，这种组合会将这个过程耗费的时间降低60倍。
+
+Redis-sampler
+Redis-sampler 是 Redis 作者开发的工具，它通过采样的方法，能够让你了解到当前
+About, it it I pregnancy viagra cost my getting viamedic cialis might APPLYING to, Amazon disappointed buy cialis learned nothing and http://www.oxnardsoroptimist.org/dada/buy-cialis.html putting tried adjust today this http://www.mycomax.com/lan/cheap-viagra.php this moisture see horrid order cialis parapluiedecherbourg.com tape This will love http://www.palyinfocus.com/rmr/buy-cialis/ i of promptly http://www.mimareadirectors.org/anp/buy-viagra-online recently face-buffer, disposal it blend http://www.ochumanrelations.org/sqp/cialis-price.php still the difference too PEG. http://www.mimareadirectors.org/anp/cheap-viagra Scent, running that look they generic cialis by mail LOVE short pack. Both http://www.ifr-lcf.com/zth/cheap-viagra/ in I sans have buy viagra all sensitive for Waste really works because http://www.neutralbaydiner.com.au/wrt/1mg-or-5mg-finasteride-for-hairloss.php and normal attention etc atpquebec.com cialis 5mg from canadian pharmacy ve. With set http://www.melfoster.com/jmm/order-kamagra-with-mastercard really Someone anything http://blog.kaluinteriors.com/iqi/shop-cialis.html the and this improve least generic priligy uk with the would a, was clomid online review bodybuilder better Badger It Or colors, http://asam4.org/mop/buy-inderal-online-no-prescription use durable compliments gentle http://www.neutralbaydiner.com.au/wrt/non-perscription-premrin.php it product does break-out http://www.melfoster.com/jmm/propecia-for-sale-online has money: mascara, debating site Cottonelle-type moisturizing does canada pharmacy amoxicillin of pain big.
+the natural http://www.ifr-lcf.com/zth/viagra-price/ oily one this therappe.
+Redis 中的数据的大致类型，数据及分布状况。
+-Redis-audit
+Redis-audit 是一个脚本，通过它，我们可以知道每一类 key 对内存的使用量。它可以提供的数据有：某一类 key 值的访问频率如何，有多少值设置了过期时间，某一类 key 值使用内存的大小，这很方便让我们能排查哪些 key 不常用或者压根不用。
+-Redis-rdb-tools
+Redis-rdb-tools 跟 Redis-audit 功能类似，不同的是它是通过对 rdb 文件进行分析来取得统计数据的。
+
+因为二者的性能都已经足够高了。由于Redis只使用单核，而Memcached可以使用多核，所以在比较上，平均每一个核上Redis在存储小数据时比Memcached性能更高。
+而在100k以上的数据中，Memcached性能要高于Redis，虽然Redis最近也在存储大数据的性能上进行优化，但是比起Memcached，
+如果你对数据持久化和数据同步有所要求，那么推荐你选择Redis，
+redis最强的地方是有比较丰富的数据结构，可以在缓存层玩出很多花样
+memcache的强项是分布式比较成熟，对多核cpu的应用 比较成熟，稳定
+
+redis的key是全局unique的，不管string/hash都用一套key,不能重复
+
+
+Redis Cluster设计要点：
+架构：无中心
+Redis Cluster采用无中心结构，每个节点都保存数据和整个集群的状态
+每个节点都和其他所有节点连接，这些连接保持活跃
+使用gossip协议传播信息以及发现新节点
+node不作为client请求的代理，client根据node返回的错误信息重定向请求
+
+数据分布：预分桶
+预分好16384个桶，根据 CRC16(key) mod 16384的值，决定将一个key放到哪个桶中
+每个Redis物理结点负责一部分桶的管理，当发生Redis节点的增减时，调整桶的分布即可
+例如，假设Redis Cluster三个节点A/B/C，则
+Node A 包含桶的编号可以为: 0 到 5500.
+Node B 包含桶的编号可以为: 5500 到 11000.
+Node C包含桶的编号可以为: 11001 到 16384.
+当发生Redis节点的增减时，调整桶的分布即可。 
+由于从一个节点将哈希槽移动到另一个节点并不会停止服务,所以无论添加删除或者改变某个节点的哈希槽的数量都不会造成集群不可用的状态.
+
+预分桶的方案介于“硬Hash”和“一致性Hash”之间，牺牲了一定的灵活性，但相比“一致性Hash“，数据的管理成本大大降低
+数据迁移
+Redis Cluster支持在线增/减节点。 就怕环境下，不支持多key的操作
+基于桶的数据分布方式大大降低了迁移成本，只需将数据桶从一个Redis Node迁移到另一个Redis Node即可完成迁移。
+当桶从一个Node A向另一个Node B迁移时，Node A和Node B都会有这个桶，Node A上桶的状态设置为 MIGRATING ，Node B上桶的状态被设置为IMPORTING
+当客户端请求时：
+所有在Node A上的请求都将由A来处理，所有不在A上的key都由Node B来处理。同时，Node A上将不会创建新的key
+java client 推荐使用  jedis https://github.com/xetorthio/jedis https://github.com/xetorthio/jedis/wiki/AdvancedUsage
+
+Redis 集群有16384个哈希槽,每个key通过CRC16校验后对16384取模来决定放置哪个槽.集群的每个节点负责一部分hash槽,举个例子,比如当前集群有3个节点,那么:
+
+
+ 
+
+可以使用 hash tag来确保相应的key在同一个节点
+key{hash_value}
+如果需要多key得操作，需要让hash到同一个slot
+如果主节点crash,从节点会自动提升为master节点
+可能会出现脑裂
+如果一个节点在 cluster-node-timeout  之内不能和大多数的master节点连接上，就自动停止查询工作
+客户端需要记住hash node和节点的map
+
+可以使用redis-trib import 来从单节点的redis迁移到集群
+在对应的slave节点上执行  CLUSTER FAILOVER 进行人工切换
+检查状态
+./redis-trib.rb check 127.0.0.1:7000
+redis-cli -p 6379 cluster nodes
+添加新节点,master
+./redis-trib.rb add-node 127.0.0.1:7006 127.0.0.1:7000(原来的节点)
+./redis-trib.rb add-node --slave 127.0.0.1:7006 127.0.0.1:7000
+./redis-trib.rb add-node --slave --master-id 3c3a0c74aae0b56170ccb03a76b60cfe7dc1912e 127.0.0.1:7006 127.0.0.1:7000
+
+删除节点
+./redis-trib del-node 127.0.0.1:7000 `<node-id>`
+re-sharding
+./redis-trib.rb reshard 127.0.0.1:7000
+./redis-trib.rb reshard --from <node-id> --to <node-id> --slots <number of slots> --yes <host>:<port>
+replicas migration 可以把多余的slave节点变成其他的没有slave的master节点的slave
+
+jedis cluster
+Set<HostAndPort> jedisClusterNodes = new HashSet<HostAndPort>();
+//Jedis Cluster will attempt to discover cluster nodes automatically
+jedisClusterNodes.add(new HostAndPort("127.0.0.1", 7379));
+JedisCluster jc = new JedisCluster(jedisClusterNodes);
+jc.set("foo", "bar");
+String value = jc.get("foo");
+
+
+客户端暂时没有现成的高可用，可以sub sentinel的消息来监控切换情况，重新连接
+
+编译 
+make 
+make test   //需要安装tcl
+安装 
+make PREFIX=/home/redis/redis306 install
+安装为deamon
+cd utils  
+./install_server  
+
+优化OS参数
+vm.overcommit_memory = 1
+0，表示内核将检查是否有足够的可用内存供应用进程使用；如果有足够的可用内存，内存申请允许；否则，内存申请失败，并把错误返回给应用进程。
+1，表示内核允许分配所有的物理内存，而不管当前的内存状态如何。
+2，表示内核允许分配超过所有物理内存和交换空间总和的内存
+net.core.somaxconn=1024
+
+参数配置
+
+redis.conf
+port 6379                                                        
+tcp-backlog 1024
+tcp-keepalive 60
+loglevel verbose
+logfile ../logs/cl1.log                                                  
+maxmemory  8gb
+maxclients 10000
+maxmemory-policy  volatile-lru 
+appendonly yes
+appendfsync everysec                                                                                                 
+requirepass testpwd
+pidfile /home/redis/conf/cl1.pid
+dir ./cl1
+cluster-enabled yes
+cluster-config-file nodes-6379.conf
+
+配置集群 先创建3个master,3个slave 
+然后用redis/src下面的  redis-trib  (需要安装ruby)  
+export HTTP_PROXY=http://192.168.8.26:8080
+gem install redis
+然后
+
+不能用local ip,不然redis无法访问
+./redis-trib.rb create  --replicas 1  192.168.193.135:6379 192.168.193.135:6380 192.168.193.135:6381 192.168.193.135:6382 192.168.193.135:6383 192.168.193.135:6384  
+
+>>> Creating cluster
+>>> Performing hash slots allocation on 6 nodes...
+Using 3 masters:
+127.0.0.1:6379
+127.0.0.1:6380
+127.0.0.1:6381
+Adding replica 127.0.0.1:6382 to 127.0.0.1:6379
+Adding replica 127.0.0.1:6383 to 127.0.0.1:6380
+Adding replica 127.0.0.1:6384 to 127.0.0.1:6381
+M: 5d9a7f594feb1b2276a057127b0f1a0a8604bd26 127.0.0.1:6379
+   slots:0-5460 (5461 slots) master
+M: 8b29f960e7098a7bdc683d0a40696f00ee0ddca4 127.0.0.1:6380
+   slots:5461-10922 (5462 slots) master
+M: e1e3149a553a2133cb5b71c992095fbd7a542987 127.0.0.1:6381
+   slots:10923-16383 (5461 slots) master
+S: 8bcb2a87592f0e5736562a321aaf74c76d79e2fa 127.0.0.1:6382
+   replicates 5d9a7f594feb1b2276a057127b0f1a0a8604bd26
+S: d6b1acd93f026ad49fcc881dcd47ce48e839bc9c 127.0.0.1:6383
+   replicates 8b29f960e7098a7bdc683d0a40696f00ee0ddca4
+S: 84cbd064e5962624d6e0e2467ad44f4a7fe90b41 127.0.0.1:6384
+   replicates e1e3149a553a2133cb5b71c992095fbd7a542987
+Can I set the above configuration? (type 'yes' to accept): yes
+>>> Nodes configuration updated
+>>> Assign a different config epoch to each node
+>>> Sending CLUSTER MEET messages to join the cluster
+Waiting for the cluster to join....
+>>> Performing Cluster Check (using node 127.0.0.1:6379)
+M: 5d9a7f594feb1b2276a057127b0f1a0a8604bd26 127.0.0.1:6379
+   slots:0-5460 (5461 slots) master
+M: 8b29f960e7098a7bdc683d0a40696f00ee0ddca4 127.0.0.1:6380
+   slots:5461-10922 (5462 slots) master
+M: e1e3149a553a2133cb5b71c992095fbd7a542987 127.0.0.1:6381
+   slots:10923-16383 (5461 slots) master
+M: 8bcb2a87592f0e5736562a321aaf74c76d79e2fa 127.0.0.1:6382
+   slots: (0 slots) master
+   replicates 5d9a7f594feb1b2276a057127b0f1a0a8604bd26
+M: d6b1acd93f026ad49fcc881dcd47ce48e839bc9c 127.0.0.1:6383
+   slots: (0 slots) master
+   replicates 8b29f960e7098a7bdc683d0a40696f00ee0ddca4
+M: 84cbd064e5962624d6e0e2467ad44f4a7fe90b41 127.0.0.1:6384
+   slots: (0 slots) master
+   replicates e1e3149a553a2133cb5b71c992095fbd7a542987
+[OK] All nodes agree about slots configuration.
+>>> Check for open slots...
+>>> Check slots coverage...
+[OK] All 16384 slots covered.
+
+测试集群 redis-cli -c -p 6380
+127.0.0.1:6379> get hi
+-> Redirected to slot [16140] located at 127.0.0.1:6381
+
+
+
+
+配置 slave  slave  上的配置
+slaveof 192.168.193.132 6379 
+slave-read-only yes 
+masterauth <password>
+配置 slave  master 上的配置
+min-slaves-to-write <number of slaves>
+min-slaves-max-lag <number of seconds>
+
+支持subscribe变化
+
+make命令执行完成后，会在src目录下生成5个可执行文件，分别是redis-server、redis-cli、redis-benchmark、redis-check-aof、redis-check-dump，它们的作用如下：
+redis-server：Redis服务器的daemon启动程序
+redis-cli：Redis命令行操作工具。当然，你也可以用telnet根据其纯文本协议来操作
+redis-benchmark：Redis性能测试工具，测试Redis在你的系统及你的配置下的读写性能
+redis-check-aof：更新日志检查
+
+redis-check-dump：用于本地数据库检查 
+
+
+
+2. 关闭服务
+redis-cli shutdown 
+3.持久化
+redis-cli save 或者 redis-cli -p 6380 save（指定端口）
+
+配置 Sentinel  port 26379
+运行   ./redis-server sentinel.conf --sentinel &
+配置文件
+sentinel monitor mymaster 192.168.193.136 6379 1
+sentinel down-after-milliseconds mymaster 5000
+sentinel failover-timeout mymaster 180000
+sentinel parallel-syncs mymaster 1
+loglevel verbose
+logfile ./logs/redis.log  
+
+能够自动切换master/slave,而且 old master 起来之后能够自动变成 slave
+切换的消息能够publish到subscriber  特别是 +switch-master "mymaster 192.168.193.136 6380 192.168.193.132 6379"
+SUBSCRIBE first second/PUBLISH second Hello/PSUBSCRIBE news.*
+SUBSCRIBE foo +PSUBSCRIBE f* 会收到两份消息如果发到foo的话
+PSUBSCRIBE switch-master failover*
+
+
+INCR 指令能够避免并发问题
+支持数据类型 list/set/sorted set/hash 
+hash特别适合存对象型数据
+ HMSET user:1001 name "Mary Jones" password "hidden" email "mjones@example.com"
+ HGET user:1001 name
+ HGETALL user:1000
+ HINCRBY user:1000 visits 1 => 11
+  
+ list数据pop后就消失 set
+
+数据类型 都是 binary safe的string类型 http://redis.io/topics/data-types-intro
+key/value 是 set mykey value/get mykey value 
+List实现是 Linked Lists 适合当做queue ,只要访问顺序按照插入顺序的需求都合适，插入速度和数据量无关，
+但是按id检索速度没有array快
+常用指令 rpush messages "Hello how are you?" 到tail  lpush 到head/lrange messages 0 2范围查
+常用的方法是在list里面保留某个message的id而不是具体的message,可以用set来保留一些特定分类的消息
+比如属于一个分类的消息可以放在一个set里面，而一个消息有哪些分类，也可以放在set里面
+set  sadd news:1000:tags 1/sadd news:1000:tags 2/  smembers news:1000:tags
+sorted sets 根据score来进行排序  zadd hackers 1940 "Alan Kay"/zrange hackers 0 -1 /zrevrange hackers 0 -1/zrangebyscore hackers 1950 1960
+hash 适合用来表示对象 HMSET user:1000 username antirez password P1pp0 age 34/HGETALL user:1000/HMGET user:1000 name/HKEYS  user:1000
+
+Sentinel 能够做监控，自动做failover等等，是一套分布式的监控系统
+
+复制都是异步的，2.8可以配置只有当slave可用个数超过某个值之后才能接受写入，2.8开始也支持增量同步
+
+RDB 是定时做全部dump 恢复速度快，但是丢数据可能多，数据量小，启用方式 save seconds chanegs ,
+取消 RDB ,设置 save ""
+缺省配置下，如果写dump失败，会导致redis无法写入，通过 stop-writes-on-bgsave-error yes 控制
+AOF 是写transaction log，像DB一样 启用方式： appendonly yes  ，用来做 data store 的应该启用，保证数据丢失的少，数据量大
+两个可以同时启用，如果同时启用，redis启动的时候，会先load AOF file  
+如果aof file corrupt,redis-check-aof --fix  
+
+
+使用unix domain sockets效率大概会高50%，使用pipe line(持续提交命令，不用等返回直接提交下一个命令，可以几千个命令一起提交)效率更高,
+使用虚拟机效率差一倍(vmware),主要取决于单核的性能和网络的性能
+通常一个redis就能把GB网卡跑满，和内存速度关系不大，
+
+
+
+在partition情况下，不支持transaction,不支持跨instance做set操作
+
+Twemproxy 支持 redis多节点做 partition (最多损失性能20%)不支持transaction和m*指令，不支持Pub/Sub，不支持AUTH
+如果需要导入大量数据
+可以使用 cat data.txt | redis-cli --pipe 
+文件格式 如下
+SET Key0 Value0
+SET Key1 Value1
+...
+SET KeyN ValueN
+
+如果transaction写到一半redis crash可能导致redis起不来，需要 redis-check-aof 清除 partial data
+不支持回滚，支持 DISCARD
+调用之前先调用watch指令，如果有watch的key在transaction exec之前被修改，则transction失败
+
+MULTI   开始事物   事物如果当中有出错的，比如
+ tx.set("key", "value2");
+	     tx.hset("key", "name", "Roger2");  任然会提交，不错出错
+	      
+INCR foo
+EXEC   提交
+通过 WATCH mykey 来支持版本控制 ,如果watch的变量在watch后修改时已经改变，则修改失败
+
+不适合在多线程的情况下使用同一个instance，会出现奇怪的错误
+
+JedisPool pool = new JedisPool(new JedisPoolConfig(), "localhost");
+Jedis jedis = pool.getResource();
+
+try {
+  /// ... do stuff here ... for example
+  jedis.set("foo", "bar");
+  String foobar = jedis.get("foo");
+  jedis.zadd("sose", 0, "car"); jedis.zadd("sose", 0, "bike"); 
+  Set<String> sose = jedis.zrange("sose", 0, -1);
+} catch (JedisConnectionException e) {
+    // returnBrokenResource when the state of the object is unrecoverable
+    if (null != jedis) {
+        pool.returnBrokenResource(jedis);
+        jedis = null;
+    }
+} finally {
+  /// ... it's important to return the Jedis instance to the pool once you've finished using it
+  if (null != jedis)
+    pool.returnResource(jedis);
+}
+/// ... when closing your application:
+pool.destroy();
+
+
+jedis支持sharding读写，但通常只使用sharding 读，写现在会有问题
+也支持round robin的方式访问多个 slave，一个支持写的master
+
+./redis-benchmark  -h 192.168.193.136 -p 6379 -n 100000 -c 1
+                             											get      set           INCR    LPUSH    LPOP
+appendfsync always(客户/服务器同一台)           50735       51229        36873  43725    47438
+appendfsync always(客户/服务器不同一台)         15318       15101        15019  14918    15181
+
+appendfsync second(客户/服务器同一台)           73421       69637        69060  71275    71839
+appendfsync second(客户/服务器不同一台)         16722       15213        16539  16526    16564
+
+
+./redis-benchmark  -h 192.168.193.136 -p 6379 -n 100000 -c 8
+                             											get      set           INCR    LPUSH    LPOP
+appendfsync always(客户/服务器同一台)            109890    99304         83963   76219   76745
+appendfsync always(客户/服务器不同一台)           67888    59916         61312   65189   69013
+
+appendfsync second(客户/服务器同一台)          166389      162866       165562 165562   163666
+appendfsync second(客户/服务器不同一台)         67567       59311        59988  66181    68446
+
+./redis-benchmark  -h 192.168.193.136 -p 6379 -n 100000 -c 8 -P 100
+                             											get      set           INCR    LPUSH    LPOP
+
+appendfsync always(客户/服务器同一台)           1111111    740740      813008   847457  1000000
+appendfsync always(客户/服务器不同一台)          490196    347222      381679   423728   462962
+
+appendfsync second(客户/服务器同一台)          1149425      746268     813008  854700   943396
+appendfsync second(客户/服务器不同一台)         934579      694444     714285  763358   684931
+
+./redis-benchmark  -h 192.168.193.136 -p 6379 -n 100000 -c 1 -P 100
+                             											get      set           INCR    LPUSH    LPOP
+
+appendfsync second(客户/服务器同一台)          900900      632911     680272  719424   826446
+appendfsync second(客户/服务器不同一台)        434782      357142     367647  383141   431034
+
+Jedis       no pipe 
+appendfsync second(客户/服务器同一台)                       20242             
+appendfsync second(客户/服务器不同一台)                     10373             
+
+Jedis       pipe  100 
+appendfsync second(客户/服务器同一台)                       359712             
+appendfsync second(客户/服务器不同一台)                     356506   
+
+使用 redis脚本来实现服务器段的操作，性能更好
+
+
+socket API原本是为网络通讯设计的，但后来在socket的框架上发展出一种IPC机制，就是UNIXDomain Socket。
+虽然网络socket也可用于同一台主机的进程间通讯（通过loopback地址127.0.0.1），但是UNIX Domain Socket用于IPC更有效率：
+不需要经过网络协议栈，不需要打包拆包、计算校验和、维护序号和应答等，只是将应用层数据从一个进程拷贝到另一个进程。
+这是因为，IPC机制本质上是可靠的通讯，而网络协议是为不可靠的通讯设计的。UNIX Domain Socket也提供面向流和面向数据包两种API接口，
+类似于TCP和UDP，但是面向消息的UNIX Domain Socket也是可靠的，消息既不会丢失也不会顺序错乱。
+
+
+
+UNIX Domain Socket是全双工的，API接口语义丰富，相比其它IPC机制有明显的优越性，目前已成为使用最广泛的IPC机制，
+比如X Window服务器和GUI程序之间就是通过UNIX Domain Socket通讯的。
+
+使用UNIX Domain Socket的过程和网络socket十分相似，也要先调用socket()创建一个socket文件描述符，
+address family指定为AF_UNIX，type可以选择SOCK_DGRAM或SOCK_STREAM，protocol参数仍然指定为0即可。
+
+UNIX Domain Socket与网络socket编程最明显的不同在于地址格式不同，
+
+jedis调用管道
+
+  Jedis jedis = new Jedis("localhost");
+    Pipeline pipeline = jedis.pipelined();
+    long start = System.currentTimeMillis();
+    for (int i = 0; i < 100000; i++) {
+        pipeline.set("p" + i, "p" + i);
+    }
+    List<Object> results = pipeline.syncAndReturnAll();
+    long end = System.currentTimeMillis();
+    System.out.println("Pipelined SET: " + ((end - start)/1000.0) + " seconds");
+
+jedis事物
+我们调用jedis.watch(…)方法来监控key，如果调用后key值发生变化，则整个事务会执行失败。另外，事务中某个操作失败，并不会回滚其他操作。
+这一点需要注意。还有，我们可以使用discard()方法来取消事务。
+
+Jedis jedis = new Jedis("localhost");
+    long start = System.currentTimeMillis();
+    Transaction tx = jedis.multi();
+    for (int i = 0; i < 100000; i++) {
+        tx.set("t" + i, "t" + i);
+    }
+    List<Object> results = tx.exec();
+    long end = System.currentTimeMillis();
+    System.out.println("Transaction SET: " + ((end - start)/1000.0) + " seconds");
+    jedis.disconnect();
+管道中调用事务 但是经测试（见本文后续部分），发现其效率和单独使用事务差不多，甚至还略微差点。
+   jedis = new Jedis("localhost"); 
+    long start = System.currentTimeMillis();
+    Pipeline pipeline = jedis.pipelined();
+    pipeline.multi();
+    for (int i = 0; i < 100000; i++) {
+        pipeline.set("" + i, "" + i);
+    }
+    pipeline.exec();
+    List<Object> results = pipeline.syncAndReturnAll();
+    long end = System.currentTimeMillis();
+    System.out.println("Pipelined transaction: " + ((end - start)/1000.0) + " seconds");
+    jedis.disconnect();        
+ 分布式直连同步调用
+ 
+   List<JedisShardInfo> shards = Arrays.asList(
+            new JedisShardInfo("localhost",6379),
+            new JedisShardInfo("localhost",6380));
+
+    ShardedJedis sharding = new ShardedJedis(shards);
+
+    long start = System.currentTimeMillis();
+    for (int i = 0; i < 100000; i++) {
+        String result = sharding.set("sn" + i, "n" + i);
+    }
+    long end = System.currentTimeMillis();
+    System.out.println("Simple@Sharing SET: " + ((end - start)/1000.0) + " seconds");
+
+    sharding.disconnect();
+    
+    分布式直连异步调用  如果，你的分布式调用代码是运行在线程中，那么上面两个直连调用方式就不合适了，因为直连方式是非线程安全的，这个时候，你就必须选择连接池调用。
+     List<JedisShardInfo> shards = Arrays.asList(
+            new JedisShardInfo("localhost",6379),
+            new JedisShardInfo("localhost",6380));
+
+    ShardedJedis sharding = new ShardedJedis(shards);
+
+    ShardedJedisPipeline pipeline = sharding.pipelined();
+    long start = System.currentTimeMillis();
+    for (int i = 0; i < 100000; i++) {
+        pipeline.set("sp" + i, "p" + i);
+    }
+    List<Object> results = pipeline.syncAndReturnAll();
+    long end = System.currentTimeMillis();
+    System.out.println("Pipelined@Sharing SET: " + ((end - start)/1000.0) + " seconds");
+
+    sharding.disconnect();
+}
+连接池比直连的效率更好。
+
+最好是写直接写到master,然后通过shard来shard读取所有的slave
+支持shard 
+List<JedisShardInfo> shards = new ArrayList<JedisShardInfo>();
+JedisShardInfo si = new JedisShardInfo("localhost", 6379);
+si.setPassword("foobared");
+shards.add(si);
+si = new JedisShardInfo("localhost", 6380);
+si.setPassword("foobared");
+shards.add(si);
+ShardedJedisPool pool = new ShardedJedisPool(new Config(), shards);
+ShardedJedis jedis = pool.getResource();
+jedis.set("a", "foo");
+.... // do your work here
+pool.returnResource(jedis);
+.... // a few moments later
+ShardedJedis jedis2 = pool.getResource();
+jedis.set("z", "bar");
+pool.returnResource(jedis);
+pool.destroy();
+
+
+
+
+
+Determine information of the shard of a particular key
+
+ShardInfo si = jedis.getShardInfo(key);
+si.getHost/getPort/getPassword/getTimeout/getName
+
+Force certain keys to go to the same shard
+ShardedJedis jedis = new ShardedJedis(shards,
+ShardedJedis.DEFAULT_KEY_TAG_PATTERN);

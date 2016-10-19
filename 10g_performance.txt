@@ -1,0 +1,1099 @@
+RAID 1 and 1/0 require two disks to be written for each host write
+Total I/O = Host Reads + 2 * Host Writes
+RAID 5 requires four operations per host write A RAID 5 write requires 2 reads and 2 writes
+Total I/O = Host Reads + 4 * Host Writes
+We do one large stripe write if data is sequential or large (Modified RAID 3, “MR3”)
+
+
+
+20100823
+每次只访问一张分区表，性能最好
+一次访问两张 cost 204 时间42s consistent read 34784 physical read 32574
+一次访问一张 cost 10  时间 4s consistent read 1036  physical read 0 
+SQL> select sum(TOTALVOLUME) from xlhkmdf.t_hkex_bs where SYMBOL in('02318','00001')  and TRANS_DATE>=sysdate-5;
+
+SUM(TOTALVOLUME)
+----------------
+      3.2668E+10
+
+Elapsed: 00:00:00.42
+
+Execution Plan
+----------------------------------------------------------
+Plan hash value: 4183795726
+
+--------------------------------------------------------------------------------------------------------------------------------
+| Id  | Operation              | Name      | Rows  | Bytes | Cost (%CPU)| Time     | Pstart| Pstop | TQ  |IN-OUT| PQ Distrib |
+--------------------------------------------------------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT       |           |     1 |    22 |   204   (3)| 00:00:03 |       |       |     |         |
+|   1 |  SORT AGGREGATE        |           |     1 |    22 |            |          |       |       |     |         |
+|   2 |   PX COORDINATOR       |           |       |       |            |          |       |       |     |         |
+|   3 |    PX SEND QC (RANDOM) | :TQ10000  |     1 |    22 |            |          |       |       |  Q1,00 | P->S | QC (RAND)
+|   4 |     SORT AGGREGATE     |           |     1 |    22 |            |          |       |       |  Q1,00 | PCWP |
+|   5 |      PX BLOCK ITERATOR |           |     1 |    22 |   204   (3)| 00:00:03 |KEY(I) |KEY(I) |  Q1,00 | PCWC |
+|*  6 |       TABLE ACCESS FULL| T_HKEX_BS |     1 |    22 |   204   (3)| 00:00:03 |KEY(I) |KEY(I) |  Q1,00 | PCWP |
+--------------------------------------------------------------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   6 - filter(("SYMBOL"='00001' OR "SYMBOL"='02318') AND "TRANS_DATE">=SYSDATE@!-5)
+
+
+Statistics
+----------------------------------------------------------
+        120  recursive calls
+          0  db block gets
+      34784  consistent gets
+      32574  physical reads
+          0  redo size
+        348  bytes sent via SQL*Net to client
+        350  bytes received via SQL*Net from client
+          2  SQL*Net roundtrips to/from client
+          2  sorts (memory)
+          0  sorts (disk)
+          1  rows processed
+
+SQL> select sum(over_all) from  (  select sum(TOTALVOLUME) over_all  from xlhkmdf.t_hkex_bs where SYMBOL='00001' and TRANS_DATE>
+
+SUM(OVER_ALL)
+-------------
+   3.2668E+10
+
+Elapsed: 00:00:00.04
+
+Execution Plan
+----------------------------------------------------------
+Plan hash value: 2857243512
+
+--------------------------------------------------------------------------------------------------------------------------------
+| Id  | Operation                               | Name                  | Rows  | Bytes | Cost (%CPU)| Time     | Pstart| Pstop
+--------------------------------------------------------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT                        |                       |     1 |    13 |    10  (20)| 00:00:01 |       |
+|   1 |  SORT AGGREGATE                         |                       |     1 |    13 |            |          |       |
+|   2 |   VIEW                                  |                       |     2 |    26 |    10  (20)| 00:00:01 |       |
+|   3 |    SORT UNIQUE                          |                       |     2 |    46 |    10  (60)| 00:00:01 |       |
+|   4 |     UNION-ALL                           |                       |       |       |            |          |       |
+|   5 |      SORT AGGREGATE                     |                       |     1 |    23 |     5  (20)| 00:00:01 |       |
+|   6 |       PARTITION HASH SINGLE             |                       |     1 |    23 |     4   (0)| 00:00:01 |   372 |   372
+|*  7 |        TABLE ACCESS BY LOCAL INDEX ROWID| T_HKEX_BS             |     1 |    23 |     4   (0)| 00:00:01 |   372 |   372
+|*  8 |         INDEX RANGE SCAN                | IDX_HKEX_BS_TRANSDATE |     1 |       |     3   (0)| 00:00:01 |   372 |   372
+|   9 |      SORT AGGREGATE                     |                       |     1 |    23 |     5  (20)| 00:00:01 |       |
+|  10 |       PARTITION HASH SINGLE             |                       |     1 |    23 |     4   (0)| 00:00:01 |   992 |   992
+|* 11 |        TABLE ACCESS BY LOCAL INDEX ROWID| T_HKEX_BS             |     1 |    23 |     4   (0)| 00:00:01 |   992 |   992
+|* 12 |         INDEX RANGE SCAN                | IDX_HKEX_BS_TRANSDATE |     1 |       |     3   (0)| 00:00:01 |   992 |   992
+--------------------------------------------------------------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   7 - filter("SYMBOL"='00001')
+   8 - access("TRANS_DATE">=SYSDATE@!-5)
+  11 - filter("SYMBOL"='02318')
+  12 - access("TRANS_DATE">=SYSDATE@!-5)
+
+
+Statistics
+----------------------------------------------------------
+          1  recursive calls
+          0  db block gets
+       1036  consistent gets
+          0  physical reads
+          0  redo size
+        345  bytes sent via SQL*Net to client
+        350  bytes received via SQL*Net from client
+          2  SQL*Net roundtrips to/from client
+          1  sorts (memory)
+          0  sorts (disk)
+          1  rows processed
+
+
+
+20100811
+有trigger
+506.4s   100000/
+commit each row
+
+无trigger
+8.9s   100000/
+commit each row
+
+declare
+begin
+for i in 1..100000 loop
+insert into t_test values(i);
+commit;
+end loop;
+end;
+/
+  
+
+
+
+20101601
+网络性能测试
+
+Chariot
+
+
+高频数据 tik insert性能 
+(update ,commit every record ，带index)
+insert per second 714
+(update ,commit every 1000 ，带index)
+insert per second 2500
+
+(update ,batch commit every 10000 ，带index)
+insert per second 125000
+(update ,batch commit every 10000 ，no index)
+insert per second 250000
+
+
+
+
+direct insert 的数据能够被压缩
+insert /*+ append */ into t_hkex_bs_compress select *from data.t_hkex_bs t where t.symbol='00001';
+33.235s  63M
+insert /*+ append */ into t_hkex_bs_nocompress select *from data.t_hkex_bs t where t.symbol='00001';
+25.61s   176M
+
+已有的hash table无法被move compress
+但是 list的可以
+alter table T_HKEX_BS_COMPRESS_LIST MOVE PARTITION  p1  tablespace dev compress;
+
+
+20100507
+测试压缩性能 bs数据压缩后大概只有原来的1/3
+
+性能比较   
+		           不压缩成本   压缩成本   不压缩     压缩     不压缩   压缩
+		                                   物理读     物理读    逻辑读  逻辑读 
+select_index     4731       812        487        802       2464    1782
+sum()_noindex    4867      1693        21060      7001      21939   7549
+
+select t.trans_date,t.lastprice
+  From t_hkex_bs_nocompress t
+ where t.trans_date >= to_date('20100401 10:30:00', 'yyyymmdd hh24:mi:ss')
+   and t.trans_date <= to_date('20100402 11:30:00', 'yyyymmdd hh24:mi:ss')
+ 
+3551 rows selected.
+
+Elapsed: 00:00:25.12
+
+Execution Plan
+----------------------------------------------------------
+Plan hash value: 2658107681
+
+----------------------------------------------------------------------------------------------------
+| Id  | Operation                   | Name                 | Rows  | Bytes | Cost (%CPU)| Time     |
+----------------------------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT            |                      | 10840 |   275K|  4731   (1)| 00:00:57 |
+|   1 |  TABLE ACCESS BY INDEX ROWID| T_HKEX_BS_NOCOMPRESS | 10840 |   275K|  4731   (1)| 00:00:57 |
+|*  2 |   INDEX RANGE SCAN          | IDX_NOCOMPRESS       | 10840 |       |    38   (0)| 00:00:01 |
+----------------------------------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   2 - access("T"."TRANS_DATE">=TIMESTAMP' 2010-04-01 10:30:00' AND
+              "T"."TRANS_DATE"<=TIMESTAMP' 2010-04-02 11:30:00')
+
+Note
+-----
+   - dynamic sampling used for this statement
+
+
+Statistics
+----------------------------------------------------------
+          9  recursive calls
+          0  db block gets
+       2464  consistent gets
+        802  physical reads
+          0  redo size
+      61750  bytes sent via SQL*Net to client
+       2946  bytes received via SQL*Net from client
+        238  SQL*Net roundtrips to/from client
+          0  sorts (memory)
+          0  sorts (disk)
+       3551  rows processed
+
+
+
+select t.trans_date,t.lastprice
+  From t_hkex_bs_compress t
+ where t.trans_date >= to_date('20100401 10:30:00', 'yyyymmdd hh24:mi:ss')
+   and t.trans_date <= to_date('20100402 11:30:00', 'yyyymmdd hh24:mi:ss')
+   
+   
+   3551 rows selected.
+
+Elapsed: 00:00:25.21
+
+Execution Plan
+----------------------------------------------------------
+Plan hash value: 685982999
+
+--------------------------------------------------------------------------------------------------
+| Id  | Operation                   | Name               | Rows  | Bytes | Cost (%CPU)| Time     |
+--------------------------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT            |                    |  2500 | 65000 |   812   (1)| 00:00:10 |
+|   1 |  TABLE ACCESS BY INDEX ROWID| T_HKEX_BS_COMPRESS |  2500 | 65000 |   812   (1)| 00:00:10 |
+|*  2 |   INDEX RANGE SCAN          | IDX_COMPRESS       |  2500 |       |    12   (0)| 00:00:01 |
+--------------------------------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   2 - access("T"."TRANS_DATE">=TIMESTAMP' 2010-04-01 10:30:00' AND
+              "T"."TRANS_DATE"<=TIMESTAMP' 2010-04-02 11:30:00')
+
+Note
+-----
+   - dynamic sampling used for this statement
+
+
+Statistics
+----------------------------------------------------------
+         52  recursive calls
+          0  db block gets
+       1782  consistent gets
+        487  physical reads
+          0  redo size
+      61750  bytes sent via SQL*Net to client
+       2946  bytes received via SQL*Net from client
+        238  SQL*Net roundtrips to/from client
+          0  sorts (memory)
+          0  sorts (disk)
+       3551  rows processed
+       
+
+
+select sum(t.lastprice)
+  From t_hkex_bs_nocompress t
+ where t.trans_date >= to_date('20100317 11:30:00', 'yyyymmdd hh24:mi:ss')
+   and t.trans_date <= to_date('20100318 18:30:00', 'yyyymmdd hh24:mi:ss');
+   
+   
+   
+   
+   Elapsed: 00:00:00.60
+
+Execution Plan
+----------------------------------------------------------
+Plan hash value: 20258651
+
+-------------------------------------------------------------------------------------------
+| Id  | Operation          | Name                 | Rows  | Bytes | Cost (%CPU)| Time     |
+-------------------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT   |                      |     1 |    26 |  4867   (1)| 00:00:59 |
+|   1 |  SORT AGGREGATE    |                      |     1 |    26 |            |          |
+|*  2 |   TABLE ACCESS FULL| T_HKEX_BS_NOCOMPRESS | 19931 |   506K|  4867   (1)| 00:00:59 |
+-------------------------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   2 - filter("T"."TRANS_DATE">=TIMESTAMP' 2010-03-17 11:30:00' AND
+              "T"."TRANS_DATE"<=TIMESTAMP' 2010-03-18 18:30:00')
+
+Note
+-----
+   - dynamic sampling used for this statement
+
+
+Statistics
+----------------------------------------------------------
+          9  recursive calls
+          0  db block gets
+      21939  consistent gets
+      21060  physical reads
+          0  redo size
+        346  bytes sent via SQL*Net to client
+        350  bytes received via SQL*Net from client
+          2  SQL*Net roundtrips to/from client
+          0  sorts (memory)
+          0  sorts (disk)
+          1  rows processed
+ 
+ 
+ select sum(t.lastprice)
+  From t_hkex_bs_compress t
+ where t.trans_date >= to_date('20100317 11:30:00', 'yyyymmdd hh24:mi:ss')
+   and t.trans_date <= to_date('20100318 18:30:00', 'yyyymmdd hh24:mi:ss');
+   
+   
+   SUM(T.LASTPRICE)
+----------------
+        775553.4
+
+Elapsed: 00:00:00.76
+
+Execution Plan
+----------------------------------------------------------
+Plan hash value: 449820523
+
+-----------------------------------------------------------------------------------------
+| Id  | Operation          | Name               | Rows  | Bytes | Cost (%CPU)| Time     |
+-----------------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT   |                    |     1 |    26 |  1693   (2)| 00:00:21 |
+|   1 |  SORT AGGREGATE    |                    |     1 |    26 |            |          |
+|*  2 |   TABLE ACCESS FULL| T_HKEX_BS_COMPRESS | 22767 |   578K|  1693   (2)| 00:00:21 |
+-----------------------------------------------------------------------------------------
+
+Predicate Information (identified by operation id):
+---------------------------------------------------
+
+   2 - filter("T"."TRANS_DATE">=TIMESTAMP' 2010-03-17 11:30:00' AND
+              "T"."TRANS_DATE"<=TIMESTAMP' 2010-03-18 18:30:00')
+
+Note
+-----
+   - dynamic sampling used for this statement
+
+
+Statistics
+----------------------------------------------------------
+          9  recursive calls
+          0  db block gets
+       7549  consistent gets
+       7001  physical reads
+          0  redo size
+        346  bytes sent via SQL*Net to client
+        350  bytes received via SQL*Net from client
+          2  SQL*Net roundtrips to/from client
+          0  sorts (memory)
+          0  sorts (disk)
+          1  rows processed
+
+
+分区类型性能测试
+		                               		   行数	         时间     	Cost(%CPU)	consistent gets	physical reads
+T_XHKG_BS_L2_HASH	  一个equity一个月	   7278	     00: 00: 03.67	431   	    7317	6929
+T_XHKG_BS_L2_RANGE	一个equity一个月	   7278	     00: 01: 12.64	76571 			1252554	1251685
+T_XHKG_BS_L2_HASH	  一个equity连续三个月 174530	   00: 00: 21.76	1032  			17056	16709
+T_XHKG_BS_L2_RANGE	一个equity连续三个月 174530	   00: 00: 59.85	60315   		705349	569844
+T_XHKG_BS_L2_HASH	一些equity一个月	     11886908	 00: 26: 15.12	279K  			4271178	4261004
+T_XHKG_BS_L2_RANGE 一些equity一个月	     11886908	 00: 22: 27.08	100K     		1252554	1251685
+T_XHKG_BS_L2_RANGE	一些equity连续三个月 35250290	 01: 10: 40.13	237K 				3574891	3572403
+
+
+   
+20100505
+Cheetah? 15K.7
+600GB、450GB 和 300GB ? 15,000RPM ? 6Gb/秒串行
+
+连接 SCSI (SAS) 以及 4Gb/秒 FC
+主要优势
+? 第三代垂直记录技术可提供高达 600GB 的容量。
+? 卓越性能，具备高达 204MB/秒的持续数据传输率 － 比上一代提升 16%
+? 该 3.5 英寸硬盘可靠性在业界有口皆碑，MTBF 长达 160 万小时
+? 采用希捷 PowerTrim? 技术，闲置功耗（GB/瓦）比典型的 3.5 英寸硬盘降低 62%。
+? 先进的读/写技术使不可恢复错误率降低至 1x10E16
+? 提供 4Gb/秒 FC 或 6Gb/秒 SAS 接口（支持 SAS 2.0 功能集）
+
+平均延迟时间（毫秒）2.0
+寻道时间
+平均读/写时间（毫秒）3.4/3.9
+
+
+Cheetah 15K.5
+300GB、146GB、73GB— 15KRPM — Ultra320 SCSI、3Gb/秒串行连接 SCSI (SAS) 和 4Gb/秒 FC
+
+主要优势
+? 杰出的垂直记录技术实现 300GB 的容量，可将性能提升30%
+? Cheetah? 15K.5 硬盘的持续传输率达到 125MB/秒，第一次突破
+了 100MB 的极限
+? 速度最高、最可靠的 Cheetah 15K 硬盘
+? 与 3.5 英寸硬盘相比，其 IOPS 和响应速度分别提高 30% 和
+20%
+? 在减少硬盘数的同时提高性能，减少支持基础架构、维护和
+空间要求且提高系统可靠性
+? 在业界同类 3.5 英寸硬盘中提供最高可靠性，专为高要求的
+24x7 的企业应用而设计
+? 减少 RAID 重建时间并将可靠性风险减少到最低
+
+
+
+SATA 缓存 (MB) 64
+平均故障间隔时间（小时） 750,000
+平均延迟时间（毫秒）
+4.16
+
+Cheetah? 10K.7 Ultra320 SCSI 146-GB 硬盘驱动器  SCSI
+主要功能和优势
+
+    * 缓存为 8 MB
+    * Ultra320 SCSI 80 针接口
+    * 平均读寻道时间为 4.6 ms，平均写寻道时间为 5.2 ms
+    * 持续数据传输率高达 80 MB/s
+    * 独有的背景媒体扫描和增强的错误纠正代码
+    * 较低的功率和冷却要求
+    * 5 年保修
+
+20091225
+
+java System.nanoTime()
+
+RMDS
+           SLERT 10 SP2u3       SLES 10 SP2 
+infiniband <0.67ms 750k/s    <1ms 600k/s      k 1000message
+1000M      <1ms    500k/s    <1ms 200k/s
+10000M(TOE)<1ms     800k/s    <1ms 550k
+ 
+LLM
+QDR
+< 8 microseconds at the base message rates set by the specs 
+< 12-microseconds at 1 million messages per second.
+RMDS
+           SLERT 10 SP2u3       SLES 10 SP2 
+infiniband <0.67ms 750k/s    <1ms 600k/s      k 1000message
+1000M      <1ms    500k/s    <1ms 200k/s
+10000M(TOE)<1ms     800k/s    <1ms 550k
+ 
+LLM
+QDR
+< 8 microseconds at the base message rates set by the specs 
+< 12-microseconds at 1 million messages per second.
+
+TT update 15 microseconds select <5 microseconds (直接对1M记录做全表扫描，156纳秒/记录)
+实测 TT insert 2 microseconds select <0.156 microseconds (直接对1M记录做全表扫描，156纳秒/记录)
+java 循环1m次赋值，耗时 3ms  3ns
+
+FC disk 7ms 
+SSD    75 microseconds
+
+RAM  Nehalem 80NS(DDR3 1066MHZ，理论值12NS ) L1 cache 4clocks L2 10clocks L3 48clocks
+
+dell d630测试 (evertest) CPU 2GHz
+     read(MB/s)   write(MB/s)    latency(ns)
+Ram  5321         3507           85.7
+L1   34667        34558          1.4 
+L2   10510        6099           9.7
+磁盘latency 16ms 
+
+hp workstation xw4600 测试 (evertest) CPU 2.5GHz
+     read(MB/s)   write(MB/s)    latency(ns)
+Ram  6376         6922           81.5
+L1   39983       39881          1.2 
+L2   17711       11624          71
+磁盘latency 13.15ms  random read 78.8M/s
+
+IBM 3650M2 测试 (evertest) CPU 5520 2.2G
+     read(MB/s)   write(MB/s)    latency(ns)
+Ram  10879        5360           72
+L1   32001       27722           2.5
+L2   17063       15571           6.3
+L3   15579       13717           7.1
+磁盘 latency 7.4 ms  random read 190M/s 
+
+
+Nehalem 为 numa结构
+近端访问约60个时钟周期，远端访问约90个时钟周期（据说仍然比Harptertown Xeon快），本地L3 Cache Hit则为30个时钟周期
+
+
+latency FC=10MS SSD=50microseconds  1MS IB=0.67MS 
+TT=8(read) 20(insert)microseconds  KDB=5 NS(read) ??
+
+
+RISC架构的特点就是指令长度相等，执行时间恒定（通常为一个时钟周期），因此处理器设计起来就很简单，可以通过深长的流水线达到很高的频率（例如31 级流水线的Pentium 4……当然Pentium 4要超过5GHz的屏障需要付出巨大的功耗代价），IBM的Power6就可以轻松地达到4.7GHz的起步频率。关于Power6的架构的非常简单的介绍可以看《机密揭露：Intel超线程技术有多少种？》，我们继续说Nehalem：和RISC相反，CISC指令的长度不固定，执行时间也不固定，因此 Intel的RISC/CISC混合处理器架构就要通过解码器将x86指令翻译为uop，从而获得RISC架构的长处，提升内部执行效率。
+KDB 
+Kdb+ helps address latency issues with its million messages per second speed; typical streaming data solutions offer 100,000 –
+200,000 messages per second.
+Kdb+ queries in-memory data at the rate of over 200 million records per second per CPU and updates data in memory at the rate
+of 1 million inserts per second
+
+
+
+20091124
+首先创建以 testname为名字的 lun
+如 mytest.lun
+内容如下：
+/dev/sdb
+
+ ./orion_linux_x86-64 -run advanced -size_small 8 -size_large 1024 -type rand -simulate concat -write 0 -duration 10    -matrix basic -num_disks 11 -testname mytest
+ 
+
+  ./orion_linux_x86-64 -run advanced -size_small 8 -size_large 1024 -type rand -simulate concat -write 0 -duration 3    -matrix detailed  -num_disks 6 -testname diskarray
+ 
+ ds5300 测试
+ 
+ ./orion_aix_ppc64 -run advanced -size_small 8 -size_large 1024 -type rand -simulate concat -write 0 -duration 10    -matrix basic -num_disks 11 -testname ytest
+ 
+
+
+ 磁盘阵列测试结果  1000g 128k segment size 
+  Commandline:
+-run advanced -size_small 8 -size_large 1024 -type rand -simulate concat -write 0 -duration 10 -matrix basic -num_disks 6 -testname mytest
+
+Maximum Large MBPS=185.28 @ Small=0 and Large=12
+Maximum Small IOPS=1553 @ Small=27 and Large=0
+Minimum Small Latency=5.52 @ Small=1 and Large=0
+
+ 磁盘阵列测试结果 500g 64k segment size 
+Commandline:
+-run advanced -size_small 8 -size_large 1024 -type rand -simulate concat -write 0 -duration 10 -matrix basic -num_disks 6 -testname diskarray
+
+Maximum Large MBPS=132.51 @ Small=0 and Large=10
+Maximum Small IOPS=1758 @ Small=29 and Large=0
+Minimum Small Latency=5.00 @ Small=1 and Large=0
+
+
+DS5300测试结果(FC 12块盘raid 5,segment size 128k)
+Maximum Large MBPS=362.48 @ Small=0 and Large=2
+Maximum Small IOPS=34689 @  Small=54 and Large=0
+Minimum Small Latency=0.28 @ Small=6 and Large=0
+
+DS5300测试结果(FC 12块盘raid 5,segment size 64k)
+Maximum Large MBPS=140.26 @ Small=0 and Large=2
+Maximum Small IOPS=34792 @ Small=52 and Large=0
+Minimum Small Latency=0.49 @ Small=14 and Large=0
+
+
+DS5300测试结果(SSD 2块盘raid 1,segment size 64k)
+Maximum Large MBPS=276.43 @ Small=0 and Large=2
+Maximum Small IOPS=21162 @ Small=54 and Large=0
+Minimum Small Latency=0.42 @ Small=1 and Large=0
+
+
+
+
+内置8块硬盘测试结果
+ORION VERSION 11.1.0.7.0
+
+Commandline:
+-run advanced -testname mytest -num_disks 8 -size_small 8 -write 0 -matrix basic -duration 10
+Maximum Large MBPS=169.63 @ Small=0 and Large=16
+Maximum Small IOPS=1465 @ Small=40 and Large=0
+Minimum Small Latency=7.22 @ Small=1 and Large=0
+
+内置4块硬盘测试
+
+ORION VERSION 11.1.0.7.0
+
+Commandline:
+-run advanced -size_small 8 -size_large 1024 -type rand -simulate concat -write 0 -duration 10 -matrix basic -num_disks 4 -testname testinternal
+
+Maximum Large MBPS=109.30 @ Small=0 and Large=8
+Maximum Small IOPS=743 @ Small=20 and Large=0
+Minimum Small Latency=8.04 @ Small=1 and Large=0
+
+
+20090811
+可以用 oracle orion 来对io坐压力测试
+
+20090722
+输出更好的格式
+SET SERVEROUTPUT ON FORMAT WRAPPED;
+The new OLTP Table Compression feature, however, is a part of the Oracle Advanced Compression option that needs to be licensed in addition to the Enterprise Edition
+
+SecureFiles Deduplication is an intelligent technology that eliminates duplicate copies of SecureFiles data. Oracle stores one image of the SecureFiles data and replaces the duplicate copies with references to this image.
+FOR EXAMPLE 10 users receive an email with the same 1MB attachment. Without SecureFiles Deduplication, the system would store one copy of the file for each of the 10 users – requiring 10MB of storage. If the email application in our example had used SecureFiles with Deduplication, it would have stored the 1MB attachment just once. That’s a 90% savings in storage requirements.
+
+Oracle's table compression feature compresses data by eliminating duplicate values in a database block. Compressed data stored in a database block (also known as disk page) is self-contained. That is, all the information needed to re-create the uncompressed data in a block is available within that block. Duplicate values in all the rows and columns in a block are stored once at the beginning of the block, in what is called a symbol table for that block. All occurrences of such values are replaced with a short reference to the symbol table.
+压缩适合只读的，不太适合high update的操作
+
+sqlplus 里面设置变量
+var col1 varchar2(128);
+var col2 varchar2(128);
+
+execute :col1:='A';
+execute :col2:='A';
+
+可以显示绑定变量的peek过程
+SELECT * FROM TABLE(DBMS_XPLAN.DISPLAY_CURSOR(NULL, NULL, 'ADVANCED'));
+e-rows代表cbo估算的,a-rows代表实际的
+
+--------------------------------------------------------------------------------------------
+| Id  | Operation         | Name         | Starts | E-Rows | A-Rows |   A-Time   | Buffers |
+--------------------------------------------------------------------------------------------
+|   1 |  SORT AGGREGATE   |              |      1 |      1 |      1 |00:00:00.01 |       4 |
+|*  2 |   INDEX RANGE SCAN| ACS_TEST_IDX |      1 |      1 |    958 |00:00:00.01 |       4 |
+
+
+
+
+bind peeking 
+同样的sql生成不同的执行计划，如果有histogram信息的话
+select child_number, executions, buffer_gets, is_bind_sensitive, is_bind_aware,plan_hash_value from v$sql；
+
+The current execution statistics for the cursor can be seen using:
+select * from v$sql_cs_statistics where sql_id='19sxt3v07nzm4'; 
+CHILD_NUMBER EXECUTIONS BUFFER_GETS I I PLAN_HASH_VALUE
+------------ ---------- ----------- - - ---------------
+           0          2         163 Y N      2647430641
+           1          1          68 Y Y      3194050402
+           2          1           4 Y Y      2647430641
+
+select CHILD_NUMBER,PREDICATE,RANGE_ID,LOW,HIGH from v$sql_cs_selectivity where sql_id = '19sxt3v07nzm4';
+
+CHILD_NUMBER PREDICATE                                  RANGE_ID LOW        HIGH
+------------ ---------------------------------------- ---------- ---------- ----------
+           1 =B2                                               0 0.879750   1.075250
+           1 =B1                                               0 0.861750   1.053250 
+
+_OPTIM_PEEK_USER_BINDS default TRUE
+
+Bind peeking has been known to cause a different execution plan to be used on different nodes of a RAC
+cluster, because each node has its own Shared Pool, and despite the same SQL, data, and statistics the
+first time a cursor was hard parsed on each node a different set of bind values was presented to the
+optimizer, and it thus chose a different plan on each node.
+
+There is a hidden parameter which controls this feature's behaviour, whose default value is TRUE.
+Although a stable plan can be achieved by setting the parameter off it must be realized that this stable
+plan is not necessarily the optimum plan for all bind values. Consider the following simple example where
+tablex has 10,000 rows and col1 has an index. 
+
+           
+
+20090720
+commit_write 控制redo 异步写
+commit_write=’batch,nowait’),
+
+
+Nologging operations are invoked by any of the following:
+
+    * SQL*Loader direct load operations
+    * Direct load INSERT operations from CREATE TABLE | INDEX or INSERT commands
+    * Loading into an object containing LOB data when its object’s segment characteristic is NOCACHE NOLOGGING
+
+For databases in ARCHIVELOG mode, nologging operations can only occur for a particular object if and only if:
+
+    * Database allows for nologging (ALTER DATABASE NO FORCE LOGGING) and
+    * Tablespace allows for nologging (ALTER TABLESPACE <NAME> NO FORCE LOGGING) and
+    * Object allows for nologging (ALTER TABLE <NAME> NOLOGGING)
+    
+20090714
+AWR里面的tablespace IO 统计是从v$filestat 汇总的
+    Execute to Parse%-round(100*(1-:prse/:exe),2) 
+user calls ：Number of user calls such as login, parse, fetch, or
+execute When determining activity, the ratio of user calls to RPI
+calls, give you an indication of how much internal work
+gets generated as a result of the type of requests the user
+is sending to Oracle.
+
+execute count  :Total number of calls (user and recursive) that executed SQL statements
+
+recursive calls : Number of recursive calls generated at both the user
+and system level. Oracle maintains tables used for
+internal processing. When Oracle needs to make a
+change to these tables, it internally generates an internal
+SQL statement, which in turn generates a recursive call.
+
+Version Count 在AWR表示 具有同样sql和同样执行计划的sql的出现次数
+dbms_worklad.create_snapshot;
+
+20090625
+intel Intel? X25-E Extreme SATA Solid-State Drive 
+SLC NAND
+
+Bandwidth  	 Sustained sequential read: up to 250 MB/s
+							Sustained sequential write: up to 170 MB/s 
+Read latency  	 75 microseconds
+I/O Per Second (IOPS) 	Random 4KB Reads: >35,000 IOPS
+											Random 4KB Writes: >3,300 IOPS
+											
+Life expectancy  	 2 Million Hours Mean Time Before Failure (MTBF) 
+
+Power consumption  	 Active: 2.4W Typical (server workload1)
+										Idle (DIPM): 0.06 W Typical 
+										
+内存读取延迟在纳秒级别 (亿分之一) ddr 15-20ns ddr2 10-20ns  ddr3 10-15n2
+15k segate 磁盘
+Average latency  	2.0 msec
+Random read seek time 	3.50 msec
+Random write seek time 	4.0 msec
+
+20090619
+cache命中率不高的，随机IO多,小IO操作(up to 16kb)的比较合适ssd
+iops 大概能有8倍的提高，latency有至少4倍的提高
+Redo 最好放到传统的磁盘上，因为有cache，而且是顺序读写
+temp  适合放到ssd
+对象密度大的适合放到ssd object_iops/objects/gb
+http://www.petefinnigan.com/unwrap.sql 安全相关的
+
+
+set serveroutput on;
+create or replace procedure unwrap(o in varchar,n in varchar, t in varchar)
+as
+        vWrappedtext                Varchar2(32767);               
+        vtrimtext                Varchar2(32767);               
+        vChar                                        Varchar2(2);
+        vRepchar                                Varchar2(2);
+        vLZinflatestr                        Varchar2(32767);
+        nLen                Integer;
+        nLoop        Integer;
+        nCnt                Integer;
+type vartab is table of varchar2(2) index by varchar2(2);
+
+mytbl vartab;
+cursor getchar is select C_BASE64DECODE xr,C_LZDEFLATECODE dr from sys.idltranslate;
+Begin
+for i in getchar loop --sys.idltranslate表内容存到字符数组
+   mytbl(i.xr):=i.dr;
+end loop;
+vtrimtext:='';
+select count(*) into ncnt                         from DBA_SOURCE
+                        Where owner=o
+                        And Name = n
+                        And Type=t ;
+if ncnt >0 and ncnt <5 then
+for i in 1..ncnt loop
+if i=1 then
+select rtrim( substr( TEXT, instr( TEXT, chr( 10 ), 1, 20 ) + 1 ), chr(10) )   --保存去掉换行的BASE64码正文
+into vLZinflatestr
+                        from DBA_SOURCE
+                        Where owner=o
+                        And Name = n
+                        And Type=t and line=i;
+else
+select text into vLZinflatestr
+                        from DBA_SOURCE
+                        Where owner=o
+                        And Name = n
+                        And Type=t and line=i;
+end if;
+vtrimtext:=vtrimtext||vLZinflatestr;
+end loop;
+end if;
+vtrimtext:=replace(vtrimtext,chr(10),'');
+nLen := Length(vtrimtext)/64 ;
+vWrappedtext :='';
+for i in 0..nLen  loop  
+if i< nLen   then
+vWrappedtext:=vWrappedtext||utl_encode.base64_decode( utl_raw.cast_to_raw(substrb(vtrimtext,64*i+1 , 64 ))) ;
+else
+vWrappedtext:=vWrappedtext||utl_encode.base64_decode( utl_raw.cast_to_raw(substrb(vtrimtext,64*i+1  ))) ;
+end if;
+        --DBMS_OUTPUT.PUT_LINE(vWrappedtext);
+        End Loop;
+--vWrappedtext:=substr(vWrappedtext,41);
+    nLen := Length(vWrappedtext)/2 - 1;
+
+        vLZinflatestr :='';
+
+        For nLoop In 20..nLen Loop --从第41字节开始
+                vChar := Substrb(vWrappedtext,nLoop*2+1,2);
+                /*
+                Select Count(*) Into nCnt From SYS.IDLTRANSLATE Where C_BASE64DECODE=vChar;
+                If nCnt <> 1 Then
+                        DBMS_OUTPUT.PUT_LINE('SUBSTATION TABLE WARNING: Count not find following char--'||vChar);
+                        Return;
+                Else
+                        Select C_LZDEFLATECODE Into vRepchar From SYS.IDLTRANSLATE Where C_BASE64DECODE=vChar;
+                End If;
+                */
+                vLZinflatestr := vLZinflatestr || mytbl(vChar); --从字符数组匹配
+                --DBMS_OUTPUT.PUT_LINE(vLZinflatestr);
+        End Loop;
+        --DBMS_OUTPUT.PUT_LINE(vLZinflatestr);
+        DBMS_OUTPUT.PUT_LINE(amosunwrapper.inflate(vLZinflatestr));
+End;
+/
+
+exec unwrap('SYS','HANMON','PACKAGE BODY');
+
+
+
+
+
+20090611
+Trace Analyzer (TRCA) is a tool that inputs an
+EVENT 10046 SQL Trace file, connects to the
+database, and outputs a comprehensive report for
+process performance analysis and tuning.
+? Focus on big time consumers, e.g.:
+? Logical Reads ? CPU Time ? SQL Tuning
+? Waits ? Resource Contention
+? Unaccounted-for ? Investigate
+? If moving into SQL analysis and tuning, consider
+
+11g 新功能
+创建多个字段的统计信息
+declare
+cg_name varchar2(30);
+begin
+cg_name := dbms_stats.create_extended_stats(null,'customers',
+'(cust_state_province',country_id)');
+end;
+/
+Exec dbms_stats.gather_table_stats(null,'customers',method_opt =>
+'for all columns size skewonly
+for columns (cust_state_province,country_id) skewonly');
+
+exec dbms_stats.gather_table_stats(null,'customers', method_opt =>
+'for all columns size skewonly
+for columns (lower(cust_state_province)) skewonly');
+
+alter system set "_fix_control"='3746511:OFF’;
+
+
+SQLT (SQLTXPLAIN) is a tool that inputs one SQL
+statement and outputs a set of comprehensive
+diagnostic files for SQL performance analysis and
+tuning.
+
+可以导入导出SQL相关的信息(执行计划,outline,profile等等)
+DBMS_SQLDIAG.EXPORT_SQL_TESTCASE()
+
+
+20090609
+少量做全面统计比经常做sample好
+
+CBO poorly estimates Expressions on Columns
+ E.g., WHERE upper(model) = ‘FLEX’
+ CBO assumes default selectivity (5%)
+
+11g可以对多个字段组合在一起收集histogram
+也可以对有函数的字段进行histogram统计
+
+收集系统，数据字典，fixed object的统计信息
+
+
+
+20090403
+不同的sql version 是由于相同的sql不同的schema对象，不同的bind变量类型，不同的optimize mode或者NLS参数
+当cursor_sharing=similar 时，CBO判断是否安全，如果可能生成不同的执行计划，则采用child cursor的形式
+不安全的通常是like或则=但是该列有histogram
+cursor_sharing->session_cached_cursors->cursor_space_for_time
+使用vpd，则是sql在动态加上where 条件之后在做优化
+
+做histogram的时候，最大的bucket是255 ，如果字符字段里面的值>32bytes，则historgram无法使用，因为只统计32个bytes
+__optimizer_cost_model = {choose|io|cpu}
+%CPU is 100*cpu_cost/(cpu_cost+io_cost)
+The CPU cost reflects the estimated number of CPU cycles for operation
+两个特殊的hint 
+CARDINALITY(t1 [, t2 ...], n)
+SELECTIVITY(t1 [, t2 ...], n)
+select /*+ cardinality(dual, 42)*/ * from dual;
+
+使用串行读取的bolck放在buffer pool，使用并行读取的block slave's PGA
+如果是direct io ，则绕过buffer cache，直接放到pga
+检查物化视图是否使用
+1.query_rewrite_enabled = FORCE
+2.mv 创建的时候是rewrite_enabled
+3.DBMS_MVIEW.EXPLAIN_REWRITE
+20090402
+index的branch block里面的每个entry包含直属叶子节点的最大值和left-most child DBA
+通过索引来加快存取数据，同时可以保证数据唯一性
+创建index的时候，都是先创建叶子节点，然后是branch，然后是root
+读取一条记录，走索引通常5次读取就ok了，root,
+两个branch(one read on the next level branch block, and one read on the lowest level branch bloc)
+,leaf,data block
+index的层数通常小于等于3，经常是2 最大24
+A 24-level index with 2 rows per index block can hold 2*(3**23) ~ 18.8 billion leaf rows.
+
+update index的时候是先删除，然后插入
+
+当连接表数量<=5，CBO会尝试所有的组合计算成本
+选取的数据小于10%，使用索引会快
+
+20090327
+partition 支持多个字段做 partition(最多16个字段)  
+globale partitioned index and globale index
+
+alter table add partition update index 这样能同时更新index ，以免出现index失效情况
+SKIP_UNUSABLE_INDEXES 参数如果为true，则 optimizer自动忽略 无效index
+人工重建 index 效果更好(更快，空间利用更好)
+
+
+
+However, local indexes will be more common than global indexes. Global indexes
+should be used when there is a specific requirement which cannot be met by local
+indexes (for example, a unique index on a non-partitioning key, or a performance
+requirement).
+A bitmap index on a partitioned table must be a local index.
+local prefix index是和(OLTP/OLAP) global  index 适合 OLTP
+local non-prefix index适合OLAP
+如果需要经常进行分区的变动(增加，删除)那么local index比较合适，gloabl Index受影响比较大
+
+
+sql profile 是通过tuning advisor 自动产生的 ,包含一些针对特定SQL的auxiliary统计信息，通过
+采样或者部分执行的方式产生更加准确的统计信息帮助CBO生成更好的执行计划
+profile也可以分组更好的控制，同时profile也不真正固化执行计划，
+
+索引中所有的列值都放在leaf block，所以每条记录存取时间差不多
+domain index用在spatial data,image,document等等
+
+
+low  cluster factor 意味着 相同的列值在index中放在一起(统一block ），执行成本低
+like 'wzy%' 可以使用上index range scan
+
+
+emc doc 
+https://powerlink.emc.com
+wzy964@gmail.com/ftp_12345
+
+20090312
+lock_sga可以在AIX上面设置，同时需要设置
+/usr/sbin/vmo -r -o maxpin%=sga+3%
+/usr/sbin/vmo -r -o lgpg_regions=10 -o lgpg_size=16777216
+可以提高性能
+
+v$segment_stat 可以查到对象一级的读写情况
+
+在spfile里面不设置 lock_sga参数，否则不能启动
+
+20090306
+rows return speed improvement with index
+10000000     x1.1
+500000       x1.0
+50000        x1.0
+5000         x1.1
+1000         x20.8
+
+尽量少用临时表，high water mark 不会被清除
+
+少用function-based index
+
+多用户测试的时候，一定要测试是否有死锁的现象
+Clustering factor is a number between the number of
+blocks and the number of rows in the table
+
+DBA_HIST_SNAPSHOT 保留awr的 snap
+
+20081126 
+DOP 并行度和partition数目没有关系
+
+阵列的性能主要是内部的Loop fc扩展性不高，大概只有 FC Loop bandwidth 400 MB/sec max
+
+
+oracle内部的服务器90%都是linux,剩下的10%消耗了90%的支持和维护
+cpu使用率虚拟化后从7%上升到73%。
+
+
+分区的一些满足条件:
+单表>2g
+表含有历史数据
+分区对oltp主要是高可用性和可管理性，对olap可以提高性能增加管理型
+
+11g增加了interval partition,可以自动添加range类型的分区
+
+global index 优化oltp
+local index  优化olap
+
+如果分区的关键字涉及到索引，用local index
+如果索引是唯一的，用global index
+local index便于管理
+global partition index 包含 rang 和 hash两种
+
+global index可以唯一，local index如果唯一，必须有partition key参与
+
+很多操作都会导致 index 失效，需要重新rebuild 
+
+可以通过partition index和partition table来化解 hot spot
+
+VLDB备份 archive+rman+block change track+read only tablespace+增量+ETL(重新生成数据)+guarantee restore point
+VLDB环境下 1m stripe size 比较好
+
+
+每个磁盘大概能服务 30-40IOPS 50Mbytes/s的数据量
+
+Component Speeds
+2 gigabit HBA : 175MB/s
+CPU core : 200MB/s
+15k FCAL drive : 50MB/s  (1MB size random I/O)
+To have a system that can read 2GB/s we’d need:
+12 CPU cores (12 * 200MB/s = 2400MB/s)
+12 HBAs (12 * 175MB/s = 2100MB/s)
+48 drives (mirrored) (48 * 50MB/s = 2400MB/s)
+
+
+每个cpu配置4C内存
+每个cpu大概支持10个oracle 进程，三层架构，连接池方式
+磁盘访问 1-10 毫秒
+内存访问 0.1-10 微秒
+每次增加cpu的个数按照2的倍数增加
+HBA和SAN switch 可以达到理论的70-90%的性能
+
+DW环境少用index和hint,采用partition和parallel，用index读取大量数据不合适
+CPU每秒可以消耗100-400Mbyte的数据
+
+当表的数据变化超过10%的时候，需要做统计
+
+
+在确定nest loop的时候，需要外面的表数据越少越好，这样成本低
+比如 emp_2 100条记录 ，emp 10000条记录
+ SQL> select /*+ leading(a b) use_nl(a b)  */ count(*)  from emp_2 a, emp b  where  a.id=b.id  and b.id>=100 and b.id<2000;
+
+  COUNT(*)
+----------
+        34
+
+
+执行计划
+----------------------------------------------------------
+Plan hash value: 2482710495
+
+----------------------------------------------------------------------------------
+| Id  | Operation              | Name    | Rows  | Bytes | Cost (%CPU)| Time     |
+----------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT       |         |     1 |    17 |   174   (9)| 00:00:03 |
+|   1 |  SORT AGGREGATE        |         |     1 |    17 |            |          |
+|   2 |   NESTED LOOPS         |         |    34 |   578 |   174   (9)| 00:00:03 |
+|*  3 |    INDEX FAST FULL SCAN| IDX_ID3 |    34 |   442 |     2   (0)| 00:00:01 |
+|*  4 |    INDEX FAST FULL SCAN| IDX_ID1 |     1 |     4 |     5   (0)| 00:00:01 |
+----------------------------------------------------------------------------------
+
+SQL> select /*+ leading(b a) use_nl(a b)  */ count(*)  from emp_2 a, emp b  where  a.id=b.id  and b.id>=100 and b.id<2000;
+
+  COUNT(*)
+----------
+        34
+
+
+执行计划
+----------------------------------------------------------
+Plan hash value: 3447020636
+
+----------------------------------------------------------------------------------
+| Id  | Operation              | Name    | Rows  | Bytes | Cost (%CPU)| Time     |
+----------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT       |         |     1 |    17 |   316  (98)| 00:00:04 |
+|   1 |  SORT AGGREGATE        |         |     1 |    17 |            |          |
+|   2 |   NESTED LOOPS         |         |    34 |   578 |   316  (98)| 00:00:04 |
+|*  3 |    INDEX FAST FULL SCAN| IDX_ID1 |  1901 |  7604 |     6   (0)| 00:00:01 |
+|*  4 |    INDEX RANGE SCAN    | IDX_ID3 |     1 |    13 |     1   (0)| 00:00:01 |
+----------------------------------------------------------------------------------
+
+如果不指定leading顺序，则oracle自动选择最优的计划，不管那张表在前面
+
+
+
+如何确定literal sql
+select count(*) ,plan_hash_value from v$sql group by plan_hash_value  having count(*)>100;
+
+10.2 performance 
+性能同时是由于资源竞争或者资源不够导致
+设计不好的应用，添加再多的资源也没有用
+在确定添加资源前，要确定没有串行的或者单线程的应用
+如果web应用7s没有反应，就不行
+
+单用户最重要的是响应时间，企业应用用户固定重要是交互可以信赖的服务同时满足预期增长
+互联网应用重要是复杂的负载均衡和无状态的应用，还有一些静态的页面
+
+应用要做到响应时间应该和 数据量无关
+
+index插入的时间需要三倍的没有index的插入时间
+用soft parse能够2.5倍的性能hard parse,如果用no parse,能到 4倍多
+
+Large amounts of recursive SQL executed by SYS could indicate space
+management activities, such as extent allocations, taking place.
+
+压缩表主要用于read only的情景
+
+ASH每秒采集一次非idle的session
+
+ADDM分析用的是AWR采集的数据
+
+awrddrpt.sql 对选中的两个时段做比较。
+ashrpt.sql
+addmrpt.sql
+
+也可以通过 dbms_advisor.create_task来生成report ，可以生成 ADDM，SQL Access Advisor，SQL Tuning Advisor
+
+阵列的stripe size>=2倍block_size
+v$session_event可以看到一个session过去的等待事件
+
+可以通过 DBMS_MONITOR或者dbms_session来设置打开sql trace,或者通过
+alter session set sql_trace=true;
+DBMS_MONITOR可以通过模块或者client_id来设置
+最后通过trcsess来汇总同一模块的trace

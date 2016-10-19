@@ -1,0 +1,135 @@
+shrio
+
+能够和CAS集成
+
+
+在 Shiro 中，更多的是通过 AOP 进行分散的权限控制，即方法级别的；而通过 URL 进行权限控制是一种集中的权限控制
+不支持直接从LDAP获取role
+
+
+Shiro 架构包含三个主要的理念：Subject(current user),SecurityManager和 Realm(access security data)
+
+Subject 本质上是当前运行用户特定的'View'(视图)，而单词“User”经常暗指一个人，Subject 可以是一个人，但也可以是第三方服务、守护进程帐户、时钟守护任务或者其它--当前和软件交互的任何事件。 Subject 实例都和（也需要）一个 SecurityManager 绑定，当你和一个Subject 进行交互，这些交互动作被转换成 SecurityManager 下Subject 特定的交互动作。
+SecurityManager 是 Shiro 架构的核心，配合内部安全组件共同组成安全伞。
+Realm 是可以访问程序特定的安全数据如用户、角色、权限等的一个组件。Realm 会将这些程序特定的安全数据转换成一种 Shiro 可以理解的形式，Shiro 就可以依次提供容易理解的 Subject 程序API而不管有多少数据源或者程序中你的数据如何组织。
+Realm 实质上就是一个特定安全的 DAO
+Realm 通常和数据源是一对一的对应关系，如关系数据库，LDAP 目录，文件系统，或其他类似资源。因此，Realm 接口的实现使用数据源特定的API 来展示授权数据（角色，权限等），如JDBC，文件IO，Hibernate 或JPA，或其他数据访问API。
+
+记住的（Remembered）：一个被记住的 Subject 没有已知身份（也就是说subject.getPrincipals())返回空），但是它的身份被先前的认证过程记住，并存于先前session中，一个被认为记住的对象在执行subject.isRemembered())返回真。
+已验证（Authenticated）：一个被验证的 Subject 是成功验证后（如登录成功）并存于当前 session 中，一个被认为验证过的对象调用subject.isAuthenticated()) 将返回真。
+已记住（Remembered）和已验证（Authenticated）是互斥的--一个标识值为真另一个就为假，反过来也一样。
+
+当你调用 logout，任何现存的 session 将变为不可用并且所有的身份信息将消失（如：在 web 程序中，RememberMe 的 Cookie 信息同样被删除）。
+当一个 Subject 退出登录，Subject 被重新认定为匿名的，对于 web 程序，如果需要可以重新登录。
+因为在 Web 程序中记住身份信息往往使用 Cookies，而 Cookies 只能在 Response 提交时才能被删除，所以强烈要求在为最终用户调用subject.logout() 之后立即将用户引导到一个新页面，确保任何与安全相关的 Cookies 如期删除，这是 Http 本身 Cookies 功能的限制而不是 Shiro 的限制。
+
+Permission-Based Authorization 基于权限的授权
+Object-based Permission Checks 基于对象的权限检查
+String-based permission checks 基于字符串的权限检查
+
+
+Annotation-based Authorization 基于注解的授权（AOP)
+
+@RequiresAuthentication 注解表示在访问或调用被注解的类/实例/方法时，要求 Subject 在当前的 session中已经被验证。
+@RequiresGuest注解表示要求当前Subject是一个“guest(访客)”，也就是，在访问或调用被注解的类/实例/方法时，他们没有被认证或者在被前一个Session 记住。
+@RequiresPermissions("account:create") 注解表示要求当前Subject在执行被注解的方法时具备一个或多个对应的权限。
+ @RequiresRoles("administrator") 注解表示要求当前Subject在执行被注解的方法时具备所有的角色，否则将抛出 AuthorizationException 异常。
+@ RequiresUser* 注解表示要求在访问或调用被注解的类/实例/方法时，当前 Subject 是一个程序用户，“程序用户”是一个已知身份的 Subject，或者在当前 Session 中被验证过或者在以前的 Session 中被记住过。
+
+如果你想在一个特定的部件给某一用户授予所有的值呢？这将是比手动列出每个值更为方便的事情。同样，基于通配符的话，我也可以做到这一点。若打印机域有3 个可能的操作（query，print 和manage）
+printer:* 然后，任何对 "printer:XXX" 的权限检查都将返回 true
+
+ 
+
+默认地，Shiro 的 SessionManager 实现默认是 30 分钟会话超时
+
+
+Spring web 应用程序中配置 Shiro：
+<filter>
+    <filter-name>shiroFilter</filter-name>
+    <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+    <init-param>
+        <param-name>targetFilterLifecycle</param-name>
+        <param-value>true</param-value>
+    </init-param>
+</filter>
+
+<filter-mapping>
+    <filter-name>shiroFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+</filter-mapping>
+
+
+这假设一个 Shiro INI Configuration 文件在以下两个位置任意一个，并使用最先发现的那个：
+
+/WEB-INF/shiro.ini
+在classpath 根目录下shiro.ini 文件
+
+
+FormAuthenticationFilter ('authc') - it is instantiated and available already:
+
+[main]
+...
+# configure Shiro's default 'ssl' filter to be disabled while testing:
+ssl.enabled = false
+[urls]
+/some/path = ssl, authc
+/another/path = ssl, roles[admin]
+
+在Spring里面配置
+
+  <bean id="ShiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+        <property name="securityManager" ref="securityManager"/>
+        <property name="loginUrl" value="/login"/>
+        <!--<property name="loginUrl" value="/company/list"/>-->
+        <property name="unauthorizedUrl" value="/unauthorized"/>
+        <property name="successUrl" value="/portfolio/list"/>
+        <!-- The 'filters' property is not necessary since any declared javax.servlet.Filter bean  -->
+        <!-- defined will be automatically acquired and available via its beanName in chain        -->
+        <!-- definitions, but you can perform instance overrides or name aliases here if you like: -->
+        <!-- <property name="filters">
+            <util:map>
+                <entry key="anAlias" value-ref="someFilter"/>
+            </util:map>
+        </property> -->
+ <property name="filterChainDefinitions">
+        <value>
+            # some example chain definitions:
+            /admin/** = authc, roles[admin]
+            /docs/** = authc, perms[document:read]
+            /** = authc
+            # more URL-to-FilterChain definitions here
+        </value>
+    </property>
+    </bean>
+    
+    <!-- 开启Shiro注解的Spring配置方式的beans。在lifecycleBeanPostProcessor之后运行 -->
+<bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator" depends-on="lifecycleBeanPostProcessor"/>
+<bean class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">
+    <property name="securityManager" ref="securityManager"/>
+</bean>
+
+
+
+@Controller
+public class AdminController {
+    // 登录成功的页面
+    @RequestMapping(value = "/admin/home")
+    public String adminHomePage(){
+        return "admin/home";
+    }
+
+    // 只有角色为admin的才能访问
+    @RequiresRoles("admin")
+    @RequestMapping(value = "/admin/role")
+    public String adminWithRole(){
+        return "admin/withrole";
+    }
+
+    // 只用同时具有user:view和user:create权限才能访问
+    @RequiresPermissions(value={"user:view","user:create"}, logical= Logical.AND)
+    @RequestMapping(value = "/admin/auth")
+    public String adminWithAuth(){
+        return "admin/withauth";
+    }
+}

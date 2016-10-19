@@ -1,0 +1,1070 @@
+
+durable topic的情况下，如果mq重启，则消息丢失
+
+failover:(tcp://192.168.10.42:63616,tcp://192.168.107.4:63616)?jms.prefetchPolicy.all=100&randomize=false 
+20131218
+ActiveMQ添加plugin
+import org.apache.activemq.broker.Broker;
+import org.apache.activemq.broker.BrokerPlugin;
+ 
+public class MyPlugin implements BrokerPlugin {
+         
+        public Broker installPlugin(Broker broker) throws Exception {           
+             return new MyBroker(broker);
+        }  
+ 
+}
+
+import org.apache.activemq.broker.Broker;
+import org.apache.activemq.broker.BrokerFilter;
+import org.apache.activemq.broker.ConnectionContext;
+import org.apache.activemq.command.ConnectionInfo;
+ 
+public class MyBroker extends BrokerFilter {
+     
+     public MyBroker(Broker next) {
+        super(next);               
+    }
+ 
+    public void addConnection(ConnectionContext context, ConnectionInfo info)
+            throws Exception {      
+         
+         // Your code goes here
+ 
+        // Then call your parent
+        super.addConnection(context, info);
+    }  
+ 
+    public void addSession(ConnectionContext context, SessionInfo info)
+            throws Exception {      
+         
+         //  Your code goes here...
+ 
+         // Then call your parent
+         super.addSession(context, info);
+    }  
+}
+
+<plugins>
+      <bean xmlns="http://www.springframework.org/schema/beans" id="myPlugin" class="org.myorg.MyPlugin"/>   
+  </plugins>
+  
+  
+  
+20131104
+如果配置了 failover  ，则第一次启动的时候，如果 mq server没有起来，也会在mq起来后自动连接上的但是如果有 timeout ,则timeout之后会断掉
+
+
+
+如果client段断掉，如果没有配置 failover,则不会自动重新连接，除非配置了 failover 哪怕只有一个ip也行
+
+如果 consumer onMessage 抛出异常，MQ会自动重发，但是只重发7次，7次后就认为你收到了。
+timeout	 -1	 Enables timeout on send operations (in miliseconds) without interruption of reconnection process
+如果 timeout=10s 在10s之内如果session能够重新建立，则发送成功，如果在10s之内如果session不能建立，则抛出异常，
+如果异常捕获，则等连接建立后，可以继续发送或者发送新的消息
+
+如果发送queue消息的时候配置了不persistent，那么也不会persistent
+如果需要failover之后，连接能够建立，但是session consumer 也能正常工作
+
+ cc = ccf.createConnection();
+ cc.start();
+ ActiveMQConnection acc = (ActiveMQConnection) cc;
+ acc.addTransportListener(this);
+ 
+ActiveMQConnectionFactory.setTransportListener更加安全
+
+
+
+20131017
+
+Session.AUTO_ACKNOWLEDGE: The session automatically acknowledges a client’s receipt of a message 
+either when the client has successfully returned from a call to receive 
+or when the MessageListener it has called to process the message returns successfully. 
+
+
+缺省情况下 用file cursor来保存消息，所以内存不会超过
+non-persisted messages are shunted into the temporary file store to reduce the amount of memory
+want to keep all your non-persistent messages in memory  用vmcursor
+<policyEntry queue=">" producerFlowControl="true" memoryLimit="1mb">   
+  <pendingQueuePolicy>
+    <vmQueueCursor/>
+  </pendingQueuePolicy>
+</policyEntry>
+
+应对比较慢得消费者，丢弃就得消息，只保留一个特定值
+ <policyEntry topic="levelOne.>">
+                    <pendingMessageLimitStrategy>
+                        <constantPendingMessageLimitStrategy limit="100"/>
+                        </pendingMessageLimitStrategy>
+ </policyEntry>
+
+或者可以设置cache到file 
+
+
+                        <policyEntry topic="levelOne.>">
+                       
+ <pendingSubscriberPolicy>
+                <fileCursor />
+            </pendingSubscriberPolicy>
+                                 <pendingMessageLimitStrategy>
+                        <constantPendingMessageLimitStrategy limit="100"/>
+                        </pendingMessageLimitStrategy>
+ </policyEntry>
+
+            
+ <policyEntry topic=">" producerFlowControl="false" memoryLimit="2 gb">
+  
+  
+优化 bin/activemq
+if [ -z "$ACTIVEMQ_OPTS" ] ; then
+  ACTIVEMQ_OPTS="-Xms2024m -Xmx2024m    -XX:+PrintGCDetails -XX:+PrintGCTimeStamps  -XX:+CMSIncrementalMode -Xloggc:gc.log -XX:+UseConcMarkSweepGC  -Dorg.apache.activemq.UseDedicatedTaskRunner=true -Djava.util.logging.config.file=logging.properties"
+fi
+
+
+优化文档 http://fusesource.com/docs/broker/5.4/tuning/index.html
+jms消息中 BytesMessage (a stream of uninterpreted bytes) is the fastest, while ObjectMessage (serialization of a Java object) is the slowest.
+
+http://fusesource.com/docs/broker/5.4/clustering/index.html
+
+
+可以通过复合destion来达到送一个消息到queue然后自动到多个queue的功能
+<broker persistent="false" useJmx="false" xmlns="http://activemq.apache.org/schema/core">
+    <destinationInterceptors>
+      <virtualDestinationInterceptor>
+        <virtualDestinations>
+          <compositeQueue name="MY.QUEUE">
+            <forwardTo>
+              <queue physicalName="FOO" />
+              <topic physicalName="BAR" />
+            </forwardTo>
+          </compositeQueue>
+        </virtualDestinations>
+      </virtualDestinationInterceptor>
+    </destinationInterceptors>
+ 
+  </broker>
+ 
+ 发消息可以发到复合目的地，但是消费只能消费真实的queue
+ 
+ message group(queue)可以保证同一个group id的message被同一个consumer消费，除非这个consumer dead
+ Exclusive Consumer(queue） 保证一个消费者消费所有的消息，message group相当于并行版本的 exclusive
+ consumer 如果消息处理的时候rollback，则这个消息会被重新发出来
+ 
+ ActiveBlaze 支持 multicast播放topic
+ 
+ 
+http://swingchen.javaeye.com/blog/173658  RabbitMQ/AMQP所描绘的美好前景(转)
+realtime suse/redhat 
+
+新版本叫 ActiveMQ Apollo
+http://fusesource.com 有mq的优化
+尽量使用static discovery加快性能（大量减少 advisory messages)
+
+RabbitMQ 只支持java C# Erlang等客户端
+
+RV 和 MQ 都是分布式结构的， 和 JMS 消息中间件的星型结构不同。分布式消息中间件的 Server 在应用环境里都会部署多个，彼此互联，没有主备之分。 JMS 消息中间件的应用部署一般都是主备两个 Server ，消息的发送和接收应用平时和主 Server 相连，有问题时切换到备 Server ，主备 Server 共用公共的存储设备来保存消息。
+
+MQ 和 JMS 消息中间件都采用消息接收端主动接收消息的方式。消息从发送端发出后，首先会缓存到 Server 上， 接收端应用发起一个接收消息的请求， Server 把消息作为应答返回给接收端。接收端不执行接收动作，消息就会一直在 Server 上保存。
+
+RV 和这两种消息中间件都不同，使用的是消息推送的模式。消息从发送端发出后，并不在 Server 上缓存， Server 只做路由把消息推送给消息接收端。消息接收端只要连接上 Server ，订阅要接收的消息，这些消息就会源源不断地从 Server 那里推送过来，消息先缓存到接收客户端的队列里，接收端应用再从队列里取消息。
+
+总之 RV 是一个分布式结构，推送消息模式，客户端缓存的消息中间件。分布式结构适用于分布是应用系统，方便做扩展，推送加客户端缓存适用于高实时性消息的处理，消息需要在第一时间到达目的地，过时的消息的没有必要保存下来的，消息接收端应用需要做的事情就是不断地处理已经推送到的消息。 
+
+
+MQ 和 JMS 消息中间件在 IP 层都使用点对点的传输方式，而 RV 在 IP 层使用的是广播或者组播的方式。 使用广播或者组播可以直接实现一对多的发布订阅形式，发布应用发布消息到 RV 网络上，这些消息会广播到网络的每一个节点上，每一个订阅应用都会收到这些消息。而 MQ 和 JMS 实现发布订阅就要麻烦的多了， 都是在 Server 按消息的 Topic 来缓存消息，为每一个订阅者拷贝每一条消息的引用。当所有订阅者都从 Server 上取走某条消息，这条消息才在 Server 上删除。 
+
+MQ 和 JMS 消息中间件不论是 Server 和 Server 的通信，还是 Server 和 Client 的通信，在传输层都使用 TCP 协议，保证消息传输连接的可靠性。而 RV 在 Server 和 Server 之间的通信使用了 UDP 协议，牺牲可靠性来达到高实时性的需求。 RV 有两种可靠性级别， RV Reliable 和 RVCM 。 RV Reliable 模式使用基于 UDP 增加了一定可靠机制的 TRDP 协议，在一定范围内具有消息包的检查和重传机制，保证了一定程度的消息可靠性，但不保证消息不丢失。 RVCM 在 RV Reliable 基础上更进一步，在消息级别具有消息确认和重传机制，可以保证消息绝对不丢失。对于长度在 1500 个字节以下的消息， RV Reliable 发布消息能达到 150 万笔消息每秒，接收也能达到 50 万笔消息每秒。传输消息的性能是非常好的。 
+
+
+一般选择后台到中台使用 RV 做第一层的数据复制和筛选，自己开发中台来实现中台到终端用户的数据复制和筛选。
+
+　　（3）对于重传数据的请求，应该通过单独的服务器进行处理，主服务器只发送最新的行情。
+多播效率更高，在交易所广泛使用
+JGroups是一个基于Java语言的提供可靠多播(组播)的开发工具包。在IP Multicast基础上提供可靠服务，也可以构建在TCP或者WAN上。主要是由Bela Ban开发，属于JBoss.org，在JBoss的网站也有一些相关文档。目前在 SourceForge上还是比较活跃，经常保持更新。
+
+ActiveMQ也支持AMPQ了
+
+The BlazeChannel supports broadcasting on Topics - either using reliable multicast or point-cast.
+
+
+RabbitMQ is the best performance wise according to me, but it does not have failover and recovery options. ActiveMQ has the most features, but is slower.
+
+
+rabbitMQ 是 AMQP 用 Erlang 实现的 MQ 。之前不是很理解，为什么要用 Erlang 来“又实现一个中间件”呢？这么做能发挥 Erlang 的优势么？机缘巧合，
+最近了解了一下 AMQP ，有了一点新的认识。
+
+AMQP 主要是由金融领域的软件专家们贡献的创意，而联合了通讯和软件方面的力量，一起打造出来的规范。
+【Contributors: JPMorgan Chase Bank & Co., Cisco Systems, Inc., Credit Suisse, Envoy Technologies Inc., iMatix Corporation, IONA Technologies, Rabbit Technologies Ltd., Red Hat, Inc., TWIST Process Innovations Ltd, and 29West, Inc.】粗略的从概念上来讲 AMQP 首先满足的是金融系统的消息通讯业务需求。这是一个可以和 JMS 进行类比的消息中间件开放规范，所不同的是 AMQP 同时定义了消息中间件的语意层面和协议层面；另外一个不同是 AMQP 是语言中立的，而 JMS 仅和 Java 相关。AMQP 在“语意层面的定义”，这就意味着，它并不仅仅是象 JMS 或者其他的 MQ 一样，仅能按照预定义的方式工作，而是“可编程”的消息中间件。而“语言中立”则意味着只要遵循 AMQP 的协议，任何一种语言都可以开发消息组件乃至中间件本身。比如说这样的场景：“Java 写的消息端(新的前端)通过 Erlang 写的消息中间件(基础设施)与 C 写的另外一个消息端(遗留系统)进行消息交互”。AMQP 是一个开放标准，目前还在 0.9 版本。尚未成熟，但市场上已经出现了很多这个标准的实现产品。在 AMQP 所描绘的美好前景下，我们可以这么设想将来构建在成熟之后构建在 AMQP 之上的金融系统。前端程序员用他们熟悉的“工业语言”来构建系统中新的应用模块。后端程序员则继续用“老旧语言”在“遗产系统”上慢慢改进。当然，金融系统需要他们赖以沟通消息互相调用的“基础设施”必须坚若磐石。为业界提供“高并发，易扩容”的产品，这似乎正是 Erlang 的强项。之前听说“ Erlang 进入金融系统”，具体的事例，大概就是这件事了。
+
+
+评测 Queue
+单条测试
+异步接收同网段 avg 24ms(transaction,queue,persistent)
+2010-12-07 16:48:40:039 sending message message25  16:48:40:065 message arrived =26ms
+2010-12-07 16:48:41:895 sending message message26  16:48:41:919 message arrived =24ms
+2010-12-07 16:48:44:126 sending message message27  16:48:44:148 message arrived =22ms
+异步接收不同网段 avg 21ms(transaction,queue,persistent)
+2010-12-07 17:18:26:688 sending message message50  2010-12-07 17:18:26:704 =16
+2010-12-07 17:18:28:235 sending message message51  2010-12-07 17:18:28:251 =16
+2010-12-07 17:18:32:235 sending message message52  2010-12-07 17:18:32:267 =32
+异步接收不同网段 avg 11ms (no transaction,no persistent,queue)
+
+10000条发收测试
+开始时间38:745 结束 43:277
+耗时 4.532S 平均每条 0.45微妙
+
+
+
+
+发送消息时间约31ms(including commit) (transaction)
+
+LLM 只要 11 microsecond 2100x
+
+
+单个broker方式发送时间(tcp 10000条连续发送 queue)
+如果选择 persistent(kahadb),no transaction     					1message /8 微妙  138 messages/S
+如果选择 persistent(Oracle),no transaction     					1message /8 微妙  117 messages/S
+如果选择 persistent(Oracle),transaction(commit 1000rows)1message /8 微妙 2000 messages/S
+如果选择 persistent(Oracle), no transaction,异步发送             					147 messages/S
+
+如果选择 persistent(MySql),no transaction      					1message /1 微妙  625 messages/S
+如果选择 persistent(MySql), transaction(commit 1000rows)					       5000 messages/S
+如果选择 persistent(MySql), no transaction,异步发送              				 1250 messages/S
+如果选择 no persistent,no transaction(tcp)  								1message/20毫秒 50000 messages/S
+如果选择 no persistent,no transaction(nio)  								1message/20毫秒 50000 messages/S
+如果连续发送(no persistent,no transaction)  能达到 1message/0.137microsecond
+
+单个broker同步方式发送时间(300000条连续发送 topic)
+如果选择 no persistent,no transaction,1 consumer  								 42857 messages/S
+如果选择 no persistent,no transaction,2 consumer  								 33333 messages/S
+如果选择 no persistent,no transaction,4 consumer  								 18750 messages/S
+如果选择 no persistent,no transaction,0 consumer  								 75000 messages/S
+
+
+
+
+Pure HA方式
+(topic)下降10倍
+无slave   no persistent,no transaction   71428 messages/S
+1 slave   no persistent,no transaction    6060 messages/S
+1 slave      persistent,no transaction    6060 messages/S
+(queue)下降3倍 
+无slave   no persistent,no transaction    5255 messages/S
+1 slave   no persistent,no transaction    1886 messages/S
+1 slave      persistent,no transaction    357  messages/S 约1倍
+
+
+
+
+会出现流量超过限制
+   <policyEntry queue=">" producerFlowControl="true" memoryLimit="1mb">
+ 只有 producerFlowControl=true的时候，设置的memoryLimit才有效果
+ 
+ 缺省情况下，是消息先送到persistent然后在dispatch到consumer，如果启用了concurrentStoreAndDispatchQueues="true" 
+ 则会persistent和dispatch同时多线程做
+ 
+ <persistenceAdapter>
+<kahaDB directory="activemq-data"
+journalMaxFileLength="32mb"
+concurrentStoreAndDispatchQueues="true"
+concurrentStoreAndDispatchTopics="true"
+/>
+</persistenceAdapter>
+   
+64个线程发送，64个线程同时接收，系统工作正常，扩展性不错
+ WARN | TopicSubscription: consumer=ID:bjnpdt01-3420-1291793514952-0:20:1:1, destinations=1, dispatched=32766, delivered=1452815, matched=64034, discarded=0: stopped waiting for space in pendingMessage cursor for: ID:bjnpdt01-63032-1291793539148-0:13:1:1:48319
+
+通过嵌入的方式启动 
+	  BrokerService service=new BrokerService();
+		service.addConnector("tcp://localhost:8900");
+		service.start();
+		
+		修改监控端口 
+		jetty.xml
+		
+		支持通过jms的方式传递系统监控信息，比如通过ActiveMQ.Advisory.Connection ActiveMQ.Advisory.Queue
+		支持jabber类型的及时聊天工具，通过topic的方式
+		
+		ActiveMQ目前支持的transport有：VM Transport、TCP Transport、SSL Transport、Peer Transport、
+UDP Transport、Multicast Transport、HTTP and HTTPS Transport、Failover Transport、Fanout
+Transport、Discovery Transport、ZeroConf Transport
+
+ActiveMQ支持订阅同一个queue的consumers上的集群。如果一个consumer失效，那么所有未被确认
+（unacknowledged）的消息都会被发送到这个queue上其它的consumers。如果某个consumer的处理速度
+比其它consumers更快，那么这个consumer就会消费更多的消息。
+
+Exclusive Consumer 当有多个queue consumer连接上来的时候，保证只发给一个 consumer ，除非这个consumer断掉
+queue = new ActiveMQQueue("TEST.QUEUE?consumer.exclusive=true");
+consumer = session.createConsumer(queue);
+
+。Message Groups特性保证所有具有相同
+JMSXGroupID 的消息会被分发到相同的consumer（只要这个consumer保持active）。另外一方面，
+Message Groups特性也是一种负载均衡的机制。
+
+	
+consumer = session.createConsumer(destination, "JMSType = 'car' AND weight > 2500");
+
+ActiveMQ通过prefetch机制来提高性能，这意味这客户端的内存里可能会
+缓存一定数量的消息。缓存消息的数量由prefetch limit来控制。当某个consumer的prefetch buffer已经达到
+上限，那么broker不会再向consumer分发消息，直到consumer向broker发送消息的确认。
+queue = new ActiveMQQueue("TEST.QUEUE?consumer.prefetchSize=10");
+
+
+ActiveMQ支持Mirrored Queues。Broker会把发送到某个queue的所有消息转发到一个名称类似的topic，
+因此监控程序可以订阅这个mirrored queue topic。
+
+有时候需要保证不同的topic consumer以相同的顺序接收消息。通常ActiveMQ会保证topic consumer以相
+同的顺序接收来自同一个producer的消息。然而，由于多线程和异步处理，不同的topic consumer可能会以不
+同的顺序接收来自不同producer的消息
+<destinationPolicy>
+<policyMap>
+<policyEntries>
+<policyEntry topic=""FOO.>">
+<dispatchPolicy>
+		<strictOrderDispatchPolicy />
+</dispatchPolicy>
+</policyEntry>
+</policyEntries>
+</policyMap>
+</destinationPolicy>
+
+
+使用oracle做 persistent ，需要把jdbc driver copy到lib目录
+<beans>
+
+<broker>
+ <persistenceAdapter>
+        <jdbcPersistenceAdapter dataDirectory="activemq-data" dataSource="#oracle-ds"/>
+ </persistenceAdapter>
+</broker>
+ <bean id="oracle-ds" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+    <property name="driverClassName" value="oracle.jdbc.driver.OracleDriver"/>
+    <property name="url" value="jdbc:oracle:thin:@localhost:1521:test"/>
+    <property name="username" value="activemq"/>
+    <property name="password" value="activemq"/>
+    <property name="poolPreparedStatements" value="true"/>
+  </bean>
+</beans>
+
+配置mysql
+<bean id="mysql-ds" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+    <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
+    <property name="url" value="jdbc:mysql://localhost/activemq?relaxAutoCommit=true"/>
+    <property name="username" value="activemq"/>
+    <property name="password" value="activemq"/>
+    <property name="maxActive" value="200"/>
+    <property name="poolPreparedStatements" value="true"/>
+  </bean>
+  
+如果在传输过程中中断master,会导致pending message(20000)和enqued message(17794)数目对不上,但是consume的message数量不会出现问题
+
+配置network forward (如果没有消费者,则queue和topic都不会复制到另外的broker上和persistent没有关系)
+有消费者的时候，则queue的信息自动转发到另外一个有consumer的broker上
+当 network forward配置好之后，queue和topic自动变成分布式的，会自动往其他broker上转
+
+  <broker brokerName="receiver" persistent="true" useJmx="false">  
+      <managementContext>
+            <managementContext createConnector="false"/>
+        </managementContext>
+
+双向连接 
+
+<networkConnectors>
+   <networkConnector name="linkToBrokerB"
+       uri="static:(tcp://localhost:61002)"
+       networkTTL="3"
+       duplex="true"
+   />
+</networkConnectors>
+
+
+    <networkConnectors>
+     <networkConnector uri="static:(tcp://192.168.193.132:61616,tcp://192.168.193.134:61616,tcp://192.168.193.136:61616)"/>
+    </networkConnectors>
+      <transportConnectors>
+            <transportConnector name="openwire" uri="tcp://0.0.0.0:61616"/>
+        </transportConnectors>
+ </broker>
+ 
+ 或者
+  <networkConnectors>
+      <networkConnector uri="multicast://default"/>
+    </networkConnectors>
+ 
+ 
+ 如果是Queue,多个consumer在多个broker上接收，则每个consumer基本平分所有的消息，不会重复接收
+ 如果是Topic,多个consumer在多个broker上接收，则每个consumer接收到所有的message
+
+配置 pure Master/Slave
+在slave上
+<broker masterConnectorURI="tcp://masterhost:61616" shutdownOnMasterFailure="false">
+
+用两层级来做cluster，一层接受，然后转发到另外一层专门做消息发送
+接收的可以用嵌入式进一步加快性能
+
+broker cluster+HA同时做
+
+
+To avoid this XML validation error in ActiveMQ 5.4, simply change the ordering of the XML elements so that they are in alphabetical order. Below is an example of the same XML configuration but in alphabetical order:
+
+优化
+no persistent ->async sending->transaction batch commit 
+Async publishing
+  ((ActiveMQConnectionFactory)connectionFactory).setUseAsyncSend(true); 
+  ((ActiveMQConnection)connection).setUseAsyncSend(true);
+  
+Pre-fetch sizes for Consumers
+
+Optimized Acknowledge
+使用 Session.DUPS_OK_ACKNOWLEDGE lazy ackowledge
+Straight through Session Consumption
+使用 embedded broker 减少一方的 latency
+缺省使用 dispatch thread per Queue,thread per destination ,per subscriber ,可以使用环境变量 org.apache.activemq.UseDedicatedTaskRunner=false 来提供并发支持
+调整如下参数
+  <systemUsage>
+            <systemUsage>
+                <memoryUsage>
+                    <memoryUsage limit="256 mb"/>
+                </memoryUsage>
+                <storeUsage>
+                    <storeUsage limit="60 gb" name="foo"/>
+                </storeUsage>
+                <tempUsage>
+                    <tempUsage limit="60 gb"/>
+                </tempUsage>
+            </systemUsage>
+        </systemUsage> 
+使用 KahaDB for persistence  <kahaDB directory="${activemq.base}/data/kahadb" enableJournalDiskSyncs="false" inde
+xWriteBatchSize="10000" indexCacheSize="1000" enableIndexWriteAsync="true"/>
+使用 NIO 
+  <transportConnectors>
+            <transportConnector name="nio" uri="nio://0.0.0.0:61616"/>
+        </transportConnectors>
+        
+缺省使用异步 dispatch
+Configuring Async Dispatch at the ConnectionFactory Level
+((ActiveMQConnectionFactory)connectionFactory).setDispatchAsync(true);
+((ActiveMQConnection)connection).setDispatchAsync(false);
+        
+使用 Composite Destinations，可以在一个broker上使用一个物理连接同时处理多个topic,queue等
+
+如果有个consumer特别慢，会导致publisher会变慢，可以通过设置 <constantPendingMessageLimitStrategy limit="50"/> 以及减小prefetchsize来减少影响
+
+From 5.3 onwards - we recommend you use KahaDB - which offers improved scalability and recoverability over the AMQ Message Store.
+
+The AMQ Message Store which although faster than KahaDB - does not scales as well as KahaDB and recovery times take longer.
+
+
+解压后
+
+启动
+bin\activemq
+bin/activemq console xbean:conf/activemq-scalability.xml
+
+nohup bin/activemq
+
+监控 
+http://localhost:8161/admin
+jms端口
+61616
+
+需要的jar
+activemq-core.jar
+commons-logging.jar
+geronimo-spec-jms.jar
+geronimo-spec-jta.jar
+geronimo-spec-j2ee-management.jar
+
+spring.jar - if you wish to use the XML configuration file for configuring the Message Broker
+
+set CLASSPATH=D:\workspace\JMS\bin;D:\workspace\JMS\bin\activemq-all-5.4.1.jar 
+
+出现 错误
+java.io.EOFException: Chunk stream does not exist at page
+处理办法：
+修改 conf/activemq.xml 添加 schedulerSupport="false"
+在
+<broker xmlns="http://activemq.apache.org/schema/core"
+
+schedulerSupport="false"
+
+brokerName="localhost"
+
+dataDirectory="${activemq.base}/data"
+
+destroyApplicationContextOnStop="true">
+
+
+We currently have 3 choices for multicast protocols
+
+    * multicast
+    * jgroups: uses the JGroups library to implement reliable multicast
+    * jrms: uses Sun's JRMS library to implement reliable multicast
+由于点对点通信效率更高，建议使用multicast只在发现阶段。
+Broker clusters
+failover:// protocol 
+Queue consumer clusters 
+failover:// transport
+
+failover:(tcp://localhost:61616,tcp://remotehost:61616)?initialReconnectDelay=100
+
+You can then use a Broker Configuration URI to specify how to start and configure your broker using a single URI. For example
+
+activemq broker:(tcp://localhost:61616,network:static:tcp://remotehost:61616)?persistent=false&useJmx=true
+
+pub/sub模式可以有多个publisher和consumer,但是consumer只能接受active之后的message,durable sub可以解决这个问题
+
+pub/sub topics
+ptp  queue
+
+一个clientid只能有一个durable subscriber 
+支持message filter在provider上实现(只支持在header和properties 上filter,不支持content)
+没有commit的时候，message不会发送出去，在commit的时候，会自动send acknowledge 
+不能再一个transaction里面同时处理topic和queue，但是可以同时操作动作queue或者topic,因为transaction是在session级别的，所以只能在一个session上操作
+
+
+缺省是走async发送
+如果不是使用事务模式，而且使用了 persistent messages，则消息必须同步到磁盘才算发送成功。
+
+所有传输的消息都采用wire format的方式组织 
+The Fanout transport layers reconnect and replicate logic on top of any of the other transports. It utilizes the Discovery transport to discover brokers and replicates commands to those brokers.
+
+
+ActiveMQ缺省使用异步传输方式。但是按照JMS规范，当在事务外发送持久化消息的时候，ActiveMQ会强
+制使用同步发送方式。在这种情况下，每一次发送都是同步的，而且阻塞到收到broker的应答。这个应答保证
+了broker已经成功地将消息持久化，而且不会丢失。但是这样作也严重地影响了性能。
+如果你的系统可以容忍少量的消息丢失，那么可以在事务外发送持久消息的时候，选择使用异步方式
+
+可以设置
+You can enable this feature on the ActiveMQConnectionFactory object using the property.
+((ActiveMQConnectionFactory)connectionFactory).setUseAsyncSend(true);
+
+
+
+If you are not using transactions and are sending persistent messages, then each send is synch and blocks until the broker has sent back an acknowledgement to the producer that the message has been safely persisted to disk
+
+
+
+
+支持如下三种高可用性
+Pure Master Slave 只支持一个slave 
+Shared File System Master Slave 多个slave   The first broker to grab the exclusive lock on the file is the master broker. If that broker dies and releases the lock then another broker takes over. 
+JDBC Master Slave  多个slave   
+
+broker支持定时schedule的方式发送message
+
+Master/Slave
+
+Master/Slave for High Availability
+Store and forward networks of brokers(任意时间，1个queue message只存在一个broker上)
+Distributed Queues in Store/Forward
+
+当slave没有变成主的时候，tcp监听端口都不会启动
+
+支持mirror queue，可用于监控等目的
+
+
+2010-12-10 10:36:57:504 [ActiveMQ Transport: tcp:///192.168.193.58:2619]  INFO   org.apache.activemq.broker.region.TopicSubscription - TopicSubscription: consumer=ID:BJ-932w0j4-4600-2615-1291948683615-0:0:1:1, destinations=1, dispatched=32766, delivered=202999, matched=63610, discarded=0: Pending message cursor [org.apache.activemq.broker.region.cursors.VMPendingMessageCursor@4e19b97c] is full, temp usage (0%) or memory usage (100%) limit reached, blocking message add() pending the release of resources.
+
+
+
+对象 <-> 消息，直接用QueueSession中的createObjectMessage方法，一行搞定，时间消耗也非常低。可以忽略不计。
+
+测试环境是两台P4 3G 1.5G内存, IDE硬盘的普通PC
+
+jms要看服务器端是用什么方式存储，如果是内存模式，调用一次的时间1ms，非常快。
+
+如果是文件方式，依赖于硬盘速度。IDE的是 22－26 ms
+如果是数据库方式，依赖数据库服务器的性能，我们用的数据库服务器是oracle 9，双CPU，SISC硬盘的，大概24ms。
+
+相对于你一次处理要20秒，这点花费非常少，随便用那种都够。
+
+曾经做的一个项目是 >500请求/秒，每个请求的处理时间<300ms, 所以专门测试国jms的性能，做过几次测试，每次测试大概调用了1千万次。结论是：
+JMS性能还是不错的，而且比较稳定。 缺点是做集群比较麻烦。后来觉得慢，也没用 
+
+
+而ActiveMQ由于APACHE自身开源的强大,发展非常迅速,你可以看见在
+一些ESB,J2EE Server已经已经默认使用它了,比如mule,serviceMix
+Geronimo,并且ActiveMQ已经从孵化器里面出来,成为APACHE下面的top level项目了,有一定发展潜力的。
+
+   而在这3个之间，从网络底层来看,只有ActiveMQ使用了NIO,单从这个角度来看ActiveMQ在性能上会有
+        一定的优势       
+		
+		
+		activemq我们做个简单的持久性测试，在不使用集群上很稳定，
+jbossmq没测，
+
+性能 ：activemq比jbossmq有明显优势
+
+扩张性： activemq的与其他中间件的兼容性比较好 (websphere不明)
+
+另 目前jbossmq已经不更新了，新的jbossmessing将取代他
+
+jboss as5.0后都将使用jbossmessing作为jboss as的核心中间件
+
+楼上， 本人以亲身体验， 并且以受害人的身份向你哭诉， 千万别用SUN的MQ。 痛苦， 实在是痛苦， 苦不堪言！！！ 这也是目前我这么关心MQ产品的原因。 
+
+  最可笑的是， 有时候， 连接什么的都完全正常， 消息看上去发的很正常， 服务器却没有收到。当然这个机会很少，我碰到过几次。还有很多BUG， 报告给SUN， 也得到了BUG确认， 修复动作特别迟缓。 半年也不给发布。 受不了。最后决定撤出所有sun相关的软件， 一律不用。
+  
+  ActiveMQ历史长，也相当成熟，特别是它有各种语言的客户端库，包括C/CPP等。如果你们的系统里涉及多种平台和语言，用JBoss Messaging就不爽了。不过ActiveMQ的商用支持在国内没怎么听说过。 
+  
+  
+  MOM=messaging-oriented middleware (MOM) 
+send or synchronously receive a JMS message
+Message send and receive operations can participate in distributed transactions, which allow JMS operations and database accesses to take place within a single transaction.
+
+A point-to-point (PTP) product or application is built on the concept of message queues, senders, and receivers. Each message is addressed to a specific queue, and receiving clients extract messages from the queues established to hold their messages. Queues retain all messages sent to them until the messages are consumed or until the messages expire. 
+# A sender and a receiver of a message have no timing dependencies. The receiver can fetch the message whether or not it was running when the client sent the message.
+
+
+
+In a publish/subscribe (pub/sub) product or application, clients address messages to a topic, which functions somewhat like a bulletin board. Publishers and subscribers are generally anonymous and can dynamically publish or subscribe to the content hierarchy.
+A client that subscribes to a topic can consume only messages published after the client has created a subscription, and the subscriber must continue to be active in order for it to consume messages.
+The JMS API relaxes this timing dependency to some extent by allowing subscribers to create durable subscriptions, which receive messages sent while the subscribers are not active.
+
+
+Synchronously: A subscriber or a receiver explicitly fetches the message from the destination by calling the receive method. The receive method can block until a message arrives or can time out if a message does not arrive within a specified time limit.
+Asynchronously: A client can register a message listener with a consumer. A message listener is similar to an event listener. Whenever a message arrives at the destination, the JMS provider delivers the message by calling the listener's onMessage method, which acts on the contents of the message.
+
+
+TextMessage
+A java.lang.String object (for example, the contents of an Extensible Markup Language file).
+
+MapMessage
+
+A set of name-value pairs, with names as String objects and values as primitive types in the Java programming language. The entries can be accessed sequentially by enumerator or randomly by name. The order of the entries is undefined.
+
+BytesMessage
+A stream of uninterpreted bytes. This message type is for literally encoding a body to match an existing message format.
+
+StreamMessage
+A stream of primitive values in the Java programming language, filled and read sequentially.
+
+ObjectMessage
+A Serializable object in the Java programming language.
+
+Message
+Nothing. Composed of header fields and properties only. This message type is useful when a message body is not required. 
+
+
+
+# Creating durable subscriptions: You can create durable topic subscriptions, which receive messages published while the subscriber is not active. Durable subscriptions offer the reliability of queues to the publish/subscribe message domain.
+# Using local transactions: You can use local transactions, which allow you to group a series of sends and receives into an atomic unit of work. Transactions are rolled back if they fail at any time.
+
+
+
+
+At the cost of higher overhead, you can use the Session.createDurableSubscriber method to create a durable subscriber. A durable subscription can have only one active subscriber at a time. 
+
+There are various ways to implement a peer to peer JMS network. One easy way is just to use a multicast transport for communication; then all nodes on the same multicast address will receive all messages and the local embedded message broker will route messages to the necessary MessageConsumers.
+
+We currently have 3 choices for multicast protocols
+
+    * multicast
+    * jgroups: uses the JGroups library to implement reliable multicas
+    
+    Multicast is great in development though often you might want to disable this feature in production and have well known servers fixed on specific machines. Often socket based communication (using pointcast) is much faster & better for heavy-lifting - particularly on Java - so we tend to recommend to use multicast mostly for discovery and use TCP / SSL for your heavy duty messaging.
+    
+
+cluster
+master/slave
+
+Replicated Message Store 
+
+
+set CLASSPATH=d:\activemq\libactivemq-core-5.3.0.jar;d:\activemq\libgeronimo-spec-jms-1.1-rc4.jar;geronimo-spec-j2ee-management-1.0-rc4.jar;geronimo-spec-jta-1.0.1B-rc4.jar;commons-logging-1.1.jar;.
+
+
+程序
+import javax.jms.Connection;
+import javax.jms.QueueConnection;
+import javax.jms.DeliveryMode;
+import javax.jms.Destination;
+import javax.jms.MessageProducer;
+import javax.jms.Session;
+import javax.jms.QueueSession;
+import javax.jms.TextMessage;
+import javax.tools.JavaCompiler;
+import java.text.SimpleDateFormat; 
+import java.util.Date; 
+
+import org.apache.activemq.ActiveMQConnection;
+import org.apache.activemq.ActiveMQConnectionFactory;
+import org.apache.activemq.util.IndentPrinter;
+
+public class Sender {
+
+	/**
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		
+		try {
+            // Create the connection.
+            ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory("tcp://192.168.193.177:61616");
+           Connection connection = connectionFactory.createConnection();
+            connection.start();
+            String messagetxt="default message" ;  
+            // Create the session
+            if (args.length>0)
+    		{
+            	messagetxt=args[0];
+    		}
+           Session session = connection.createSession(true, Session.AUTO_ACKNOWLEDGE);
+            Destination des=session.createQueue("myqueue");
+            MessageProducer producer = session.createProducer(des);
+            TextMessage message =session.createTextMessage(messagetxt);
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS"); 
+            System.out.println(sdf.format(new Date())+" sending message "+messagetxt);
+            producer.send(message);
+            session.commit();
+            producer.close();
+          session.close();
+          connection.close();
+          
+
+        System.out.println("finished");
+        } catch (Exception e) {
+            
+            e.printStackTrace();
+        } 
+        }
+    
+	
+
+}
+
+
+
+import javax.jms.*;
+
+import org.apache.activemq.ActiveMQConnection;
+import org.apache.activemq.ActiveMQConnectionFactory;
+import org.apache.activemq.util.IndentPrinter;
+import java.text.SimpleDateFormat; 
+import java.util.Date; 
+
+public class Receiver extends Thread  implements MessageListener{
+	  
+	 ActiveMQConnectionFactory connectionFactory ;
+      Connection connection ;
+      Session session ;
+      Destination des;
+      
+       MessageConsumer consumer;
+	/**
+	 * @param args
+	 */
+	 public void onMessage(Message message) {
+		  SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS"); 
+          System.out.print(sdf.format(new Date())+" message arrived");
+        
+		    
+		  try {
+	         if (message instanceof TextMessage) {
+	             TextMessage txtMsg = (TextMessage) message;
+	                 String msg = txtMsg.getText();
+	                 System.out.println("message is :"+msg);
+	
+	             } 
+	        session.commit();
+		  }
+		  catch (javax.jms.JMSException e)
+		  {
+			  e.printStackTrace();
+		  }
+	 }
+		public void run()
+		{       System.out.println("start thread");
+			try {
+	            // Create the connection.
+	             connectionFactory = new ActiveMQConnectionFactory("tcp://192.168.193.177:61616");
+	            connection = connectionFactory.createConnection();
+	            connection.start();
+
+	            // Create the session
+	          
+	           session = connection.createSession(true, Session.AUTO_ACKNOWLEDGE);
+	             des=session.createQueue("myqueue");
+	           
+	             consumer= session.createConsumer(des);
+	            consumer.setMessageListener(this);
+	           // Message message = consumer.receive(1000);
+	        
+	   
+	        } catch (Exception e) {
+	            
+	            e.printStackTrace();
+	        } 
+
+	 }
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+	       System.out.println("main start");
+		  Receiver rec=new Receiver();   
+		  rec.start();
+         while(true)
+         {
+        	 try {
+                 Thread.sleep(1000);
+             } catch (Exception e) {
+             }
+         }
+        }
+    
+	
+
+}
+
+
+sub/pub 
+import javax.jms.Connection;
+import javax.jms.QueueConnection;
+import javax.jms.DeliveryMode;
+import javax.jms.Destination;
+import javax.jms.MessageProducer;
+import javax.jms.Session;
+import javax.jms.QueueSession;
+import javax.jms.TextMessage;
+import javax.tools.JavaCompiler;
+import java.text.SimpleDateFormat; 
+import java.util.Date; 
+import javax.jms.Topic;
+import org.apache.activemq.ActiveMQConnection;
+import org.apache.activemq.ActiveMQConnectionFactory;
+import org.apache.activemq.util.IndentPrinter;
+
+public class Publisher  {
+
+	/**
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		try {
+            // Create the connection.
+            ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory("tcp://192.168.193.177:61616");
+           Connection connection = connectionFactory.createConnection();
+            connection.start();
+            String messagetxt="default message" ;  
+            // Create the session
+            if (args.length>0)
+    		{
+            	messagetxt=args[0];
+    		}
+           Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+           Topic topic =session.createTopic("wzy.topic");
+           MessageProducer publisher = session.createProducer(topic);
+           publisher.setDeliveryMode(javax.jms.DeliveryMode.PERSISTENT);
+           TextMessage message =session.createTextMessage(messagetxt);
+            
+            long begin_mill=System.nanoTime();
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS"); 
+            System.out.println(sdf.format(new Date())+" "+begin_mill+" sending message "+messagetxt);
+            	for (int k=1;k<=100000;k++)
+             {message =session.createTextMessage(messagetxt+k);
+             publisher.send(message);
+            
+           // session.commit();            
+            }
+            
+            long end_mill=System.nanoTime();
+            System.out.println("sending time "+(end_mill-begin_mill)/1000);
+
+            publisher.close();
+          session.close();
+          connection.stop();
+          connection.close();
+          
+
+        System.out.println("finished");
+        } catch (Exception e) {
+            
+            e.printStackTrace();
+        } 
+        }
+	
+
+}
+
+
+
+import javax.jms.*;
+
+import org.apache.activemq.ActiveMQConnection;
+import org.apache.activemq.ActiveMQConnectionFactory;
+import org.apache.activemq.util.IndentPrinter;
+import java.text.SimpleDateFormat; 
+import java.util.Date; 
+public class Subscriber extends Thread  implements MessageListener{
+
+	 ActiveMQConnectionFactory connectionFactory ;
+     Connection connection ;
+     Session session ;
+     Destination des;
+     Topic topic;
+      MessageConsumer consumer;
+      
+	 public void onMessage(Message message) {
+		  SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS"); 
+		  long begin_mill=System.nanoTime();
+          System.out.print(sdf.format(new Date())+" "+begin_mill+" message arrived");
+        
+		    
+		  try {
+	         if (message instanceof TextMessage) {
+	             TextMessage txtMsg = (TextMessage) message;
+	                 String msg = txtMsg.getText();
+	                 System.out.println("message is :"+msg);
+	
+	             } 
+	       // session.commit();
+		  }
+		  catch (javax.jms.JMSException e)
+		  {
+			  e.printStackTrace();
+		  }
+	 }
+		public void run()
+		{       System.out.println("start thread");
+			try {
+	            // Create the connection.
+	            connectionFactory = new ActiveMQConnectionFactory("tcp://192.168.193.177:61616");
+	            connection = connectionFactory.createConnection();
+	            connection.setClientID("client1");
+	            connection.start();
+
+	            // Create the session
+	          
+	           session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+	           topic =session.createTopic("wzy.topic");
+	           MessageConsumer   consumer = session.createDurableSubscriber(topic,"client1" );
+
+	            
+	            consumer.setMessageListener(this);
+	          //  consumer.setMessageListener(this);
+	           // Message message = consumer.receive(1000);
+	        
+	   
+	        } catch (Exception e) {
+	            
+	            e.printStackTrace();
+	        } 
+
+	 }
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+	       System.out.println("main start");
+	       Subscriber sub=new Subscriber();   
+	       sub.start();
+         while(true)
+         {
+        	 try {
+                 Thread.sleep(1000);
+             } catch (Exception e) {
+             }
+         }
+        }
+    
+
+}
+
+
+前面的例子中创建一个消息消费者使用的是:
+sesssion.createConsumer(destination)
+另外，还提供了另一种方式：
+sesssion.createConsumer(destination, selector)
+
+ MessageConsumer   consumer = session.createConsumer(topic,"user like '%b%'");
+  
+
+
+这里selector是一个字符串，用来过滤消息。也就是说，这种方式可以创建一个可以只接收特定消息的一个消费者。Selector的格式是类似于 SQL-92的一种语法。可以用来比较消息头信息和属性。
+
+  下面的例子中，创建两个消费者，共同监听同一个Queue，但是它们的Selector不同，然后创建一个消息生产者，来发送多个消息。
+
+import javax.jms.Connection;
+import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.MessageConsumer;
+import javax.jms.MessageListener;
+import javax.jms.MessageProducer;
+import javax.jms.Queue;
+import javax.jms.Session;
+import javax.jms.TextMessage;
+
+import org.apache.activemq.ActiveMQConnectionFactory;
+import org.apache.activemq.command.ActiveMQQueue;
+
+public class JMSSelectorTest {
+
+public static void main(String[] args) throws Exception {
+ActiveMQConnectionFactory factory = new ActiveMQConnectionFactory("vm://localhost");
+
+Connection connection = factory.createConnection();
+connection.start();
+
+Queue queue = new ActiveMQQueue("testQueue");
+
+Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+
+MessageConsumer comsumerA = session.createConsumer(queue, "receiver = 'A'");
+comsumerA.setMessageListener(new MessageListener(){
+public void onMessage(Message m) {
+try {
+System.out.println("ConsumerA get " + ((TextMessage) m).getText());
+} catch (JMSException e1) { }
+}
+});
+
+MessageConsumer comsumerB = session.createConsumer(queue, "receiver = 'B'");
+comsumerB.setMessageListener(new MessageListener(){
+public void onMessage(Message m) {
+try {
+System.out.println("ConsumerB get " + ((TextMessage) m).getText());
+} catch (JMSException e) { }
+}
+});
+
+MessageProducer producer = session.createProducer(queue);
+for(int i=0; i<10; i++) {
+String receiver = (i%3 == 0 ? "A" : "B");
+TextMessage message = session.createTextMessage("Message" + i + ", receiver:" + receiver);
+message.setStringProperty("receiver", receiver);
+producer.send(message );
+}
+}
+}
+
+mq出现错误 
+
+2013-10-25 10:17:52,537 | WARN  | Async error occurred: javax.jms.JMSException: Invalid acknowledgment: MessageAck
+ {commandId = 19947, responseRequired = false, ackType = 3, consumerId = ID:testing-HP-65294-1382665424451-0:1:1:2
+, firstMessageId = ID:HKITCVS01-50261-1382662991279-0:2:1:2:2909458, lastMessageId = ID:HKITCVS01-50261-1382662991
+279-0:2:1:2:2909458, destination = topic://levelOne.topic, transactionId = null, messageCount = 1} | org.apache.ac
+tivemq.broker.TransportConnection.Service | ActiveMQ Transport: tcp:///192.168.10.76:65295
+javax.jms.JMSException: Invalid acknowledgment: MessageAck {commandId = 19947, responseRequired = false, ackType =
+ 3, consumerId = ID:testing-HP-65294-1382665424451-0:1:1:2, firstMessageId = ID:HKITCVS01-50261-1382662991279-0:2:
+1:2:2909458, lastMessageId = ID:HKITCVS01-50261-1382662991279-0:2:1:2:2909458, destination = topic://levelOne.topi
+c, transactionId = null, messageCount = 1}
+        at org.apache.activemq.broker.region.TopicSubscription.acknowledge(TopicSubscription.java:231)
+        at org.apache.activemq.broker.region.AbstractRegion.acknowledge(AbstractRegion.java:369)
+        at org.apache.activemq.broker.region.RegionBroker.acknowledge(RegionBroker.java:470)
+        at org.apache.activemq.broker.TransactionBroker.acknowledge(TransactionBroker.java:194)
+        at org.apache.activemq.broker.BrokerFilter.acknowledge(BrokerFilter.java:74)
+        at org.apache.activemq.broker.BrokerFilter.acknowledge(BrokerFilter.java:74)
+        at org.apache.activemq.broker.BrokerFilter.acknowledge(BrokerFilter.java:74)
+        at org.apache.activemq.broker.MutableBrokerFilter.acknowledge(MutableBrokerFilter.java:85)
+        at org.apache.activemq.broker.TransportConnection.processMessageAck(TransportConnection.java:449)
+        at org.apache.activemq.command.MessageAck.visit(MessageAck.java:205)
+        at org.apache.activemq.broker.TransportConnection.service(TransportConnection.java:297)
+        at org.apache.activemq.broker.TransportConnection$1.onCommand(TransportConnection.java:175)
+        at org.apache.activemq.transport.TransportFilter.onCommand(TransportFilter.java:68)
+        at org.apache.activemq.transport.WireFormatNegotiator.onCommand(WireFormatNegotiator.java:113)
+        at org.apache.activemq.transport.InactivityMonitor.onCommand(InactivityMonitor.java:210)
+        at org.apache.activemq.transport.TransportSupport.doConsume(TransportSupport.java:84)
+        
+        
+  可能原因，transaction 的rollback?
+  

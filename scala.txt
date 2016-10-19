@@ -1,0 +1,385 @@
+sbt配置代理  配置文件
+sbtconfig.txt
+-Dhttp.proxySet=true 
+-Dhttp.proxyHost=192.168.8.26
+-Dhttp.proxyPort=8080
+ -Dhttps.proxySet=true 
+ -Dhttps.proxyHost=192.168.8.26 
+ -Dhttps.proxyPort=8080
+用这个命令行好使
+set JAVA_OPTS=-Dhttp.proxySet=true -Dhttp.proxyHost=192.168.8.26 -Dhttp.proxyPort=8080 -Dhttps.proxySet=true -Dhttps.proxyHost=192.168.8.26 -Dhttps.proxyPort=8080
+
+
+1.Clojure能够吸引人的很重要一点是它是JVM之上的语言，这个决定非常关键。
+首先，因为根植于JVM之上，并且做到了跟Java语言的相互调用，它能吸引很多成熟的Java开发者。其次，它可以使用Java社区丰富的开源软件，不需要从头去构建一个社区，你可以看到很多Clojure开源代码都是简单地包装Java的开源包，但是通过Clojure高度抽象简单的语法提供更便利的使用的方式；
+第三，由于JVM平台本身的高度成熟和优化，clojure的编译器生成的byte code跟Java编译器生成的byte code并无二致（不完全是），它的性能和稳定性也能马上得到保证，这比从头构建一个新平台成本低得多。
+
+构建于JVM之上，Clojure就是一门“严肃”的语言，而非很多人眼中的Lisp“玩具”语言，你学习后可以马上使用并且实践。但是Clojure又是Lisp方言，Lisp的神奇能力它还都保留，这样兼具美学和实用的语言如何让人不爱？我相信很多熟悉Scheme之类方言的童鞋，并且有Java背景的，都会对Clojure有相见恨晚的感觉。
+
+
+
+scala
+也可以run在.net上  2003 developed by Martin Odersky's group at EPFL, Lausanne, Switzerland.
+
+有 Erlang-like Actors library
+scala的Int等类型是对象，但是编译的时候还是变成java的基本类型已获得更好的性能
+
+object Test {
+def main(args: Array[String]) {
+println("Hello, world!")
+}
+}
+Any数据类型就是Java的object
+做object类型转换 var.asInstanceOf[Date]  判断变量类型 that.isInstanceOf[Date]
+
+private var contents: T = _  表示给default value  default value is 0 for numeric types, false for the Boolean type, () for the Unit type and null for all object types
+
+object方式定义一个单例的instance,scala里面没有静态方法和静态成员，使用单例的方式来解决
+一个Scala单例对象会被编译成由“$”结尾的类 , 比如  会变成  TraitImpl$
+object TraitImpl {
+  def apply = new TraitImpl("foo")
+  def apply(name: String) = new TraitImpl(name)
+}
+
+import java.text.DateFormat._  使用 _代替*因为*是scala的关键字
+缺省就会import java.lang里面的class
+import类里面的静态方法就可以直接用了，不用带上类的名字，比如 getDateInstance(LONG, Locale.FRANCE)
+
+ val msg2: java.lang.String = "Hello again, world!"
+ 函数返回类型可以自动判断，但是参数必须指定类型
+
+
+
+import java.util.{Date, Locale}
+import java.text.DateFormat
+import java.text.DateFormat._
+
+object FrenchDate {
+  def main(args: Array[String]) {
+    val now = new Date
+    val df = getDateInstance(LONG, Locale.FRANCE)
+    println(df format now)  等于 println(df.format(now));
+	  }
+	}
+
+所有都是对象，没有java的primitive
+
+也支持泛型 
+class Link[T](val head: T, val tail: Link[T])
+val greetStrings: Array[String] = new Array[String](3)
+
+for (i <- 0 to 2)   returns not an Array but a Scala iterator that returns the values 0, 1, and 2
+  print(greetStrings(i))
+ 
+ greetStrings(i) gets transformed into greetStrings.apply(i)
+ greetStrings(0) = "Hello"  essentially be transformed into greetStrings.update(0, "Hello")
+ List和java string一样是 immutable的，操作之后会产生一个新的list
+ tuple（ immutable）     可以放不同类型的对象
+val pair = (99, "Luftballons") 
+println(pair._1)
+
+ 
+ apply方法是个特殊的方法，相对于类的方法，调用的时候，可以不用指定方法名
+ 比如
+ class AddMe {
+   def apply(distance: Int)    {
+   val  ke =distance+5;
+  }
+}
+调用
+    var addMe=new AddMe();
+    addMe(3);
+ 
+map
+import scala.collection.mutable.HashMap
+val treasureMap = new HashMap[Int, String]
+treasureMap += 1 -> "Go to island."
+println(treasureMap(2))
+
+import scala.collection.mutable.HashSet
+val jetSet = new HashSet[String]
+jetSet += "Lear"
+jetSet += ("Boeing", "Airbus")
+
+通过工厂方法获取 map
+
+val romanNumeral = Map(1 -> "I", 2 -> "II", 3 -> "III", 4 -> "IV", 5 -> "V")
+
+
+
+trait 相当于java的接口在加上实现代码 与接口不同的是，它还可以定义属性和方法的实现 
+一般情况下Scala的类只能够继承单一父类，但是如果是特征的话就可以继承多个 java 8也有这个功能
+
+使用 val定义常量，一经定义后，该变量名不能被重新赋值。使用 var定义变量，可被重新赋值
+程序语句结尾没有分号，这也是 Scala 中约定俗成的编程习惯。大多数情况下分号都是可省的
+
+
+函数的定义也非常简单，使用关键字 def，后跟函数名和参数列表，如果不是递归函数可以选择省略函数返回类型
+def max(x: Int, y: Int): Int = if (x < y) y else x
+让我们再来和 Java 中对应的函数定义语法比较一下。首先，函数体没有像 Java 那样放在 {}里。Scala 中的一条语句其实是一个表达式，函数的执行过程就是对函数体内的表达式的求值过程，
+最后一条表达式的值就是函数的返回值。如果函数体只包含一条表达式，则可以省略 {}。其次，没有显示的 return语句，最后一条表达式的值会自动返回给函数的调用者。
+
+
+可以把语句放到一个script里面，然后通过shell执行
+比如下面的脚本
+var i = 0;
+while (i < args.length) {
+  if (i != 0) {
+    print(" ");
+  }
+  print(args(i));
+  i += 1;
+}
+println();
+
+
+
+函数式循环
+args.foreach(arg => println(arg)) 匿名函数
+args.foreach((arg: String) => println(arg))
+
+循环数组
+for (arg <- args)
+  println(arg)
+
+
+
+scala hello.scala
+访问数组是 a(1)而不是a[1]
+
+ ++i and i++ don't work in Scala   i += 1 可以
+ 
+ while (index < xs.size) { 
+      total += xs(index) 
+      index += 1 
+    } 
+    
+     if (n > 0) n else -n
+     
+ java调用scala 
+ class Car(val year: Int) {
+  private[this] var miles: Int = 0
+
+  def drive(distance: Int) {
+    miles += distance
+  }
+
+  override def toString(): String = "year:" + year + " miles:" + miles
+}
+
+  Car car = new Car(2009);
+  System.out.println(car);
+	car.drive(10);
+	System.out.println(car);
+
+
+
+object Test {
+  def getMyname 
+  {
+   println ("test");
+  }
+}
+
+
+java调用object Test.getMyname();
+
+class CarefulGreeter(greeting: String) {
+
+  if (greeting == null) {
+    throw new NullPointerException("greeting was null")
+  }
+
+  def greet() = println(greeting)
+}
+
+class定义里面不在方法里面的代码都算在 constructor 方法里面
+
+class RepeatGreeter(greeting: String, count: Int) {
+
+ def this(greeting: String) = this(greeting, 1)  //重载的构造函数
+
+  def greet() = {
+    for (i <- 1 to count)
+      println(greeting)
+  }
+}
+
+不支持 static field和方法，通过定义 singleton objects  来解决
+the Scala compiler transforms the fields and methods of a singleton object to static fields and methods of the resulting binary Java class.
+
+object WorldlyGreeter {
+  def worldify(s: String) = s + ", world!"
+}
+
+object WorldlyApp {
+  def main(args: Array[String]) {
+    val wg = WorldlyGreeter.worldify(greeting)
+    wg.greet()
+  }
+}
+fsc第一次运行的时候会启动一个dameon程序一致run，相当于把编译用的jvm已经起来，以后就不用每次都运行了，加快编译速度
+fsc WorldlyApp.scala WorldlyGreeter.scala
+
+
+scala也只能继承一个类，但是可以有多个接口trait
+trait也可以实现多个trait ，trait也可以继承class 
+
+class Dog extends Friendly {
+  override def greet() = "Woof"
+}
+
+可以在实例化的时候，混用trait的实现
+
+trait ExclamatoryGreeter extends Friendly {
+  override def greet() = super.greet() + "!"
+}
+
+val pup: Friendly = new Dog with ExclamatoryGreeter
+println(pup.greet())
+
+
+定义 case class 主要用于函数递归   case class可以不使用new构造 ，可以直接 用 比如 Var("1") ,而且class的参数会自动有getter函数  比如 Var.getArg()
+ abstract class Term  
+  case class Var(name: String) extends Term  
+   case class Fun(arg: String, body: Term) extends Term  
+   case class App(f: Term, v: Term) extends Term 
+object Test {
+ def printTerm(term: Term) {  
+    term match {  
+      case Var(n) =>  
+        print(n)  
+      case Fun(x, b) =>  
+        print("^" + x + ".")  
+        printTerm(b)  
+      case App(f, v) =>  
+        Console.print("(")  
+        printTerm(f)  
+        print(" ")  
+        printTerm(v)  
+        print(")")  
+    }  
+  }  
+  Case Class 隐式地就有了一个构造方法，与类名一致。可以直接使用Sum(Sum(Number(1) , Number(2)) , Number(3))
+隐式地有了toString , equals 和hashCode的实现。在重写的时候把这个类里所有的成员都用上。(书上说的是把类参数当成val去维护)
+可以直接访问构造参数。否则在其他的类中，应该再提供类似于def n : Int 这样的方法来让外界访问这个变量。
+
+var myVar = "theValue";
+var myResult =
+    myVar match {
+       case "someValue"   => myVar + " A";
+       case "thisValue"   => myVar + " B";
+       case "theValue"    => myVar + " C";
+       case "doubleValue" => myVar + " D";
+       case  _ =>   满足所有其他情况
+    }
+println(myResult);
+
+match也可以返回值像上面一下
+
+	
+max，跟着是括号里带有冒号分隔的参数列表。 每个函数参数后面必须带前缀冒号的类型标注，
+因为Scala编译器（以及解释器，但之后我们将只说编译器）没办法推断函数参数类型。 本例中，名叫max的函数带有两个参数，x和y，都是Int类型。 在max参数列表的括号之后你会看到另一个": Int"类型标注，
+这是定义了max函数的结果类型。
+
+Scala的Unit类型比较接近Java的void类型， 而且实际上Java里返回void的方法都会被映射为返回Unit的Scala方法
+唯一的区别是 Unit = ()定义一个返回为空的函数
+因此结果类型为Unit的方法，并非是为了得到返回值，而是为了其他的运行效果。
+	
+	这个返回int值，
+def max(x: Int, y: Int): Int = {            
+          if (x > y) x  
+          else y  
+        }
+        
+        
+        
+如果定义为方法，则没有返回值
+  def addOne(inNumber:Int)  { inNumber+1};         
+	        
+ args.foreach(arg => println(arg))  args.foreach(println)    //只循环里面的元素，不返回值
+ args.map 对list/set里面的元素循环操作，然后返回新的list/set  
+ filter移除任何对传入函数计算结果为false的元素。返回一个布尔值的函数通常被称为谓词函数[或判定函数]。
+ numbers.filter((i: Int) => i % 2 == 0)
+ val numbers = List(1, 2, 3, 4)    numbers(0)=1
+  Set(1, 1, 2)  set不包含重复值
+ 
+ object Timer {
+  def oncePerSecond(callback: () => Unit) {  定义function作为参数，返回Unit(void)
+    while (true) { callback(); Thread sleep 1000 }
+  }
+  def timeFlies() {
+    println("time flies like an arrow...")
+  }
+  def main(args: Array[String]) {
+    oncePerSecond(timeFlies)  传递function作为参数 
+  }
+}
+直接用匿名函数的方式   =>分割函数的参数和函数体
+ oncePerSecond(() =>  
+      println("time flies like an arrow..."))
+  
+ 定义class可以带参数
+ class Complex(real: Double, imaginary: Double) {
+  def re() = real  //函数直接返回值  也可以定义成 def re=real 
+  def im() = imaginary
+}
+使用的时候
+ val c1:Complex= new Complex(1.2,3.3);
+ 调用 c1.re或者c1.re()
+ 定义方法覆盖  override def toString() ={}
+ 定义带参数类型的类
+ 
+ class Reference[T] {
+  private var contents: T = _
+  def set(value: T) { contents = value }
+  def get: T = contents
+}
+
+使用的时候，需要加上参数类型
+  val cell = new Reference[Int]
+    cell.set(13)
+    
+    变长参数
+    def capitalizeAll(args: String*) = {
+  args.map { arg =>
+    arg.capitalize
+  }
+}
+定义抽象类
+abstract class Shape {
+def getArea():Int    // subclass should define this
+}
+如果你需要构造函数参数，使用抽象类。因为抽象类可以定义带参数的构造函数，而特质不行。例如，你不能说trait t(i: Int) {}，参数i是非法的。
+
+定义线程执行
+val hello = new Thread(new Runnable {
+  def run() {
+    println("hello world")
+  }
+})
+
+hello.start
+
+
+Future 代表异步计算。你可以把你的计算包装在Future中，当你需要计算结果的时候，你只需调用一个阻塞的 get() 方法就可以了。一个 Executor 返回一个 Future 。如果使用Finagle RPC系统，你可以使用 Future 实例持有可能尚未到达的结果。
+一个 FutureTask 是一个Runnable实现，就是被设计为由 Executor 运行的
+
+val future = new FutureTask[String](new Callable[String]() {
+  def call(): String = {
+    searcher.search(target);
+}})
+executor.execute(future)
+val blockingResult = future.get()
+
+使用锁
+class Person(var name: String) {
+  def set(changedName: String) {
+    this.synchronized {
+      name = changedName
+    }
+  }
+}
+synchronized 允许更细粒度的锁。 而 volatile 则对每次访问同步。
+
+

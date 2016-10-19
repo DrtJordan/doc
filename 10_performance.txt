@@ -1,0 +1,645 @@
+20100106
+select  404462/4 as ibm,232002/4 as intel,631766/8 as inter2 ,7646486/384 as sun  from dual;
+
+
+20091225
+
+java System.nanoTime()
+
+RMDS
+           SLERT 10 SP2u3       SLES 10 SP2 
+infiniband <0.67ms 750k/s    <1ms 600k/s      k 1000message
+1000M      <1ms    500k/s    <1ms 200k/s
+10000M(TOE)<1ms     800k/s    <1ms 550k
+ 
+
+LLM
+QDR
+< 8 microseconds at the base message rates set by the specs 
+< 12-microseconds at 1 million messages per second.
+RMDS
+           SLERT 10 SP2u3       SLES 10 SP2 
+infiniband <0.67ms 750k/s    <1ms 600k/s      k 1000message
+1000M      <1ms    500k/s    <1ms 200k/s
+10000M(TOE)<1ms     800k/s    <1ms 550k
+ 
+LLM
+QDR
+< 8 microseconds at the base message rates set by the specs 
+< 12-microseconds at 1 million messages per second.
+
+TT update 15 microseconds select <5 microseconds (Ö±½Ó¶Ô1M¼ÇÂ¼×öÈ«±íÉ¨Ãè£¬156ÄÉÃë/¼ÇÂ¼)
+Êµ²â TT insert 2 microseconds select <0.156 microseconds (Ö±½Ó¶Ô1M¼ÇÂ¼×öÈ«±íÉ¨Ãè£¬156ÄÉÃë/¼ÇÂ¼)
+java Ñ­»·1m´Î¸³Öµ£¬ºÄÊ± 3ms  3ns
+
+FC disk 7ms 
+SSD    75 microseconds
+
+RAM  Nehalem 80NS(DDR3 1066MHZ£¬ÀíÂÛÖµ12NS ) L1 cache 4clocks L2 10clocks L3 48clocks
+
+dell d630²âÊÔ (evertest) CPU 2GHz
+     read(MB/s)   write(MB/s)    latency(ns)
+Ram  5321         3507           85.7
+L1   34667        34558          1.4 
+L2   10510        6099           9.7
+´ÅÅÌlatency 16ms 
+
+hp workstation xw4600 ²âÊÔ (evertest) CPU 2.5GHz
+     read(MB/s)   write(MB/s)    latency(ns)
+Ram  6376         6922           81.5
+L1   39983       39881          1.2 
+L2   17711       11624          71
+´ÅÅÌlatency 13.15ms  random read 78.8M/s
+
+IBM 3650M2 ²âÊÔ (evertest) CPU 5520 2.2G
+     read(MB/s)   write(MB/s)    latency(ns)
+Ram  10879        5360           72
+L1   32001       27722           2.5
+L2   17063       15571           6.3
+L3   15579       13717           7.1
+´ÅÅÌ latency 7.4 ms  random read 190M/s 
+
+
+Nehalem Îª numa½á¹¹
+½ü¶Ë·ÃÎÊÔ¼60¸öÊ±ÖÓÖÜÆÚ£¬Ô¶¶Ë·ÃÎÊÔ¼90¸öÊ±ÖÓÖÜÆÚ£¨¾ÝËµÈÔÈ»±ÈHarptertown Xeon¿ì£©£¬±¾µØL3 Cache HitÔòÎª30¸öÊ±ÖÓÖÜÆÚ
+
+
+latency FC=10MS SSD=50microseconds  1MS IB=0.67MS 
+TT=8(read) 20(insert)microseconds  KDB=5 NS(read) ??
+
+
+RISC¼Ü¹¹µÄÌØµã¾ÍÊÇÖ¸Áî³¤¶ÈÏàµÈ£¬Ö´ÐÐÊ±¼äºã¶¨£¨Í¨³£ÎªÒ»¸öÊ±ÖÓÖÜÆÚ£©£¬Òò´Ë´¦ÀíÆ÷Éè¼ÆÆðÀ´¾ÍºÜ¼òµ¥£¬¿ÉÒÔÍ¨¹ýÉî³¤µÄÁ÷Ë®Ïß´ïµ½ºÜ¸ßµÄÆµÂÊ£¨ÀýÈç31 ¼¶Á÷Ë®ÏßµÄPentium 4¡­¡­µ±È»Pentium 4Òª³¬¹ý5GHzµÄÆÁÕÏÐèÒª¸¶³ö¾Þ´óµÄ¹¦ºÄ´ú¼Û£©£¬IBMµÄPower6¾Í¿ÉÒÔÇáËÉµØ´ïµ½4.7GHzµÄÆð²½ÆµÂÊ¡£¹ØÓÚPower6µÄ¼Ü¹¹µÄ·Ç³£¼òµ¥µÄ½éÉÜ¿ÉÒÔ¿´¡¶»úÃÜ½ÒÂ¶£ºIntel³¬Ïß³Ì¼¼ÊõÓÐ¶àÉÙÖÖ£¿¡·£¬ÎÒÃÇ¼ÌÐøËµNehalem£ººÍRISCÏà·´£¬CISCÖ¸ÁîµÄ³¤¶È²»¹Ì¶¨£¬Ö´ÐÐÊ±¼äÒ²²»¹Ì¶¨£¬Òò´Ë IntelµÄRISC/CISC»ìºÏ´¦ÀíÆ÷¼Ü¹¹¾ÍÒªÍ¨¹ý½âÂëÆ÷½«x86Ö¸Áî·­ÒëÎªuop£¬´Ó¶ø»ñµÃRISC¼Ü¹¹µÄ³¤´¦£¬ÌáÉýÄÚ²¿Ö´ÐÐÐ§ÂÊ¡£
+KDB 
+Kdb+ helps address latency issues with its million messages per second speed; typical streaming data solutions offer 100,000 ¨C
+200,000 messages per second.
+Kdb+ queries in-memory data at the rate of over 200 million records per second per CPU and updates data in memory at the rate
+of 1 million inserts per second
+
+
+20090818
+¶¯Ì¬²ÉÑùÈ±Ê¡µÄ OPTIMIZER_DYNAMIC_SAMPLING =2µÄÊ±ºò£¬Ö»¶ÔÃ»ÓÐÍ³¼ÆÐÅÏ¢µÄ±í×ö¶¯Ì¬²ÉÑù
+Èç¹û OPTIMIZER_DYNAMIC_SAMPLING =10 ÔòÈ«²¿¶¯Ì¬È«±íblock²ÉÑù
+
+ebay ÏµÍ³execution per second Ô¼ 6-10 Íò µ¥¿â
+
+wait event :sequential read =random block read 
+            scattered  read =sequential block read
+            
+10g shared pool·Ö³É¼¸¸ösub poolÀ´¹ÜÀí
+
+            
+20091124
+Ê×ÏÈ´´½¨ÒÔ testnameÎªÃû×ÖµÄ lun
+Èç mytest.lun
+ÄÚÈÝÈçÏÂ£º
+/dev/sdb
+
+ ./orion_linux_x86-64 -run advanced -size_small 8 -size_large 1024 -type rand -simulate concat -write 0 -duration 10    -matrix basic -num_disks 6 -testname mytest
+ 
+ 
+  ./orion_linux_x86-64 -run advanced -size_small 8 -size_large 1024 -type rand -simulate concat -write 0 -duration 3    -matrix detailed  -num_disks 6 -testname diskarray
+ 
+ ´ÅÅÌÕóÁÐ²âÊÔ½á¹û  1000g 128k segment size 
+  Commandline:
+-run advanced -size_small 8 -size_large 1024 -type rand -simulate concat -write 0 -duration 10 -matrix basic -num_disks 6 -testname mytest
+
+Maximum Large MBPS=185.28 @ Small=0 and Large=12
+Maximum Small IOPS=1553 @ Small=27 and Large=0
+Minimum Small Latency=5.52 @ Small=1 and Large=0
+
+ ´ÅÅÌÕóÁÐ²âÊÔ½á¹û 500g 64k segment size 
+Commandline:
+-run advanced -size_small 8 -size_large 1024 -type rand -simulate concat -write 0 -duration 10 -matrix basic -num_disks 6 -testname diskarray
+
+Maximum Large MBPS=132.51 @ Small=0 and Large=10
+Maximum Small IOPS=1758 @ Small=29 and Large=0
+Minimum Small Latency=5.00 @ Small=1 and Large=0
+
+
+
+
+ÄÚÖÃ8¿éÓ²ÅÌ²âÊÔ½á¹û
+ORION VERSION 11.1.0.7.0
+
+Commandline:
+-run advanced -testname mytest -num_disks 8 -size_small 8 -write 0 -matrix basic -duration 10
+Maximum Large MBPS=169.63 @ Small=0 and Large=16
+Maximum Small IOPS=1465 @ Small=40 and Large=0
+Minimum Small Latency=7.22 @ Small=1 and Large=0
+
+ÄÚÖÃ4¿éÓ²ÅÌ²âÊÔ
+
+ORION VERSION 11.1.0.7.0
+
+Commandline:
+-run advanced -size_small 8 -size_large 1024 -type rand -simulate concat -write 0 -duration 10 -matrix basic -num_disks 4 -testname testinternal
+
+Maximum Large MBPS=109.30 @ Small=0 and Large=8
+Maximum Small IOPS=743 @ Small=20 and Large=0
+Minimum Small Latency=8.04 @ Small=1 and Large=0
+
+
+20090811
+¿ÉÒÔÓÃ oracle orion À´¶Ôio×øÑ¹Á¦²âÊÔ
+
+20090722
+Êä³ö¸üºÃµÄ¸ñÊ½
+SET SERVEROUTPUT ON FORMAT WRAPPED;
+The new OLTP Table Compression feature, however, is a part of the Oracle Advanced Compression option that needs to be licensed in addition to the Enterprise Edition
+
+SecureFiles Deduplication is an intelligent technology that eliminates duplicate copies of SecureFiles data. Oracle stores one image of the SecureFiles data and replaces the duplicate copies with references to this image.
+FOR EXAMPLE 10 users receive an email with the same 1MB attachment. Without SecureFiles Deduplication, the system would store one copy of the file for each of the 10 users ¨C requiring 10MB of storage. If the email application in our example had used SecureFiles with Deduplication, it would have stored the 1MB attachment just once. That¡¯s a 90% savings in storage requirements.
+
+Oracle's table compression feature compresses data by eliminating duplicate values in a database block. Compressed data stored in a database block (also known as disk page) is self-contained. That is, all the information needed to re-create the uncompressed data in a block is available within that block. Duplicate values in all the rows and columns in a block are stored once at the beginning of the block, in what is called a symbol table for that block. All occurrences of such values are replaced with a short reference to the symbol table.
+Ñ¹ËõÊÊºÏÖ»¶ÁµÄ£¬²»Ì«ÊÊºÏhigh updateµÄ²Ù×÷
+
+sqlplus ÀïÃæÉèÖÃ±äÁ¿
+var col1 varchar2(128);
+var col2 varchar2(128);
+
+execute :col1:='A';
+execute :col2:='A';
+
+¿ÉÒÔÏÔÊ¾°ó¶¨±äÁ¿µÄpeek¹ý³Ì
+SELECT * FROM TABLE(DBMS_XPLAN.DISPLAY_CURSOR(NULL, NULL, 'ADVANCED'));
+e-rows´ú±ícbo¹ÀËãµÄ,a-rows´ú±íÊµ¼ÊµÄ
+
+--------------------------------------------------------------------------------------------
+| Id  | Operation         | Name         | Starts | E-Rows | A-Rows |   A-Time   | Buffers |
+--------------------------------------------------------------------------------------------
+|   1 |  SORT AGGREGATE   |              |      1 |      1 |      1 |00:00:00.01 |       4 |
+|*  2 |   INDEX RANGE SCAN| ACS_TEST_IDX |      1 |      1 |    958 |00:00:00.01 |       4 |
+
+
+
+
+bind peeking 
+Í¬ÑùµÄsqlÉú³É²»Í¬µÄÖ´ÐÐ¼Æ»®£¬Èç¹ûÓÐhistogramÐÅÏ¢µÄ»°
+select child_number, executions, buffer_gets, is_bind_sensitive, is_bind_aware,plan_hash_value from v$sql£»
+
+The current execution statistics for the cursor can be seen using:
+select * from v$sql_cs_statistics where sql_id='19sxt3v07nzm4'; 
+CHILD_NUMBER EXECUTIONS BUFFER_GETS I I PLAN_HASH_VALUE
+------------ ---------- ----------- - - ---------------
+           0          2         163 Y N      2647430641
+           1          1          68 Y Y      3194050402
+           2          1           4 Y Y      2647430641
+
+select CHILD_NUMBER,PREDICATE,RANGE_ID,LOW,HIGH from v$sql_cs_selectivity where sql_id = '19sxt3v07nzm4';
+
+CHILD_NUMBER PREDICATE                                  RANGE_ID LOW        HIGH
+------------ ---------------------------------------- ---------- ---------- ----------
+           1 =B2                                               0 0.879750   1.075250
+           1 =B1                                               0 0.861750   1.053250 
+
+_OPTIM_PEEK_USER_BINDS default TRUE
+
+Bind peeking has been known to cause a different execution plan to be used on different nodes of a RAC
+cluster, because each node has its own Shared Pool, and despite the same SQL, data, and statistics the
+first time a cursor was hard parsed on each node a different set of bind values was presented to the
+optimizer, and it thus chose a different plan on each node.
+
+There is a hidden parameter which controls this feature's behaviour, whose default value is TRUE.
+Although a stable plan can be achieved by setting the parameter off it must be realized that this stable
+plan is not necessarily the optimum plan for all bind values. Consider the following simple example where
+tablex has 10,000 rows and col1 has an index. 
+
+           
+
+20090720
+commit_write ¿ØÖÆredo Òì²½Ð´
+commit_write=¡¯batch,nowait¡¯),
+
+
+Nologging operations are invoked by any of the following:
+
+    * SQL*Loader direct load operations
+    * Direct load INSERT operations from CREATE TABLE | INDEX or INSERT commands
+    * Loading into an object containing LOB data when its object¡¯s segment characteristic is NOCACHE NOLOGGING
+
+For databases in ARCHIVELOG mode, nologging operations can only occur for a particular object if and only if:
+
+    * Database allows for nologging (ALTER DATABASE NO FORCE LOGGING) and
+    * Tablespace allows for nologging (ALTER TABLESPACE <NAME> NO FORCE LOGGING) and
+    * Object allows for nologging (ALTER TABLE <NAME> NOLOGGING)
+    
+20090714
+AWRÀïÃæµÄtablespace IO Í³¼ÆÊÇ´Óv$filestat »ã×ÜµÄ
+    Execute to Parse%-round(100*(1-:prse/:exe),2) 
+user calls £ºNumber of user calls such as login, parse, fetch, or
+execute When determining activity, the ratio of user calls to RPI
+calls, give you an indication of how much internal work
+gets generated as a result of the type of requests the user
+is sending to Oracle.
+
+execute count  :Total number of calls (user and recursive) that executed SQL statements
+
+recursive calls : Number of recursive calls generated at both the user
+and system level. Oracle maintains tables used for
+internal processing. When Oracle needs to make a
+change to these tables, it internally generates an internal
+SQL statement, which in turn generates a recursive call.
+
+Version Count ÔÚAWR±íÊ¾ ¾ßÓÐÍ¬ÑùsqlºÍÍ¬ÑùÖ´ÐÐ¼Æ»®µÄsqlµÄ³öÏÖ´ÎÊý
+dbms_worklad.create_snapshot;
+
+20090625
+intel Intel? X25-E Extreme SATA Solid-State Drive 
+SLC NAND
+
+Bandwidth  	 Sustained sequential read: up to 250 MB/s
+							Sustained sequential write: up to 170 MB/s 
+Read latency  	 75 microseconds
+I/O Per Second (IOPS) 	Random 4KB Reads: >35,000 IOPS
+											Random 4KB Writes: >3,300 IOPS
+											
+Life expectancy  	 2 Million Hours Mean Time Before Failure (MTBF) 
+
+Power consumption  	 Active: 2.4W Typical (server workload1)
+										Idle (DIPM): 0.06 W Typical 
+										
+ÄÚ´æ¶ÁÈ¡ÑÓ³ÙÔÚÄÉÃë¼¶±ð (ÒÚ·ÖÖ®Ò») ddr 15-20ns ddr2 10-20ns  ddr3 10-15n2
+15k segate ´ÅÅÌ
+Average latency  	2.0 msec
+Random read seek time 	3.50 msec
+Random write seek time 	4.0 msec
+
+20090619
+cacheÃüÖÐÂÊ²»¸ßµÄ£¬Ëæ»úIO¶à,Ð¡IO²Ù×÷(up to 16kb)µÄ±È½ÏºÏÊÊssd
+iops ´ó¸ÅÄÜÓÐ8±¶µÄÌá¸ß£¬latencyÓÐÖÁÉÙ4±¶µÄÌá¸ß
+Redo ×îºÃ·Åµ½´«Í³µÄ´ÅÅÌÉÏ£¬ÒòÎªÓÐcache£¬¶øÇÒÊÇË³Ðò¶ÁÐ´
+temp  ÊÊºÏ·Åµ½ssd
+¶ÔÏóÃÜ¶È´óµÄÊÊºÏ·Åµ½ssd object_iops/objects/gb
+http://www.petefinnigan.com/unwrap.sql °²È«Ïà¹ØµÄ
+
+
+set serveroutput on;
+create or replace procedure unwrap(o in varchar,n in varchar, t in varchar)
+as
+        vWrappedtext                Varchar2(32767);               
+        vtrimtext                Varchar2(32767);               
+        vChar                                        Varchar2(2);
+        vRepchar                                Varchar2(2);
+        vLZinflatestr                        Varchar2(32767);
+        nLen                Integer;
+        nLoop        Integer;
+        nCnt                Integer;
+type vartab is table of varchar2(2) index by varchar2(2);
+
+mytbl vartab;
+cursor getchar is select C_BASE64DECODE xr,C_LZDEFLATECODE dr from sys.idltranslate;
+Begin
+for i in getchar loop --sys.idltranslate±íÄÚÈÝ´æµ½×Ö·ûÊý×é
+   mytbl(i.xr):=i.dr;
+end loop;
+vtrimtext:='';
+select count(*) into ncnt                         from DBA_SOURCE
+                        Where owner=o
+                        And Name = n
+                        And Type=t ;
+if ncnt >0 and ncnt <5 then
+for i in 1..ncnt loop
+if i=1 then
+select rtrim( substr( TEXT, instr( TEXT, chr( 10 ), 1, 20 ) + 1 ), chr(10) )   --±£´æÈ¥µô»»ÐÐµÄBASE64ÂëÕýÎÄ
+into vLZinflatestr
+                        from DBA_SOURCE
+                        Where owner=o
+                        And Name = n
+                        And Type=t and line=i;
+else
+select text into vLZinflatestr
+                        from DBA_SOURCE
+                        Where owner=o
+                        And Name = n
+                        And Type=t and line=i;
+end if;
+vtrimtext:=vtrimtext||vLZinflatestr;
+end loop;
+end if;
+vtrimtext:=replace(vtrimtext,chr(10),'');
+nLen := Length(vtrimtext)/64 ;
+vWrappedtext :='';
+for i in 0..nLen  loop  
+if i< nLen   then
+vWrappedtext:=vWrappedtext||utl_encode.base64_decode( utl_raw.cast_to_raw(substrb(vtrimtext,64*i+1 , 64 ))) ;
+else
+vWrappedtext:=vWrappedtext||utl_encode.base64_decode( utl_raw.cast_to_raw(substrb(vtrimtext,64*i+1  ))) ;
+end if;
+        --DBMS_OUTPUT.PUT_LINE(vWrappedtext);
+        End Loop;
+--vWrappedtext:=substr(vWrappedtext,41);
+    nLen := Length(vWrappedtext)/2 - 1;
+
+        vLZinflatestr :='';
+
+        For nLoop In 20..nLen Loop --´ÓµÚ41×Ö½Ú¿ªÊ¼
+                vChar := Substrb(vWrappedtext,nLoop*2+1,2);
+                /*
+                Select Count(*) Into nCnt From SYS.IDLTRANSLATE Where C_BASE64DECODE=vChar;
+                If nCnt <> 1 Then
+                        DBMS_OUTPUT.PUT_LINE('SUBSTATION TABLE WARNING: Count not find following char--'||vChar);
+                        Return;
+                Else
+                        Select C_LZDEFLATECODE Into vRepchar From SYS.IDLTRANSLATE Where C_BASE64DECODE=vChar;
+                End If;
+                */
+                vLZinflatestr := vLZinflatestr || mytbl(vChar); --´Ó×Ö·ûÊý×éÆ¥Åä
+                --DBMS_OUTPUT.PUT_LINE(vLZinflatestr);
+        End Loop;
+        --DBMS_OUTPUT.PUT_LINE(vLZinflatestr);
+        DBMS_OUTPUT.PUT_LINE(amosunwrapper.inflate(vLZinflatestr));
+End;
+/
+
+exec unwrap('SYS','HANMON','PACKAGE BODY');
+
+
+
+
+
+20090611
+Trace Analyzer (TRCA) is a tool that inputs an
+EVENT 10046 SQL Trace file, connects to the
+database, and outputs a comprehensive report for
+process performance analysis and tuning.
+? Focus on big time consumers, e.g.:
+? Logical Reads ? CPU Time ? SQL Tuning
+? Waits ? Resource Contention
+? Unaccounted-for ? Investigate
+? If moving into SQL analysis and tuning, consider
+
+11g ÐÂ¹¦ÄÜ
+´´½¨¶à¸ö×Ö¶ÎµÄÍ³¼ÆÐÅÏ¢
+declare
+cg_name varchar2(30);
+begin
+cg_name := dbms_stats.create_extended_stats(null,'customers',
+'(cust_state_province',country_id)');
+end;
+/
+Exec dbms_stats.gather_table_stats(null,'customers',method_opt =>
+'for all columns size skewonly
+for columns (cust_state_province,country_id) skewonly');
+
+exec dbms_stats.gather_table_stats(null,'customers', method_opt =>
+'for all columns size skewonly
+for columns (lower(cust_state_province)) skewonly');
+
+alter system set "_fix_control"='3746511:OFF¡¯;
+
+
+SQLT (SQLTXPLAIN) is a tool that inputs one SQL
+statement and outputs a set of comprehensive
+diagnostic files for SQL performance analysis and
+tuning.
+
+¿ÉÒÔµ¼Èëµ¼³öSQLÏà¹ØµÄÐÅÏ¢(Ö´ÐÐ¼Æ»®,outline,profileµÈµÈ)
+DBMS_SQLDIAG.EXPORT_SQL_TESTCASE()
+
+
+20090609
+ÉÙÁ¿×öÈ«ÃæÍ³¼Æ±È¾­³£×ösampleºÃ
+
+CBO poorly estimates Expressions on Columns
+ E.g., WHERE upper(model) = ¡®FLEX¡¯
+ CBO assumes default selectivity (5%)
+
+11g¿ÉÒÔ¶Ô¶à¸ö×Ö¶Î×éºÏÔÚÒ»ÆðÊÕ¼¯histogram
+Ò²¿ÉÒÔ¶ÔÓÐº¯ÊýµÄ×Ö¶Î½øÐÐhistogramÍ³¼Æ
+
+ÊÕ¼¯ÏµÍ³£¬Êý¾Ý×Öµä£¬fixed objectµÄÍ³¼ÆÐÅÏ¢
+
+
+
+20090403
+²»Í¬µÄsql version ÊÇÓÉÓÚÏàÍ¬µÄsql²»Í¬µÄschema¶ÔÏó£¬²»Í¬µÄbind±äÁ¿ÀàÐÍ£¬²»Í¬µÄoptimize mode»òÕßNLS²ÎÊý
+µ±cursor_sharing=similar Ê±£¬CBOÅÐ¶ÏÊÇ·ñ°²È«£¬Èç¹û¿ÉÄÜÉú³É²»Í¬µÄÖ´ÐÐ¼Æ»®£¬Ôò²ÉÓÃchild cursorµÄÐÎÊ½
+²»°²È«µÄÍ¨³£ÊÇlike»òÔò=µ«ÊÇ¸ÃÁÐÓÐhistogram
+cursor_sharing->session_cached_cursors->cursor_space_for_time
+Ê¹ÓÃvpd£¬ÔòÊÇsqlÔÚ¶¯Ì¬¼ÓÉÏwhere Ìõ¼þÖ®ºóÔÚ×öÓÅ»¯
+
+×öhistogramµÄÊ±ºò£¬×î´óµÄbucketÊÇ255 £¬Èç¹û×Ö·û×Ö¶ÎÀïÃæµÄÖµ>32bytes£¬ÔòhistorgramÎÞ·¨Ê¹ÓÃ£¬ÒòÎªÖ»Í³¼Æ32¸öbytes
+__optimizer_cost_model = {choose|io|cpu}
+%CPU is 100*cpu_cost/(cpu_cost+io_cost)
+The CPU cost reflects the estimated number of CPU cycles for operation
+Á½¸öÌØÊâµÄhint 
+CARDINALITY(t1 [, t2 ...], n)
+SELECTIVITY(t1 [, t2 ...], n)
+select /*+ cardinality(dual, 42)*/ * from dual;
+
+Ê¹ÓÃ´®ÐÐ¶ÁÈ¡µÄbolck·ÅÔÚbuffer pool£¬Ê¹ÓÃ²¢ÐÐ¶ÁÈ¡µÄblock slave's PGA
+Èç¹ûÊÇdirect io £¬ÔòÈÆ¹ýbuffer cache£¬Ö±½Ó·Åµ½pga
+¼ì²éÎï»¯ÊÓÍ¼ÊÇ·ñÊ¹ÓÃ
+1.query_rewrite_enabled = FORCE
+2.mv ´´½¨µÄÊ±ºòÊÇrewrite_enabled
+3.DBMS_MVIEW.EXPLAIN_REWRITE
+20090402
+indexµÄbranch blockÀïÃæµÄÃ¿¸öentry°üº¬Ö±ÊôÒ¶×Ó½ÚµãµÄ×î´óÖµºÍleft-most child DBA
+Í¨¹ýË÷ÒýÀ´¼Ó¿ì´æÈ¡Êý¾Ý£¬Í¬Ê±¿ÉÒÔ±£Ö¤Êý¾ÝÎ¨Ò»ÐÔ
+´´½¨indexµÄÊ±ºò£¬¶¼ÊÇÏÈ´´½¨Ò¶×Ó½Úµã£¬È»ºóÊÇbranch£¬È»ºóÊÇroot
+¶ÁÈ¡Ò»Ìõ¼ÇÂ¼£¬×ßË÷ÒýÍ¨³£5´Î¶ÁÈ¡¾ÍokÁË£¬root,
+Á½¸öbranch(one read on the next level branch block, and one read on the lowest level branch bloc)
+,leaf,data block
+indexµÄ²ãÊýÍ¨³£Ð¡ÓÚµÈÓÚ3£¬¾­³£ÊÇ2 ×î´ó24
+A 24-level index with 2 rows per index block can hold 2*(3**23) ~ 18.8 billion leaf rows.
+
+update indexµÄÊ±ºòÊÇÏÈÉ¾³ý£¬È»ºó²åÈë
+
+µ±Á¬½Ó±íÊýÁ¿<=5£¬CBO»á³¢ÊÔËùÓÐµÄ×éºÏ¼ÆËã³É±¾
+Ñ¡È¡µÄÊý¾ÝÐ¡ÓÚ10%£¬Ê¹ÓÃË÷Òý»á¿ì
+
+20090327
+partition Ö§³Ö¶à¸ö×Ö¶Î×ö partition(×î¶à16¸ö×Ö¶Î)
+globale partitioned index and globale index 
+
+sql profile ÊÇÍ¨¹ýtuning advisor ×Ô¶¯²úÉúµÄ ,°üº¬Ò»Ð©Õë¶ÔÌØ¶¨SQLµÄauxiliaryÍ³¼ÆÐÅÏ¢£¬Í¨¹ý
+²ÉÑù»òÕß²¿·ÖÖ´ÐÐµÄ·½Ê½²úÉú¸ü¼Ó×¼È·µÄÍ³¼ÆÐÅÏ¢°ïÖúCBOÉú³É¸üºÃµÄÖ´ÐÐ¼Æ»®
+profileÒ²¿ÉÒÔ·Ö×é¸üºÃµÄ¿ØÖÆ£¬Í¬Ê±profileÒ²²»ÕæÕý¹Ì»¯Ö´ÐÐ¼Æ»®£¬
+
+Ë÷ÒýÖÐËùÓÐµÄÁÐÖµ¶¼·ÅÔÚleaf block£¬ËùÒÔÃ¿Ìõ¼ÇÂ¼´æÈ¡Ê±¼ä²î²»¶à
+domain indexÓÃÔÚspatial data,image,documentµÈµÈ
+
+
+low  cluster factor ÒâÎ¶×Å ÏàÍ¬µÄÁÐÖµÔÚindexÖÐ·ÅÔÚÒ»Æð(Í³Ò»block £©£¬Ö´ÐÐ³É±¾µÍ
+like 'wzy%' ¿ÉÒÔÊ¹ÓÃÉÏindex range scan
+
+
+emc doc 
+https://powerlink.emc.com
+wzy964@gmail.com/ftp_12345
+
+20090312
+lock_sga¿ÉÒÔÔÚAIXÉÏÃæÉèÖÃ£¬Í¬Ê±ÐèÒªÉèÖÃ
+/usr/sbin/vmo -r -o maxpin%=sga+3%
+/usr/sbin/vmo -r -o lgpg_regions=10 -o lgpg_size=16777216
+¿ÉÒÔÌá¸ßÐÔÄÜ
+
+v$segment_stat ¿ÉÒÔ²éµ½¶ÔÏóÒ»¼¶µÄ¶ÁÐ´Çé¿ö
+
+ÔÚspfileÀïÃæ²»ÉèÖÃ lock_sga²ÎÊý£¬·ñÔò²»ÄÜÆô¶¯
+
+20090306
+rows return speed improvement with index
+10000000     x1.1
+500000       x1.0
+50000        x1.0
+5000         x1.1
+1000         x20.8
+
+¾¡Á¿ÉÙÓÃÁÙÊ±±í£¬high water mark ²»»á±»Çå³ý
+
+ÉÙÓÃfunction-based index
+
+¶àÓÃ»§²âÊÔµÄÊ±ºò£¬Ò»¶¨Òª²âÊÔÊÇ·ñÓÐËÀËøµÄÏÖÏó
+Clustering factor is a number between the number of
+blocks and the number of rows in the table
+
+DBA_HIST_SNAPSHOT ±£ÁôawrµÄ snap
+
+20081126 
+DOP ²¢ÐÐ¶ÈºÍpartitionÊýÄ¿Ã»ÓÐ¹ØÏµ
+
+ÕóÁÐµÄÐÔÄÜÖ÷ÒªÊÇÄÚ²¿µÄLoop fcÀ©Õ¹ÐÔ²»¸ß£¬´ó¸ÅÖ»ÓÐ FC Loop bandwidth 400 MB/sec max
+
+
+oracleÄÚ²¿µÄ·þÎñÆ÷90%¶¼ÊÇlinux,Ê£ÏÂµÄ10%ÏûºÄÁË90%µÄÖ§³ÖºÍÎ¬»¤
+cpuÊ¹ÓÃÂÊÐéÄâ»¯ºó´Ó7%ÉÏÉýµ½73%¡£
+
+
+·ÖÇøµÄÒ»Ð©Âú×ãÌõ¼þ:
+µ¥±í>2g
+±íº¬ÓÐÀúÊ·Êý¾Ý
+·ÖÇø¶ÔoltpÖ÷ÒªÊÇ¸ß¿ÉÓÃÐÔºÍ¿É¹ÜÀíÐÔ£¬¶Ôolap¿ÉÒÔÌá¸ßÐÔÄÜÔö¼Ó¹ÜÀíÐÍ
+
+11gÔö¼ÓÁËinterval partition,¿ÉÒÔ×Ô¶¯Ìí¼ÓrangeÀàÐÍµÄ·ÖÇø
+
+global index ÓÅ»¯oltp
+local index  ÓÅ»¯olap
+
+Èç¹û·ÖÇøµÄ¹Ø¼ü×ÖÉæ¼°µ½Ë÷Òý£¬ÓÃlocal index
+Èç¹ûË÷ÒýÊÇÎ¨Ò»µÄ£¬ÓÃglobal index
+local index±ãÓÚ¹ÜÀí
+global partition index °üº¬ rang ºÍ hashÁ½ÖÖ
+
+global index¿ÉÒÔÎ¨Ò»£¬local indexÈç¹ûÎ¨Ò»£¬±ØÐëÓÐpartition key²ÎÓë
+
+ºÜ¶à²Ù×÷¶¼»áµ¼ÖÂ index Ê§Ð§£¬ÐèÒªÖØÐÂrebuild 
+
+¿ÉÒÔÍ¨¹ýpartition indexºÍpartition tableÀ´»¯½â hot spot
+
+VLDB±¸·Ý archive+rman+block change track+read only tablespace+ÔöÁ¿+ETL(ÖØÐÂÉú³ÉÊý¾Ý)+guarantee restore point
+VLDB»·¾³ÏÂ 1m stripe size ±È½ÏºÃ
+
+
+Ã¿¸ö´ÅÅÌ´ó¸ÅÄÜ·þÎñ 30-40IOPS 50Mbytes/sµÄÊý¾ÝÁ¿
+
+Component Speeds
+2 gigabit HBA : 175MB/s
+CPU core : 200MB/s
+15k FCAL drive : 50MB/s  (1MB size random I/O)
+To have a system that can read 2GB/s we¡¯d need:
+12 CPU cores (12 * 200MB/s = 2400MB/s)
+12 HBAs (12 * 175MB/s = 2100MB/s)
+48 drives (mirrored) (48 * 50MB/s = 2400MB/s)
+
+
+Ã¿¸öcpuÅäÖÃ4CÄÚ´æ
+Ã¿¸öcpu´ó¸ÅÖ§³Ö10¸öoracle ½ø³Ì£¬Èý²ã¼Ü¹¹£¬Á¬½Ó³Ø·½Ê½
+´ÅÅÌ·ÃÎÊ 1-10 ºÁÃë
+ÄÚ´æ·ÃÎÊ 0.1-10 Î¢Ãë
+Ã¿´ÎÔö¼ÓcpuµÄ¸öÊý°´ÕÕ2µÄ±¶ÊýÔö¼Ó
+HBAºÍSAN switch ¿ÉÒÔ´ïµ½ÀíÂÛµÄ70-90%µÄÐÔÄÜ
+
+DW»·¾³ÉÙÓÃindexºÍhint,²ÉÓÃpartitionºÍparallel£¬ÓÃindex¶ÁÈ¡´óÁ¿Êý¾Ý²»ºÏÊÊ
+CPUÃ¿Ãë¿ÉÒÔÏûºÄ100-400MbyteµÄÊý¾Ý
+
+µ±±íµÄÊý¾Ý±ä»¯³¬¹ý10%µÄÊ±ºò£¬ÐèÒª×öÍ³¼Æ
+
+
+ÔÚÈ·¶¨nest loopµÄÊ±ºò£¬ÐèÒªÍâÃæµÄ±íÊý¾ÝÔ½ÉÙÔ½ºÃ£¬ÕâÑù³É±¾µÍ
+±ÈÈç emp_2 100Ìõ¼ÇÂ¼ £¬emp 10000Ìõ¼ÇÂ¼
+ SQL> select /*+ leading(a b) use_nl(a b)  */ count(*)  from emp_2 a, emp b  where  a.id=b.id  and b.id>=100 and b.id<2000;
+
+  COUNT(*)
+----------
+        34
+
+
+Ö´ÐÐ¼Æ»®
+----------------------------------------------------------
+Plan hash value: 2482710495
+
+----------------------------------------------------------------------------------
+| Id  | Operation              | Name    | Rows  | Bytes | Cost (%CPU)| Time     |
+----------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT       |         |     1 |    17 |   174   (9)| 00:00:03 |
+|   1 |  SORT AGGREGATE        |         |     1 |    17 |            |          |
+|   2 |   NESTED LOOPS         |         |    34 |   578 |   174   (9)| 00:00:03 |
+|*  3 |    INDEX FAST FULL SCAN| IDX_ID3 |    34 |   442 |     2   (0)| 00:00:01 |
+|*  4 |    INDEX FAST FULL SCAN| IDX_ID1 |     1 |     4 |     5   (0)| 00:00:01 |
+----------------------------------------------------------------------------------
+
+SQL> select /*+ leading(b a) use_nl(a b)  */ count(*)  from emp_2 a, emp b  where  a.id=b.id  and b.id>=100 and b.id<2000;
+
+  COUNT(*)
+----------
+        34
+
+
+Ö´ÐÐ¼Æ»®
+----------------------------------------------------------
+Plan hash value: 3447020636
+
+----------------------------------------------------------------------------------
+| Id  | Operation              | Name    | Rows  | Bytes | Cost (%CPU)| Time     |
+----------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT       |         |     1 |    17 |   316  (98)| 00:00:04 |
+|   1 |  SORT AGGREGATE        |         |     1 |    17 |            |          |
+|   2 |   NESTED LOOPS         |         |    34 |   578 |   316  (98)| 00:00:04 |
+|*  3 |    INDEX FAST FULL SCAN| IDX_ID1 |  1901 |  7604 |     6   (0)| 00:00:01 |
+|*  4 |    INDEX RANGE SCAN    | IDX_ID3 |     1 |    13 |     1   (0)| 00:00:01 |
+----------------------------------------------------------------------------------
+
+Èç¹û²»Ö¸¶¨leadingË³Ðò£¬Ôòoracle×Ô¶¯Ñ¡Ôñ×îÓÅµÄ¼Æ»®£¬²»¹ÜÄÇÕÅ±íÔÚÇ°Ãæ
+
+
+
+ÈçºÎÈ·¶¨literal sql
+select count(*) ,plan_hash_value from v$sql group by plan_hash_value  having count(*)>100;
+
+10.2 performance 
+ÐÔÄÜÍ¬Ê±ÊÇÓÉÓÚ×ÊÔ´¾ºÕù»òÕß×ÊÔ´²»¹»µ¼ÖÂ
+Éè¼Æ²»ºÃµÄÓ¦ÓÃ£¬Ìí¼ÓÔÙ¶àµÄ×ÊÔ´Ò²Ã»ÓÐÓÃ
+ÔÚÈ·¶¨Ìí¼Ó×ÊÔ´Ç°£¬ÒªÈ·¶¨Ã»ÓÐ´®ÐÐµÄ»òÕßµ¥Ïß³ÌµÄÓ¦ÓÃ
+Èç¹ûwebÓ¦ÓÃ7sÃ»ÓÐ·´Ó¦£¬¾Í²»ÐÐ
+
+µ¥ÓÃ»§×îÖØÒªµÄÊÇÏìÓ¦Ê±¼ä£¬ÆóÒµÓ¦ÓÃÓÃ»§¹Ì¶¨ÖØÒªÊÇ½»»¥¿ÉÒÔÐÅÀµµÄ·þÎñÍ¬Ê±Âú×ãÔ¤ÆÚÔö³¤
+»¥ÁªÍøÓ¦ÓÃÖØÒªÊÇ¸´ÔÓµÄ¸ºÔØ¾ùºâºÍÎÞ×´Ì¬µÄÓ¦ÓÃ£¬»¹ÓÐÒ»Ð©¾²Ì¬µÄÒ³Ãæ
+
+Ó¦ÓÃÒª×öµ½ÏìÓ¦Ê±¼äÓ¦¸ÃºÍ Êý¾ÝÁ¿ÎÞ¹Ø
+
+index²åÈëµÄÊ±¼äÐèÒªÈý±¶µÄÃ»ÓÐindexµÄ²åÈëÊ±¼ä
+ÓÃsoft parseÄÜ¹»2.5±¶µÄÐÔÄÜhard parse,Èç¹ûÓÃno parse,ÄÜµ½ 4±¶¶à
+
+Large amounts of recursive SQL executed by SYS could indicate space
+management activities, such as extent allocations, taking place.
+
+Ñ¹Ëõ±íÖ÷ÒªÓÃÓÚread onlyµÄÇé¾°
+
+ASHÃ¿Ãë²É¼¯Ò»´Î·ÇidleµÄsession
+
+ADDM·ÖÎöÓÃµÄÊÇAWR²É¼¯µÄÊý¾Ý
+
+awrddrpt.sql ¶ÔÑ¡ÖÐµÄÁ½¸öÊ±¶Î×ö±È½Ï¡£
+ashrpt.sql
+addmrpt.sql
+
+Ò²¿ÉÒÔÍ¨¹ý dbms_advisor.create_taskÀ´Éú³Éreport £¬¿ÉÒÔÉú³É ADDM£¬SQL Access Advisor£¬SQL Tuning Advisor
+
+ÕóÁÐµÄstripe size>=2±¶block_size
+v$session_event¿ÉÒÔ¿´µ½Ò»¸ösession¹ýÈ¥µÄµÈ´ýÊÂ¼þ
+
+¿ÉÒÔÍ¨¹ý DBMS_MONITOR»òÕßdbms_sessionÀ´ÉèÖÃ´ò¿ªsql trace,»òÕßÍ¨¹ý
+alter session set sql_trace=true;
+DBMS_MONITOR¿ÉÒÔÍ¨¹ýÄ£¿é»òÕßclient_idÀ´ÉèÖÃ
+×îºóÍ¨¹ýtrcsessÀ´»ã×ÜÍ¬Ò»Ä£¿éµÄtrace

@@ -1,0 +1,532 @@
+20150206
+配置centos7 能从console输出
+ grubby --update-kernel=ALL --args="console=ttyS0"
+ 然后reboot
+ 就可以通过 virsh console 虚拟机名字 来访问console了
+ 
+20150205
+　Linux bridge用于连接OVS port和虚拟机。ports负责连通OVS bridge和linux bridge或者两者与虚拟机。linux bridage主要用于安全组增强。安全组通过iptables实现，iptables只能用于linux bridage而非OVS bridage。
+
+　　Veth对在openstack网络中大量使用，也是debug网络问题的很好工具。Veth对是一个简单的虚拟网线，所以一般成对出现。通常Veth对的一端连接到bridge，另一端连接到另一个bridge或者留下在作为一个网口使用。
+
+TUN/TAP 设备是一种让用户态程序向内核协议栈注入数据的设备，一个工作在三层，一个工作在二层，使用较多的是 TAP 设备。VETH 设备出现较早，它的作用是反转通讯数据的方向，需要发送的数据会被转换成需要收到的数据重新送入内核网络层进行处理，从而间接的完成数据的注入。
+当执行 write()操作时，数据进入 TAP 设备，此时对于 Linux 网络层来说，相当于 TAP 设备收到了一包数据，请求内核接受它，如同普通的物理网卡从外界收到一包数据一样，不同的是其实数据来自 Linux 上的一个用户程序。Linux 收到此数据后将根据网络配置进行后续处理，从而完成了用户程序向 Linux 内核网络层注入数据的功能。当用户程序执行 read()请求时，相当于向内核查询 TAP 设备上是否有需要被发送出去的数据，有的话取出到用户程序里，完成 TAP 设备的发送数据功能。针对 TAP 设备的一个形象的比喻是：使用 TAP 设备的应用程序相当于另外一台计算机，TAP 设备是本机的一个网卡，他们之间相互连接。应用程序通过 read()/write()操作，和本机网络核心进行通讯。
+
+TUN 设备的 /dev/tunX 文件收发的是 IP 层数据包，只能工作在 IP 层，无法与物理网卡做 bridge，但是可以通过三层交换（如 ip_forward）与物理网卡连通。
+TAP 设备的 /dev/tapX 文件收发的是 MAC 层数据包，拥有 MAC 层功能，可以与物理网卡做 bridge，支持 MAC 层广播
+
+普通的网卡通过网线收发数据包，但是 TUN 设备通过一个文件收发数据包。所有对这个文件的写操作会通过 TUN 设备转换成一个数据包送给内核；当内核发送一个包给 TUN 设备时，通过读这个文件可以拿到包的内容。
+
+VETH 设备总是成对出现，送到一端请求发送的数据总是从另一端以请求接受的形式出现。该设备不能被用户程序直接操作，但使用起来比较简单。创建并配置正确后，向其一端输入数据，VETH 会改变数据的方向并将其送入内核网络核心，完成数据的注入。在另一端能读到此数据。
+veth很像网线
+
+ ip link add veth0 type veth peer name veth1
+ tunctl -t tap0 -u peter 创建了一个名为tap0的虚拟网卡
+
+TAP 设备是一种工作在二层协议的点对点网络设备，每一个 TAP 设备都有一个对应的 Linux 字符设备，用户程序可以通过对字符设备的读写操作，完成与 Linux 内核网络协议栈的数据交换工作，在虚拟化环境中经常被模拟器使用。VETH 设备是一种成对出现的点对点网络设备，从一段输入的数据会从另一端改变方向输出，通常用于改变数据方向，或连接其它网络设备。VLAN 设备是以母子关系出现的一组设备，是 Linux 里对 802.1.Q VLAN 技术的部分实现，主要完成对 802.1.Q VLAN Tag 的处理。
+
+创建tunnel 
+ip tunnel add tunnel0 mode gre remote 192.168.20.2 local 192.168.10.1 ttl 255
+ip link set tunnel0 up mtu 1400
+ip addr add 172.16.1.1/30  dev tunnel0
+ip addr add 172.16.1.1/30 peer 172.16.1.2/30 dev tunnel0
+ip route add 202.100.2.2/32 dev tunnel0
+
+添加tap设置
+ip tuntap add mode tap tap0
+
+
+20141217 
+  另外值得一提的是，OpenStack和CloudStack虽然都对VMware的ESXi虚拟化技术提供支持，
+  但支持方式是不一样的，如图4所示。CloudStack要经过vCenter才可以实现对ESXi宿主机上虚拟机的管理；
+  而OpenStack支持直接和ESXi通信，实现对虚拟机的基本管理，只有高级功能才需要vCenter的支持。针对目前中小企业普遍采用VMware的免费虚拟化技术而没有vCenter的现状，这也是在平台选择时需要考虑的。
+  openstack python /cloudstack java 
+  
+  openstack swift不要求用raid, ceph也不要求用raid ,glusterfs可以用
+  
+E5-2620 v3 
+20140916
+KVM 的性能相比宿主机而言下降了1.5%
+Xen 的性能相对宿主机而言差异比较大，有3项测试性能下降在低于2.5%，其他的性能下降率都是 KVM 的2～4倍
+
+kvm
+Qemu:
+是一个完整的可以单独运行的软件，它可以用来模拟机器，非常灵活和可移植。它主要通过一个特殊的'重编译器'将为特定处理器编写二进制代码转换为另一种。（也就是，在PPC mac上面运行MIPS代码，或者在X86 PC上运行ARM代码）
+在可预见的未来，Qemu团队专注于硬件模拟和可移植性，同时KVM团队专注于内核模块（如果某些部分确实有性能提升的话，KVM会将一小部分模拟代码移进来）和与剩下的用户空间代码的交互。
+kvm-qemu可执行程序像普通Qemu一样：分配RAM,加载代码，不同于重新编译或者调用calling KQemu，它创建了一个线程（这个很重要）；这个线程调用KVM内核模块去切换到用户模式，并且去执行VM代码。当遇到一个特权指令，它从新切换会KVM内核模块，该内核模块在需要的时候，像Qemu线程发信号去处理大部分的硬件仿真。
+这个体系结构一个比较巧妙的一个地方就是客户代码被模拟在一个posix线程，这允许你使用通常Linux工具管理。如果你需要一个有2或者4核的虚拟机，kvm-qemu创建2或者4个线程，每个线程调用KVM内核模块并开始执行。并发性（若果你有足够多的真实核）或者调度（如果你不管）是被通用的Linux调度器，这个使得KVM代码量十分的小
+当一起工作的时候，KVM管理CPU和MEM的访问，QEMU仿真硬件资源（硬盘，声卡，USB，等等）当QEMU单独运行时，QEMU同时模拟CPU和硬件。
+
+KVM是最底层的hypervisor，它是用来模拟CPU的运行，它缺少了对network和周边I/O的支持，所以我们是没法直接用它的。
+QEMU-KVM就是一个完整的模拟器，它是建基于KVM上面的，它提供了完整的网络和I/O支持. 
+Openstack不会直接控制qemu-kvm，它会用一个叫libvirt的库去间接控制qemu-lvm， libvirt提供了夸VM平台的功能，它可以控制除了QEMU的模拟器，包括vmware, virtualbox xen等等。所以为了openstack的夸VM性，所以openstack只会用libvirt而不直接用qemu-kvm。libvirt还提供了一些高级的功能，例如pool/vol管理。
+libvirt installation provides NAT
+
+Single Root I/O Virtualization (SR-IOV) 能够把一个物理设备给多个VM使用 必须要设备支持才行 Virtual Functions have near-native performance and provide better performance than para-virtualized
+drivers and emulated access. Virtual Functions provide data protection between
+总的来说，SR-IOV实现了将PCI功能分配到多个虚拟接口以在虚拟化环境中共享一个PCI设备的资源。SR-IOV能够让网络传输绕过软件模拟层，直接分配到虚拟机。这样就降低了软加模拟层中的I/O开销。,常见就是基于intel82599和82598芯片组的10Gb网卡
+kvm-clock 
+为了保证时间一直，VM上需要和主机同步时间 用NTP
+
+原理：Para-virtualization又称半虚拟化，最早由Citrix的Xen提出使用。在半虚拟化模型中，物理硬件资源统一由 Hypervisor 管理，由Hypervisor提供资源调用接口。虚拟子机通过特定的调用接口与Hypervisor通信，然后完整 I/O 资源控制操 作。Para-virtualization模型图如下：
+
+缺省的NAT方式下只能从guest机器对外主动连接? 不用snat/dnat方式，通过 masquerading,通过界面添加的nat网卡，能够从host主动到guest
+bridge方式共享物理网卡，同网段(routed模式)
+区别在于iptables的设置，nat方式下，外面进来的包必须是状态已经建立的才能通过
+
+
+https://www.redhat.com/archives/libvir-list/2010-June/msg00762.html
+kvm缺省的规则
+
+http://wiki.libvirt.org/page/Main_Page#KVM_.2F_QEMU
+
+
+物理pci设备可以直接assign给一个VM使用
+virtio 是对半虚拟化 hypervisor 中的一组通用模拟设备的抽象 能够加快性能
+
+2.6.20之后已经自动安装了kvm内核 modprobe -l | grep kvm 
+加载
+
+modprobe kvm 
+modprobe kvm_intel
+
+安装 qemu
+./configure --prefix=/usr/local/kvm
+make 
+make install
+/sbin/modprobe kvm-intel
+
+安装管理工具
+yum install qemu-kvm qemu-im
+yum install virt-manager libvirt libvirt-python python-virtinst libvirt-client
+
+虚拟机的性能大概相当于物理机的85%
+支持PXE启动
+The KVM para-virtualized drivers are automatically loaded and installed on the following:
+Red Hat Enterprise Linux 4.8 and newer
+Red Hat Enterprise Linux 5.3 and newer
+Red Hat Enterprise Linux 6 and newer
+Some versions of Linux based on the 2.6.27 kernel or newer kernel versions.
+为了更好地性能，需要把主机上的网卡 GSO/TSO关闭
+
+
+创建虚拟机磁盘(qemu-img info test.vmdk  可以查看信息)
+/usr/local/kvm/bin/qemu-img create -f qcow2 vdisk.img 10G  
+安装虚拟机
+/usr/local/kvm/bin/qemu-system-x86_64 -hda vdisk.img -cdrom /kvm/CentOS-6.5-x86_64-bin-DVD1.iso    -boot d  -m 1024 -nographic --vnc 0.0.0.0:0   -smp cpus=2
+ 
+运行虚拟机
+/usr/local/kvm/bin/qemu-system-x86_64 -hda vdisk.img -m 1024 -nographic --vnc 0.0.0.0:0   -smp cpus=2
+
+
+用 virt-install --name kvm3  --vcpus 2 --ram 2048 --disk path=/kvm/kvm3.img,size=20 --cpu host  --graphics vnc,listen=0.0.0.0 --network bridge:br0  --os-type=linux  --cdrom /kvm/CentOS-6.5-x86_64-bin-DVD1.iso
+ 启动虚拟机 
+ virt-viewer  kvm3
+ 或者virsh start kvm3
+ 查看vnc端口  virsh vncdisplay centos-7
+ 这个是启动 /usr/libexec/qemu-kvm 性能比 qemu-system-x86_64  好很多 这是通过 qemu-kvm-0.12.1.2-2.355.el6.x86_64 安装的
+ qemu-kvm 是启用了硬件模拟 而 qemu-system-x86_64  是纯软件模拟，所以慢
+
+
+动态迁移
+virsh migrate --live guest1-rhel6-64 qemu+ssh://host2.example.com/system
+静态迁移
+virsh dumpxml Guest1 > Guest1.xml
+virsh -c qem u+ssh://<target-system -FQDN> define Guest1.xm l
+virsh undefine Guest1
+
+Libvirt配置文件 max_clients/max_workers
+/etc/libvirt/libvirtd.conf
+/etc/libvirt/qemu.conf
+/etc/libvirt/qemu/*.xml 虚拟机配置文件
+缺省的image配置在
+ /var/lib/libvirt/images/
+ 
+ 性能优化
+ NUMA system最好启用 processor affinities以便把内存和cpu分配在一个numa节点，可以在 virt-install的时候直接指定 --cpuset=auto
+如果有多个cpu 插座，也可以启用   <vcpus cpuset='0-3'>4</vcpus>
+ 通过 virsh capabilities 来看系统的cpu和numa信息
+  <topology sockets='1' cores='4' threads='1'/>
+  <topology>
+      <cells num='1'>
+        <cell id='0'>
+          <cpus num='4'>
+            <cpu id='0'/>
+            <cpu id='1'/>
+            <cpu id='2'/>
+            <cpu id='3'/>
+          </cpus>
+        </cell>
+      </cells>
+    </topology>
+    
+选择clone虚拟机后，修改 /etc/sysconfig/network ,修改主机名
+
+查看虚拟机状态
+virsh list
+看虚拟机cpu和物理cpu映射关系
+virsh vcpuinfo kvm3  yyyy表示可以运行到任何物理cpu
+VCPU:           0
+CPU:            0
+State:          running
+CPU time:       215.5s
+CPU Affinity:   yyyy
+可以通过 virsh vcpupin kvm3 0 3 来修改
+virsh vcpuinfo kvm3   
+VCPU:           0
+CPU:            3
+State:          running
+CPU time:       215.7s
+CPU Affinity:   ---y
+
+自启动
+virsh autostart kvm3
+看host机器信息
+virsh nodeinfo
+修改配置文件
+virsh edit kvm3
+关闭guest
+virsh shutdown
+启动guest
+virsh start kvm3
+查看guest信息
+ virsh dominfo kvm3
+ 
+ virsh blkdeviotune sets disk I/O throttling for a specified guest virtual machine
+   virsh domiftune sets the guest virtual machine's network interface bandwidth parameters.
+
+log信息
+/var/log/libvirt/qemu/ directory. Each guest log is named as GuestName.log
+$HOME/.virt-manager/virt-manager.log
+启动kvm_stat
+mount -t debugfs debugfs /sys/kernel/debug
+kvm _stat
+
+mklabel gpt
+GUID Partition Table (GPT ) disk label. GPT disk labels allow for
+creating a large numbers of partitions, up to 128 partitions, on each device
+
+定义storage pool
+virsh pool-define-as guest_images dir - - - -  "/kvm"
+查看
+virsh pool-list --all
+build 
+virsh pool-build
+virsh pool-autostart guest_images
+virsh pool-info guest_images
+删除pool
+virsh pool-destroy guest_images_disk
+
+
+关闭guest机器的磁盘检查，加快性能
+service smartd stop
+chkconfig --del smartd
+
+
+
+设置bridge ，以便VM可以访问外面的网络
+ifcfg-eth0
+
+DEVICE=eth0 
+TYPE=Ethernet
+HWADDR=00:14:5E:C2:1E:40 
+ONBOOT=yes 
+NM_CONTROLLED=no   Specifies that the bridge is not controlled by the Network Manager. In order for the bridge to work, only one device can be controlled by the Network Manager.
+BRIDGE=br0
+
+ifcfg-br0
+DEVICE=br0
+TYPE=Bridge
+NM_CONTROLLED=no
+BOOTPROTO=static 
+IPADDR=10.10.1.152 
+NETMASK=255.255.255.0 
+ONBOOT=yes 
+
+性能 
+When using KVM, guests run as a Linux process on the host.
+Virtual CPUs (vCPUs) are implemented as normal threads, handled by the Linux scheduler.
+Guests inherit features such as NUMA and Huge Pages from the kernel.
+Disk and network I/O settings in the host have a significant performance impact.
+Network traffic typically travels through a software-based bridge.
+通常使用 Cache=none
+使用 Enable Kernel Samepage Merging: KSM periodically scans those areas of an application's address space that an app has advised may be mergeable.
+使用  a raw partition cache=none,if=virtio 不能使用 filesystem btrfs 来存放虚拟机
+
+Perf 是用来进行软件性能分析的工具。 主要用来对程序进行分析
+通过它，应用程序可以利用 PMU，tracepoint 和内核中的特殊计数器来进行性能统计。它不但可以分析指定应用程序的性能问题 (per thread)，也可以用来分析内核的性能问题，当然也可以同时分析应用代码和内核，从而全面理解应用程序中的性能瓶颈。
+
+
+只需修改vnc option里面Advanced-->expert-->ColourLevel的值为“rgb222” or “full”即可。
+说明：rgb111--8 colours，rgb222--64 colours，pal8 -- 256 colours，full -- full colours
+
+通过这个指令启动可以把本地端口的访问转发到 guest
+with "-device e1000,netdev=user.0 -netdev user,id=user.0,hostfwd=tcp::5555-:22"
+使用virtio性能更好
+把当前cpu的特性全部传给guest 
+-cpu host
+
+Don't use the linux filesystem btrfs on the host for the image files
+如果可能使用raw device效果更好 同时关闭cache 使用virtio
+ qemu -drive file=/dev/mapper/ImagesVolumeGroup-Guest1,cache=none,if=virtio
+ 
+
+NBD(Network Block Device)让你可以将一个远程主机的磁盘空间,当作一个块设备来使用.
+支持gluster sheepdog 等分布式文件系统
+
+检查CPU是否支持 虚拟
+egrep '(vmx|svm)' /proc/cpuinfo
+
+    
+ 如果是64bit host 需要  qemu-system-x86_64  
+ 如果不是可以用  qemu 
+ 
+ 支持多虚拟磁盘
+ qemu -m 256 -hda winxp.img -hdb pagefile.img -hdc testdata.img -hdd tempfiles.img -kernel-kqemu
+ 
+host主机也能Mount raw 格式的磁盘文件
+mount -o loop,offset=32256 /path/to/image.img /mnt/mountpoint
+其他类型的可以用 qemu-nbd mount
+modprobe nbd max_part=16
+qemu-nbd -c /dev/nbd0 image.qcow2
+partprobe /dev/nbd0
+mount /dev/nbd0p1 /mnt/image
+
+ 
+Control and Alt keys 释放鼠标
+
+后台支持的网络类型: User Networking (SLIRP performance is poor)  和 TAP(性能最好)
+rtl8139 is the default network adapter in qemu-kvm.
+virtio-net (para-virtualised) network adapter has the best performance
+The para-virtualized block device (virtio-blk)
+支持硬件直接assign到虚拟机
+USB passthrough
+PCI device assignment
+
+缺省启动的情况下会给guest主机添加一个 e1000 PCI bridges to the host's network 可以通过配置在host主机上的 10.0.2.4 来访问
+
+
+
+KVM 所使用的方法是通过简单地加载内核模块而将 Linux 内核转换为一个系统管理程序。这个内核模块导出了一个名为 /dev/kvm 的设备，它可以启用内核的客户模式（除了传统的内核模式和用户模式）。有了 /dev/kvm 设备，VM 使自己的地址空间独立于内核或运行着的任何其他 VM 的地址空间。设备树（/dev）中的设备对于所有用户空间进程来说都是通用的。但是每个打开 /dev/kvm 的进程看到的是不同的映射（为了支持 VM 间的隔离）。
+
+安装 KVM 之后，您可以在用户空间启动客户操作系统。每个客户操作系统都是主机操作系统（或系统管理程序）的一个单个进程。
+记住 KVM 只是虚拟化解决方案的一部分。处理器直接提供了虚拟化支持（可以为多个操作系统虚拟化处理器）。内存可以通过 kvm 进行虚拟化（这在下一节中将会讨论）。最后，I/O 通过一个稍加修改的 QEMU 进程（执行每个客户操作系统进程的一个拷贝）进行虚拟化。
+
+全虚拟如vmware/kvm无需对guest os 早任何改动 ，但是半虚拟的比如xen就需要对 guest os做修改，对windows这样的就没法支持了
+
+QEMU currently supports these image types or formats
+raw/ (default) the raw format is a plain binary image of the disc image,
+qcow2     QEMU copy-on-write format with a range of special features, 
+vmdk     VMware 3 & 4, or 6 image format, for exchanging images with that product
+vdi     VirtualBox 1.1 compatible image format, for exchanging images with VirtualBox.
+
+ Linux Containers从根本上提供了原生的性能，你可以实时进行资源分配的管理。Linux Container当中运行的二进制程序实际上是直接在宿主机的内核上运行的一个普通的进程，跟其他进程没什么两样。这同时也意味着CPU和I/O的规划更加公平，而且可以进行微调。Container下拿到的磁盘I/O性能是系统虚拟化所无法比拟的（即使在Xen下使用paravirt模式也无法达到）。你可以在Linux Container当中运行磁盘I/O较重的应用，如数据库。
+ 
+ Para-virtualized device drivers
+allow the guest operating system access to physical devices on the host system
+
+balloon device 能够把分配给虚拟机的一部分内存保留起来给 host用，如果需要的时候在释放给 guest 用
+PCI device assignment 可以直接让虚拟机使用，提高性能
+
+virsh(build on libvirt) is a command line interface (CLI) tool for managing the hypervisor and guest virtual machines
+virt-manager graphical
+virt-install  CLI
+virsh command line 
+
+虚拟的bridge在
+/etc/libvirt/qemu/networks
+vhost-net module实现virtio networking
+  
+  Docker 是一个对LXC的封装，使用更简单方便
+  
+ LXC 安装 
+ 安装   lxc-0.9.0.tar.gz
+需要启动host机器的   cgconfig 
+service cgconfig start
+chkconfig cgconfig on
+lxc-create -t centos -n centos  只有350M
+
+Copy /usr/local/var/cache/lxc/centos/x86_64/6/rootfs to /usr/local/var/lib/lxc/c2/rootfs ... 
+Copying rootfs to /usr/local/var/lib/lxc/c2/rootfs ... 
+
+The following logging levels are available: FATAL, CRIT, WARN, ERROR, NOTICE, INFO, and DEBUG. 
+lxc-start -n centos  -o /container/ol6ctr1_debug.log -l DEBUG
+
+Virtual Ethernet Port Aggregator (VEPA) 
+
+ 登陆 lxc-console -n p1
+ 绕开登陆 直接进入os 
+lxc-attach -n p1
+查看信息
+lxc-info -n p1
+lxc-ls -lt
+自启动所有已经配置为自启动的
+lxc-autostart -a
+lxc-freeze -n
+lxc-unfreeze -n
+
+lxc-destroy -n ol6ctr2
+新的lxc配置在
+/usr/local/var/lib/lxc/
+
+设置网卡支持
+lxc.network.type = veth
+lxc.network.flags = up
+lxc.network.link = br0
+lxc.network.name = eth0
+直接添加设备
+lxc-device add -n p1 /dev/ttyUSB0 /dev/ttyS0
+
+限制资源 
+lxc.cgroup.memory.limit_in_bytes = 1073741824  (1g)
+lxc.cgroup.memory.limit_in_bytes="2G"; 
+
+cgroup配置
+group locores {
+    cpuset {
+        cpuset.mems="0";
+#       Run tasks on cores 0 through 3
+        cpuset.cpus="0-3"; 
+    }
+}
+group hipri { 
+    cpu {
+#       Set the relative share of CPU resources equal to 75%
+        cpu.shares="750"; 
+    }
+    cpuset {
+#       No alternate memory nodes if the system is not NUMA
+        cpuset.mems="0"; 
+#       Make all CPU cores available to tasks
+        cpuset.cpus="0-7"; 
+    }
+    memory {
+#       Allocate at most 2 GB of memory to tasks
+        memory.limit_in_bytes="2G"; 
+#       Allocate at most 4 GB of memory+swap to tasks
+        memory.memsw.limit_in_bytes="4G"; 
+#       Apply a soft limit of 1 GB to tasks
+        memory.soft_limit_in_bytes="1G"; 
+    }
+}
+group lopri { 
+    cpu {
+#       Set the relative share of CPU resources equal to 25%
+        cpu.shares="250"; 
+    }
+       blkio  {
+#       Limit reads from /dev/sda1 to 50 MB/s
+        blkio.throttle.read_bps_device="8:1 52428800"; 
+         blkio.throttle.read_iops_device="8:48 100";
+          blkio.weight_device="8:16 250"; 
+    }
+    
+    cpuset {
+        cpuset.mems="0"; 
+        cpuset.cpus="0,1"; 
+    }
+    memory {
+        memory.limit_in_bytes="1G"; 
+        memory.memsw.limit_in_bytes="2G"; 
+        memory.soft_limit_in_bytes="512M"; 
+    }
+}
+
+
+lxc.cgroup.cpuset.cpus = 2  
+lxc.cgroup.cpu.shares=1024
+显示资源限制
+lxc-cgroup -n ol6ctr1 cpuset.cpus
+设置 lxc-cgroup -n ol6ctr1 cpuset.cpus 0,1
+blkio.weight 
+
+获取cgroup信息
+cgget -r memory.stat lxc
+设置信息
+cgset -r blkio.throttle.read_bps_device="8:1 0" iocap1
+保存信息
+cgsnapshot -s > current_cgconfig.conf
+
+cgroup的mount在 /cgroup/
+
+
+LXC两种类型 
+system container
+application container   lxc-execute -n guest  -f config --  /usr/sbin/httpd
+ 
+
+lxc-execute command to invoke lxc-init (a cut-down version of /sbin/init) in the container. lxc-init mounts any required directories such as /proc, /dev/shm, and /dev/mqueue, executes the specified application program, and then waits for it to finish executing. When the application exits, the container instance ceases to exist.
+
+ 
+ 设置网桥 physical device sharing
+ cat /etc/sysconfig/network-scripts/ifcfg-br0 
+DEVICE=br0
+TYPE=Bridge
+ONBOOT=yes
+NM_CONTROLLED=no
+BOOTPROTO=static
+IPADDR=192.168.73.147
+NETMASK=255.255.255.0
+GATEWAY=192.168.73.1
+
+[root@kvm ~]# cat /etc/sysconfig/network-scripts/ifcfg-eth0 
+DEVICE=eth0
+TYPE=Ethernet
+ONBOOT=no
+NM_CONTROLLED=no
+HWADDR=78:ac:c0:94:7a:79
+BRIDGE=br0
+
+service network restart 
+也可以通过下面的方法
+virsh iface-bridge eth0 br0
+chkconfig NetworkManager off
+chkconfig network on
+service NetworkManager stop
+service network start
+
+
+原理：Hypervisor将一个PCI设备(可以是网卡、USB、光驱)直接分配给指定虚拟子机单独访问。为了安全和稳定性考虑，pass-through使用通常结合intel VT-D(AMD也有类似技术)来使用，通过iommu保证虚拟子机之间内存访问不冲突。这种技术在VMware上叫VMDirectPath I/O，其他方案中没有找到相关专门名词。
+
+优点：性能好。单独PCI设备分配给虚拟子机，虚拟子机直接跟物理设备通信。
+
+缺点：设备只能被一个虚拟子机使用，配置也比较复杂，首先需要在hypervisor将指定设备通过PCI id方式分配给指定虚拟子机，然后虚拟子机识别到设备再安装驱动来使用。
+
+迁移性：迁移性方面待研究，有兴趣的朋友可以补充完善。
+
+
+LXC
+The kernel assigns system resources by creating separate namespaces for containers. Namespaces allow to create an abstraction of a particular global system resource and make it appear as a separated instance to processes within a namespace. Consequently, several containers can use the same resource simultaneously without creating a conflict
+有 filesystem /network/ipc/pid等等
+通过使用cgroup实现
+
+chroot，即 change root directory (更改 root 目录)。在 linux 系统中，系统默认的目录结构都是以 `/`，即是以根 (root) 开始的。而在使用 chroot 之后，系统的目录结构将以指定的位置作为 `/` 位置。 一般用来做安全限制或者开发隔离现有系统
+cgroups(控制组)是Linux内核的一个功能，用来限制报告和分离一个进程组的资源(CPU、内存、磁盘输入输出等)。这个工作是由Google的工程师(主要是Paul Menage和Rohit Seth)在2006年以“process containers(进程容器)”的名字开始的；[1] 在2007年的晚些时候被重命名为控制组(由于在内核中“容器”这个名词的歧义引起的混乱)并被合并到2.6.24版的内核中去。[2] 自那以后，又添加了很多功能和控制器。
+
+功能编辑
+cgroups的一个设计目标是为不同的应用情况提供统一的接口，从控制单一进程(像nice)到系统级虚拟化(像opeNVZ，Linux-VServer，LXC)。cgroups提供：
+
+资源限制：组可以被设置不超过设定的内存限制；这也包括虚拟内存。[3] 原来的分页机制是在Linux研讨会的Containers: Challenges with the memory resource controller and its performance报告中提出的。[4]
+优先化：一些组可能会得到大量的CPU[5] 或磁盘输入输出通量。[6]
+报告：用来衡量系统确实把多少资源用到适合的目的上。[7]
+分离：为组分离命名空间，这样一个组不会看到另一个组的进程、网络连接和文件。
+
+
+
+
+全虚拟化（Full Virtulization）简介：主要是在客户操作系统和硬件之间捕捉和处理那些对虚拟化敏感的特权指令，使客户操作系统无需修改就能运行，速度会根据不同的实现而不同，但大致能满足用户的需求。这种方式是业界现今最成熟和最常见的，而且属于 Hosted 模式和 Hypervisor 模式的都有，知名的产品有IBM CP/CMS，VirtualBox，KVM，VMware Workstation和VMware ESX（它在其4.0版，被改名为VMware vSphere）。
+
+优点：Guest OS无需修改，速度和功能都非常不错，更重要的是使用非常简单，不论是 VMware 的产品，还是Sun（Oracle？）的 VirtualBox。
+
+缺点：基于Hosted模式的全虚拟产品性能方面不是特别优异，特别是I/O方面。未来：因为使用这种模式，不仅Guest OS免于修改，而且将通过引入硬件辅助虚拟化技术来提高其性能，我个人判断，在未来全虚拟化还是主流。
+
+半虚拟化（Parairtulization）简介：它与完全虚拟化有一些类似，它也利用Hypervisor来实现对底层硬件的共享访问，但是由于在Hypervisor 上面运行的Guest OS已经集成与半虚拟化有关的代码，使得Guest OS能够非常好地配合Hyperivosr来实现虚拟化。通过这种方法将无需重新编译或捕获特权指令，使其性能非常接近物理机，其最经典的产品就是Xen，而且因为微软的Hyper-V所采用技术和Xen类似，所以也可以把Hyper-V归属于半虚拟化。
+
+三年前Xen项目引起人们的注意之前，准虚拟化（paravirtualization）闻所未闻。这项技术是指，经过改动的操作系统把特权操作指令重定向至功能薄薄的“hypervisor”层，而不是直接把它们发送到CPU。特权操作指令是裸机代码，负责调整虚拟内存以及与设备之间进行通信。这种方案的效率远远高于在CPU指令层截获特权操作系统并加以重定向，而VMware、微软虚拟服务器及基于硬件仿真的其他虚拟化解决方案都属于后者。
+　　Xen把自己植入到Linux源代码树里面，相当于新的CPU架构。如果你把Linux和作为目标架构的Xen一起编译，最后就会得到准虚拟化功能是内置、而不是外挂的Linux。引导时，Xen小小的hypervisor在Xen Linux主机内核加载前先加载。之后，只要一个简单的命令即可启动Linux、BSD、NetWare，或者经过修改后作为Xen客户运行的其他少数主机操作系统。
+　　Xen的一大优点是，它详细地介绍了物理系统迁移到虚拟系统（这个过程通常很麻烦）的方法：使用dd命令，把引导驱动器从另一个服务器拷贝到本地文件上，然后把Xen指向该文件，最后就可以引导虚拟机了。用不着寻求帮助。
+
+优点：这种模式和全虚拟化相比，架构更精简，而且在整体速度上有一定的优势。
+
+缺点：需要对Guest OS进行修改，所以在用户体验方面比较麻烦。未来：我觉得其将来应该和现在的情况比较类似，在公有云（比如Amazon EC2）平台上应该继续占有一席之地，但是很难在其他方面和类似VMware vSphere这样的全虚拟化产品竞争，同时它也将会利用硬件辅助虚拟化技术来提高速度，并简化架构。
+Xen作为最优秀的半虚拟化引擎，在基于硬件的虚拟化的帮助下，现在也支持完全虚拟化MS windows了。KVM是一个相对较新的简单的，但也非常强大的虚拟化引擎，它已经集成到Linux内核中去了，让内核天生有虚拟化的能力，因为KVM使用的是基于硬件的虚拟化技术，它不需要修改客户操作系统，因此，部署在一个受支持的处理器上，它可以从Linux支持任何平台。

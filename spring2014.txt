@@ -1,0 +1,942 @@
+20160407
+spring 做databind 对象嵌套对象的处理方式
+比如 
+Class PojoA{
+{
+String id;
+PojoB pb ;
+}
+Class PojoB{
+{
+String idb;
+}
+
+则前台html页面用这种方式
+<input id=pb.idb name=pb.idb>
+就能正确的做databind了
+
+
+20160107
+如果一个接口有多个实现，可以指定一个类为 @Primary作为缺省
+ @Primary
+ @Component
+ public class HibernateFooRepository {
+     public HibernateFooService(SessionFactory sessionFactory) {
+         // ...
+     }
+ }
+ 
+20151030
+spring的配置文件同样的key可以配置在多个文件中，优先级高的覆盖优先级低的
+ <context:property-placeholder ignore-resource-not-found="true"
+            location="classpath*:META-INF/spring/*.properties,file:/${user.home}/.odts/*.properties"/>
+            
+20150519
+采用<mvc:resources /> 
+<mvc:default-servlet-handler />将静态资源的处理经由Spring MVC框架交回Web应用服务器处理。而<mvc:resources />更进一步，由Spring MVC框架自己处理静态资源，并添加一些有用的附加值功能。 
+首先，<mvc:resources />允许静态资源放在任何地方，如WEB-INF目录下、类路径下等，你甚至可以将JavaScript等静态文件打到JAR包中。通过location属性指定静态资源的位置，由于location属性是Resources类型，因此可以使用诸如"classpath:"等的资源前缀指定资源位置。传统Web容器的静态资源只能放在Web容器的根路径下，<mvc:resources />完全打破了这个限制。 
+其次，<mvc:resources />依据当前著名的Page Speed、YSlow等浏览器优化原则对静态资源提供优化。你可以通过cacheSeconds属性指定静态资源在浏览器端的缓存时间，一般可将该时间设置为一年，以充分利用浏览器端的缓存。在输出静态资源时，会根据配置设置好响应报文头的Expires 和 Cache-Control值。 
+在接收到静态资源的获取请求时，会检查请求头的Last-Modified值，如果静态资源没有发生变化，则直接返回303相应状态码，提示客户端使用浏览器缓存的数据，而非将静态资源的内容输出到客户端，以充分节省带宽，提高程序性能。 
+在springMVC-servlet中添加如下配置： 
+Java代码  收藏代码
+<mvc:resources location="/,classpath:/META-INF/publicResources/" mapping="/resources/**"/>  
+以上配置将Web根路径"/"及类路径下 /META-INF/publicResources/ 的目录映射为/resources路径。假设Web根路径下拥有images、js这两个资源目录,在images下面有bg.gif图片，在js下面有test.js文件，则可以通过 /resources/images/bg.gif 和 /resources/js/test.js 访问这二个静态资源。 
+假设WebRoot还拥有images/bg1.gif 及 js/test1.js，则也可以在网页中通过 /resources/images/bg1.gif 及 /resources/js/test1.js 进行引用。
+
+
+So if you have /somepath/{variable} :
+/somepath/param, /somepath/param.json, /somepath/param.xml or /somepath/param.anything will result in a param with value param
+/somepath/param.value.json, /somepath/param.value.xml or /somepath/param.value.anything will result in a param with value param.value
+
+if you change your mapping to /somepath/{variable:.+} as suggested, any dot, including the last one will be consider as part of your parameter :
+/somepath/param will result in a param with value param
+/somepath/param.json will result in a param with value param.json
+/somepath/param.xml will result in a param with value param.xml
+/somepath/param.anything will result in a param with value param.anything
+/somepath/param.value.json will result in a param with value param.value.json
+
+20140902 使用prop文件
+prop文件里面的内容不能用""括起来
+
+<util:properties id="propertyConfigurer" location="classpath:userconf.properties"/>
+<context:property-placeholder
+		properties-ref="propertyConfigurer" /> 这样可以在bean里面引用
+		
+<bean
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="/WEB-INF/views/" />
+		<property name="suffix" value=".jsp" />
+	<!-- 	<property name="exposeContextBeansAsAttributes" value="true"/>  -->
+		<property name="exposedContextBeanNames">
+			<list>
+				<value>propertyConfigurer</value>
+			</list>
+		</property>
+		<property name="order" value="2" />
+	</bean>
+	
+	
+	也可以用这样的方式配置 
+	<context:property-placeholder
+location="classpath:someapp.local.properties, classpath:someapp.test.properties" />
+或者这样
+   <bean id="propertyPlaceholderConfigurer" class="org.springframework.beans.factory.confi
+g.PropertyPlaceholderConfigurer"      p:location="/WEB-INF/cas.properties" />        
+
+
+jsp使用
+
+<%@ taglib prefix="spring" uri="_http://www.springframework.org/tags" %>
+<spring:eval expression="@propertyConfigurer.getProperty('gaf.shortcut.resetpassword')" />
+
+java里面使用
+
+@Value("${gaf.trade.export.csv.folder}")
+private String exportFolder;
+
+	
+
+
+bean注入属性只要有对应的方法就行，不一定要有真的属性
+比如
+public class MyBean {
+public void setAge(int age)
+{
+	System.out.println("you iinput"+age);
+}
+}
+
+<bean id="myBean" class="com.cicc.bean.MyBean"  >
+  <property name="age" value="30"/>
+  </bean>
+
+
+
+
+
+20140901 使用自定义validation 
+   
+   @InitBinder
+    protected void initBinder(WebDataBinder binder) {
+        binder.setValidator(new CustomValidator());
+    }
+    
+Module转换
+@NumberFormat(pattern="#, ###.##") 定义是有,分割的数字，不用写很多位就行,但是小数点就需要写够#
+
+
+    
+如果只需要对spring管理的bean做AOP那么spring的AOP就够了， 如果不是就需要AspectJ
+缺省的都是spring AOP
+JTA  是global transaction  利用JavaEE规范的JTA驱动程序。这种方式性能更好，是EJB和JMS的常用方式。
+
+分布式事务是指操作多个数据库之间的事务，spring的org.springframework.transaction.jta.JtaTransactionManager，提供了分布式事务支持。如果使用WAS的JTA支持，把它的属性改为WebSphere对应的TransactionManager。
+    在tomcat下，是没有分布式事务的，不过可以借助于第三方软件jotm（Java Open Transaction Manager ）和AtomikosTransactionsEssentials实现，在spring中分布式事务是通过jta（jotm，atomikos）来进行实现。
+http://jotm.objectweb.org/
+http://www.atomikos.com/Main/TransactionsEssentials 
+
+在spring环境下，使用下面的方法来获得当前的connection(比较低级别)
+Connection conn = DataSourceUtils.getConnection(dataSource);
+或者 EntityManagerFactoryUtils
+或者使用JdbcTemplate 这种稍微高级的
+要支持:annotation-driven的事物，
+需要
+<tx:annotation-driven transaction-manager="txManager"/><!-- a
+代理模式下(缺省方式)事物的处理方式是self-invocation，也就是说从外面调用的方法必须标记为事物，如果不标记为事物，
+就算这个方法再调用一个标记为事物的方法也不会有事物
+PROPAGATION_NESTED 可以做到savepoint和rollback到savepoint的效果
+
+JdbcTemplate 是spring对jdbc的包装，比较底层，不太适合做ORMAP对象转换
+
+Spring 对DataSource进行事务管理的关键在于ConnectionHolder和TransactionSynchronizationManager。
+  0.先从TransactionSynchronizationManager中尝试获取连接
+  1.如果前一步失败则在每个线程上，对每个DataSouce只创建一个Connection
+   2.这个Connection用ConnectionHolder包装起来，由TransactionSynchronizationManager管理
+  3.再次请求同一个连接的时候，从TransactionSynchronizationManager返回已经创建的ConnectionHolder，然后调用ConnectionHolder的request将引用计数+1
+  4.释放连接时要调用ConnectionHolder的released，将引用计数-1
+  5.当事物完成后，将ConnectionHolder从TransactionSynchronizationManager中解除。当谁都不用，这个连接被close
+
+以上所有都是可以调用DataSourceUtils化简代码，而JdbcTemplate又是调用DataSourceUtils的。
+所以在Spring文档中要求尽量首先使用JdbcTemplate，其次是用DataSourceUtils来获取和释放连接。
+至于TransactionAwareDataSourceProxy，那是下策的下策。不过可以将Spring事务管理和遗留代码无缝集成。 
+
+org.springframework.orm.jpa.LocalEntityManagerFactoryBean 这个只能在测试环境用，不能再生产上用
+应该使用 
+<bean id="myEmf" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+<property name="dataSource" ref="someDataSource"/>
+<property name="loadTimeWeaver">
+<bean class="org.springframework.instrument.classloading.InstrumentationLoadTimeWeaver"/
+>
+</property>
+</bean>
+
+
+    PROPAGATION_REQUIRED 如果当前没有事务，就新建一个事务，如果已经存在一个事务中，加入到这个事务中。这是最常见的选择。
+    PROPAGATION_SUPPORTS 支持当前事务，如果当前没有事务，就以非事务方式执行。
+    PROPAGATION_MANDATORY 使用当前的事务，如果当前没有事务，就抛出异常。
+    PROPAGATION_REQUIRES_NEW 新建事务，如果当前存在事务，把当前事务挂起。
+    PROPAGATION_NOT_SUPPORTED 以非事务方式执行操作，如果当前存在事务，就把当前事务挂起。
+    PROPAGATION_NEVER 以非事务方式执行，如果当前存在事务，则抛出异常。
+    PROPAGATION_NESTED 如果当前存在事务，则在嵌套事务内执行。如果当前没有事务，则执行与 PROPAGATION_REQUIRED 类似的操作。
+    
+    
+    从以上的运行结果，我们可以得出这样的结论：使用 Hibernate 事务管理器后，可以混合使用 Hibernate 和 Spring JDBC 数据访问技术，它们将工作于同一事务上下文中。但是使用 Spring JDBC 访问数据时，Hibernate 的一级或二级缓存得不到同步，此外，一级缓存延迟数据同步机制可能会覆盖 Spring JDBC 数据更改的结果。
+
+由于混合数据访问技术的方案的事务同步而缓存不同步的情况，所以最好用 Hibernate 完成读写操作，而用 Spring JDBC 完成读的操作。如用 Spring JDBC 进行简要列表的查询，而用 Hibernate 对查询出的数据进行维护。如果确实要同时使用 Hibernate 和 Spring JDBC 读写数据，则必须充分考虑到 Hibernate 缓存机制引发的问题：必须充分分析数据维护逻辑，根据需要，及时调用 Hibernate 的 flush() 方法，以免覆盖 Spring JDBC 的更改，在 Spring JDBC 更改数据库时，维护 Hibernate 的缓存。
+
+    混合使用多个数据访问技术框架的最佳组合是一个 ORM 技术框架（如 Hibernate 或 JPA 等）+ 一个 JDBC 技术框架（如 Spring JDBC 或 iBatis）。直接使用 ORM 技术框架对应的事务管理器就可以了，但必须考虑 ORM 缓存同步的问题；
+    Spring AOP 增强有两个方案：其一为基于接口的动态代理，其二为基于 CGLib 动态生成子类的代理。由于 Java 语法的特性，有些特殊方法不能被 Spring AOP 代理，所以也就无法享受 AOP 织入带来的事务增强。
+    
+    
+    只要您的程序都使用 Spring DAO 模板（如 JdbcTemplate、HibernateTemplate 等）进行数据访问，一定不会存在数据连接泄漏的问题 ―― 这是 Spring 给予我们郑重的承诺！因此，我们无需关注数据连接（Connection）及其衍生品（Hibernate 的 Session 等）的获取和释放的操作，模板类已经通过其内部流程替我们完成了，且对开发者是透明的。
+    
+    
+    Spring 提供了一个能从当前事务上下文中获取绑定的数据连接的工具类，那就是 DataSourceUtils。Spring 强调必须使用 DataSourceUtils 工具类获取数据连接，Spring 的 JdbcTemplate 内部也是通过 DataSourceUtils 来获取连接的。DataSourceUtils 提供了若干获取和释放数据连接的静态方法，说明如下：
+
+    static Connection doGetConnection(DataSource dataSource)：首先尝试从事务上下文中获取连接，失败后再从数据源获取连接；
+    static Connection getConnection(DataSource dataSource)：和 doGetConnection 方法的功能一样，实际上，它内部就是调用 doGetConnection 方法获取连接的；
+    static void doReleaseConnection(Connection con, DataSource dataSource)：释放连接，放回到连接池中；
+    static void releaseConnection(Connection con, DataSource dataSource)：和 doReleaseConnection 方法的功能一样，实际上，它内部就是调用 doReleaseConnection 方法获取连接的；
+    
+      Connection conn = DataSourceUtils.getConnection(jdbcTemplate.getDataSource());
+      
+      通过 jdbcTemplate.getDataSource().getConnection();获取的是新的连接，而不是已有的连接
+     通过 DataSourceUtils.getConnection(jdbcTemplate.getDataSource()); 也必须要调用 releaseConnection释放
+    
+srping配置tomcat connection pool
+
+<bean id="dataSource" class="org.apache.tomcat.jdbc.pool.DataSource"  destroy-method="close">
+<property name="driverClassName" value="${jdbc.driverClassName}"/>
+<property name="url" value="${jdbc.url}"/>
+<property name="username" value="${jdbc.username}"/>
+<property name="password" value="${jdbc.password}"/>
+<property name="defaultAutoCommit" value="true"/>
+<property name="maxActive" value="${jdbc.maxActive}"/>
+<property name="maxIdle" value="${jdbc.maxIdle}"/>
+<property name="minIdle" value="${jdbc.minIdle}"/>
+<property name="initialSize" value="${jdbc.initialSize}"/>
+<property name="maxWait" value="30000"/>
+<property name="testOnBorrow" value="true"/>
+<property name="testOnReturn" value="false"/>
+<property name="testWhileIdle" value="true"/>
+<property name="validationQuery" value="${jdbc.validationQuery}"/>
+<property name="validationQueryTimeout" value="5"/>
+<property name="validationInterval" value="5000"/>
+<property name="timeBetweenEvictionRunsMillis" value="10000"/>
+<property name="minEvictableIdleTimeMillis" value="600000"/>
+<property name="removeAbandoned" value="false"/>
+<property name="removeAbandonedTimeout" value="600"/>
+<property name="logAbandoned" value="true"/>
+<property name="suspectTimeout" value="600"/>
+<property name="connectionProperties" value="600000"/>
+</bean>
+<context:property-placeholder location="classpath:userconf.properties"/>
+
+
+ execution (* com.sample.service.impl..*.*(..))
+
+execution()是最常用的切点函数，其语法如下所示：
+
+ 整个表达式可以分为五个部分：
+ 1、execution(): 表达式主体。
+ 2、第一个*号：表示返回类型，*号表示所有的类型。
+ 3、包名：表示需要拦截的包名，后面的两个句点表示当前包和当前包的所有子包，com.sample.service.impl包、子孙包下所有类的方法
+ 4、第二个*号：表示类名，*号表示所有的类。
+ 5、*(..):最后这个星号表示方法名，*号表示所有的方法，后面括弧里面表示方法的参数，两个句点表示任何参数。
+"execution(* com..*.service..*(..))" 表示com开始，任意包下面以service开始的包及service下面的包
+在类名模式串中，“.*”表示包下的所有类，而“..*”表示包、子孙包下的所有类的所有方法。 
+
+处理view的时候,如果用 InternalResourceView,是直接转到 RequestDispatcher 上面
+如果用freemarker之类的，则该view直接生成内容到客户端
+
+如果为DispatcherServlet指定多个ViewResolver的话，不要给予InternalResour- ceViewResolver以及其他UrlBasedViewResolver子类过高的优先级，因为这些ViewResolver即使找不到相应的视图，也不会返回null以给我们轮询下一个ViewResolver的机会，这样，我们所指定的其他ViewResolver实际上就形同虚设。合理的处理方式是，给予ResourceBundleView- Resolver或者XmlViewResolver这种能够通过返回null以表明无法找到相应视图的ViewResolver较高的优先级，而只是将InternalResourceViewResolver（或者其他类似行为的ViewResolver）添加为最低优先级ViewResolver，以作为DispatcherServlet的后备查找对象。
+
+DispatcherServlet会加载所有的viewResolver到一个list中，并按照优先级进行解析。注意order中的值越小，优先级越高。而id为viewResolver的viewResolver的优先级是最低的。
+
+<bean id=”beanNameViewResolver” class=”...XmlViewResolver”>
+<property name="order" value="0"></property>
+</bean>
+
+
+配置web.xml
+
+<servlet>
+ <servlet-name>addressbook</servlet-name>
+ <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+ <init-param>
+  <param-name>contextConfigLocation</param-name>
+  <param-value>/WEB-INF/spring/spring-mvc.xml</param-value>
+ </init-param>
+ <load-on-startup>1</load-on-startup>
+</servlet>
+
+As you can see in this file there's only a scanning of @Controller annotated beans. This file should contain web tier components as:
+
+    Controllers
+    ViewResolvers
+    LocaleResolvers
+    ThemeResolvers
+
+
+<context-param>
+        <param-name>contextConfigLocation</param-name>
+ <param-value>classpath*:META-INF/spring/spring-context.xml</param-value>
+</context-param>
+<listener>
+ <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+</listener>
+As you can see in this file there's not a scanning of @Controller annotated beans because we are interested into other annotated beans such as @Service, @Repository etc.. This file contains your middle tier and data tier components:
+
+    DAO: such as @Repository bean
+    Entity: such as @Entity bean
+    Service: such as @Service bean
+
+如果程序实现了接口，则spring getbean返回的是一个 JdkDynamicAopProxy 只能cast成该接口
+如果程序没有接口，则spring getbean返回的是一个 cgi的之类 就能cast成该类
+
+支持异步servlet处理
+@RequestMapping(method=RequestMethod.POST)
+public Callable<String> processUpload(final MultipartFile file) {
+
+    return new Callable<String>() {
+        public String call() throws Exception {
+            // ...
+            return "someView";
+        }
+    };
+
+}
+同意处理http 错误页面
+web.xml
+
+<error-page>
+    <location>/error</location>
+</error-page>
+
+
+@Controller
+public class ErrorController {
+
+    @RequestMapping(value="/error", produces="application/json")
+    @ResponseBody
+    public Map<String, Object> handle(HttpServletRequest request) {
+       Map<String, Object> map = new HashMap<String, Object>();
+        map.put("status", request.getAttribute("javax.servlet.error.status_code"));
+        map.put("reason", request.getAttribute("javax.servlet.error.message"));
+        return map;
+    }
+}
+
+配置 viewer
+
+<bean id="viewResolver"
+        class="org.springframework.web.servlet.view.UrlBasedViewResolver">
+    <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
+    <property name="prefix" value="/jsp/"/>
+    <property name="suffix" value=".jsp"/>
+</bean>
+
+启用注解的方式写controller
+<mvc:annotation-driven />
+
+
+如何使用sockjs 同时支持long polling 和websocket 
+
+spring.xml
+
+     <websocket:handlers>
+        <websocket:mapping path="/myHandler" handler="myHandler"/>
+        <websocket:sockjs/>
+    </websocket:handlers>
+    <bean id="myHandler" class="com.test.MyHandler"/>
+
+web.xml
+
+   <servlet>
+        <servlet-name>spring</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+          <async-supported>true</async-supported>
+      	<init-param>
+      	<param-name>contextConfigLocation</param-name>
+      		 <param-value>/WEB-INF/spring.xml</param-value>
+		</init-param>
+    </servlet>
+    
+    
+handler
+ 
+package com.test;
+import org.springframework.web.socket.CloseStatus;
+import org.springframework.web.socket.WebSocketHandler;
+import org.springframework.web.socket.WebSocketSession;
+import org.springframework.web.socket.TextMessage;
+import org.springframework.web.socket.handler.TextWebSocketHandler;
+import org.apache.log4j.Logger;
+
+public class MyHandler  extends TextWebSocketHandler {
+	static Logger log = Logger.getLogger(MyHandler.class.getName());
+
+	 	    @Override
+		    public void handleTextMessage(WebSocketSession session, TextMessage message) 
+	 	    {
+	 	    	log.info("message arrived"+message);
+	 	    	TextMessage m1=new TextMessage("retruned from server");
+	 	    	try {
+	 	    	session.sendMessage(m1);
+	 	    	}
+	 	    	catch(java.lang.Exception e)
+	 	    	{
+	 	    		e.printStackTrace();
+	 	    	}
+		       
+		    }
+	 	    @Override
+	 	    public  void afterConnectionEstablished(WebSocketSession wsSession)
+	 	    {
+	 	   	log.info("connection afterConnectionEstablished");
+ 	   		}
+	 	    
+	 	    @Override
+	 	    public  void afterConnectionClosed(WebSocketSession wsSession, CloseStatus status)
+	 	    {
+	 	   	log.info("connection closed");
+ 	   		}
+	 	    
+}
+
+
+page
+
+<html>
+<head>
+<script src="js/sockjs.js">
+  </script>
+<meta charset="GB18030">
+<script >
+wsocket = new SockJS("/springweb/app/myHandler");
+wsocket.onmessage = function(e) {
+	alert("<<< " + e.data);
+};
+wsocket.onopen = function() {
+	alert("Connection opened. (" + wsocket.protocol + ")");
+    
+};
+wsocket.onclose = function(e) {
+	alert("Connection closed.  Reason: (" + e.code + ") " + e.reason);
+};
+function clickMe()
+{
+	wsocket.send("hello");	}
+
+</script>
+<title>Insert title here</title>
+</head>
+<body>
+<input type="button" onclick="clickMe()" value="send message" />
+</body>
+</html>
+
+
+
+注册为web service
+
+import org.springframework.web.context.support.SpringBeanAutowiringSupport;
+@WebService(serviceName="AccountService")
+public class AccountServiceEndpoint extends SpringBeanAutowiringSupport {
+
+    @Autowired
+    private AccountService biz;
+
+    @WebMethod
+    public void insertAccount(Account acc) {
+        biz.insertAccount(acc);
+    }
+
+    @WebMethod
+    public Account[] getAccounts(String name) {
+        return biz.getAccounts(name);
+    }
+
+}
+
+RMI远程很heavy但是能够支持所有的对象类型
+
+
+RestFul
+/blog/1　HTTP　GET　=>　　得到id　=　1的blog
+/blog/1　HTTP　DELETE　=>　删除　id　=　1的blog
+/blog/1　HTTP　PUT　=>　　更新id　=　1的blog
+/blog　　　HTTP　POST　=>　　新增BLOG
+
+
+@RestController is a stereotype annotation that combines @ResponseBody and @Controller. 
+ @RequestBody 可以直接把上传的内容转成一个对象 比如 json
+  
+  public  String DeleteUser(@PathVariable String id,@RequestBody User body)  {
+ @RequestBody  可以自动把json的对象转换成java对象
+ 比如如下 json {"id":1,"name":"mary"} 会自动转成
+public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+int id;
+String name;
+
+}
+
+servet可以直接读取所有的内容传入内容
+	java.io.BufferedReader bf=new java.io.BufferedReader(request.getReader());
+		StringBuffer sbf=new StringBuffer();
+		String str="";
+		try {
+			while((str=bf.readLine())!=null){
+		   sbf.append(str);		
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		log.info("you inputed"+sbf);
+		
+
+ 
+ @ResponseBody 使用来直接返回内容到客户，而不是返回到view
+ 
+  public @ResponseBody String helloWorld(@PathVariable String id)  {
+  
+通过ajax支持delete
+$.ajax({ 
+        type:"DELETE", 
+        url:"/springweb/app/restful/1", 
+        dataType:"json",      
+        contentType:"application/json",               
+        data:"test", 
+        success:function(data){ 
+        	console.log(data);
+        } 
+     }); 
+   
+     
+       
+如何支持delete等方法
+
+html:  <form action="/springweb/app/restful/1" method="POST">   --必须是POST
+         <input type="hidden" name="_method" value="DELETE" />  --值必须为GET,、POST、 HEAD、OPTIONS、PUT、DELETE、TRACE中的一个值必须为GET,、POST、 HEAD、OPTIONS、PUT、DELETE、TRACE中的一个
+    
+web.xml    <filter>
+    <filter-name>httpMethodFilter</filter-name>
+    <filter-class>org.springframework.web.filter.HiddenHttpMethodFilter</filter-class>
+</filter>
+
+<filter-mapping>
+    <filter-name>httpMethodFilter</filter-name>
+    <servlet-name>spring</servlet-name>
+</filter-mapping>
+    
+Restful controller:
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
+import org.apache.log4j.Logger;
+
+@RestController
+public class RestfulController {
+	 static Logger log = Logger.getLogger(RestfulController.class.getName());
+
+	   @RequestMapping(method=RequestMethod.GET, value="/restful/{id}")
+	    public  String getUser(@PathVariable String id,@RequestBody String body)  {
+		   try {
+	      //  model.addAttribute("message", "Hello World!");
+	       // String name=request.getParameter("username");
+	        log.info("new usernmae="+id+" body="+body);
+	       // response.getOutputStream().print("direct output "+name);
+	        //return "redirect:/jsp/home.jsp";
+		   }
+		   catch (Exception e)
+		   {
+			   e.printStackTrace();
+		   }
+	        return "you want to  inquiry "+id+" and "+body;
+
+	    }
+	   
+	   @RequestMapping(method=RequestMethod.DELETE, value="/restful/{id}")
+	    public  String DeleteUser(@PathVariable String id,@RequestBody String body)  {
+		   try {
+	      //  model.addAttribute("message", "Hello World!");
+	       // String name=request.getParameter("username");
+	        log.info("new usernmae="+id+" body="+body);
+	       // response.getOutputStream().print("direct output "+name);
+	        //return "redirect:/jsp/home.jsp";
+		   }
+		   catch (Exception e)
+		   {
+			   e.printStackTrace();
+		   }
+	        return "you want to  delete "+id+" and "+body;
+
+	    }
+	   
+}
+
+
+
+Spring’s WebSocket and SockJS support does not depend on Spring MVC.
+
+SockJS可以用ajax long polling 来模拟websocket 后台需要 Vert.x 支持
+SockJS开两个http,一个用来向客户发消息，一个用来向server发消息以便模拟全双工的websocket
+
+Vert.x是一个异步应用程序开发框架，可用于开发异步、可伸缩、高并发的Web应用。其目的在于为JVM提供一个Node.js的替代方案。
+它是基于Netty和Java 7的NIO2的编写的 提供了websocket的实现
+
+
+The following summarizes the benefits for an application from using STOMP over WebSocket:
+
+    Standard message format
+    Application-level protocol with support for common messaging patterns
+    Client-side support, e.g. stomp.js, msgs.js
+    The ability to interpret, route, and process messages on both client and server-side
+    The option to plug a message broker?—?RabbitMQ, ActiveMQ, many others?—?to broadcast messages (explained later) 
+    
+    
+
+如果通过注解的方式来注册ASPECT,需要同时表明 @Aspect 和 @Component 
+定义一个AOP
+package com.test;
+
+import org.aspectj.lang.annotation.AfterReturning;
+import org.aspectj.lang.annotation.Aspect;
+import org.springframework.stereotype.Component;
+import org.apache.log4j.Logger;
+
+@Aspect
+@Component 
+public class MyAspect {
+	static Logger log = Logger.getLogger(MyAspect.class.getName());
+  //com.test里面已get开始的方法
+	@AfterReturning(
+	        pointcut="execution(* com.test..get*(..))",    
+	        returning="retVal")
+	    public void doAccessCheck(Object retVal) {
+	       log.info("aspect return " +retVal);
+	    }
+}
+
+或者用下面的xml配置
+  <bean id="myAspect" class="com.test.MyAspect" />
+
+ <aop:config>
+	<aop:aspect id="afterReturning" ref="myAspect">
+   <aop:pointcut id="businessService"
+            expression="execution(* com.test..get*(..))"/>
+	<aop:after-returning
+        pointcut-ref="businessService"
+        returning="retVal"
+        method="doAccessCheck"/>
+</aop:aspect>
+</aop:config>
+
+<bean id="profiler" class="x.y.SimpleProfiler"/>
+<aop:config>
+<aop:aspect ref="profiler">
+<aop:pointcut id="theExecutionOfSomeFooServiceMethod"
+expression="execution(* x.y.service.FooService.getFoo(String,int))
+and args(name, age)"/>
+<aop:around pointcut-ref="theExecutionOfSomeFooServiceMethod"
+method="profile"/>
+</aop:aspect>
+</aop:config>
+
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.springframework.util.StopWatch;
+public class SimpleProfiler {
+public Object profile(ProceedingJoinPoint call, String name, int age) throws Throwable
+{
+StopWatch clock = new StopWatch("Profiling for " + name + " and " + age + "");
+try {
+clock.start(call.toShortString());
+return call.proceed();
+} finally {
+clock.stop();
+System.out.println(clock.prettyPrint());
+}
+}
+}
+定义bean
+<bean id="concurrentOperationExecutor"
+class="com.xyz.myapp.service.impl.ConcurrentOperationExecutor">
+<property name="maxRetries" value="3"/>
+<property name="order" value="100"/>
+</bean>
+
+定义order的时候，order越小，约先执行
+
+设置多个AOP  顺序是如果前后切点在around中间，则一定是around的先开始，最后是around结束
+中间按照前后已经环绕节点的顺序执行
+<aop:config >
+		<aop:pointcut id="txPointcut" expression="execution(* com..*.service..*(..))" />
+		<aop:advisor advice-ref="txAdvice" pointcut-ref="txPointcut"  order="5"/>
+	 </aop:config>
+
+  	
+	
+  <bean id="myAspect" class="com.cicc.service.AroundMyAspect"     >
+  <property name="order" value="10"/>
+  
+  </bean>
+  <bean id="myAspect2" class="com.cicc.service.AroundMyAspect2"  >
+  <property name="order" value="20"/>
+  
+  </bean>
+    <bean id="myAspect3" class="com.cicc.service.BeforeMyAspect"     >
+  <property name="order" value="15"/>
+  
+  </bean>
+  
+ <bean id="myAspect4" class="com.cicc.service.AfterMyAspect"     >
+  <property name="order" value="15"/>
+  
+  </bean>
+ <aop:config>
+	<aop:aspect id="around" ref="myAspect">
+	<aop:around
+        pointcut-ref="txPointcut"
+        method="aroundCheck"/>
+</aop:aspect>
+</aop:config>
+	
+  <aop:config>
+	<aop:aspect id="around2" ref="myAspect2">
+	<aop:around
+        pointcut-ref="txPointcut"
+        method="aroundCheck"/>
+</aop:aspect>
+</aop:config>
+ 
+  <aop:config>
+	<aop:aspect id="around3" ref="myAspect3">
+	    
+	<aop:before
+        pointcut-ref="txPointcut"
+        method="beforeCheck"/>
+</aop:aspect>
+</aop:config>
+
+    <aop:config>
+	<aop:aspect id="around4" ref="myAspect4">
+	    
+	<aop:after
+        pointcut-ref="txPointcut"
+        method="afterCheck"/>
+</aop:aspect>
+
+Obtaining JDBC connection
+AroundMyAspect begin around aop 1
+BeforeMyAspect
+AroundMyAspect2  begin around aop 1
+
+Hibernate: select SEQ_USER.nextval from dual
+
+AroundMyAspect2 stop around aop 1
+AfterMyAspect
+AroundMyAspect stop around aop 1
+
+
+
+
+
+
+<aop:config proxy-target-class="true"> 强制使用CGLIB生成子类
+
+使用AspectJ not Spring AOP
+java启动的时候需要加入 -javaagent:lib\spring-instrument-4.0.2.RELEASE.jar
+添加  <context:load-time-weaver/> 到配置文件
+把如下内容加到 META-INF/aop.xml
+<!DOCTYPE aspectj PUBLIC "-//AspectJ//DTD//EN" "http://www.eclipse.org/aspectj/dtd/aspectj.dtd">
+<aspectj>
+    <weaver>
+        <!-- only weave classes in our application-specific packages -->
+        <include within="com.test.*"/>
+    </weaver>
+    <aspects>
+        <!-- weave in just this aspect -->
+        <aspect name="com.test.AspectJ"/>
+    </aspects>
+</aspectj>
+
+AspectJ 程序
+package com.test;
+import org.apache.log4j.Logger;
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.AfterReturning;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Around;
+import org.aspectj.lang.annotation.Pointcut;
+import org.springframework.util.StopWatch;
+import org.springframework.core.annotation.Order;
+
+@Aspect
+public class AspectJ {
+	static Logger log = Logger.getLogger(AspectJ.class.getName());
+
+	@AfterReturning(  pointcut="execution(* com.test..get*(..))",
+	        returning="retVal")
+	public void doAccessCheck(Object retVal) {
+	       log.info("aspect return " +retVal);
+	    }
+}
+
+
+
+
+
+spring缺省只对 RuntimeException 的回滚 ，对 checked exceptions 不回滚
+
+<tx:advice id="txAdvice">
+    <tx:attributes>
+    <tx:method name="*" rollback-for="Throwable" no-rollback-for="InstrumentNotFoundException"/>
+    </tx:attributes>
+</tx:advice>
+
+如果要JTA，必须  org.springframework.transaction.jta.JtaTransactionManager 
+
+模拟测试web
+
+@RunWith(SpringJUnit4ClassRunner.class)
+@WebAppConfiguration
+@ContextConfiguration("test-servlet-context.xml")
+public class ExampleTests {
+
+    @Autowired
+    private WebApplicationContext wac;
+
+    private MockMvc mockMvc;
+
+    @Before
+    public void setup() {
+        this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
+    }
+
+    @Test
+    public void getAccount() throws Exception {
+        this.mockMvc.perform(get("/accounts/1").accept(MediaType.parseMediaType("application/json;charset=UTF-8")))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType("application/json"))
+            .andExpect(jsonPath("$.name").value("Lee"));
+    }
+
+}
+
+
+
+Spring不但支持自己定义的@Autowired注解，还支持几个由JSR-250规范定义的注解，它们分别是@Resource、@PostConstruct以及@PreDestroy。
+　　@Resource的作用相当于@Autowired，只不过@Autowired按byType自动注入，而@Resource默认按 byName自动注入罢了。@Resource有两个属性是比较重要的，分是name和type，Spring将@Resource注解的name属性解析为bean的名字，而type属性则解析为bean的类型。所以如果使用name属性，则使用byName的自动注入策略，而使用type属性时则使用byType自动注入策略。如果既不指定name也不指定type属性，这时将通过反射机制使用byName自动注入策略。
+　　@Resource装配顺序
+　　1. 如果同时指定了name和type，则从Spring上下文中找到唯一匹配的bean进行装配，找不到则抛出异常
+　　2. 如果指定了name，则从上下文中查找名称（id）匹配的bean进行装配，找不到则抛出异常
+　　3. 如果指定了type，则从上下文中找到类型匹配的唯一bean进行装配，找不到或者找到多个，都会抛出异常
+　　4. 如果既没有指定name，又没有指定type，则自动按照byName方式进行装配；如果没有匹配，则回退为一个原始类型进行匹配，如果匹配则自动装配；
+
+@Autowired 与@Resource的区别：
+
+ 
+
+1、 @Autowired与@Resource都可以用来装配bean. 都可以写在字段上,或写在setter方法上。
+
+2、 @Autowired默认按类型装配（这个注解是属业spring的），默认情况下必须要求依赖对象必须存在，如果要允许null值，可以设置它的required属性为false，如：@Autowired(required=false) ，如果我们想使用名称装配可以结合@Qualifier注解进行使用，如下：
+	
+@Autowired() @Qualifier("baseDao")
+private BaseDao baseDao;
+
+3、@Resource（这个注解属于J2EE的），默认安装名称进行装配，名称可以通过name属性进行指定，如果没有指定name属性，当注解写在字段上时，默认取字段名进行安装名称查找，如果注解写在setter方法上默认取属性名进行装配。当找不到与名称匹配的bean时才按照类型进行装配。但是需要注意的是，如果name属性一旦指定，就只会按照名称进行装配。
+
+	
+@Resource(name="baseDao")
+private BaseDao baseDao;
+
+推荐使用：@Resource注解在字段上，这样就不用写setter方法了，并且这个注解是属于J2EE的，减少了与spring的耦合。这样代码看起就比较优雅。
+
+
+public class CachingMovieLister {
+   @PostConstruct
+    public void populateMovieCache() {
+        // populates the movie cache upon initialization...
+    }
+    @PreDestroy
+    public void clearMovieCache() {
+        // clears the movie cache upon destruction...
+    }
+
+
+@Component is a generic stereotype for any Spring-managed component. @Repository, @Service, and @Controller are specializations of @Component for more specific use cases, for example, in the persistence, service, and presentation layers, respectively. 
+
+
+
+@Component
+public class FactoryMethodComponent {
+
+    @Bean  //定义工厂方法，
+    @Qualifier("public")//定义Qualifier
+    public TestBean publicInstance() {
+        return new TestBean("publicInstance");
+    }
+
+    public void doWork() {
+        // Component method implementation omitted
+    }
+
+
+
+Spring				javax.inject.*	
+@Autowired    @Inject
+@Component    @Named
+@Scope("singleton") @Singleton
+@Qualifier    @Named
+
+
+@Configuration is a class-level annotation indicating that an object is a source of bean definitions.
+
+配置validation convert缺省日期格式
+
+ <bean id="conversionService" class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
+        <property name="registerDefaultFormatters" value="false" />
+        <property name="formatters">
+            <set>
+                <bean class="org.springframework.format.number.NumberFormatAnnotationFormatterFactory" />
+            </set>
+        </property>
+        <property name="formatterRegistrars">
+            <set>
+                <bean class="org.springframework.format.datetime.joda.JodaTimeFormatterRegistrar">
+                    <property name="dateFormatter">
+                        <bean class="org.springframework.format.datetime.joda.DateTimeFormatterFactoryBean">
+                            <property name="pattern" value="yyyyMMdd"/>
+                        </bean>
+                    </property>
+                </bean>
+            </set>
+        </property>
+    </bean>
+    
+    
+    Due to the proxy-based nature of Spring’s AOP framework, protected methods are by definition not intercepted, neither for JDK proxies (where this isn’t applicable) nor for CGLIB proxies (where this is technically possible but not recommendable for AOP purposes). 
+    

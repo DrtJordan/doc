@@ -1,0 +1,248 @@
+R 里面都是对象 ，有 mode(obj) length(obj)等基本方法  ，可以通过class(obj)来看对象
+对象类型有
+"numeric", "logical", "character" or "list", but "matrix", "array", "factor" and "data.frame" 
+读取文件
+
+dat = read.csv("Stock_Bond.csv")
+
+
+生成序列 
+seq(-pi, pi, by=)
+
+R开N次方  x^(1/n)   Pi =pi
+安装新的包
+install.packages("Ecdat")
+install.packages("quadprog")
+> x <- array(1:20, dim=c(4,5))    变成4行5列的，以列优先进行处理
+> x
+     [,1] [,2] [,3] [,4] [,5]
+[1,]    1    5    9   13   17
+[2,]    2    6   10   14   18
+[3,]    3    7   11   15   19
+[4,]    4    8   12   16   20
+> 
+
+
+ t(A) transpose(转置）
+ 
+ x <- matrix(data = c(1:6), nrow = 2, ncol = 3, byrow = TRUE)
+ y <- matrix(data = c(1:12), nrow = 6, ncol = 2, byrow = TRUE)
+ X <- cbind(arg_1, arg_2, arg_3, …)
+ X <- rbind(arg_1, arg_2, arg_3, …)
+  A= i x j matrix, B =j x k  matric  C=A*B=i x k  
+ Cik = Σj AijBjk
+ x%*%y
+ R提供了crossprod和tcrossprod函数, 也是矩阵相乘, 但是速度比%*%更快
+ 
+ Eigenvalues(特征值) and eigenvectors(特征向量)
+ singular value decomposition  奇异值分解
+ QR分解法是三种将矩阵分解的方式之一。这种方式，把矩阵分解成一个半正交矩阵与一个上三角矩阵的积。QR分解经常用来解线性最小二乘法问题。QR分解也是特定特征值算法即QR算法的基础。
+ 
+ 访问 list
+  Lst <- list(name="Fred", wife="Mary", no.children=3,              child.ages=c(4,7,9))
+  Lst2 <- list(name2="Fred", wife2="Mary", no.children2=3,              child.ages=c(4,7,9))
+
+  Lst$name  或者  Lst[[1]]  Lst["name"]
+  
+  attach(x) 把 data.frame的变量变成公共变量，可以直接引用
+  detach() 取消attach 
+  
+   search() 查看当前变量搜索路径 
+   
+   load R 内置 data data(infert)
+     data(package="rpart")
+     
+     hist(eruptions)
+     
+     for (name in expr_1) 
+     {expr_1;
+     expr_2}
+     
+     repeat expr
+     while (condition) expr  支持 break/ next 
+     
+     定义 function ，返回
+     addFun=function(x,y) {c=x*2+y;x=x+1;c}
+     fun1 <- function(data, data.frame, graph=TRUE, limit=20) { … }
+     
+     函数内的变量作用域只在函数内 ,在函数内对全局变量赋值 需要 <<-  x<<-x+1 
+     
+     open.account <- function(total) {
+  list(
+    deposit = function(amount) {
+      if(amount <= 0)
+        stop("Deposits must be positive!\n")
+      total <<- total + amount
+      cat(amount, "deposited.  Your balance is", total, "\n\n")
+    },
+    withdraw = function(amount) {
+      if(amount > total)
+        stop("You don't have that much money!\n")
+      total <<- total - amount
+      cat(amount, "withdrawn.  Your balance is", total, "\n\n")
+    },
+    balance = function() {
+      cat("Your balance is", total, "\n\n")
+    }
+  )
+}
+
+通过环境变量 R_PROFILE  来指定初始化文件 或者 Rprofile.site  或者  .Rprofile
+
+查看一个calss的所有方法 
+methods(class="data.frame")
+     We achieve this by creating the three functions within account and then returning a list containing them. 
+     When account is invoked it takes a numerical argument total and returns a list containing the three functions. 
+     Because these functions are defined in an environment which contains total, they will have access to its value.
+     
+     
+     二次规划    quadratic programming    在运筹学当中，是一种特殊类型的最佳化问题。
+     在限定条件下求最佳答案
+     
+     solve.QP(Dmat, dvec, Amat, bvec, meq=0, factorized=FALSE)
+   Dmat matrix appearing in the quadratic function to be minimized.
+   dvec vector appearing in the quadratic function to be minimized.
+    Amat matrix defining the constraints under which we want to minimize the quadratic   function.
+    bvec vector holding the values of b0 (defaults to zero).
+     meq the first meq constraints are treated as equality constraints, all further as inequality  constraints (defaults to 0).
+     	
+     	
+
+
+和java集成
+
+rJava
+Rserve (integration with rJava is discussed in R Tutorial: How to integrate R with Java using Rserve tutorial)
+rJava is used as an API i.e. it does not involve any client server communication. The program using rJava directly uses it to execute the R code. On the other hand Rserve works in a client server manner. 
+
+Rserve支持多线程的客户连接(linux）下
+
+
+RConnection c = new RConnection("192.168.1.201");
+REXP x = c.eval("R.version.string");
+System.out.println(r.asString());
+c.assign("x",dataX);
+c.assign("y",dataY);
+RList l = c.eval("lowess(x,y)").asList();
+double[] lx = (double[]) l.at("x").getContent();
+double[] ly = (double[]) l.at("y").getContent();
+
+安装Rserve 
+install.packages("Rserve")
+运行 
+library(Rserve) 缺省端口 6311
+Rserve(TRUE)  或者 Rserve(args="--no-save")
+
+run.Rserve() 在当前session打开 Rserve
+
+安装 RJDBC
+install.packages("RJDBC",dep=TRUE)
+连接
+	
+library(RJDBC)   #需要把jvm.dll 放到path路径里面，而且要和R的32/64匹配
+drv <- JDBC("com.mysql.jdbc.Driver",  "d:/mysql-connector-java-6.0.2.jar",    identifier.quote="`")
+conn <- dbConnect(drv, "jdbc:mysql://localhost/wm?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC", "wm", "wm")
+acruss=dbGetQuery(conn, "select return_ratio*100 RUSS from t_instrument_price where ticker='RUSS'")
+ac700=dbGetQuery(conn, "select return_ratio*100 '700' from t_instrument_price where ticker='00700'")
+achxfe=dbGetQuery(conn, "select return_ratio*100 HXFE from t_instrument_price where ticker='HXFE'")
+acdgaz=dbGetQuery(conn, "select return_ratio*100 DGAZ from t_instrument_price where ticker='DGAZ'")
+acftec=dbGetQuery(conn, "select return_ratio*100 FTEC from t_instrument_price where ticker='FTEC'")
+acvnq=dbGetQuery(conn, "select return_ratio*100 VNQ from t_instrument_price where ticker='VNQ'")
+acfxi=dbGetQuery(conn, "select return_ratio*100 FXI from t_instrument_price where ticker='FXI'")
+
+
+
+
+ for (i in 1:nlambda)
+ {
+ lambda = exp(loglambda_vect[i])
+ opt = solve.QP(Dmat = as.matrix(lambda^2 * cov_mat),
+ dvec = lambda * mean_vect, Amat = as.matrix(rep(1,5)),
+ bvec = c(1), meq = 1)
+ w = opt$solution
+ mu_vect[i] = w %*% mean_vect
+ sd_vect[i] = sqrt(w %*% cov_mat %*% w)
+ w_matrix[i,] = w
+ ExUtil_vect[i] = opt$value
+ }
+ 
+ 
+ for (i in 1:length(muP)) # find the optimal portfolios
+ {
+ bvec = c(1, muP[i]) # constraint vector
+ result =
+ solve.QP(Dmat = 2 * cov_mat, dvec = rep(0, 5),
+ Amat = Amat, bvec = bvec, meq = 2)
+ sdP[i] = sqrt(result$value)
+ weights[i,] = result$solution
+ }
+ 
+ 
+priceall=cbind(ac700,acdgaz,acftec,achxfe,acruss);
+names(priceall)=c("00700","DGAZ","FTEC","HXFE","RUSS")
+bond3y=rep(0.010958,233)
+priceall=cbind(ac700,acdgaz,acftec );
+names(priceall)=c("00700","DGAZ","FTEC","HXFE","RUSS")
+
+
+library('quadprog')
+mean_vect = colMeans(priceall);
+
+cov_mat = cov(priceall);
+sd_vect = sqrt(diag(cov_mat));
+Amat = cbind(rep(1, 3), mean_vect,diag(1, nrow = 3)) ;
+Amat <- cbind(Amat, -diag(3)) #<= constraint
+muP = seq(min(mean_vect) + 0.0001, max(mean_vect) - 0.0001, length = 300) ;
+ sdP = muP ;
+ weights = matrix(0, nrow = 300, ncol = 3) ;
+ for (i in 1:length(muP))  
+ {
+ bvec = c(1, muP[i],rep(0.05, 3)) # constraint vector
+ #bvec <- c(bvec, rep(-0.5, 3))
+ result =
+ solve.QP(Dmat = 2 * cov_mat, dvec = rep(0, 3),
+ Amat = Amat, bvec = bvec, meq = 2)
+ sdP[i] = sqrt(result$value)
+ weights[i,] = result$solution
+ }
+
+
+ pdf("quad_prog_plot.pdf", width = 6, height = 5);
+ plot(sdP, muP, type = "l", xlim = c(0, 12), ylim = c(0.03, 0.5), lty = 3);
+ mufree = 1.3 / 253 # input value of risk-free interest rate
+ points(0, mufree, cex = 4, pch = "*");
+ sharpe = (muP - mufree) / sdP ;
+ ind = (sharpe == max(sharpe)) ;
+ weights[ind, ] ;
+ lines(c(0, 2), mufree + c(0, 2) * (muP[ind] - mufree) / sdP[ind], lwd = 4, lty = 1, col = "blue") ;
+ points(sdP[ind], muP[ind], cex = 4, pch = "*") ;
+ ind2 = (sdP == min(sdP)) ;
+ points(sdP[ind2], muP[ind2], cex = 2, pch = "+") ;
+ ind3 = (muP > muP[ind2]);
+ lines(sdP[ind3], muP[ind3], type = "l", xlim = c(0, 0.25), ylim = c(0, 0.3), lwd = 3, col = "red") ;
+ graphics.off();
+ 
+ 
+ 
+ install.packages("fPortfolio",dep=TRUE)
+ library('fPortfolio')
+ priceall=cbind(ac700,acdgaz,acftec);
+ priceall=cbind(ac700,acdgaz,acftec,acvnq,acfxi);
+priceall=cbind(ac700,acvnq,acfxi);
+tangencyPortfolio(as.timeSeries(priceall),spec=myspec,constraints=c('minW[1:3]=0.1','maxW[1:3]=0.5')) 
+fr=efficientPortfolio(as.timeSeries(priceall),spec=myspec,constraints=c('minW[1:3]=0.1','maxW[1:3]=0.8')) 
+fr=portfolioFrontier(as.timeSeries(priceall),spec=myspec,constraints=c('minW[1:3]=0','maxW[1:3]=0.8')) 
+
+
+myspec<-portfolioSpec();
+setRiskFreeRate(myspec)<-0.04;
+setTargetRisk(myspec)=9;
+setNFrontierPoints(myspec)=50
+
+ ('700',  ' DGAZ', ,'FTEC','BOND3Y')
+ 
+ 
+ R 画图
+  x11()   新开个画图窗口
+  layout(mat)  分割图形窗口
+  

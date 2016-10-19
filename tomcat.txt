@@ -1,0 +1,193 @@
+ 压缩
+ 
+            compression="on"  
+                compressionMinSize="2048"  
+                noCompressionUserAgents="gozilla,traviata"  
+                compressableMimeType="text/html,text/xml,text/javascript,text/css,text/plain"  
+                1) compression="on" 打开压缩功能
+2) compressionMinSize="2048" 启用压缩的输出内容大小，这里面默认为2KB(即输出内容大于2KB才压缩)
+3) noCompressionUserAgents="gozilla, traviata" 对于以下的浏览器，不启用压缩&<60;
+4) compressableMimeType="text/html,text/xml" 压缩类型 
+ 	< Connector  port ="80"  maxHttpHeaderSize ="8192" 
+                maxThreads ="150"  minSpareThreads ="25"  maxSpareThreads ="75" 
+                enableLookups ="false"  redirectPort ="8443"  acceptCount ="100" 
+                connectionTimeout ="20000"  disableUploadTimeout ="true"  URIEncoding ="utf-8"  
+                  compression="on"  
+                compressionMinSize="2048"  
+                noCompressionUserAgents="gozilla,traviata"  
+                compressableMimeType="text/html,text/xml,application/javascript,text/css,text/plain"  /> 
+配置cache
+web.xml
+
+<filter>
+ <filter-name>ExpiresFilter</filter-name>
+ <filter-class>org.apache.catalina.filters.ExpiresFilter</filter-class>
+ <init-param>
+    <param-name>ExpiresByType image</param-name>
+    <param-value>access plus 20 minutes</param-value>
+ </init-param>
+ <init-param>
+    <param-name>ExpiresByType text/css</param-name>
+    <param-value>access plus 20 minutes</param-value>
+ </init-param>
+ <init-param>
+    <param-name>ExpiresByType application/javascript</param-name>
+    <param-value>access plus 20 minutes</param-value>
+ </init-param>
+</filter>
+ 
+<filter-mapping>
+ <filter-name>ExpiresFilter</filter-name>
+ <url-pattern>/*</url-pattern>
+ <dispatcher>REQUEST</dispatcher>
+</filter-mapping>
+设置压缩
+    <Connector port="80" protocol="HTTP/1.1"   
+               connectionTimeout="20000"   
+               redirectPort="8443" executor="tomcatThreadPool" URIEncoding="utf-8"   
+                           compression="on"   
+                           compressionMinSize="50" noCompressionUserAgents="gozilla, traviata"   
+                           compressableMimeType="text/html,text/xml,application/javascript,text/css,text/plain" />  
+                           
+ 压缩前 jquer.js 200k byte
+ 压缩后 jquery.js  60k byte
+  压缩前 jquerymin.js 82k byte 时间 797 ms
+ 压缩后 jquerymin.js  28k byte 时间  ms
+ 20141106
+ rotate log 
+ /etc/logrotate.d/castomcat
+ 
+/sso/tomcat/cas/logs/catalina.out {
+rotate 1
+daily
+copytruncate
+compress
+notifempty
+missingok
+}
+
+ tomcat DBCP的 remove abandon 不work ，只有下次重新拿连接的时候发现没有可用连接才会去做abandon检查
+但是connection pool正常工作，没有这个问题
+
+
+替换显示图标，把webapps/ROOT下面的 favicon.ico 替换成自己的大小32X32
+
+  就<context-param>、<listener>、<filter>、<servlet>四种节点而言，启动服务器时的加载顺序是context-param --> listener --> filter --> servlet
+
+    首先是<context-param>,启动一个WEB项目的时候，WEB容器会读取配置描述符文件(web.xml)中的<context-param>节点信息。<context-param>它用于向 ServletContext 提供键值对，即应用程序上下文信息。在初始化listener, filter和servlet时到可能会用到这些信息。 
+    
+    
+
+20140120
+在context.xml 设置   使用新的 connection pool 
+factory="org.apache.tomcat.jdbc.pool.DataSourceFactory"
+同时需要把 ojdbc14.jar 和 tomcat-jdbc.jar copy 到lib
+The Tomcat JDBC pool was introduced in Tomcat 7.0.19 ,
+
+修改 character encode，这个能解决get的问题
+ <Connector port="8080" protocol="HTTP/1.1"
+               connectionTimeout="20000"
+               redirectPort="8443"  URIEncoding="UTF-8"   useBodyEncodingForURI="true" />
+post还需要 request.setCharacterEncoding("UTF-8");
+
+
+               
+
+./version.sh 
+Server version: Apache Tomcat/7.0.8
+
+
+配置参数
+catalina.sh
+JAVA_OPTS="-server -Xms1024m -Xmx1024m  -XX:PermSize=128M -XX:MaxPermSize=256M   -Xloggc:gc.log -XX:+UseConcMarkSweepGC"
+
+
+
+20130509
+写access log是正常访问服务完成之后才写的
+tomcat 
+
+conf/context.xml
+
+<Resource name="jdbc/eds" auth="Container"
+              type="javax.sql.DataSource" driverClassName="oracle.jdbc.OracleDriver"
+              url="jdbc:oracle:thin:@192.168.193.132:1521:npdev01"
+              username="data" password="data_prod" maxActive="20" maxIdle="10"
+               defaultAutoCommit="false" maxWait="5000" validationQuery="select 1 from dual"
+  testWhileIdle="true" timeBetweenEvictionRunsMillis="5000" removeAbandoned="true"  removeAbandonedTimeo
+ut="30" logAbandoned="true"/>
+
+Context envContext = (Context) initContext.lookup("java:/comp/env");
+			DataSource ds = (DataSource) envContext.lookup("jdbc/rds");
+			
+			
+mysql配置
+context.xml
+<Resource name="jdbc/RDS" auth="Container" type="javax.sql.DataSource"
+  maxActive="100" maxIdle="30" maxWait="10000"
+  username="wechat" password="wechat" driverClassName="com.mysql.jdbc.Driver"
+  url="jdbc:mysql://192.168.193.132:3308/wechat?rewriteBatchedStatements=true"/>
+               
+              
+
+<%@ page import="java.sql.*" %>
+<%@ page import="javax.naming.*" %>
+<% 
+javax.naming.Context initContext = new    javax.naming.InitialContext();
+//javax.naming.Context envContext = (javax.naming.Context) initContext.lookup("java:/comp/env");
+javax.sql.DataSource ds = (javax.sql.DataSource) initContext.lookup("java:/comp/env/jdbc/RDS");
+Connection conn=ds.getConnection();
+		Statement st=conn.createStatement();
+			ResultSet res=st.executeQuery("select * from test");
+			while(res.next())
+			{
+				System.out.println(res.getInt("id"));
+			
+			
+			
+		}
+			
+			
+			%>
+			
+						
+			集群 配置
+			<distributable/> 加到web.xml 
+			context.xml里面可能会有注释屏蔽掉 session 复制，需要关闭
+			
+			tomcat支持 
+    Using session persistence, and saving the session to a shared file system (PersistenceManager + FileStore)
+    Using session persistence, and saving the session to a shared database (PersistenceManager + JDBCStore)
+    Using in-memory-replication, using the SimpleTcpCluster that ships with Tomcat (lib/catalina-tribes.jar + lib/catalina-ha.jar)
+
+   Tomcat can perform an all-to-all replication of session state using the DeltaManager
+   perform backup replication to only one node using the BackupManager
+   通过 multicast 来判断是否是一组 cluster
+   Membership is established using multicast heartbeats. Hence, if you wish to subdivide your clusters, you can do this by changing the multicast IP address or port in the <Membership> element. 
+   
+   消息复制是通过tcp
+   The heartbeat contains the IP address of the Tomcat node and the TCP port that Tomcat listens to for replication traffic. All data communication happens over TCP. 
+   
+   Synchronous vs. asynchronous is configured using the channelSendOptions flag and is an integer value. The default value for the SimpleTcpCluster/DeltaManager combo is 8, which is asynchronous.
+   
+   The JvmRouteBinderValve rewrites the session id to ensure that the next request will remain sticky (and not fall back to go to random nodes since the worker is no longer available) after a fail over. The valve rewrites the JSESSIONID value in the cookie with the same name. Not having this valve in place, will make it harder to ensure stickyness in case of a failure for the mod_jk module. 
+   支持静态配置成员
+   
+   Membership is done using multicasting. Please note that Tribes also supports static memberships using the StaticMembershipInterceptor if you want to extend your membership to points beyond multicasting
+   
+   tomcat的发布目录在work下面，可以做清理，确保发布
+   
+   
+   sesssion.jsp
+ <%Integer counter=((Integer)request.getSession().getAttribute("counter"));
+   if (counter==null)
+   {counter=Integer.parseInt("1");
+   }
+   else
+   {
+	   counter=counter+1;
+   }
+   request.getSession().setAttribute("counter", counter);
+ System.out.println(" counter="+counter);
+  out.println( session.getId()+" "+request.getLocalName()+" "+request.getLocalPort()+" counter="+counter);
+   %>

@@ -1,0 +1,610 @@
+安装ceph
+文档 http://ceph.com/docs/next/dev/
+http://www.wzxue.com/category/ceph-2/
+
+CEPH client 不能和 OSD/MON/MDS在一台机器，会导致冲突，装在虚拟机上没问题
+CEPH Dameon node 时间一定要同步,MON node间时间差不能超过 0.05s
+
+目前建议使用XFS  ，建议一个 HD  driver 一个OSD ,journal 建议使用ssd
+cluster->pool(设置replicas  数量)->placement group->object   一般100个pg一个osd  
+pool类型replicated/erasure(像raid5,功能没有replicate全面)  pg可以跨pool
+osd数量越多，如果网络不是瓶颈，则osd crash之后恢复起来越快
+
+pg_number设置 
+Less than 5 OSDs set pg_num to 128
+Between 5 and 10 OSDs set pg_num to 512
+Between 10 and 50 OSDs set pg_num to 4096
+
+ceph block device有两种方式使用 一种是 kvm/qemu通过librbd使用，另一种是直接通过kernel module(rbd使用,libceph)前一种稳定
+很多object map到 one PG
+一个object只能map到一个PG
+One PG map到one OSD 
+one OSD包含很多PG
+
+CEPH目前的认证不包含传输加密以及数据加密
+Acting Set包含一个PG的维护OSD信息
+当OSD启动的时候，会和自己包含的PG的其他配合OSD做peering，保证数据一致
+客户端只往primary OSD写，primary OSD自己通过CRUSH算法找到replicate OSD，然后写过去 复制是在pool级别设置，只要写到pool就ok了
+客户端API(ceph提供的)会把file切分成统一大小的object(file_nid.obj_id)(可配置)然后写到OSD上
+客户端都是先和monitor接触，获得 cluster map然后通过CRUSH算法决定往那个OSD写数据
+所有存在OSD的object都是 flat的namespace,没有层级结构
+OSD之间会传递最新的map信息，所以减少了OSD变动带来的风暴
+
+
+
+
+
+优化操作系统的参数可以充分利用硬件的性能。
+优化客户端，提前把object做完stripe然后再往CEPH写， 能充分提高并行度
+
+CPU 关闭CPU节能模式 使用Cgroup绑定Ceph OSD进程到固定的CPU Cores上
+Memory 关闭NUMA 设置vm.swappiness=0
+Block 设置SSD的调度算法为deadline
+FileSystem 设置挂载参数”noatime nobarrier”
+Qemu作为块存储系统的直接消费者，也有很多值得优化的地方。
+Throttle: 平滑的I/O QoS算法
+RBD: 支持discard和flush
+Burst: 支持突发请求
+Virt-scsi: 支持多队列
+打开网络的Jubmo frame 分开内外网
+把Journal分到SSD
+服务器配置
+32GRAM/6core12线程 E5/2X400G SAS15k/2XSSD Intel 520/2X10G网卡
+
+RBD的I/O路径很长，要经过网络、文件系统、磁盘：
+Librbd -> networking -> OSD -> FileSystem -> Disk
+Client的每个写操作在OSD中要经过8种线程，写操作下发到OSD之后，会产生2~3个磁盘seek操作：
+把写操作记录到OSD的Journal文件上(Journal是为了保证写操作的原子性)。
+把写操作更新到Object对应的文件上。
+把写操作记录到PG Log文件上。
+优化mount buffer mount -t ceph 10.37.248.43:6789:/ /mnt/ceph -o name=admin,nocrc,readdir_max_bytes=4104304,readdir_max_entries=8192
+
+
+
+disable selinux
+setenforce 0
+
+OSD’s journal on an SSD 
+内存需求 ~1GB for 1TB of storage per daemon
+
+Ceph OSDs: A Ceph OSD Daemon (Ceph OSD) stores data, handles data replication, recovery, backfilling, rebalancing, 
+Monitors: A Ceph Monitor maintains maps of the cluster state
+MDSs: A Ceph Metadata Server (MDS) stores metadata on behalf of the Ceph Filesystem
+
+
+安装步骤
+setenforce 0
+修改  /etc/wgetrc  添加  http_proxy = http://192.168.8.26:8080/
+修改  /etc/yum.conf   添加   proxy=http://192.168.8.26:8080
+安装需要软件
+yum install -y  yum-plugin-priorities redhat-lsb
+安装 ceph的 key 
+rpm --httpproxy 192.168.8.26   --httpport 8080  --import 'https://ceph.com/git/?p=ceph.git;a=blob_plain;f=keys/release.asc' 
+
+添加 ceph的 repositiory 
+
+ceph-extra.repo
+
+[ceph-extras]
+name=Ceph Extras Packages
+baseurl=http://ceph.com/packages/ceph-extras/rpm/centos6/$basearch
+enabled=1
+priority=2
+gpgcheck=1
+type=rpm-md
+gpgkey=https://ceph.com/git/?p=ceph.git;a=blob_plain;f=keys/release.asc
+
+[ceph-extras-noarch]
+name=Ceph Extras noarch
+baseurl=http://ceph.com/packages/ceph-extras/rpm/centos6/noarch
+enabled=1
+priority=2
+gpgcheck=1
+type=rpm-md
+gpgkey=https://ceph.com/git/?p=ceph.git;a=blob_plain;f=keys/release.asc
+
+[ceph-extras-source]
+name=Ceph Extras Sources
+baseurl=http://ceph.com/packages/ceph-extras/rpm/centos6/SRPMS
+enabled=1
+priority=2
+gpgcheck=1
+type=rpm-md
+gpgkey=https://ceph.com/git/?p=ceph.git;a=blob_plain;f=keys/release.asc
+
+添加 ceph repo
+ceph.repo
+
+[ceph]
+name=Ceph packages for $basearch
+baseurl=http://ceph.com/rpm-giant/el7/$basearch
+enabled=1
+priority=2
+gpgcheck=1
+type=rpm-md
+gpgkey=https://ceph.com/git/?p=ceph.git;a=blob_plain;f=keys/release.asc
+
+[ceph-noarch]
+name=Ceph noarch packages
+baseurl=http://ceph.com/rpm-giant/el7/noarch
+enabled=1
+priority=2
+gpgcheck=1
+type=rpm-md
+gpgkey=https://ceph.com/git/?p=ceph.git;a=blob_plain;f=keys/release.asc
+
+[ceph-source]
+name=Ceph source packages
+baseurl=http://ceph.com/rpm-giant/el7/SRPMS
+enabled=0
+priority=2
+gpgcheck=1
+type=rpm-md
+gpgkey=https://ceph.com/git/?p=ceph.git;a=blob_plain;f=keys/release.asc
+
+apache-ceph.repo
+
+[apache2-ceph-noarch]
+name=Apache noarch packages for Ceph
+baseurl=http://gitbuilder.ceph.com/apache2-rpm-centos7-x86_64-basic/ref/master
+enabled=1
+priority=2
+gpgcheck=1
+type=rpm-md
+gpgkey=https://ceph.com/git/?p=ceph.git;a=blob_plain;f=keys/autobuild.asc
+
+[apache2-ceph-source]
+name=Apache source packages for Ceph
+baseurl=http://gitbuilder.ceph.com/apache2-rpm-centos7-x86_64-basic/ref/master
+enabled=0
+priority=2
+gpgcheck=1
+type=rpm-md
+gpgkey=https://ceph.com/git/?p=ceph.git;a=blob_plain;f=keys/autobuild.asc
+
+ceph-fastcgi.repo
+
+[fastcgi-ceph-basearch]
+name=FastCGI basearch packages for Ceph
+baseurl=http://gitbuilder.ceph.com/mod_fastcgi-rpm-centos7-x86_64-basic/ref/master
+enabled=1
+priority=2
+gpgcheck=1
+type=rpm-md
+gpgkey=https://ceph.com/git/?p=ceph.git;a=blob_plain;f=keys/autobuild.asc
+
+[fastcgi-ceph-noarch]
+name=FastCGI noarch packages for Ceph
+baseurl=http://gitbuilder.ceph.com/mod_fastcgi-rpm-centos7-x86_64-basic/ref/master
+enabled=1
+priority=2
+gpgcheck=1
+type=rpm-md
+gpgkey=https://ceph.com/git/?p=ceph.git;a=blob_plain;f=keys/autobuild.asc
+
+[fastcgi-ceph-source]
+name=FastCGI source packages for Ceph
+baseurl=http://gitbuilder.ceph.com/mod_fastcgi-rpm-centos7-x86_64-basic/ref/master
+enabled=0
+priority=2
+gpgcheck=1
+type=rpm-md
+gpgkey=https://ceph.com/git/?p=ceph.git;a=blob_plain;f=keys/autobuild.asc
+
+
+安装 EPEL 7 源
+ wget http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-5.noarch.rpm
+ rpm -ivh epel-release-7-5.noarch.rpm
+
+yum install snappy  gdisk python-argparse  redhat-lsb
+yum install  fcgi-devel   gperftools-devel  yasm
+yum --disablerepo=ceph*  install   leveldb-devel
+yum --disablerepo=ceph*  install   curl-devel   
+yum install httpd mod_fastcgi
+yum install ntp ntpdate ntp-doc
+yum install boost
+
+配置ntp server 
+/etc/ntp.conf 
+server 127.127.1.0
+fudge 127.127.1.0 stratum 8
+把用户加到sudo组
+visudo 
+ceph    ALL=(ALL)       NOPASSWD: ALL
+
+
+systemctl enable ntpd
+systemctl start  ntpd      
+修改timezone
+timedatectl  set-timezone Asia/Shanghai
+hwclock --systohc 
+设置防火墙
+firewall-cmd --zone=public --add-port=6789/tcp --permanent
+关闭防火墙 systemctl stop firewalld 
+
+
+安装ceph
+1. ./install-deps.sh
+2.  ./autogen.sh     
+    ./configure  --prefix=/vm/ceph
+     make 
+     make install   会安装  /usr/sbin/mount.fuse.ceph    /usr/sbin/mount.ceph 
+      
+
+cp -vf /vm/ceph/lib/python2.7/site-packages/* /usr/lib64/python2.7/
+echo /vm/ceph/lib/  > /etc/ld.so.conf.d/ceph.conf
+ldconfig
+
+
+issues:
+
+./install-deps.sh: line 18: lsb_release: command not found
+
+安装 lsb  yum install -y redhat-lsb
+Error: No Package found for fcgi-devel
+Error: No Package found for gperftools-devel
+Error: No Package found for leveldb-devel > 1.2
+Error: No Package found for yasm
+
+
+先建立 monitor node,这个用来控制很多参数 建议和OSD分开
+
+产生 fsid 
+
+uuidgen
+b71d0b3c-d607-474a-8b85-bfc0fbbcf2ce
+创建 /vm/ceph/etc/ceph/ceph.conf
+[global]
+fsid=b71d0b3c-d607-474a-8b85-bfc0fbbcf2ce
+mon initial members =dev140
+mon host =192.168.193.140         
+public network =192.168.193.140/27
+auth cluster required = cephx
+auth service required = cephx
+auth client required = cephx
+osd journal size = 1024
+filestore xattr use omap = true
+osd pool default size = 2
+osd pool default min size = 1
+osd pool default pg num = 333
+osd pool default pgp num = 333
+osd crush chooseleaf type = 1
+
+生成key 
+ceph-authtool --create-keyring /tmp/ceph.mon.keyring --gen-key -n mon. --cap mon 'allow *'
+ceph-authtool --create-keyring /etc/ceph/ceph.client.admin.keyring --gen-key -n client.admin --set-uid=0 --cap mon 'allow *' --cap osd 'allow *' --cap mds 'allow'
+ceph-authtool /tmp/ceph.mon.keyring --import-keyring /etc/ceph/ceph.client.admin.keyring
+生成 monitor map
+monmaptool --create --add  dev140  192.168.193.140   --fsid b71d0b3c-d607-474a-8b85-bfc0fbbcf2ce  /tmp/monmap
+sudo mkdir -p /var/lib/ceph/mon/ceph-dev140#可以不要
+sudo chown -R ceph /var/lib/ceph
+
+
+初始化monitor 
+ceph-mon --mkfs -i dev140 --monmap /tmp/monmap --keyring /tmp/ceph.mon.keyring
+sudo touch /var/lib/ceph/mon/ceph-dev140/done
+
+copy init 文件
+sudo cp  ./src/init-ceph /etc/init.d/ceph
+
+启动monitor
+touch /var/lib/ceph/mon/ceph-dev140/sysvinit
+sudo /etc/init.d/ceph start mon.dev140
+
+添加新的monitor 导致monitor无反应，通过admin socket能看到正在选举,直接往下启动新的monitor就行了?
+ceph --admin-daemon /var/run/ceph/ceph-mon.ID.asok  mon_status 
+
+
+ceph auth get mon. -o /tmp/ceph.mon.keyring
+ceph mon getmap -o /tmp/monmap
+ceph-mon --mkfs -i dev144 --monmap /tmp/monmap --keyring /tmp/ceph.mon.keyring
+ceph mon add dev144 192.168.193.144:6789
+ceph-mon -i dev144 --public-addr  192.168.193.144:6789
+touch /var/lib/ceph/mon/ceph-dev144/sysvinit
+/etc/init.d/ceph start mon.dev144
+
+删除monitor
+ceph -a stop mon.{mon-id}
+ceph mon remove {mon-id}
+
+
+
+创建新的  osd 或者 rbd客户端 
+复制monitor的文件到
+mkdir -p /vm/soft
+scp -r /etc/ceph on monitor to osd 
+scp /etc/yum.repos.d/ceph* 192.168.193.144:/etc/yum.repos.d
+scp /vm/soft/epel-release-7-5.noarch.rpm 192.168.193.144:/vm/soft
+scp  -r /vm/ceph/  192.168.193.144:/vm/
+scp  /tmp/ceph-0.90.tar.gz  192.168.193.144:/vm/soft
+scp /etc/init.d/ceph 192.168.193.144:/etc/init.d
+
+rpm -ivh /vm/soft/epel-release-7-5.noarch.rpm  
+
+setenforce 0
+修改  /etc/wgetrc  添加  http_proxy = http://192.168.8.26:8080/
+修改  /etc/yum.conf   添加   proxy=http://192.168.8.26:8080
+安装需要软件
+yum install -y  yum-plugin-priorities redhat-lsb
+yum install -y   snappy  gdisk python-argparse  redhat-lsb  fcgi-devel   gperftools-devel  yasm  httpd mod_fastcgi ntp ntpdate ntp-doc  boost
+yum --disablerepo=ceph*  install  -y   leveldb-devel  curl-devel   
+
+
+安装依赖包 解开ceph源代码
+cp -vf /vm/ceph/lib/python2.7/site-packages/* /usr/lib64/python2.7/
+echo /vm/ceph/lib/  > /etc/ld.so.conf.d/ceph.conf
+ldconfig
+
+./install-deps.sh
+
+以下为osd存储设置 
+
+mkpart logical xfs 244GB 400GB 
+mkfs.xfs   /dev/sda4
+
+
+
+chmod 755 /etc/ceph/ceph.client.admin.keyring
+sudo mkdir -p /var/lib/ceph/osd/ceph-5/
+sudo mkdir -p /var/log/ceph
+sudo chown -R ceph /var/lib/ceph/osd/ceph-1/
+sudo chown -R ceph /var/log/ceph
+
+生成uuid(用root操作)
+
+ceph osd create  
+mount   /dev/sda4 /var/lib/ceph/osd/ceph-5
+ceph-osd -i 6 --mkfs --mkkey --osd-uuid  
+ceph auth del osd.6 第二个节点不需要
+ceph auth add osd.6 osd 'allow *' mon 'allow profile osd' -i /var/lib/ceph/osd/ceph-6/keyring
+ceph osd crush add-bucket dev144 host #如果在已经加过的机器上，就不需要这步了
+ceph osd crush move dev144  root=default #如果在已经加过的机器上，就不需要这步了
+ceph osd crush add osd.6 1.0 host=dev144
+touch /var/lib/ceph/osd/ceph-6/sysvinit
+启动
+/etc/init.d/ceph start osd.5
+
+修改PG number 
+ceph osd pool set rbd pg_num  512  
+查看pool 
+ceph osd pool ls
+状态检查
+ceph -s 
+
+[ceph@dev140 store.db]$ ceph -s
+    cluster 84d08382-9f31-4d1b-9870-75e6975f69fe
+     health HEALTH_OK
+     monmap e1: 1 mons at {dev140=192.168.193.140:6789/0}
+            election epoch 1, quorum 0 dev140
+     osdmap e13: 2 osds: 2 up, 2 in
+      pgmap v21: 64 pgs, 1 pools, 0 bytes data, 0 objects
+            2114 MB used, 303 GB / 305 GB avail
+                  64 active+clean
+
+ceph health detail
+
+
+ceph osd tree
+# id    weight  type name       up/down reweight
+-1      4       root default
+-2      1               host dev141
+0       1                       osd.0   down    0
+-3      1               host dev143
+1       1                       osd.1   down    0
+-4      1               host dev140
+2       1                       osd.2   up      1
+-5      1               host dev134
+3       1                       osd.3   down    0
+
+删除pool
+ceph osd pool delete  cephfs_data cephfs_data --yes-i-really-really-mean-it         
+删除osd
+ceph-users@lists.ceph.com
+ceph osd out 5
+停止该osd /etc/init.d/ceph stop osd.3
+ceph osd crush remove osd.3
+ceph auth del osd.3
+ceph osd rm 3
+
+导出 crush map
+ceph osd getcrushmap -o crush.map
+反编译
+crushtool -d crush.map -o  decrush.map
+compile到二级制
+crushtool -c decrush.map  -o crush_new.map
+导入
+ceph osd setcrushmap -i  crush_new.map
+
+140 osd.2 141 osd.0  143 osd.1/4 144 osd.5/6
+设置osd weight 
+
+ceph osd crush reweight  osd.5 1.0
+清理状态不对的pg
+ceph health detail
+实在不行就重新创建该　PG  ceph pg force_create_pg 0.20
+查询某个PG的状态 ceph pg 0.d query 
+如果有unbond的pg，缺省找不到可以 ceph pg 0.6 mark_unfound_lost  delete
+配置mds
+
+
+ mkdir /var/lib/ceph/mds/ceph-0
+ ceph auth get-or-create mds.m1 mds 'allow' osd 'allow *' mon 'allow *' >  /var/lib/ceph/mds/ceph-0/keyring
+配置文件 /etc/ceph/ceph.conf
+
+[mds.m1]
+    host = dev140
+    mds addr = 192.168.193.140:6790
+    mds data = /var/lib/ceph/mds/ceph-0                  
+启动 mds 
+ceph-mds --id m1       
+创建 filesystem 的 pool
+ceph osd pool create cephfs_data  128
+ceph osd pool create cephfs_metadata   128
+ceph fs new cephfs cephfs_metadata cephfs_data  
+删除fs 
+ceph fs rm cephfs --yes-i-really-mean-it 
+
+检查  ceph fs ls
+      ceph mds stat
+[root@dev143 vm]# ceph mds stat
+e4: 1/1/1 up {0=0=up:active}
+
+添加新的 mds
+
+mkdir -p /var/lib/ceph/mds/ceph-0
+ceph auth get-or-create mds.m2 mds 'allow' osd 'allow *' mon 'allow *' >  /var/lib/ceph/mds/ceph-0/keyring
+
+[mds.m2]
+    host = dev141
+    mds addr = 192.168.193.141:6790
+    mds data = /var/lib/ceph/mds/ceph-0   
+
+ceph-mds --id m2   
+
+dump mds
+ceph mds dump
+
+
+ceph filesystem 客户端mount 
+先升级 kernel (有mainline（3.16.1）、long-term（3.10.28）这2个内核版本)
+rpm --httpproxy 192.168.8.26   --httpport 8080 --import https://www.elrepo.org/RPM-GPG-KEY-elrepo.org
+rpm --httpproxy 192.168.8.26   --httpport 8080  -Uvh http://www.elrepo.org/elrepo-release-7.0-2.el7.elrepo.noarch.rpm
+yum --enablerepo=elrepo-kernel install kernel-ml
+ 
+
+先检查 ceph client admin的 key 
+ceph auth list
+ client.admin
+        key: AQCh8rVU5FNTKRAAerik4/tEu8nVAAtRXpXMqw==
+        
+load ceph module 
+	modprobe ceph 
+	mount.ceph  192.168.193.140:6789:/ /mnt/ceph -v -o name=admin,secret=AQCh8rVU5FNTKRAAerik4/tEu8nVAAtRXpXMqw==
+	
+	fio -ioengine=libaio -bs=128k  -direct=1 -thread -rw=read  -size=50G -filename=/mnt/ceph/test6.img -name="EBS 4K randwrite test" -iodepth=64  -numjobs=1 -group_reporting
+	
+fuse方式 mount 
+scp /etc/ceph/ceph.conf 192.168.193.134:/etc/ceph
+scp /etc/ceph/ceph.client.admin.keyring 192.168.193.134:/etc/ceph
+mount.fuse.ceph 192.168.193.140:6789:/ /mnt/cephfuse -o name=admin,secret=AQDZlaNUAzzYNxAAo2VAkMCUeNJyA9rNbIdf1w==
+	mount.fuse.ceph 192.168.193.140:6789:/ /mnt/ceph  -o name=admin,secret=AQDZlaNUAzzYNxAAo2VAkMCUeNJyA9rNbIdf1w==
+性能测试 两个OSD节点
+安装 iozne   make linux 
+
+dd if=/dev/zero of=/mnt/cephblock/test6.img  bs=2M count=1000 oflag=direct 
+2097152000 bytes (2.1 GB) copied, 88.7094 s, 23.6 MB/s
+dd if=/dev/zero of=/mnt/testfile2.img  bs=2M count=1000 oflag=direct 
+2097152000 bytes (2.1 GB) copied, 49.3121 s, 42.5 MB/s
+dd 测试 
+dd oflag=direct,nonblock if=/dev/sda1 of=/mnt/ceph/testfile4.img bs=1024K count=1000
+209715200 bytes (210 MB) copied, 13.8662 s, 15.1 MB/s
+dd oflag=direct,nonblock if=/dev/sda1 of=/mnt/testfile2.img bs=1024K count=1000
+209715200 bytes (210 MB) copied, 4.87145 s, 43.0 MB/s
+
+两个客户端同时dd of=/mnt/ceph  12.9 MB/s
+
+ dd iflag=direct,nonblock of=/dev/null if=/dev/sda3 bs=1024K count=1024
+
+ dd iflag=direct,nonblock of=/dev/null if=/mnt/ceph/testfile4.img bs=1024K count=1024
+ 209715200 bytes (210 MB) copied, 2.04239 s, 103 MB/s
+
+创建 block device  使用 librados and librbd 来访问 OSD
+rbd create cephblock --size 10240
+查看 
+rbd list 
+删除 
+rbd rm cephblock 
+查看block信息
+rbd --image cephblock2 info
+fio -ioengine=libaio -bs=128k  -direct=1 -thread -rw=read  -size=2G -filename=/mnt/ceph/test6.img -name="EBS 4K randwrite test" -iodepth=64 -runtime=300 -numjobs=2 -group_reporting 
+
+rdb客户端 需要 升级一下kernel 然后按照 osd的安装步骤把相应的包装上，
+map  rbd不支持集群，有点像san，需要os层面的集群文件系统
+
+rbd map  cephblock  --id admin
+检查 rbd showmapped
+格式化
+mkfs.xfs /dev/rbd0 
+mount /dev/rbd0  /mnt/cephblock
+dd oflag=direct,nonblock if=/dev/sda4 of=/home/ceph/file4.img bs=1024K count=1000
+
+dd oflag=direct,nonblock if=/dev/sda3 of=/mnt/cephblock/testfile4.img bs=1024K count=1000
+1027604480 bytes (1.0 GB) copied, 63.188 s, 16.3 MB/s
+
+每次测试前 sync 一次，把所有buffer写到disk 然后 echo 3 > /proc/sys/vm/drop_caches
+两个osd的情况下
+
+fio -ioengine=libaio -bs=4k -direct=1  -thread -rw=randwrite -size=2G -filename=/mnt/cephblock/test5.img -name="EBS 4K randwrite test" -iodepth=64 -runtime=60
+  write: io=174808KB, bw=2911.5KB/s, iops=727, runt= 60042msec  95.00th=[  247 ms],
+  
+fio -ioengine=libaio -bs=64k -direct=1  -thread -rw=randwrite -size=2G -filename=/mnt/cephblock/test5.img -name="EBS 4K randwrite test" -iodepth=1 -runtime=60 -numjobs=1 -group_reporting
+  write: io=236480KB, bw=3940.9KB/s, iops=61, runt= 60007msec  95.00th=[   24],
+
+fio -ioengine=libaio -bs=64k -direct=1  -thread -rw=randwrite -size=2G -filename=/mnt/cephblock/test5.img -name="EBS 4K randwrite test" -iodepth=1 -runtime=60 -numjobs=4 -group_reporting
+  
+
+
+fio -ioengine=libaio -bs=4k -direct=1 -thread -rw=randread -size=2G -filename=/mnt/cephblock/test5.img -name="EBS 4K randwrite test" -iodepth=64 -runtime=60 -numjobs=4 -group_reporting
+  read : io=3623.9MB, bw=61830KB/s, iops=15457, runt= 60016msec 95.00th=[31360 us],
+   
+fio -ioengine=libaio -bs=4k -direct=1 -thread -rw=randread -size=2G -filename=/mnt/cephblock/test5.img -name="EBS 4K randwrite test" -iodepth=64 -runtime=60 -numjobs=1 -group_reporting
+  read : io=2048.0MB, bw=62363KB/s, iops=15590, runt= 33628msec    95.00th=[ 8640 us],
+
+fio -ioengine=libaio -bs=4k  -direct=1 -thread -rw=read  -size=2G -filename=/mnt/cephblock/test5.img -name="EBS 4K randwrite test" -iodepth=64 -runtime=60 -numjobs=4 -group_reporting
+  read : io=2048.0MB, bw=100675KB/s, iops=25168, runt= 20831msec 95.00th=[ 2480 us],
+
+fio -ioengine=libaio -bs=4k  -direct=1 -thread -rw=write  -size=2G -filename=/mnt/cephblock/test6.img -name="EBS 4K randwrite test" -iodepth=64 -runtime=60 -numjobs=1 -group_reporting
+
+fio -ioengine=libaio -bs=4k -direct=1 -thread -rw=randwrite -size=2G -filename=/home/ceph/test5.img -name="EBS 4K randwrite test" -iodepth=64 -runtime=60
+ write: io=289332KB,  bw=4817.1KB/s, iops=1204, runt= 60053msec  95.00th=[  135 ms],
+fio -ioengine=libaio -bs=4k -direct=1 -thread -rw=randwrite -size=2G -filename=/home/ceph/test5.img -name="EBS 4K randwrite test" -iodepth=64 -runtime=60 -numjobs=4 -group_reporting
+  
+fio -ioengine=libaio -bs=4k -direct=1 -thread -rw=randread -size=2G -filename=/home/ceph/test5.img -name="EBS 4K randwrite test" -iodepth=64 -runtime=60 
+ read : io=2048.0MB,  bw=141061KB/s, iops=35265, runt= 14867msec  95.00th=[11072 us],
+
+fio -ioengine=libaio -bs=4k -direct=1 -thread -rw=randread -size=2G -filename=/home/ceph/test5.img -name="EBS 4K randwrite test" -iodepth=64 -runtime=60  -numjobs=4 -group_reporting 
+  read : io=3419.2MB, bw=58242KB/s, iops=14560, runt= 60114msec  95.00th=[66048 us]
+  
+fio -ioengine=libaio -bs=4k -direct=1 -thread -rw=read -size=2G -filename=/home/ceph/test5.img -name="EBS 4K randwrite test" -iodepth=64 -runtime=60
+  read : io=2048.0MB, bw=928354KB/s, iops=232088, runt=  2259msec  95.00th=[  454 us],
+
+
+
+3个OSD情况
+ fio -ioengine=libaio -bs=4k -direct=1  -thread -rw=randwrite -size=2G -filename=/mnt/cephblock/test5.img -name="EBS 4K randwrite test" -iodepth=64 -runtime=60 -numjobs=1 -group_reporting
+    write: io=110160KB, bw=1834.6KB/s, iops=458, runt= 60049msec 95.00th=[301056 us],
+fio -ioengine=libaio -bs=4k -direct=1  -thread -rw=randwrite -size=2G -filename=/mnt/cephblock/test5.img -name="EBS 4K randwrite test" -iodepth=64 -runtime=60 -numjobs=4 -group_reporting
+  write: io=156000KB, bw=2110.5KB/s, iops=527, runt= 73917msec
+ 
+
+
+fio -ioengine=libaio -bs=4k -direct=1 -thread -rw=randread -size=2G -filename=/mnt/cephblock/test5.img -name="EBS 4K randwrite test" -iodepth=64 -runtime=60 -numjobs=4 -group_reporting
+   
+fio -ioengine=libaio -bs=4k -direct=1 -thread -rw=randread -size=2G -filename=/mnt/cephblock/test5.img -name="EBS 4K randwrite test" -iodepth=64 -runtime=60 -numjobs=1 -group_reporting
+
+fio -ioengine=libaio -bs=4k  -direct=1 -thread -rw=read  -size=2G -filename=/mnt/cephblock/test5.img -name="EBS 4K randwrite test" -iodepth=64 -runtime=60 -numjobs=1  -group_reporting
+  read : io=1941.1MB, bw=33137KB/s, iops=8284, runt= 60011msec  95.00th=[10304 us],
+fio -ioengine=libaio -bs=4k  -direct=1 -thread -rw=read  -size=2G -filename=/mnt/cephblock/test5.img -name="EBS 4K randwrite test" -iodepth=64 -runtime=60 -numjobs=4  -group_reporting
+
+3个osd,两个客户端同时跑顺序读128k,50G数据，一个跑block跑满110M/S 一个跑fs(kernel) 能到 60M/S
+效果非常好，两个客户端都能跑到上限 
+monitor 统计经常能到 181MB/s-255MB/s
+3个osd,两个客户端同时跑顺序读128k,50G数据，两个同时跑kernel fs 都能到 60MB/s
+
+
+出现错误 
+Traceback (most recent call last):
+  File "/vm/ceph/bin/ceph", line 63, in <module>
+    import rados
+ImportError: No module named rados
+
+配置文件查找路径
+The default Ceph configuration file locations in sequential order include:
+$CEPH_CONF (i.e., the path following the $CEPH_CONF environment variable)
+-c path/path (i.e., the -c command line argument)
+/etc/ceph/ceph.conf
+~/.ceph/config
+./ceph.conf (i.e., in the current working directory)
+
+
+

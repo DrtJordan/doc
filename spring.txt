@@ -1,0 +1,1696 @@
+20120910 
+用 WebApplicationContextUtils.getWebApplicationContext获得 WebApplicationContext
+
+20110314
+性能测试
+创建10万次 CGLIB 对象，执行其中的三个方法 ，耗时 1488 微妙
+创建10万次  动态 proxy 接口 对象，执行其中的三个方法 ，耗时 506  微妙
+创建10万次  静态接口对象 ，执行其中的三个方法 ，耗时 8  微妙
+创建10万次  对象，执行其中的三个方法 ，耗时 4  微妙
+
+创建一次 CGLIB 对象，执行100000 次其中的三个方法   耗时 150 微妙
+创建一次 动态 proxy 接口 对象，执行100000 次其中的三个方法   耗时 68 微妙
+创建一次 静态接口对象，执行100000 次其中的三个方法   耗时 4  微妙
+创建一次  对象，执行100000 次其中的三个方法   耗时 2  微妙
+
+通过 AOP 的方式来执行 100万次空的方法
+proxy 8456
+cglib  9000
+classs  0 ,(1000万次 16)
+
+REST 不是 RPC，关注在 resource
+Representational - REST resources can be represented in virtually any form, including
+XML, JavaScript Object Notation (JSON), or even HTML--whatever form best suits the
+consumer of those resources.
+State - When working with REST, we are more concerned with the state of a resource
+than in the actions we can take against resources.
+Transfer - REST involves transferring resource data, in some representational form, from
+one application to another
+REST is about transferring the state of resources--in
+whatever form is most appropriate--from a server to a client (or vice-versa).
+REST就是在服务器/客户直接传递resource
+http://localhost:8080/Spitter/spittles/123 定义资源，unique id ,对资源做啥，通过http的get/put/post/delete 标示
+put(Update) post(create)
+
+
+性能从来都不在MVC上。。。主要在数据库
+
+通过eclipse 发布 web app的时候，程序是发布在
+D:\workspace\.metadata\.plugins\org.eclipse.wst.server.core\？ 通过 clean 可以看到
+
+
+集成tomcat的时候一定要把 lib/active-mq 下面的spring 2.0拿掉！
+不能把web-inf classess加到 project的 library !!!
+
+
+20120327 定义 ThreadLocal变量
+public class ThreadLocalVar {
+private static ThreadLocal<Integer> threadVar = new ThreadLocal<Integer>(); 
+public static Integer getID(){
+	Integer var=threadVar.get();
+	if (var==null)
+			{
+		var=Integer.parseInt("0");
+			}
+	var=var+1;
+	threadVar.set(var);
+	return var;
+}
+public static void main(String args[])
+{
+	Integer threadVar=ThreadLocalVar.getID();
+	System.out.println(threadVar);
+}
+}
+
+
+其实就是一个map，set的时候就会放置当前的threadid，拿的时候就获取当前thread的放进去的值
+ThreadLocal是解决线程安全问题一个很好的思路，它通过为每个线程提供一个独立的变量副本解决了变量并发访问的冲突问题。在很多情况下，ThreadLocal比直接使用synchronized同步机制解决线程安全问题更简单，更方便，且结果程序拥有更高的并发性。
+Spring 3 提供了两个可以用于格式化数字、日期和时间的注解@NumberFormat和@DateTimeFormat，这两个标签可以用于bean的属性或方法参数上。@NumberFormat可以用来格式化任何的数字的基本类型（如int，long）或java.lang.Number的实例（如 BigDecimal, Integer)。@DateTimeFormat可以用来格式化java.util.Date、java.util.Calendar和 java.util.Long类
+
+设置日期格式 需要 joda-time-2.1.jar
+ @DateTimeFormat(pattern = "yyyy-MM-dd")  @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
+	 private Date birthday ;
+	 
+配置data source
+<jee:jndi-lookup id="dataSource" jndi-name="jdbc/rds" resource-ref="true"/>
+resource-ref=true that the value given in jndi-name will be prepended with "java:comp/env/" 
+
+可以通过 JoinPoint 来获得被注入对象及参数 
+package com.cicc.AOPBean;
+import org.aspectj.lang.JoinPoint;
+import org.springframework.stereotype.Component;
+@Component
+public class AopInteceptor {
+public void beforeMethod(JoinPoint join)
+{	AopBean aopBean=(AopBean)join.getTarget();
+	System.out.println("AopInteceptor getID "+aopBean.getID());
+  Object[] args=join.getArgs();
+}
+}
+通过 环绕 AOP可以实现很有意思的事情，比如出错后不停地 re-try ...
+
+
+20120323
+The difference between directly identifying the delegate using
+default-impl and indirectly using delegate-ref is that the latter will be a
+Spring bean that itself may be injected, advised, or otherwise configured through
+Spring.
+
+<aop:declare-parents
+types-matching="com.springinaction.springidol.Performer+"
+implement-interface="com.springinaction.springidol.Contestant"
+delegate-ref="contestantDelegate"
+/>
+
+<aop:aspect>
+<aop:declare-parents
+types-matching="com.springinaction.springidol.Performer+"
+implement-interface="com.springinaction.springidol.Contestant"
+default-impl="com.springinaction.springidol.GraciousContestant"
+/>
+</aop:aspect>
+引入新的接口实现后，就可以把 获得对象转成新的接口，实现新的方法，比如
+<aop:config>
+<aop:aspect id="myTrack" ref="introductionImpl">
+<aop:declare-parents
+types-matching="com.cicc.model.dao.HibernateTestDAO+"
+implement-interface="com.cicc.model.dao.IntroductionFace"
+default-impl="com.cicc.model.dao.IntroductionImpl"
+/>
+</aop:aspect>
+</aop:config>
+
+HibernateTestDAO userDao = (HibernateTestDAO) ctx.getBean("hibernateTestImpl");
+IntroductionFace  face=(IntroductionFace) userDao;
+如果两个接口使用相同的一些参数，可以传入做一些诸如权限控制之类的事情
+
+
+
+advice 要植入代码
+jointpoint 那个方法要植入
+pointcut  那个class要植入
+
+spring对声明似的transaction支持是通过AOP实现的
+propagation来说明是否需要事务等
+也支持annotation方式声明事务
+sping对事务的支持是通过底层的支持实现的，比如jdbc connection,hibernate transaction
+打开如下配置支持事务
+
+基于JDK动态代理 ，可以将@Transactional放置在接口和具体类上。
+基于CGLIB类代理，只能将@Transactional放置在具体类上。
+因此 在实际开发时全部将@Transactional放到具体类上，而不是接口上。
+
+
+
+<bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+<property name="sessionFactory" ref="sessionFactory" />
+</bean> 
+
+<tx:advice id="txAdvice" transaction-manager="transactionManager">
+        <tx:attributes>
+            <tx:method name="delete*" propagation="REQUIRED" />
+            <tx:method name="add*" propagation="REQUIRED" />
+            <tx:method name="update*" propagation="REQUIRED" />
+            <tx:method name="save*" propagation="REQUIRED" />
+            <tx:method name="find*" propagation="SUPPORTS" read-only="true" />
+            <tx:method name="get*" propagation="SUPPORTS" read-only="true" />
+            <tx:method name="count*" propagation="SUPPORTS" read-only="true" />
+            <tx:method name="*" propagation="REQUIRED" />
+        </tx:attributes>
+    </tx:advice> 
+
+ <aop:config >
+ <aop:pointcut id="txPointcut" expression="execution(* com.springinaction.springidol.*.*(..))"/>" />
+  <aop:advisor advice-ref="txAdvice" pointcut-ref="txPointcut"/>
+</aop:config>  
+
+如果不使用接口来处理DAO的问题，会出现 class exception，
+如果修改成使用接口，用接口来调用，就不会出问题了
+用 REQUIRES_NEW 可以让某个事务单独提交
+
+通过 <tx:annotation-driven transaction-manager="txManager" /> 
+来支持 annotation 
+@Transactional(propagation=Propagation.SUPPORTS, readOnly=true)
+public class SpitterServiceImpl implements SpitterService {
+...
+@Transactional(propagation=Propagation.REQUIRED, readOnly=false)
+public void addSpitter(Spitter spitter) {
+...
+}
+...
+}
+
+和 hibernate 集成
+
+import org.springframework.beans.factory.annotation.Autowired;
+import java.util.List;
+import org.hibernate.SessionFactory;
+import org.springframework.stereotype.Repository;
+
+import java.util.*;
+
+import javax.sql.DataSource;
+@Repository("myHibernate")
+public class HibernateTestImpl implements HibernateTestDAO {
+	private SessionFactory sessionFactory;
+	@Autowired
+	public HibernateTestImpl(SessionFactory sessionFactory) {
+		this.sessionFactory = sessionFactory;
+		System.out.println("HibernateTestImpl(SessionFactory sessionFactory)");
+		}
+
+	
+	public void save(UserModel userModel)
+	{System.out.println("HibernateTestImpl save(UserModel userModel)");
+		sessionFactory.getCurrentSession().save(userModel);
+	}
+
+}
+
+20110313
+都是通过 DAO interface 然后才是 DAO imple 来进一步屏蔽 database
+SPring封装了大部分的jdbc exception，使之更加详细，同时建议不用自己捕获exception了
+Templates manage the fixed part of the  process while your custom data access code is handled in the callbacks
+
+可以把获得jdbcTemplate的方法也封装到一个父类中，这样后面的代码更加简单，
+public class JdbcTest2 extends NamedParameterJdbcDaoSupport {
+	private static final String SQL_INSERT_SPITTER =
+		"insert into t_user (name, age) " +
+		"values (:name, :age)";
+public void execSql2()
+	{Map<String, Object> params = new HashMap<String, Object>();
+	params.put("name", "newName2");
+	params.put("age", "12345");
+	getNamedParameterJdbcTemplate().update(SQL_INSERT_SPITTER, params);
+	}
+}
+配置
+<bean id="jdbcTest2"  class="com.springinaction.springidol.JdbcTest2">
+<property  name="dataSource" ref="dataSource" /> 
+</bean>
+
+
+since Spring 3.1 in favor of JdbcTemplate and NamedParameterJdbcTemplate. The JdbcTemplate and NamedParameterJdbcTemplate now provide all the functionality of the SimpleJdbcTemplate. 
+
+
+package com.springinaction.springidol;
+import org.springframework.jdbc.core.JdbcTemplate;
+import java.util.*;
+package com.springinaction.springidol;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+
+import java.util.*;
+
+import javax.sql.DataSource;
+
+public class JdbcTest {
+	private static final String SQL_INSERT_SPITTER =
+		"insert into t_user (name, age) " +
+		"values (:name, :age)";
+	private JdbcTemplate jdbcTemplate;
+	private NamedParameterJdbcTemplate namedJdbc;
+//	public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
+//	this.jdbcTemplate = jdbcTemplate;
+//	}
+	public void setNamedParameterJdbcTemplate(NamedParameterJdbcTemplate namedJdbc) {
+		this.namedJdbc = namedJdbc;
+		}
+@Autowired
+	public void setDataSource(DataSource dataSource) {
+		this.jdbcTemplate = new JdbcTemplate(dataSource);
+		this.namedJdbc = new NamedParameterJdbcTemplate(dataSource);
+		System.out.println("setDataSource(DataSource dataSource)");
+		}
+	public void execSql() throws java.lang.Exception
+	{
+		jdbcTemplate.update("insert into t_user values('123',4)");
+		System.out.println(jdbcTemplate.getDataSource().getConnection().toString());
+	}
+	public void execSql3()
+	{
+		jdbcTemplate.update("insert into t_u2 values('123456')");
+	}
+	public void execSql2()
+	{Map<String, Object> params = new HashMap<String, Object>();
+	params.put("name", "newName");
+	params.put("age", "123");
+	namedJdbc.update(SQL_INSERT_SPITTER, params);
+	}
+	/**
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+
+	}
+
+}
+
+
+
+<bean id="dataSource"
+class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+<property name="driverClassName"
+value="org.gjt.mm.mysql.Driver" />
+<property name="url"
+value="jdbc:mysql://localhost:3306/wzy" />
+<property name="username" value="wzy" />
+<property name="password" value="wzy" />
+</bean>
+<bean id="jdbcTemplate"
+class="org.springframework.jdbc.core.JdbcTemplate">
+<constructor-arg ref="dataSource" />
+</bean>
+
+<bean id="jdbcTest"  class="com.springinaction.springidol.JdbcTest">
+<property name="jdbcTemplate" ref="jdbcTemplate" />
+</bean>
+
+
+
+
+SPRING 配置constructer 
+<bean id="poeticDuke"
+class="com.springinaction.springidol.PoeticJuggler">
+<constructor-arg value="15" />
+<constructor-arg ref="sonnet29" />
+</bean>
+通过 
+<bean id="duke" class="com.springinaction.springidol.PoeticJuggler" scope="prototype" >
+ 来确定是要singleton还是每次一个新的bean
+ 注入变量
+ <property  name="userName" value="Roger" /> 
+  <property  name="userName" ref="beanID" /> 
+
+To set a property to null, you simply use the <null/> element. For
+example:
+<property name="someNonNullProperty"><null/></property>
+
+
+public void setInstruments(Properties instruments) {
+this.instruments = instruments;
+}
+<property name="instruments">
+<props>
+<prop key="GUITAR">STRUM STRUM STRUM</prop>
+<prop key="CYMBAL">CRASH CRASH CRASH</prop>
+<prop key="HARMONICA">HUM HUM HUM</prop>
+</props>
+</property>
+
+设置为annotation方式自动
+<context:annotation-config />
+@Autowired 可以放置在方法前，参数前，或者contructor前面
+如果有同样的bean定义多次，则可以通过如下方式指定用那个
+	@Autowired
+	@Qualifier("newBean2")
+	
+	prepare(@Qualifier("main") MovieCatalog movieCatalog,
+CustomerPreferenceDao customerPreferenceDao)
+
+
+
+
+可以使用
+<context:component-scan
+base-package="com.springinaction.springidol">
+</context:component-scan>
+来自动注册bean
+如果bean有下面的annotation
+@Component - A general-purpose stereotype annotation indicating that the class is a Spring component.
+@Controller - Indicates that the class defines a Spring MVC controller.
+@Repository - Indicates that the class defines a data repository.
+@Service - Indicates that the class defines a service.
+如
+@Component("eddie")
+public class Instrumentalist implements Performer {
+// ...
+}
+To force the use of CGLIB proxies set the value of the proxy-target-class attribute of the
+<aop:config> element to true:
+<aop:config proxy-target-class="true">
+<!-- other beans defined here... -->
+</aop:config>
+
+
+Spring 本身只支持方法的 AOP,ASpectJ支持更多(初始化方法,attribute)
+
+Advice what to do ,when to do 
+JointPoint  where/which method to do 
+PointCut which class to weave 
+Spring's proxy-based AOP 在运行的时候动态生成代理程序来做，如果ASpectJ可以再编译的时候就修改类
+
+声明一个 Around advance
+public void watchPerformance(ProceedingJoinPoint joinpoint) {
+try {
+System.out.println("The audience is taking their seats.");
+long start = System.currentTimeMillis();
+joinpoint.proceed();
+long end = System.currentTimeMillis(); //
+System.out.println("The performance took " + (end - start)+ " milliseconds.");
+} catch (Throwable t) {
+System.out.println("Boo! We want our money back!");
+}
+}
+<aop:around
+pointcut-ref="performance2"
+method="watchPerformance()" />
+
+
+When multiple advice needs to execute at the same join point (executing method) the ordering rules are as
+described in the section called “Advice ordering”. The precedence between aspects is determined by
+either adding the Order annotation to the bean backing the aspect or by having the bean implement the
+Ordered interface
+
+public class JDBCAOPBean implements AfterReturningAdvice ,MethodBeforeAdvice, Ordered{
+private int order = 1;
+	public int getOrder() {
+		return this.order;
+		}
+	public void setOrder(int order) {
+		this.order = order;
+		}
+
+可以使用ProxyFactoryBean的方式来实现对 MethodBeforeAdvice 和AfterReturningAdvice的实现，太麻烦。。。
+还是用统一的DAO实现比较好
+<bean id="userdaoproxy" class="org.springframework.aop.framework.ProxyFactoryBean">  
+ <property name="proxyInterfaces" value="com.cicc.model.dao.HibernateTestDAO"/>  
+ <property name="target">  
+  <ref bean="hibernateTestImpl2"/>  
+ </property>  
+ <property name="interceptorNames">  
+  <list>  
+   <value>jdbcAopBean</value>  
+  </list>  
+ </property>  
+</bean>  
+
+定义AOP
+如果 JointPoint 是interface,则不需要使用cglib和asm,如果不是interface,需要ASM cglib 2.2.2 匹配 asm 3.3.1
+
+
+<aop:config>
+<aop:aspect ref="audienceNew" >
+<aop:pointcut id="aopMethod" expression=
+"execution(* com.springinaction.springidol.AOPBean.aopMethod(..))"
+/>
+<aop:before pointcut-ref="aopMethod" method="beforeMethod()" />
+<aop:after-returning pointcut-ref="aopMethod" method="afterMethod()" />
+<aop:around  pointcut-ref="aopMethod"  method="aroundMehtod" />
+</aop:aspect>
+</aop:config>
+
+the execution of any public method:
+execution(public * *(..))
+the execution of any method with a name beginning with "set":
+execution(* set*(..))
+the execution of any method defined by the AccountService interface:
+execution(* com.xyz.service.AccountService.*(..))
+the execution of any method defined in the service package:
+execution(* com.xyz.service.*.*(..))
+the execution of any method defined in the service package or a sub-package:
+execution(* com.xyz.service..*.*(..))
+any join point (method execution only in Spring AOP) within the service package:
+within(com.xyz.service.*)
+
+You can use the * wildcard as all or
+part of a name pattern. The parameters pattern is slightly more complex: () matches a method that takes
+no parameters, whereas (..) matches any number of parameters (zero or more). The pattern (*)
+matches a method taking one parameter of any type, (*,String) matches a method taking two
+parameters, the first can be of any type, the second must be a String
+
+AOP参入参数
+<aop:config>
+<aop:aspect ref="jdbcAopBean" >
+<aop:pointcut id="daoMethod" expression= "execution(* com.cicc.model.dao.*.*(..)) and args(user_id)" />
+<aop:before pointcut-ref="daoMethod" method="beforeMethod"  arg-names="user_id"/>
+<aop:after-returning pointcut-ref="daoMethod" method="afterMethod"  arg-names="user_id"/>
+</aop:aspect>
+</aop:config>
+
+
+	public void beforeMethod(String user_id)
+{  
+	System.out.println("AOP before inputed parameter is "+user_id);
+	
+}
+
+如果使用注解来描述AOP，就需要配置 <aop:aspectj-autoproxy/> <aop:aspectj-autoproxy/> will create an  
+AnnotationAwareAspectJAutoProxyCreator in the Spring context and
+will automatically proxy beans whose methods match the pointcuts defined with
+@Pointcut annotations in @Aspect- annotated beans.
+@Aspect
+public class Audience {
+@Pointcut("execution(* com.springinaction.springidol.Performer.perform(..))")
+public void performance() {
+}
+@Before("performance()")
+public void takeSeats() {
+System.out.println("The audience is taking their seats.");
+}
+}
+AOP也可以直接引入新的方法到class
+
+20110312
+配置路径关系
+@RequestMapping("/ap2/*") 这个是相对于 servlet里面的起点开始的 <url-pattern>/app/*</url-pattern>
+如果使用了 @RequestParam ，但是参入的参数没有该变量，则会报错
+
+可以通过这种方式来配置 Spring interceptor,几乎可以拦截所有的URl
+<mvc:interceptors>  
+    <bean class="com.cicc.PPMInterceptor" />  
+</mvc:interceptors> 
+
+
+通过这种方式来获得输入的request,response
+@RequestMapping(value="/new")
+	public String newAction( HttpServletRequest request,HttpServletResponse response,Model model) throws java.lang.Exception{ 
+model.addAttribute("message", "Message from Control-New Add");
+
+String name=request.getParameter("username");
+System.out.println("new usernmae="+name);
+response.getOutputStream().print("direct output"+request.getAttribute("message"));
+//return "redirect:/jsp/home.jsp";
+return null;
+
+}
+
+如果要使用taglib，则需要加入如下内容到web.xml ，这个是ContextLoaderListener需要的，可以load其他的配置文件
+      <context-param>
+                    <param-name>contextConfigLocation</param-name>
+                     <param-value>/WEB-INF/spring-servlet.xml</param-value>
+          </context-param> 
+<listener>
+   <listener-class>
+    org.springframework.web.context.ContextLoaderListener
+   </listener-class>
+</listener>
+
+
+关于form bind的问题
+保证input 里面的name和bean里面的proptery名字一样就行了，大小写也要保持一致
+public class TestBean {
+	String userName ;
+	int age;
+	}
+	
+<input name="userName" size="15" /></td>
+<input name="age" size="15" maxlength="15" />
+controler逻辑
+
+@RequestMapping(value="/user",params="action=Add")
+	public String toHomeNew( TestBean testBean,
+			BindingResult bindingResult,Model model) {
+System.out.println("user name="+testBean.getUserName());
+model.addAttribute("username",testBean.getUserName()+":"+testBean.getAge());
+return "displayuser";
+}
+或者完全用spring 的tag 来处理
+首先在初始化form的时候，加上
+model.addAttribute("testBean", new TestBean());
+然后jsp
+<%@ taglib prefix="sf" uri="http://www.springframework.org/tags/form"%>
+<sf:form method="POST" modelAttribute="testBean">
+<sf:input path="userName" size="15" /> 
+<sf:input path="age" size="15" /> 
+
+
+   Filter有顺序吗？我们怎么控制filter的执行顺序。通过Tomcat的代码分析，servlet在Filter执行完成后才调用，如有多个filter怎么控制执行顺序，首先会想到在web.xml配置某个参数，例如order之类的，但查找一下一番，servlet并没有这个参数。试试filter Mapping的配置的先后顺序，果然有效，原来filter的执行顺序就考filter mapping在web.xml中的顺序。
+
+    spring interceptor也是这样的执行顺序，不过interceptor多一个配置参数order通过他也可以来实现interceptor的执行顺序。很多应用场景中，执行顺序还是重要的，比如cache和transaction interceptor的执行顺序，很显然cache应该在transaction之前，这样发现命中了就不用打开事务，如果transaction在前，每次都打开事务即使cache命中，这是一个无谓东动作。
+    
+    
+    设置filter 
+    
+    package com.cicc;
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+
+import java.io.IOException;
+import javax.servlet.ServletException;
+import java.util.*;  
+public class PPMFilter implements Filter   {  
+	private FilterConfig filterConfig = null;  
+	public void init(FilterConfig filterConfig) throws ServletException {  
+	this.filterConfig = filterConfig;  
+	}  
+	public void destroy() {  
+	this.filterConfig = null;  
+	}  
+	public void doFilter( ServletRequest request, ServletResponse response, 
+	FilterChain chain ) throws IOException, ServletException {  
+	Date startTime, endTime;
+	System.out.println("filter begin");
+	double totalTime;  
+	startTime = new Date(); // Forward the request to the next resource in 	the chain chain.doFilter(request, wrapper);
+	chain.doFilter(request, response);  
+	// -- Process the response -- \\  
+	// Calculate the difference between the start time and end time  
+	endTime = new Date();  
+	totalTime = endTime.getTime() - startTime.getTime();  
+	System.out.println("filter end");
+	}  
+	} 
+	
+	web.xml里面的配置
+	<filter>     
+        <filter-name>PPMFilter</filter-name>     
+        <filter-class>com.cicc.PPMFilter</filter-class>     
+        <init-param>     
+            <param-name>onError</param-name>     
+            <param-value>/index.jsp</param-value>     
+        </init-param>     
+    </filter>     
+      
+    <filter-mapping>     
+        <filter-name>PPMFilter</filter-name>    
+        <!-- 只过滤 .jsp 结尾的url, 其余的如 .do, .html, .jpg, .css 等不作过滤-->     
+        <url-pattern>/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>FORWARD</dispatcher>     
+    </filter-mapping> 
+    
+    
+  对于静态的资源访问，可以通过 tomcat来处理
+  <servlet-mapping>   
+    <servlet-name>default</servlet-name>  
+    <url-pattern>*.jpg</url-pattern>     
+</servlet-mapping>    
+<servlet-mapping>       
+    <servlet-name>default</servlet-name>    
+    <url-pattern>*.js</url-pattern>    
+</servlet-mapping>    
+<servlet-mapping>        
+    <servlet-name>default</servlet-name>       
+    <url-pattern>*.css</url-pattern>      
+</servlet-mapping>    
+    
+spring支持直接从controler写到response，返回 null  代表自己处理完了
+
+直接把返回的内容写到 response
+
+form data  binding是通过 WebDataBinder实现的，attribute名字和model的attribute名字一样就ok了。
+
+An @ModelAttribute on a method argument indicates the argument should be retrieved from the
+model. If not present in the model, the argument should be instantiated first and then added to the model.
+Once present in the model, the argument's fields should be populated from all request parameters that
+have matching names. This is known as data binding in Spring MVC, a very useful mechanism that saves
+you from having to parse each form field individually.
+@RequestMapping(value="/owners/{ownerId}/pets/{petId}/edit", method = RequestMethod.POST)
+public String processSubmit(@ModelAttribute Pet pet) {
+}
+
+interceptor类似servlet filter，可以在control处理前后进行特别处理，比如权限,log之类的
+
+<beans>
+<bean id="handlerMapping"
+class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping">
+<property name="interceptors">
+<list>
+<ref bean="officeHoursInterceptor"/>
+</list>
+</property>
+</bean>
+<bean id="officeHoursInterceptor"
+class="samples.TimeBasedAccessInterceptor">
+<property name="openingTime" value="9"/>
+<property name="closingTime" value="18"/>
+</bean>
+<beans>
+
+public class TimeBasedAccessInterceptor extends HandlerInterceptorAdapter {
+private int openingTime;
+private int closingTime;
+public void setOpeningTime(int openingTime) {
+this.openingTime = openingTime;
+}
+public void setClosingTime(int closingTime) {
+this.closingTime = closingTime;
+}
+public boolean preHandle(
+HttpServletRequest request,
+HttpServletResponse response,
+Object handler) throws Exception {
+Calendar cal = Calendar.getInstance();
+int hour = cal.get(HOUR_OF_DAY);
+if (openingTime <= hour && hour < closingTime) {
+return true;
+} else {
+response.sendRedirect("http://host.com/outsideOfficeHours.html");
+return false;
+}
+}
+}
+
+
+
+
+
+转到view的时候是通过 RequestDispatcher.forward(..) 
+
+The RedirectView issues an HttpServletResponse.sendRedirect() call that returns to the
+client browser as an HTTP redirect. By default all model attributes are considered to be exposed as URI
+template variables in the redirect URL.
+
+public String upload(...) {
+// ...
+return "redirect:files/{path}";
+}
+
+
+直接拿到 requset,response
+
+public class DisplayShoppingCartController implements Controller {
+public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) {
+List cartItems = // get a List of CartItem objects
+User user = // get the User doing the shopping
+ModelAndView mav = new ModelAndView("displayShoppingCart"); <-- the logical view name
+mav.addObject(cartItems); <-- look ma, no name, just the object
+mav.addObject(user); <-- and again ma!
+return mav;
+}
+}
+
+
+The @ResponseBody annotation is similar to @RequestBody. This annotation can be put on a
+method and indicates that the return type should be written straight to the HTTP response body (and not
+placed in a Model, or interpreted as a view name). For example:
+@RequestMapping(value = "/something", method = RequestMethod.PUT)
+@ResponseBody
+public String helloWorld() {
+return "Hello World";
+}
+The above example will result in the text Hello World being written to the HTTP response stream.
+
+
+直接引用URL里面的变量
+@RequestMapping(value="/owners/{ownerId}/pets/{petId}", method=RequestMethod.GET)
+public String findPet(@PathVariable String ownerId, @PathVariable String petId, Model model) {
+Owner owner = ownerService.findOwner(ownerId);
+Pet pet = owner.getPet(petId);
+model.addAttribute("pet", pet);
+return "displayPet";
+}
+通过参数值来判断
+@Controller
+@RequestMapping("/owners/{ownerId}")
+public class RelativePathUriTemplateController {
+@RequestMapping(value = "/pets/{petId}", method = RequestMethod.GET, params="myParam=myValue")
+public void findPet(@PathVariable String ownerId, @PathVariable String petId, Model model) {
+// implementation omitted
+}
+}
+通过header的变量来判断
+@RequestMapping(value = "/pets", method = RequestMethod.GET, headers="myHeader=myValue")
+public void findPet(@PathVariable String ownerId, @PathVariable String petId, Model model) {
+// implementation omitted
+}
+}
+
+spring 自带字符集的 filter 
+
+<filter> 
+<filter-name>encodingFilter</filter-name> 
+<filter-class> 
+org.springframework.web.filter.CharacterEncodingFilter  
+</filter-class> 
+<init-param> 
+<param-name>encoding</param-name> 
+<param-value>UTF-8</param-value> 
+</init-param> 
+<init-param> 
+<param-name>forceEncoding</param-name> 
+<param-value>false</param-value> 
+</init-param> 
+</filter> 
+
+
+20120305
+HibernateTemplate 已经被废弃了... 不推荐使用...
+springmvc spring jpa hibernate。 
+2100510
+性能测试
+spring简单转发
+2000 request/s
+
+servlet直接转发
+2600 requst/s
+性能差距在30%左右
+
+web.xml里面的servlet mapping在最后面的优先级最高
+
+struts2 is very very slow. 
+struts2 要说慢主要就是慢在tag上，不用太多没必要的tag，结合freemarker宏就足够了，
+Struts2的慢要追溯到它的前身 Webwork了，目前已知的主要原因包括：复杂的拦截器链、OGNL表达式解析等。 
+目前spring3 mvc在易用性和性能上已经完胜struts2了。
+以后的SSH就是spring mvc + spring + hibernate了。
+
+测试步骤：搭建6个Web工程，如下：
+
+1.纯JSP:不包含任何MVC框架，只有一个测试用的JSP页面。
+
+2.struts1：包含一个Action，不做任何逻辑处理，直接转发到一个JSP页面
+
+3.struts2 JSP：不包含Action，只包含测试JSP页面，直接访问该页面。
+
+4.struts2 单例Action：采用Spring来管理Struts2的Action实例，并配置成单例模式。
+
+5.struts2 多例Action：采用Spring来管理Struts2的Action实例，并配置成单例模式。
+
+6.SpringMVC3：采用Spring来管理Controller实例，包含一个Controller，不做逻辑处理，收到请求后，直接返回到一个JSP页面。
+
+测试结果： Requests Per Second(每秒处理请求数)
+
+JSP          452.83
+struts1   341.03
+struts2 JSP  79.35
+struts2 单例  action 71.74
+struts2 多例 action 58.34
+SpringMVC3 	317.09
+
+说明：以上测试虽不是非常的精确，但基本能说明一定的问题。每个JSP页面和Action都不包含任何的业务逻辑代码，只是请求转发。每轮测试取三次总时间的平均值。所有工程的测试均全部完成并正常处理请求，没有请求拒绝情况发生。
+
+结论：
+
+1.纯JSP的性能应该最高，这不难理解，JSP被编译成Servlet后，没有任何多余的功能，收到请求后直接处理。（这也验证一句经典的话：越原始效率就越高。）
+
+2.struts1的性能是仅次于纯JSP的，由于struts1采用单例Action模式，且本身的封装相比struts2应该说简单很多，虽然开发效率不如struts2，但已经过多年的实践考验，性能稳定高效。
+
+3.相比来说struts2的性能就比较差了，这不难理解，struts2之所以开发方便，是由于采用值栈、OGNL表达式、拦截器等技术对请求参数的映射和返回结果进行了处理，另外还采用大量的标签库等，这些都无疑增加了处理的时间。因此降低了效率。在我们实际的项目中，我测试本地工程访问每秒处理请求数只能达到35左右，应该说还有不少可优化的空间。
+
+4.很多人认为struts2性能差是因为它的多例Action模式导致的，但我们采用spring管理struts2的Action，并设置按单例方式生成Action实例后，发现其性能有所提高，但并不是很明显。由此可见，多例Action模式并不是struts2性能瓶颈所在。另外，我们在 struts2中采用JSP方式访问，发现其性能依旧和没有采用任何MVC框架的纯JSP之间存在好几倍的差距，这又从另一个侧面证实了我们刚才得出结论，struts2性能的瓶颈不在于它的多例Action模式。       
+
+5.SpringMVC3的性能略逊于struts1，但基本是同级别的，这让人眼前一亮，springMVC有着不比struts2差的开发效率和解耦度，但性能却是struts2的好几倍，这让我们灰常振奋，SpringMVC无疑又是项目开发的一个好的选择。唯一的问题就是，目前国内使用面还不太多，各方面的参考资料相对较少，上手的话可能要稍微难点。
+
+
+cglib比jdk创建动态代理的性能高大约10倍，但是cglib在创建代理对象时间比jdk多8倍。因此，对于创建singleton或实例池对象代理用cglib方式比较合适，因为无须频繁创建代理对象，但由于cglib采用动态创建子类的方式生成代理对象，所以对目标类中的final方法进行代理。
+
+随着 AOP（Aspect Oriented Programming）的发展，代码动态生成已然成为 Java 世界中不可或缺的一环。本文将介绍一种小巧轻便的 Java 字节码操控框架 ASM，它能方便地生成和改造 Java 代码。著名的框架，如 Hibernate 和 Spring 在底层都用到了 ASM。比起传统的 Java 字节码操控框架，BCEL 或者 SERP，它具有更符合现代软件模式的编程模型和更迅捷的性能。
+
+本文目的简单了解Spring AOP基础知识点。
+
+AOP概述
+
+Spring AOP所涉及的Java基础知识
+
+Spring AOP的增强类型
+
+Spring AOP的切面类型
+
+通过自动代理技术创建切面
+
+AOP概述
+
+编程语言最终极的目标就是能以更自然，更灵活的方式模拟世界，从原始机器语言道过程语言在岛面向对象的语言，编程语言一步步地用更自然，更强大的方式描述软件。AOP是软件开发饲养发展到一定阶段的产物，但Aop的出现并不是要完全代替OOP，而仅仅是作为OOP的有益补充。虽然AOP作为一项编程技术已经有多年的历史，但一直长时间停顿在学术领域，直到近几年，AOP才作为一项真正的实用技术在应用领域开疆扩土。需要指出的是AOP的应用场合是受限的，它一般只适合用于那些具有横切逻辑的应用场合：如性能监测，访问控制，事物管理以及日志记录（虽然很多讲解日志记录的例子用于AOP的讲解，但很多人认为很难用AOP编写实用日志。）不过，这丝毫不影响AOP作为一种新的软件开发思想在软件开发领域所占的地位。
+
+
+AOP到底是什么
+
+AOP 是Aspect Oriented Programing 的简称，最初被翻译为“面向方面编程”，这个翻译向来为人所诟病，但是由于先入为主的效应，受众广泛，所以这个翻译依然被很多人使用。但我们更倾向于用“面向切面编程”的译法，因为他表达更加准确。
+AOP是一个软件层面的高度抽象，在现实世界中很难找到贴切的对应物，所以没有办法也只能同其他的讲解一样通过代码来帮助大家理解AOP的概念。
+按照软件重构思想的概念，如果多个类中出现相同的代码，应该考虑定义一个相同的抽象类，将这些相同的代码提取到抽象类中。比如Cat,Dog,Pig这些对象都有跑行为run()和吃行为eat()，我们完全可以定义一个包含这两个方法的抽象父类Animal，然后通过引入父类来消除多个类中重复代码的方式。看一下代码：
+
+package com.animal;
+import java.util.Date;
+public class IAnimalImpl implements IAnimal {
+
+
+      public void toEat(String animalName) {
+               System.out.println("IAnimalImpl 类toEat(String animalName)方法开始执行"+new Date());----*
+              System.out.println(animalName+"开始吃饭了");
+               System.out.println("IAnimalImpl 类toEat(String animalName)方法执行结束"+new Date());-----*
+        }
+
+       public void toRun(String animalName) {
+              System.out.println("IAnimalImpl 类toRun(String animalName)方法开始执行"+new Date());-----*
+              System.out.println(animalName+"吃饱了开始跑了");
+              System.out.println("IAnimalImpl 类toRun(String animalName)方法执行结束"+new Date());-----*
+        }
+}
+
+带*号的粗体部分淹没在业务逻辑代码中，这些非业务代码像藤一样缠着业务逻辑代码，而且执行的操作几乎相同。显然我们无法通过抽象父类的方式消除以上所示的重复性横切代码，因为这些代码横切逻辑依附在业务逻辑代码中，他们不能转移到其他的地方去。
+
+AOP为我们通过横向抽取机制为这类无法通过纵向继承体系进行抽象的重复性代码提供了解决方案，AOP希望这些分散在各个业务中逻辑代码中的相同代码通过横向切割的方式提取一个独立的模块中，还业务逻辑类一个清新的世界。
+
+当然我们知道将这些重复性的横切逻辑独立出来是很容易的，但如何将这些独立的逻辑融合到业务逻辑中完成和原来一样的业务逻辑，这才是事情的关键，也正是AOP要解决的主要问题。
+
+AOP术语
+
+连接点：Joinpoint
+
+程序执行的某特特定位置：如类开始初始化前，类初始化后，类某个方法调用前，调用后，方法抛出异常后。一个类或一段程序拥有一些具有边界性质的特定点，这些代码中的特定点九称为“连接点”，Spring仅支持方法的连接点，即仅能在方法调用前，方法调用后，方法抛出异常时以及方法调用前后这些程序执行点织入增强，从某种程度上说AOP是一个黑客（因为它要想目前类中嵌入额外的代码逻辑），连接点就是AOP向目标类打入楔子的时候的点。
+
+
+连接点有两个信息确定：第一是用方法表示的程序执行点，第二个是用相对点表示的方位。如在Test.to()方法执行前的连接点，执行点为 Test.to()，方位为该方法执行前的位置。Spring使用切点对执行点进行定位，而方位则在增强类型中定义。
+
+切点：Pointcut
+
+每个程序都拥有多个连接点，如一个拥有两个方法的类，这两个方法都是连接点，即连接点是程序类中客观存在的事物，但在这为数不多的连接点中，如何定位到某个感兴趣的连接点上呢？AOP通过“切点”定位特定的连接点，通过数据库查询的感念来理解切点和连接点的关系在合适不过了：连接点相当于数据库中的记录，而切点相当于查询条件。切点和连接点不是一对一的关系，一个切点可以匹配多个连接点。
+
+在Spring中，切点通过org.springframework.aop.Pointcut接口进行描述，他使用类和方法作为连接的查询条件，Spring AOP 的规则解析引擎负责解析切点所设定的查询条件，找到对应的连接点---其实确切的说，应该是执行点而非连接点，因为连接点是方法执行前，执行后等包括方位信息的具体程序执行点，而切点只定位到某个方法上，所以如果希望定位到具体的连接点上，还需要提供方位信息。
+
+增强：Advice
+
+
+增强是织入到目标类连接点上的一段程序代码。是不是觉得AOP越来越像黑客了？这不是往业务代码中装入木马吗？在Spring中，增强除用于描述一段程序代码外，还拥有另一个和连接点相关的信息。这便是执行点的方法。结合执行点方法信息和切点信息。我们就可以找到特定的连接点了。正因为增强即包含了用于添加到目标连接点上的一段执行逻辑，有包含了用于定位连接点的方位信息，所以Spring所提供的增强接口带方位名的：BeforeAdvice,AfterRetuningAdvice,ThrowsAdvice等,
+
+目标对象(traget):
+
+增强逻辑的织入目标类,如果没有AOP,目标业务类需要自己实现所有逻辑,在AOP帮助下,目标类只需实现非横切逻辑的程序逻辑,而日志处理,性能监视等横切逻辑可以使用AOP动态织入到特定的连接点上.
+
+引介: Introdction
+
+引介是一种特殊的增强，他为类添加一些属性和方法，这样既使一个业务类原本没有实现某个接口，通过AOP的引介功能，我们可以动态地位该业务类添加接口的实例逻辑，让业务类成为这个接口的实现
+类。
+
+织入：Weaving
+
+织入是将增强添加对目标类具体连接点上的过程，AOP像一台织布机，将目标类，增强或者引介通过AOP这台织布机天衣无缝的编制在一起，我们不能不说“织入”这个词太精辟了，根据不同的实现技术
+
+，AOP有三种织入技术：
+
+1）编译期织入，这要求使用特殊的Java编译器。
+2）类加载期织入，这要求使用特殊的类装载器
+3）动态代理织入，在运行期为目标类添加增强生成子类的方式。
+Spring采用动态代理织入,一种是有接口的，通过java的反射(动态创建实现接口的proxy类)和代理来实现，如果是类的，用CGLIB(ASM)实现(动态创建子类)
+
+
+代理：Proxy
+
+
+一个被AOP织入增强后，就产生了一个结果类，它是融合了原类和增强逻辑的代理类，根据不同的代理方式，代理类即可能是和原类具有相同接口的类，也可能就是原类的子类，所以我们可以采用调用原类相同的方式调用代理类。
+
+切面:Aspect
+
+切面由切点和增强（引介）组成，它既包括了横切逻辑的定义，也包括了连接点的定位，Spring AOP就是负责实施切面的框架，它将切面所定义的横切逻辑织入到切面所指定的连接点中。
+
+AOP 的工作重心在于如何将增强应用于目标类对象的连接点上，这里首先包括两个工作,第一：如何通过切点和增强定位到连接点上，第二：如何在增强中编写切面的代码
+
+Sprig AOP
+
+
+Sping AOP是AOP的实现者之一：他使用纯Java实现，不需要专门的编译过程，不需要特殊的类加载器，他在运行期通过代理方式向目标类织入增强代码，Spring并不尝试提供最完美的AOP实现，相反它侧重于提供一种和Spring IoC容器整合的AOP实现，用以解决企业级开发中常见的问题，在Spring2.0中，我们可以天衣无缝的将Spring AOP,IoC和AspectJ整合在一起.
+
+Spring   增强
+
+前置增强:
+
+Spring 使用增强类定义横切逻辑,同时由于Spring只支持方法连接点,增强还包括了在方法的那一个点加入横切代码的方法信息,所以增强还包括了在方法的那一点加入横切代码的方位信息,所以增强即包含横切逻辑,还包括部分连接点的信息.
+
+创建一个前置增强类实现MethodBeforeAdvice接口，MethodBeforAdvice是BeforAdvice前置增强接口的子类。MethodBeforeAdvice接口中只定义了一个befor(Method method,Object[] args,Object obj)throws Throwabe,其中method为目标类的方法，args为目标类方法的入参，而obj为目标类的实例。当该方法出现异常时候，将阻止目标类方法的执行。
+
+下面我们以刚才的代码为例子创建一个前置增强类,继承MethodBeforeAdvice接口,
+package com.advice;
+import java.lang.reflect.Method;
+import java.util.Date;
+import org.springframework.aop.MethodBeforeAdvice;
+
+public class AnimalBeforeAdvice implements MethodBeforeAdvice {
+
+         public void before(Method method, Object[] arges, Object obj)
+           throws Throwable {
+                  // TODO Auto-generated method stub
+                  System.out.println(obj.getClass().getName()+"类"+method.getName()+"方法开始执        行"+new Date());
+          }
+
+}
+
+测试输出类
+
+
+package test;
+import com.animal.IAnimal;
+import com.animal.IAnimalImpl;
+import com.advice.AnimalBeforeAdvice;
+import org.springframework.aop.framework.ProxyFactory;
+public class Test {
+
+          public static void main(String arges[])
+         {
+                   //创建目标类
+                  IAnimal CatTrage=new IAnimalImpl();
+                 //目标类调用输出
+                   CatTrage.toEat("小猫");
+  
+                   //前置增强类
+                   AnimalBeforeAdvice beforeAdvice=new AnimalBeforeAdvice();
+  
+                   //Spring提供的代理工厂
+                   ProxyFactory pf=new ProxyFactory();
+  
+                   //指定对接口代理
+                   pf.setInterfaces(CatTrage.getClass().getInterfaces());
+  
+                   //指定代理目标
+                   pf.setTarget(CatTrage);
+  
+                   //指定增强
+                   pf.addAdvice(beforeAdvice);
+  
+                   //通过Spring工厂获得代理实例
+                   IAnimal CatProxy=(IAnimal)pf.getProxy();
+  
+                   //调用输出
+                   CatProxy.toEat("小猫");
+                   CatProxy.toRun("小狗");
+        }
+}
+
+输出结果
+
+小猫开始吃饭了
+
+代理结果输出:
+
+com.animal.IAnimalImpl类toEat方法开始执行Mon Feb 09 18:44:21 CST 2009
+小猫开始吃饭了
+com.animal.IAnimalImpl类toRun方法开始执行Mon Feb 09 18:44:21 CST 2009
+小狗吃饱了开始跑了
+
+解剖Spring中ProxyFactory
+
+在Spring中我们使用了org.springframework.aop.framework.ProxyFactory代理工厂将Adivce织入到目标Bean中，ProxyFactory内部就是使用了JDK代理或CGIib代理的技术，将Adive应用到目标类中。
+ProxyFactory是FactoryBean接口的实现类，它负责为其他的Bean创建代理实例，他内部使用ProxyFactory来完成这一工作，下面我们进一步了解ProxyFactoryBean的几个常用的可配置属性。
+
+
+target:代理的目标对象。
+
+
+proxyInterfaces:代理所有实现的接口，可以是多个接口，该属性还有一个别名属性interfaces
+
+
+interceptorNames:需要织入目标对象的增强类名数组（必需采用全限定类名），在内部 interceptorNames是一个字符串数组，ProxyFactoryBean通过反射机制获取对应的类，它们可以是拦截器，增强或包含增强和切点的Advisor，配置中的顺序对应调用的顺序。
+
+
+Singleton:返回的代理是否为单实例，默认为单实例。
+
+
+optimize:当设置为true时，强制使用CGLib代理，对于singleton的代理，我们推荐使用才 CGLib代理，因为CGLib代理创建代理时速度慢，而产生出的代理对象运行效率高，而使用JDK代理的表现正好相反。
+
+
+proxyTargetClass：是否对类进行代理（而不是对接口进行代理）设置为true时，使用CGLib代理。当设置成true时，无须在设置proxyInterface属性，即使设置也会被ProxyFactoryBean忽略。
+
+大家可能已经注意到ProxyFactory通过addAdvice(Advice)添加一个增强，用户可以使用该方法添加多个增强，多个增强形成一个增强链，他们的调用顺序和添加顺序一致，可以通过addAdvice(int,Advice)将增强添加到增强链的具体位置。第一个位置为0。
+
+Spring后置增强
+
+
+同理自定义后置增强类实现AfterReturningAdvice来定义后置增强的逻辑，AfterReturningAdvice接口也定义了唯一方法afterReturning(Object returnObj,Method method,Object[] arges,Object obj)throws Throwable 其中returnObj为目标类实例方法返回结果，method为目标类方法，arges为目标类方法入参，obj为目标类实例。
+
+假设在后置增强中抛出异常，如果该异常是目标类方法声明的异常，则该异常并归到目标类方法所声明的异常，如果该异常不是目标类方法声明的异常，Spring将其转为运行期异常抛出。
+
+
+创建后置增强类：
+package com.advice;
+
+import java.lang.reflect.Method;
+import java.util.Date;
+
+import org.springframework.aop.AfterReturningAdvice;
+
+public class AnimalAfterAdvice implements AfterReturningAdvice {
+
+                  public void afterReturning(Object returnObj, Method method, Object[] arges,
+                    Object obj) throws Throwable {
+                                   System.out.println(obj.getClass().getName()+"类"+method.getName()+"方法执行结束"+new Date());
+                  }
+}
+
+利用ProxyFactory的addAdvice(Advice)方法添加后置增强pf.addAdvice(afterAdvice);
+
+增强在Spring中的配置
+
+<!-- 代理目标 -->
+<bean id="targetAnimal" class="com.animal.IAnimalImpl" />
+
+
+<!-- 前置增强 -->
+<bean id="beforeAdvice" class="com.advice.AnimalBeforeAdvice" />
+
+
+<!-- 后置增强 -->
+<bean id="afterAdvice" class="com.advice.AnimalAfterAdvice" />
+
+
+<!-- 创建代理 -->
+<bean id="animal"
+   class="org.springframework.aop.framework.ProxyFactoryBean">
+   <!-- 指定代理接口 -->
+             <property name="proxyInterfaces">
+                     <value>com.animal.IAnimal</value>
+             </property>
+             <!-- 指定增强类 -->
+             <property name="interceptorNames">
+                      <list>
+                               <value>beforeAdvice</value>
+                               <value>afterAdvice</value>
+                      </list>
+             </property>
+             <!-- 指定目标类 -->
+             <property name="target">
+                        <ref local="targetAnimal" />
+             </property>
+</bean>
+
+环绕增强
+
+环绕增强允许在目标类方法调用前后织入横切逻辑，它综合实现了前置，后置增强两者的功能。
+
+Spring直接使用AOP联盟定义的MethodInterceptor最为环绕增强的接口，该接口容有唯一的接口方法Object invoke(MethodInvocation invocation)throws Throwable，MethodInvocation不但封装目标方法以及入参数组，还封装了目标方法所在实例对象，通过 MethodInvocation的getArguments()可以获取目标方法的入参数组，通过procees()放射调用目标类实例相应的方法，通过在实现类中定义横切逻辑，很容易实现方法前后增强。
+
+创建环绕增强类
+
+
+package com.advice;
+
+import java.util.Date;
+
+import org.aopalliance.intercept.MethodInterceptor;
+import org.aopalliance.intercept.MethodInvocation;
+
+public class AnimalInterceptAdvice implements MethodInterceptor {
+
+public Object invoke(MethodInvocation invocation) throws Throwable {
+             //目标类方法返回值
+             Object result=null;
+
+
+             //目标类名
+             String objName=invocation.getThis().getClass().getName();
+
+
+             //目标方法名
+             String methodName=invocation.getMethod().getName();
+
+
+             //目标方法参数
+             Object[] arges=invocation.getArguments();
+  
+             //方法执行前增强
+             System.out.println(objName+"类"+methodName+"方法开始执行"+new Date()+"环绕增强");
+
+
+             //通过反射机制调用目标方法
+             result=invocation.proceed();
+
+
+             //方法执行后增强
+             System.out.println(objName+"类"+methodName+"方法执行结束"+new Date()+"环绕增强");
+  
+             return result;
+            }
+}
+
+环绕增强在Spring中的配置
+
+<!-- 代理目标 -->
+<bean id="targetAnimal" class="com.animal.IAnimalImpl" />
+
+
+<!-- 环绕增强 -->
+<bean id="interceptAdvice" class="com.advice.AnimalInterceptAdvice" />
+
+
+<!-- 创建代理 -->
+<bean id="animal"
+   class="org.springframework.aop.framework.ProxyFactoryBean">
+   <!-- 指定代理接口 -->
+        <property name="proxyInterfaces">
+                    <value>com.animal.IAnimal</value>
+           </property>
+           <!-- 指定增强类 -->
+          <property name="interceptorNames">
+                    <list>
+                            <value>interceptAdvice</value>
+                    </list>
+          </property>
+           <!-- 指定目标类 -->
+           <property name="target">
+                   <ref local="targetAnimal"/>
+          </property>
+</bean>
+
+
+创建切面
+
+在介绍增强时，我们可能注意到一个问题，增强被织入目标类的所有方法中，假设我们希望有选择织入到目标类某些特定方法中，就需要使用切点进行目标连接点的定位了，增强提供了连接点的方位信息：如织入到方法前面，后面等，而切点进一步描述织入到那些类的那些方法上。
+Spring通过org.springframework.aop.Pointcu接口描述切点，Pointcut由ClassFilter和 MethodMatcher构成，它通过ClassFliter定位到某些特定类上，通过MethodMatcher定位到某些特定的方法上，这样 Pointcut就拥有了描述某些特定类的某些特定方法的能力。
+
+其中ClassFilter 只定义了一个方法matches(Class clazz)，其参数代表一个被检测类，该方法判别被检测的类是否匹配过滤条件。
+Spring支持两种方法匹配器：静态方法匹配器和动态方法匹配器，所谓静态方法匹配器，它仅对方法名签名（包括方法名和入参类型及顺序）进行匹配，而动态方法匹配器会在运行期检查方法入参的值。静态匹配仅会匹配一次，而动态匹配因为每次调用方法的入参可能都不一样，所以每次调用方法都必须判断，因此动态匹配对性能的影响很大。
+一般情况下，动态匹配不常用，方法匹配器的类型由isRuntime（）返回值决定。返回false,表示是静态方法匹配器，true表示动态方法匹配器。
+
+切面类型：
+
+由于增强即包含横切代码，有包含部分的连接点信息（方法前，方法后主方位信息），所以我们可以仅通过增强类生成一个切面，但切点仅代表目标类连接点的部分信息（类和方法的定位），所以仅有切点我们无法制作一个切面必须结合增强才能制作出切面。Spring中使用 org.springframework.aop.Advisor接口表示切面的概念。一个切面同时包含横切代码和连接点的信息切面可以分为三类：一般切面，切点切面和引介切面。
+
+
+下面我们介绍PointcutAdvisor切点切面：他包含Advice和Pointcut两个类。这样，我们就可以通过类，方法名以及方法为等信息灵活地定义切面的连接点，提供更具适用性的切面。
+
+PointcutAdvisor主要有6个具体的实现类，我们只介绍一种：
+RegexpMethodPointcutAdvisor:对于按正则表达式匹配方法名进行切点定义切面，可以通过扩展该实现类进行操作。RegexpMethodPointcutAdvisor允许用户以正则表达式模式串定义方法匹配的切点，其内部通过 JdkRegexpMethodPointcut构造出正则表达式方法名切点。RegexpMethodPointcutAdvisor是用于同一个类中多个方法满足一定命名规范情况下。
+
+advice属性：表示织入的增强。
+
+
+patterns属性：用正则表达式定义目标类全限定方法名的匹配模式串。当只有一个匹配模式串时使用属性
+
+pattern,当有多个匹配模式时候使用patterns，这些匹配串之间是“或”的关系。
+
+
+order切面的织入时对应的顺序。
+
+Spring环境下创建切面
+
+<!-- 代理目标 -->
+<bean id="targetAnimal" class="com.animal.IAnimalImpl" />
+<!-- 环绕增强 -->
+
+
+<bean id="interceptAdvice" class="com.advice.AnimalInterceptAdvice" />
+<!-- 创建切面 -->
+
+
+<bean id="regexAdvisor" class="org.springframework.aop.support.RegexpMethodPointcutAdvisor">
+        <!-- 指定正则表达式匹配串-->
+         <property name="patterns">
+            <list>
+                     <value>.*toEat*.</value>
+            </list>
+          </property>
+          <!-- 织入增强-->
+          <property name="advice" ref="interceptAdvice"/>
+</bean>
+
+
+<!-- 创建代理 -->
+<bean id="animal"
+   class="org.springframework.aop.framework.ProxyFactoryBean">
+           <!-- 指定代理接口 -->
+           <property name="proxyInterfaces">
+                    <value>com.animal.IAnimal</value>
+          </property>
+          <!-- 指定增强类 -->
+           <property name="interceptorNames">
+            <list>
+                    <value>regexAdvisor</value>
+           </list>
+          </property>
+          <!-- 指定目标类 -->
+          <property name="target">
+                   <ref local="targetAnimal" />
+          </property>
+</bean>
+
+
+自动代理:
+在前面所有例子中我们通过ProxyFactoryBean创建织入切面的代理，每一个需要被代理的Bean都需要使用一个 ProxyFactoryBean 进行配置，虽然可以使用父子类关系进行改造，但仍属于增量配置，而且配置文件不易读懂，幸运的是Spring提供了自动代理机制，让容器为我们自动生成代理，在内部Spring使用BeanPostProcessor自动完成这项工作。
+
+代理创建器：
+
+基于BeanPostProcessor的自动代理创建器的实现类，将根据一些规则自动在容器实例化Bean时为匹配的Bean生成代理实例，这些代理创建器可以分为以下三类 ：
+
+基于Bean配置名规则的自动代理创建器，允许为一组特定配置名的Bean自动创建代理实例的代理创建器，实现类为 BeanNameAutoPorxyCreator。
+
+
+基于Advisor匹配机制的自动代理创建器，他会对容器中所有的Advisor进行扫描，自动将这些切面应用到匹配的Bean中（即为目标Bean创建代理实例）实现类为DefaultAdvisorAutoProxyCreator。
+
+
+基于Bean中AspjectJ注解标签的自动代理创建器：为包含AspectJ注解的Bean自动创建代理实例，他的实现类是 AnnotationAwareAspectJAutoProxyCreator该类是Spring2.0的新增类。
+
+
+BeanNameAutoProxyCreator
+
+下面我们以刚才的例子为基础，使用BeanNameAutoProxyCreator自动完成代理配置
+
+<bean class="org.springframework.aop.framework.autoproxy.BeanNameAutoProxyCreator">
+      <property name="beanNames">
+          <list>
+                <!-- 添加代理的目标类 -->
+                 <value>targetAnimal</value>
+         </list>
+         </property>
+  
+         <property name="interceptorNames">
+          <list>
+                 <value>regexAdvisor</value>
+                 <!-- 此处可添加更新的拦截器 -->
+          </list>
+         </property>
+</bean>
+
+BeanNameAutoProxyCreator是Bean后处理器不需要被引用，因此没有ID属性，他根据指定拦截器为目标Bean自动创建代理。
+
+beanNames属性: 他允许用户指定一组需要自动代理的Bean名称，Bean名称也可以使用通配符*，例如*er就指定了以er为后缀的规则可以将这两个Bean和容器中其他的Bean区分开。
+配置如下：<property name="beanNames" value="*er">
+当然这样有风险：我们也可以这样设置：value="wariter,seller".
+
+interceptorNames：属性指定一个或者多个增强Bean 的名称，此外，还有一个optimize属性，如果将此属性设置为true将强制使用CGLib动态代理代理技术。
+
+通过这样配置后我们可以向平常依赖注入一样使用目标Bean，而Bean后处理器BeanNameAutoProxyCreator根据指定的配置来自动完成代理。当我们需要为新的目标Bean做代理时只需添加beanNames属性，需要添加新的拦截器时只需添加interceptorNames 属性，这样配置文件就变得简洁易懂了。
+
+
+DefaultAdvisorAutoProxyCreator
+
+我们知道切面Advisor是切点的增强复合体，Advisor本身已经包含了足够的信息，横切逻辑（要织入什么）以及连接点（织入到哪里）
+
+DefaultAdvisorAutoProxyCreator能够扫描容器中Advisor，并将Advisor自动织入到匹配的目标Bean 中，即为匹配的目标Bean自动创建代理
+
+Spring 的配置文件如下
+
+<!-- 代理目标 -->
+<bean id="targetAnimal" class="com.animal.IAnimalImpl" />
+<bean id="afterAdvice" class="com.advice.AnimalAfterAdvice" />
+<!-- 环绕增强 -->
+<bean id="interceptAdvice" class="com.advice.AnimalInterceptAdvice"/>
+
+<!-- 创建切面 -->
+<bean id="regexAdvisor" class="org.springframework.aop.support.RegexpMethodPointcutAdvisor">
+    <property name="patterns">
+          <list>
+              <value>.*toEat*.</value>
+          </list>
+      </property>
+      <property name="advice" ref="interceptAdvice"/>
+</bean>
+
+<!--Bean后处理器，没有ID属性不需要被应用-->
+<bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"/>
+
+DefaultAdvisorAutoProxyCreator他将扫描配置文件中所有Advisor并为所有匹配的Bean自动创建代理．
+
+BeanNameAutoProxyCreator，DefaultAdvisorAutoProxyCreator，Bean后处理器在 Spring声明式事务处理中被广泛应用．在以后的部分我们详细介绍．
+
+
+AOP与OOP的概念比较
+
+常听到这样的声音AOP将要取代OOP,这是不正确的，首先AOP与OOP是两个方向的概念，AOP是横向的横切提取，OOP是纵向的抽象，封装继承．AOP只是OOP的延伸，他为程序开发提供了一个新的思考角度，可以将重复性的横切逻辑抽取到统一的模块中，通过OOP纵向抽象和AOP的横向提取，程序才可以真正的解决重复性问题．
+
+OOP（面向对象编程）针对业务处理过程的实体及其属性和行为进行抽象封装，以获得更加清晰高效的逻辑单元划分 AOP则是针对业务处理过程中的切面(某个公共功能)进行提取，它所面对的是处理过程中的某个步骤或阶段，以获得逻辑过程中各部分之间低耦合性的隔离效果。这两种设计思想在目标上有着本质的差异。
+
+AOP应该更确切的成为面向切面编程.
+
+华语传统语义中的“方面”，大多数情况下指的是一件事情的不同维度、或者说不同角度上的特性，比如我们常说：“这件事情要从几个方面来看待”，往往意思是：需要从不同的角度来看待同一个事物。这里的“方面”，指的是事务的外在特性在不同观察角度下的体现。
+
+
+举个简单的例子，对于“雇员”这样一个业务实体进行封
+
+装，自然是OOP/OOD的任务，我们可以为其建立一个“Employee”类，并将“雇员”相关的属性和行为封装其中。而用AOP设计思想对“雇员”进行封装将无从谈起。
+同样，对于“权限检查”这一动作片断进行划分，则是AOP的目标领域。而通过OOD/OOP对一个动作进行封装，则有点不伦不类。
+
+AOP和OOD/OOP并不冲突，我们完全可以在一个应用系统中同时应用OOD/OOP和AOP设计思想，通过OOD/OOP对系统中的业务对象进行建模，同时通过AOP对实体处理过程中的阶段进行隔离处理.
+
+AOP的两个最主要的特性
+
+将不同阶段领域加以分隔
+
+
+源码组成无关性
+
+
+
+一、Spring的IoC(Inversion of Control)。
+这是Spring中得有特点的一部份。IoC又被翻译成“控制反转”，也不知道是谁翻译得这么别扭，感觉很深奥的词。其实，原理很简单，用一句通俗的话来说：就是用XML来定义生成的对象。IoC其实是一种设计模式，Spring只是实现了这种设计模式。
+
+这种设计模式是怎么来的呢？是实践中逐渐形成的。
+
+第一阶段：用普通的无模式来写Java程序。一般初学者都要经过这个阶段。
+第二阶段：频繁的开始使用接口，这时，接口一般都会伴随着使用工厂模式。
+第三阶段：使用IoC模式。工厂模式还不够好：（1）因为的类的生成代码写死在程序里，如果你要换一个子类，就要修改工厂方法。（2）一个接口常常意味着一个生成工厂，会多出很多工厂类。
+    可以把IoC模式看做是工厂模式的升华，可以把IoC看作是一个大工厂，只不过这个大工厂里要生成的对象都是在XML文件中给出定义的，然后利用Java 的“反射”编程，根据XML中给出的类名生成相应的对象。从实现来看，IoC是把以前在工厂方法里写死的对象生成代码，改变为由XML文件来定义，也就是把工厂和对象生成这两者独立分隔开来，目的就是提高灵活性和可维护性。
+
+    IoC中最基本的Java技术就是“反射”编程。反射又是一个生涩的名词，通俗的说反射就是根据给出的类名（字符串）来生成对象。这种编程方式可以让对象在生成时才决定要生成哪一种对象。我在最近的一个项目也用到了反射，当时是给出一个.properties文本文件，里面写了一些全类名（包名＋类名），然后，要根据这些全类名在程序中生成它们的对象。反射的应用是很广泛的，象Hibernate、String中都是用“反射”做为最基本的技术手段。
+
+    在过去，反射编程方式相对于正常的对象生成方式要慢10几倍，这也许也是当时为什么反射技术没有普通应用开来的原因。但经SUN改良优化后，反射方式生成对象和通常对象生成方式，速度已经相差不大了（但依然有一倍以上的差距）。
+
+
+    所以要理解IoC，你必须先了解工厂模式和反射编程，否则对它产生的前因后果和实现原理都是无法理解透彻的。只要你理解了这一点，你自己也完全可以自己在程序中实现一个IoC框架，只不是这还要涉及到XML解析等其他知识，稍微麻烦一些。
+
+
+    IoC最大的好处是什么？因为把对象生成放在了XML里定义，所以当我们需要换一个实现子类将会变成很简单（一般这样的对象都是现实于某种接口的），只要修改XML就可以了，这样我们甚至可以实现对象的热插拨（有点象USB接口和SCIS硬盘了）。
+
+    IoC最大的缺点是什么？（1）生成一个对象的步骤变复杂了（其实上操作上还是挺简单的），对于不习惯这种方式的人，会觉得有些别扭和不直观。（2）对象生成因为是使用反射编程，在效率上有些损耗。但相对于IoC提高的维护性和灵活性来说，这点损耗是微不足道的，除非某对象的生成对效率要求特别高。（3）缺少IDE重构操作的支持，如果在Eclipse要对类改名，那么你还需要去XML文件里手工去改了，这似乎是所有XML方式的缺憾所在。
+
+    总的来说IoC无论原理和实现都还算是很简单的。一些人曾认为IoC没什么实际作用，这种说法是可以理解的，因为如果你在编程中很少使用接口，或很少使用工厂模式，那么你根本就没有使用IoC的强烈需要，也不会体会到IoC可贵之处。有些人也说要消除工厂模式、单例模式，但是都语焉不详、人云亦云。但如果你看到IoC模式和用上Spring，那么工厂模式和单例模式的确基本上可以不用了。但它消失了吗？没有！Spring的IoC实现本身就是一个大工厂，其中也包含了单例对象生成方式，只要用一个设置就可以让对象生成由普通方式变单一实例方式，非常之简单。
+
+   总结：
+   （1）IoC原理很简单，作用的针对性也很强，不要把它看得很玄乎。
+   （2）要理解IoC，首先要了解“工厂、接口、反射”这些概念。
+
+
+二、Spring的MVC
+
+如果你已经熟悉Struts，那么不必把MVC做为重点学习内容。基本上我认为Spring  MVC是一个鸡肋，它的技术上很先进，但易用性上没有Struts好。而且Struts有这么多年的基础了，Spring很难取代Struts的地位。这就是先入为主的优秀，一个项目经理选用一种框架，不能单纯的从它的技术上考虑，还有开发效率，人员配置等都是考虑因素。但做为研究性的学习，Spring 的MVC部份还是蛮有价值的。
+
+
+三、数据库层的模板
+Spring主要是提供了一些数据库模板（模板也是一种Java设计模式），让数据部分的代码更简洁，那些try...catch都可以不见了。这个的确是个好东东。
+
+
+四、AOP
+
+AOP又称面向方面编程，它的实现原理还是用了反射：通过对某一个种类的方法名做监控来实现统一处理。比如：监控以“insert”字符串开头的方法名，在这种方法执行的前后进行某种处理（数据库事务等）。但这里我有一个疑问？不一定所有以insert开头的方法都是数据库操作，哪么当某个insert开头的方法不是数据库操作，你又对它进行了数据事务的操作，这样的错误如何防止？？？我对这方面了解不深，还是只知道一个大概。
+
+
+曾看过一个程序员发出这样的感慨：框架一个接一个，学也学不完，而且有必要吗？这样一层层的加上框架，还不如直接写JSP来得直接，效率还高。我想这种困惑很多人都有吧？但如果你经过的项目渐多，就会发现，维护项目要比开发项目更艰难，代价更大。那种用JSP直接来写，层次又不清楚的开发，往往最后得到一个不可再修改的软件，一团乱麻，移一发而动全身。但软件不象电视机，做好了就不会改动了，软件是一个变化的事物，用户的需求随时会改变，这时你会体会到分层和使用框架的好处了，它们为你做了软件中很多和业务无关的工作，你可以只关注业务，并减少代码量。唯一缺点就是有一个学习的代价，框架配置上也较麻烦。
+
+
+
+
+xiaxin@gmail.com
+
+创建一个xml文件
+IOC
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN"	"http://www.springframework.org/dtd/spring-beans.dtd">
+<beans>
+<description>Spring Quick Start</description>
+<bean id="TheAction" class="Spring.test.LowerAction">
+<property name="message">
+<value>hi</value>
+</property>
+</bean>
+</beans>
+配置好classes
+程序中通过下面的方式使用
+
+package Spring.test;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.FileSystemXmlApplicationContext;
+import org.apache.log4j.PropertyConfigurator;
+import org.apache.log4j.Logger;
+import org.apache.log4j.Priority;
+
+public class TestMain {
+
+	/**
+	 * @param args
+	 */
+	static Logger log = Logger.getLogger(TestMain.class.getName());
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		
+			ApplicationContext ctx=new FileSystemXmlApplicationContext("bean.xml");
+			Action action = (Action) ctx.getBean("TheAction");
+			System.out.println(action.execute("Rod Johnson"));
+			log.debug(action.getClass().getName());
+			}
+	
+
+}
+
+
+package Spring.test;
+
+public class UpperAction implements Action {
+	private String message;
+	public String getMessage() {
+	return message;
+	}
+	public void setMessage(String string) {
+	message = string;
+	}
+	public String execute(String str) {
+	return (getMessage()+ " "+ str).toUpperCase();
+	}
+
+}
+
+package Spring.test;
+
+public interface Action {
+
+	public String execute(String str);
+
+}
+
+
+AOP
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN"	"http://www.springframework.org/dtd/spring-beans.dtd">
+<beans>
+<description>Spring Quick Start</description>
+<bean id="TheAction" class="Spring.test.LowerAction">
+<property name="message">
+<value>hi</value>
+</property>
+</bean> 
+<bean id="MyInterceptor"
+class="Spring.test.MyInterceptor"
+/> 
+<bean id="myAOPProxy"
+class="org.springframework.aop.framework.ProxyFactoryBean">
+<property name="proxyInterfaces">
+<value>Spring.test.Action</value>
+</property>
+<!--是否强制使用CGLIB进行动态代理
+<property name="proxyTargetClass">
+<value>true</value>
+</property>
+-->
+<property name="target">
+<ref local="test" />
+</property>
+<property name="interceptorNames">
+<value>MyInterceptor</value>
+</property> 
+</bean>
+<bean id="test" class="Spring.test.LowerAction">
+ 
+<property name="message">
+<value>hi</value>
+</property>
+</bean>
+</beans>
+
+
+package Spring.test;
+
+public interface Action {
+
+	public String execute(String str);
+	public int doCal(int i);
+	
+	
+
+}
+
+package Spring.test;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.FileSystemXmlApplicationContext;
+import org.apache.log4j.PropertyConfigurator;
+import org.apache.log4j.Logger;
+import org.apache.log4j.Priority;
+
+public class TestMain {
+
+	/**
+	 * @param args
+	 */
+	static Logger log = Logger.getLogger(TestMain.class.getName());
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		
+			ApplicationContext ctx=new FileSystemXmlApplicationContext("bean.xml");
+			Action action = (Action) ctx.getBean("myAOPProxy");
+			//Action action = (Action) ctx.getBean("TheAction");
+			System.out.println(action.execute("Rod Johnson"));
+			log.debug(""+action.doCal(10));
+			log.debug(action.getClass().getName());
+			}
+}
+
+
+package Spring.test;
+import org.aopalliance.intercept.MethodInterceptor;
+import java.io.Serializable;
+import org.aopalliance.intercept.MethodInvocation;
+import org.apache.log4j.Logger;
+
+public class MyInterceptor 	 implements MethodInterceptor,Serializable {
+	protected static final Logger logger = Logger.getLogger(MyInterceptor.class.getName());
+	public Object invoke(MethodInvocation invocation) throws
+	Throwable {
+	long time = System.currentTimeMillis();
+	Object rval = invocation.proceed();
+	logger.debug(invocation.getMethod().toString());
+	time = System.currentTimeMillis() - time;
+	logger.debug("roger Cost Time => " + time + " ms");
+	return rval;
+	}
+	}
+
+
+package Spring.test;
+
+public class LowerAction implements Action {
+	private String message;
+	public String getMessage() {
+	return message;
+	}
+	public void setMessage(String string) {
+	message = string;
+	}
+	public String execute(String str) {
+	return (getMessage()+ " "+ str).toUpperCase();
+	}
+	public int doCal(int i){
+		return 100*i;
+	}
+
+}
+
+
+spring
+组成 Spring 框架的每个模块（或组件）都可以单独存在，或者与其他一个或多个模块联合实现。每个模块的功能如下：
+
+    *   核心容器：核心容器提供 Spring 框架的基本功能。核心容器的主要组件是 BeanFactory，它是工厂模式的实现。BeanFactory 使用控制反转 （IOC） 模式将应用程序的配置和依赖性规范与实际的应用程序代码分开。
+    * Spring 上下文：Spring 上下文是一个配置文件，向 Spring 框架提供上下文信息。Spring 上下文包括企业服务，例如 JNDI、EJB、电子邮件、国际化、校验和调度功能。
+    * Spring AOP：通过配置管理特性，Spring AOP 模块直接将面向方面的编程功能集成到了 Spring 框架中。所以，可以很容易地使 Spring 框架管理的任何对象支持 AOP。Spring AOP 模块为基于 Spring 的应用程序中的对象提供了事务管理服务。通过使用 Spring AOP，不用依赖 EJB 组件，就可以将声明性事务管理集成到应用程序中。
+    * Spring DAO：JDBC DAO 抽象层提供了有意义的异常层次结构，可用该结构来管理异常处理和不同数据库供应商抛出的错误消息。异常层次结构简化了错误处理，并且极大地降低了需要编写的异常代码数量（例如打开和关闭连接）。Spring DAO 的面向 JDBC 的异常遵从通用的 DAO 异常层次结构。
+    * Spring ORM：Spring 框架插入了若干个 ORM 框架，从而提供了 ORM 的对象关系工具，其中包括 JDO、Hibernate 和 iBatis SQL Map。所有这些都遵从 Spring 的通用事务和 DAO 异常层次结构。
+    * Spring Web 模块：Web 上下文模块建立在应用程序上下文模块之上，为基于 Web 的应用程序提供了上下文。所以，Spring 框架支持与 Jakarta Struts 的集成。Web 模块还简化了处理多部分请求以及将请求参数绑定到域对象的工作。
+    * Spring MVC 框架：MVC 框架是一个全功能的构建 Web 应用程序的 MVC 实现。通过策略接口，MVC 框架变成为高度可配置的，MVC 容纳了大量视图技术，其中包括 JSP、Velocity、Tiles、iText 和 POI。
+
+Spring 框架的功能可以用在任何 J2EE 服务器中，大多数功能也适用于不受管理的环境。Spring 的核心要点是：支持不绑定到特定 J2EE 服务的可重用业务和数据访问对象。毫无疑问，这样的对象可以在不同 J2EE 环境 （Web 或 EJB）、独立应用程序、测试环境之间重用。
+
+
+控制反转模式（也称作依赖性介入）的基本概念是：不创建对象，但是描述创建它们的方式。在代码中不直接与对象和服务连接，但在配置文件中描述哪一个组件需要哪一项服务。容器 （在 Spring 框架中是 IOC 容器） 负责将这些联系在一起。
+DI的主要目的是解决如何动态加载某个接口的具体实现的.
+
+在典型的 IOC 场景中，容器创建了所有对象，并设置必要的属性将它们连接在一起，决定什么时间调用方法。
+
+
+ 面向方面的编程，即 AOP，是一种编程技术，它允许程序员对横切关注点或横切典型的职责分界线的行为（例如日志和事务管理）进行模块化。AOP 的核心构造是方面，它将那些影响多个类的行为封装到可重用的模块中。
+
+AOP 和 IOC 是补充性的技术，它们都运用模块化方式解决企业应用程序开发中的复杂问题。在典型的面向对象开发方式中，可能要将日志记录语句放在所有方法和 Java 类中才能实现日志功能。在 AOP 方式中，可以反过来将日志服务模块化，并以声明的方式将它们应用到需要日志的组件上。当然，优势就是 Java 类不需要知道日志服务的存在，也不需要考虑相关的代码。所以，用 Spring AOP 编写的应用程序代码是松散耦合的。
+
+AOP 的功能完全集成到了 Spring 事务管理、日志和其他各种特性的上下文中。
+
+compoment 主要是本地用的
+service   主要是远程用的
+框架都是实现了 IOC的
+spring 通过 java relection 来实现 ioc
+
+For this new breed of containers the inversion is about how they lookup a plugin implementation
+
+
+
+大部分时候使用 ApplicationContext, 如果内存有限制,可以使用 BeanFactory
+
+
+The org.springframework.beans.factory.BeanFactory interface is the central IoC container interface in
+Spring. Its responsibilities include instantiating or sourcing application objects, configuring said objects, and
+assembling the dependencies between objects.
+
+创建一个spring project 
+加入
+
+看看Spring 的事务管理机制与EJB 中事务
+管理有何不同，或者有何优势。这里自然有许多方面可以比较，不过，笔者认为其中
+最为关键的两点是：
+1． Spring可以将任意Java Class 纳入事务管理
+这里的UserDAO只是我们编写的一个普通Java Class，其中包含了一些
+基本的数据应用逻辑。通过Spring，我们即可简单的实现事务的可配置
+化。也就是说，我们可以随意为某个类的某个方法指定事务管理机制。
+与之对比，如果使用EJB容器提供的事务管理功能，我们不得不按照EJB
+规范编将UserDAO 进行改造，将其转换为一个标准的EJB。
+2． Spring事务管理并不依赖特定的事务资源。
+EJB 容器必须依赖于JTA 提供事务支持。而Spring 的事务管理则支持
+JDBC、JTA 等多种事务资源。这为我们提供了更多的选择，从而也使得
+我们的系统部署更加灵活。
+
+
+在Spring中有两种方式：
+1． 代码控制的事务管理
+2． 参数化配置的事务管理
+
+
+OOP（面向对象编程）针对业务处理过程的实体及其属性和行为进行抽象封装，
+以获得更加清晰高效的逻辑单元划分。
+
+而AOP则是针对业务处理过程中的切面进行提取，它所面对的是处理过程中的某个步
+骤或阶段，以获得逻辑过程中各部分之间低耦合性的隔离效果。这两种设计思想在目标上有
+着本质的差异。
+而在AOP中，Aspect的含义，可能更多的理解为“切面”比较合适。所以笔者更倾向
+于“面向切面编程”的译法。
+AOP还有另外一个重要特点：源码组成无关性。
+
+上面的陈述可能过于理论化，举个简单的例子，对于“雇员”这样一个业务实体进行封
+装，自然是OOP/OOD的任务，我们可以为其建立一个“Employee”类，并将“雇员”相
+关的属性和行为封装其中。而用AOP设计思想对“雇员”进行封装将无从谈起。
+同样，对于“权限检查”这一动作片断进行划分，则是AOP的目标领域。而通过OOD/OOP
+对一个动作进行封装，则有点不伦不类。
+换而言之，OOD/OOP面向名词领域，AOP面向动词领域。
+
+，所谓源码组成无关性，体现在具体设计中就是AOP组件必须
+与应用代码无关，简单来讲，就是应用代码可以脱离AOP组件独立编译。
+
+为了实现源码组成无关性，AOP往往通过预编译方式（如AspectJ）和运行期动态代理
+模式（如Spring AOP 和JBoss AOP）实现。
+
+首先根据上例，假设我们实现了一个通用的权限检查模块，那么就可以在这层切面上进
+行统一的集中式权限管理。而业务逻辑组件则无需关心权限方面的问题。也就是说，通过切
+面，我们可以将系统中各个不同层次上的问题隔离开来，实现统一集约式处理。各切面只需
+集中于自己领域内的逻辑实现。
+
+
+所谓动
+态AOP，即通过动态Proxy模式，在目标对象的方法调用前后插入相应的处理代码。
+
+而Spring AOP中的动态Proxy模式，则是基于Java Dynamic Proxy（面向Interface）
+和 CGLib （ 面向Class）实现。
+
+
+Spring 的AOP 底层通过动态代理（接口代理使用Proxy、类代理使用CGLIB）来做支持，
+有了前面的知识，Spring 的AOP 就比较好理解了，就是在运行时通过动态代理，动态的将
+某段代码织入到你的程序，从而在不影响原有的业务代码时增加了新的功能。

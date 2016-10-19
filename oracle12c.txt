@@ -1,0 +1,6 @@
+oracle 12 支持从rman里面恢复某张表
+支持自增长列  (id NUMBER GENERATED AS IDENTITY
+32K VARCHAR2 / NVARCHAR2
+同一个表在内存中有行和列 两种格式 
+在Oracle 11g R1中，Oracle以不可见索引和虚拟字段的形式引入了一些不错的增强特性。继承前者并发扬光大，Oracle 12c R1中引入了不可见字段思想。
+12c R1中，你现在可以将DDL操作写入xml和日志文件中

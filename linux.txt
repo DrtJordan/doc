@@ -1,0 +1,1029 @@
+20161018 性能监控命令
+sar tcpdump iostat mpstat(process statistics) vmstat pmap(process memory map) netstat (network statistics)iptraf (ip network monitor) strace  ntop(network top)
+vnstat (dispaly and log network traffic of interface)  htop(more powerful top) ss (socket statistics) 
+
+
+20160718 
+查找copy 
+find . -name "restart_gmo_13.sh" -exec cp {} /tmp \;
+tar 过滤 
+tar cvzf /tmp/scriptbackup/scrpt.tgz --exclude=*.log* --exclude=*joblog* --exclude=*job_log* --exclude=*.txt* --exclude=*.xml --exclude=nohup* --exclude=*.dat.* *
+
+
+
+20160316 
+redhat 7上 samba需要关闭 selinux  
+getenforce
+setenforce 0
+
+20150414
+这个可以保存用户名和密码
+
+http://unmi.cc/wp-content/uploads/2010/06/putty_v6.0.rar 
+
+20150122
+sync函数只是将所有修改过的块缓冲区排入写队列，然后就返回，它并不等待实际写磁盘操作结束。
+通常称为update的系统守护进程会周期性地（一般每隔30秒）调用sync函数。这就保证了定期冲洗内核的块缓冲区。命令sync(1)也调用sync函数。
+fsync函数只对由文件描述符filedes指定的单一文件起作用，并且等待写磁盘操作结束，然后返回。fsync可用于数据库这样的应用程序，这种应用程序需要确保将修改过的块立即写到磁盘上。
+fdatasync函数类似于fsync，但它只影响文件的数据部分。而除数据外，fsync还会同步更新文件的属性。
+"Unfortunately fsync() will always initialize two write operations : one for the newly written data and another one in order to update the modification time stored in the inode. If the modification time is not a part of the transaction concept fdatasync() can be used to avoid unnecessary inode disk write operations."
+除了同步文件的修改内容（脏页），fsync还会同步文件的描述信息（metadata，包括size、访问时间st_atime & st_mtime等等），因为文件的数据和metadata通常存在硬盘的不同地方，因此fsync至少需要两次IO写操作，fsync的man page这样说：
+多余的一次IO操作，有多么昂贵呢？根据Wikipedia的数据，当前硬盘驱动的平均寻道时间（Average seek time）大约是3~15ms，7200RPM硬盘的平均旋转延迟（Average rotational latency）大约为4ms，因此一次IO操作的耗时大约为10ms左右。这个数字意味着什么？下文还会提到。
+
+fdatasync的功能与fsync类似，但是仅仅在必要的情况下才会同步metadata，因此可以减少一次IO写操作。那么，什么是“必要的情况”呢？根据man page中的解释：
+"fdatasync does not flush modified metadata unless that metadata is needed in order to allow a subsequent data retrieval to be corretly handled."
+举例来说，文件的尺寸（st_size）如果变化，是需要立即同步的，否则OS一旦崩溃，即使文件的数据部分已同步，由于metadata没有同步，依然读不到修改的内容。而最后访问时间(atime)/修改时间(mtime)是不需要每次都同步的，只要应用程序对这两个时间戳没有苛刻的要求，基本无伤大雅。
+
+通过 pdflush 来执行
+In the default configuration, then, data written to disk will sit in memory until either a) they're more than 30 seconds old, or b) the dirty pages have consumed more than 10% of the active, working memory. If you are writing heavily, once you reach the dirty_background_ratio driven figure worth of dirty memory, you may find that all your writes are driven by that limit. It's fairly easy to get in a situation where pages are always being written out by that mechanism well before they are considered expired by the dirty_expire_centiseconds mechanism.
+
+使用supervisor监控应用程序，能够自动重启
+
+现在用systemctl来控制cgroup，以前用libcgroup
+cgroup
+slices用来包含service(通过systemd定义的)或者scope(通过fork创建的关联进程)
+bash 乱码用 这个来解决 export LC_ALL="en_US.ISO-8859-1"
+cgroup能控制network的pri，不能控制到流量？
+
+查看cgroup tree
+systemd-cgls
+查看某个进程的 cgroup信息
+ cat /proc/PID/cgroup
+ systemctl set-property db1.service BlockIOAccounting=true
+systemctl set-property db1.service BlockIOWeight=1000
+
+
+
+
+
+20150109
+ sync 把file cache写到disk 
+echo 3 > /proc/sys/vm/drop_caches
+Here, 0 is the default value of  drop_caches; 1 is to free pagecaches, 2 is to free dentries and inodes,
+3 is to free pagecache, dentries, and inodes?
+Luckily, the fix was fairly straight forward by issuing the following command on all nodes:
+
+配置 chronyd ntp服务
+服务器配置
+driftfile /var/lib/chrony/drift
+generatecommandkey
+keyfile /etc/chrony.keys
+initstepslew 10 192.168.193.134 192.168.193.141 192.168.193.143  #服务器起来的时候可以和这三个对时间
+local stratum 8
+manual
+allow 192.168.193
+commandkey 1
+logdir /var/log/chrony
+#log measurements statistics tracking
+
+客户端配置  
+server 192.168.193.140
+driftfile /var/lib/chrony/drift
+logdir /var/log/chrony
+log measurements statistics tracking
+keyfile /etc/chrony.keys
+generatecommandkey
+commandkey 1
+local stratum 10
+initstepslew 20 192.168.193.140 #ntp服务器起来的时候如果需要和自己对时间
+allow 192.168.193.140  #ntp服务器起来的时候如果需要和自己对时间
+cmdallow 127.0.0.1
+
+启动服务器和客户端
+systemctl enable chronyd 
+systemctl start chronyd 
+检查客户端的同步状态
+chronyc tracking
+chronyc sourcestats
+chronyc sources
+chronyc -a makestep 强制同步一次
+
+20150107
+测试网络性能 安装 iperf  只能测试带宽
+服务器启动 iperf3 -s 
+客户端  iperf3  -c 192.168.193.143 -f M -i 2
+
+qperf可以同时测试带宽和latency 
+千M同交换机情况下 ping 0.18 ms
+qperf 192.168.193.143 tcp_bw tcp_lat      
+tcp_bw:
+    bw  =  118 MB/sec
+tcp_lat:
+    latency  =  34.7 us  one way latency 
+  qperf   -oo msg_size:1K:64K:*2  192.168.193.143 tcp_bw tcp_lat          
+
+udp_bw:
+    send_bw  =  120 MB/sec
+    recv_bw  =  120 MB/sec
+udp_lat:
+    latency  =  33 us    one way latency 
+    
+
+跨交换机 ping 0.33 ms
+tcp_bw:
+    bw  =  11.7 MB/sec
+tcp_lat:
+    latency  =  108 us
+千M同交换机情况下 情况下 	ping 0.18 ms
+													2k tcp   98 	us udp 	83 us
+													4k tcp  126  	us udp 133 us
+												 	8k tcp  172  	us udp 165 us
+												 16k tcp  284 	us udp 244 us
+												 32k tcp  418 	us udp 412 us
+												 64k tcp  667 	us udp 704 us
+												128k tcp 1200 	us udp 		 us
+												256k tcp 2300	  us udp     us
+												512k tcp 4400   us udp     us
+同一服务器情况下  	ping 0.04 ms
+													2k tcp   17   us udp 	17 us
+													4k tcp   17  	us udp 	17 us
+												512k tcp   147  us udp 		 us
+跨交换机 ping 0.33 ms
+
+													2k tcp  496 	us udp 	 486 us
+													4k tcp  653  	us udp	 662 us
+												 	8k tcp  980  	us udp 	 978 us
+
+												 
+监控网络使用情况
+ iftop -N -n -i virbr0 效果很好
+20150105
+centos 7 使用 grub2配置内核
+配置内核在 /boot/efi/EFI/centos/grub.cfg  或者 /boot/grub2/grub.cfg 
+
+iometer主要测试san/das，能测试mbps/iops/latency
+orion主要用来测试oracle的io性能
+iozone主要用来测试文件系统性能nas
+fio都可以测试
+使用blktrace查看I/O操作的执行
+使用iostat观察硬盘的读写情况?
+
+查看centos 7的内核配置选项
+/boot/config-3.10.0-123.el7.x86_64
+
+编译内核模块
+安装 kernel-develop包
+普通用户建立路径
+mkdir -p ~/rpmbuild/{BUILD,BUILDROOT,RPMS,SOURCES,SPECS,SRPMS}
+echo '%_topdir %(echo $HOME)/rpmbuild' > ~/.rpmmacros
+root 安装如下包
+yum install rpm-build redhat-rpm-config asciidoc hmaccalc perl-ExtUtils-Embed pesign xmlto 
+yum install audit-libs-devel binutils-devel elfutils-devel elfutils-libelf-devel
+yum install newt-devel numactl-devel pciutils-devel python-devel zlib-devel
+普通用户安装kernel source
+rpm --httpproxy 192.168.8.26   --httpport 8080  -i http://vault.centos.org/7.0.1406/updates/Source/SPackages/kernel-3.10.0-123.13.2.el7.src.rpm 2>&1 | grep -v exist
+解开
+cd ~/rpmbuild/SPECS
+rpmbuild -bp --target=$(uname -m) kernel.spec
+source code 在 ~/rpmbuild/BUILD/kernel*/linux*/ 
+cp  /lib/modules/3.10.0-123.el7.x86_64/build/Module.symvers 到source root,不然会有  WARNING: Symbol version dump /usr/src/linux-2.6.38/Module.symvers  is missing; modules will have no dependencies and modversions.
+先修改.config文件加上需要的模块，如果已经编译过了，先清理 make mrproper 
+然后make oldconfig 或者自动回答所有yes  sh -c 'yes "" | make oldconfig'
+ make prepar 
+然后到 source root 执行 make modules_prepare
+然后编译该模块的名字 如
+make M=fs/xfs
+strip --strip-debug fs/xfs/xfs.ko
+root 执行
+cp fs/xfs/xfs.ko /lib/modules/`uname -r`/extra
+depmod -a
+
+strip --strip-debug fs/ceph/ceph.ko
+strip --strip-debug net/ceph/libceph.ko
+strip --strip-debug drivers/block/rbd.ko
+
+mkdir /lib/modules/`uname -r`/kernel/fs/ceph
+mkdir /lib/modules/`uname -r`/kernel/net/ceph
+
+cp fs/ceph/ceph.ko /lib/modules/`uname -r`/kernel/fs/ceph
+cp net/ceph/libceph.ko /lib/modules/`uname -r`/kernel/net/ceph
+cp drivers/block/rbd.ko /lib/modules/`uname -r`/kernel/drivers/block
+
+
+或者不用make oldconfig 直接 
+make CONFIG_FUSE_FS=m -C /root/linux-2.6.23 M=/root/linux-2.6.23/fs/fuse modules
+
+详细文档看 kernel_source/Documentation/kbuild/modules.txt
+
+或者直接修改Makefile 
+为
+obj-m := libceph.o
+
+3.18内核出现这个错误  umount rbd device的时候
+ kernel:NMI watchdog: BUG: soft lockup - CPU#7 stuck for 22s! [abrt-dump-oops:19180]
+ 
+
+20141231
+sudo配置
+visudo
+
+配置权限的格式如下： 
+USER_FLAG HOST_FLAG=(RUNAS_FLAG) COMMAND_FLAG 
+如果不需要密码验证的话，则按照这样的格式来配置 
+USER_FLAG HOST_FLAG=(RUNAS_FLAG) NOPASSWD: COMMAND_FLAG 
+
+
+20141209
+curl跳转
+　curl -L www.sina.com  显示通信过程   -v 或者 --trace output.txt  显示头信息   -i 
+发送表单信息  curl example.com/form.cgi?data=xxx  curl --data "data=xxx" example.com/form.cgi 
+curl -X POST www.example.com 　　curl -X DELETE www.example.com  
+curl这样上传文件 　　curl --form upload=@localfilename --form press=OK [URL]
+curl --user-agent "[User Agent]" [URL] 
+　curl --cookie "name=xxx" www.example.com 
+　　curl --header "Content-Type:application/json" http://example.com
+
+20141104
+ntp配置 如果 ntpdate -d serverIP 客户端出现 Server dropped: strata too high的错误，
+把server的/etc/ntp.conf加上 
+server 127.127.1.0
+fudge 127.127.1.0 stratum 8  
+重启server即可
+
+以其他用户运行脚本
+su hksso -c "sh w.sh"
+
+logrotate
+以Nginx为例，是通过postrotate指令发送USR1信号来通知Nginx重新打开日志文件的。但是其他的应用程序不一定遵循这样的约定，比如说MySQL是通过flush-logs来重新打开日志文件的。更有甚者，有些应用程序就压根没有提供类似的方法，此时如果想重新打开日志文件，就必须重启服务，但为了高可用性，这往往不能接受。还好Logrotate提供了一个名为copytruncate的指令，此方法采用的是先拷贝再清空的方式，整个过程中日志文件的操作句柄没有发生改变，所以不需要通知应用程序重新打开日志文件，但是需要注意的是，在拷贝和清空之间有一个时间差，所以可能会丢失部分日志数据。
+
+logrotate的状态在  /var/lib/logrotate.status
+redhat的crontab运行时间在 cat /etc/anacrontab
+#period in days   delay in minutes   job-identifier   command
+1       5       cron.daily              nice run-parts /etc/cron.daily
+7       25      cron.weekly             nice run-parts /etc/cron.weekly
+@monthly 45     cron.monthly            nice run-parts /etc/cron.monthly
+
+
+logrotate可以用来自动归档 tomcat日志，比如
+ /etc/logrotate.d/castomcat
+ 
+/sso/tomcat/cas/logs/catalina.out {
+rotate 1
+daily
+copytruncate  --这个不用重启服务器就可以截断归档
+compress
+notifempty
+missingok
+}
+20140822
+如果apache/tomcat/redis/mysql的监听是所有地址，那么在apache启动之后新添加的地址也能自动被apache监听
+ 
+
+20140715
+lvm操作
+pvcreate /dev/sda3  /dev/sdb1
+vgcreate owncloud /dev/sda3 /dev/sdb1
+vgextend  centos /dev/sda4  添加硬盘
+
+
+激活
+vgchange -ay owncloud
+显示信息 vgdisplay
+lvcreate -L1.3T -nowncloud owncloud
+mkfs.ext4 /dev/owncloud/owncloud
+lvextend/lvreduce  
+lvextend /dev/centos/home -L +1.6T 
+
+xfs扩容 扩容到底层支持的最大size
+
+ xfs_growfs -d /home 
+
+
+20140714
+安装glic 2.6.1
+解压后，到另外一个目录，然后用绝对路径进行 configure --prefix=locaiton
+需要先 export LD_LIBRARY_PATH=""
+
+glibc是gnu发布的libc库，也即c运行库。glibc是linux 系统中最底层的api（应用程序开发接口），几乎其它任何的运行库都会倚赖于glibc。glibc除了封装linux操作系统所提供的系统服务外，它本 身也提供了许多其它一些必要功能服务的实现，
+
+gcc 是编译器，基本上 Linux 下所有的程序（包括内核）都是 gcc 编译的，libc 当然也是。
+gcc 和 libc 是互相依赖的两个软件，它们合作的方式类似 Linux 系统的 "自举"。先在一个可以运行的带有老 libc 和 gcc 的系统上，用老 gcc 编译出一个新版本的 gcc + 老 libc，再用这个新 gcc 编译出一个新 gcc + 新 libc，再用这套东东编译整个新系统。
+ldd --version 查看glic版本
+glibc 和 libc 都是 Linux 下的 C 函数库。
+libc 是 Linux 下的 ANSI C 函数库；glibc 是 Linux 下的 GUN C 函数库。
+ ANSI C 函数库是基本的 C 语言函数库，包含了 C 语言最基本的库函数
+ GNU C 函数库是一种类似于第三方插件的东西。由于 Linux 是用 C 语言写的，所以 Linux 的一些操作是用 C 语言实现的，因此，GUN 组织开发了一个 C 语言的库 以便让我们更好的利用 C 语言开发基于 Linux 操作系统的程序
+
+mkdir -p /mfs-cluster/vmware/glibc261/etc/ld.so.conf
+/mfs-cluster/vmware/glibc-2.6.1/configure --prefix=/mfs-cluster/vmware/glibc261
+ 
+20140708
+ls命令出现问题
+strace ls -alt 
+connect(4, {sa_family=AF_FILE, path="/var/run/nscd/socket"}, 110) = 0
+poll([{fd=4, events=POLLOUT|POLLERR|POLLHUP, revents=POLLOUT|POLLHUP}], 1, 5000) = 1
+writev(4, [{"\2\0\0\0\1\0\0\0\5\0\0\0", 12}, {"1002\0", 5}], 2) = -1 EPIPE (Broken pipe)
+--- SIGPIPE (Broken pipe) @ 0 (0) ---
++++ killed by SIGPIPE +++
+
+
+SIGPIPE using nscd socket - commands don't seem to run http://www.novell.com/support/kb/doc.php?id=7003590
+ netstat -an | grep /var/run/nscd/socket  |wc -l
+980
+
+This is bug of SUSE Linux Enterprise Server 10  and will cause nscd to be leaking sockets,so it cause this problem ,
+Solution :
+1.	restart nscd daemon at regular intervals 
+2.	adjust net.ipv4.tcp_keepalive_time to 600
+
+
+
+
+
+tcpdump -i eth0 src host hostname
+tcpdump tcp port 23 host 210.27.48.1
+tcpdump -i eth0 host hostname and port 80
+lsof -i:port 查看那个端口被谁占用
+lsof -Pnl +M -i4  |grep 7762 |grep LISTEN  查看某个进程监听的端口
+lsof   /filepath/file 谁在访问这个文件
+lsof +D /filepath/filepath2/谁在访问这个目录下的文件
+lsof  -u root 某个用户打开的文件
+
+20100228
+systemtap 是和Dtrace类似的一个内核级别的监控调试工具
+能够统计到进程级别的Io消耗啥的
+oprofile 也有差不多的功能
+
+20140227
+查找文件内容
+find . -name "*.conf" |xargs grep isHttpsNeeded
+或者  find . -name "*.conf" -print  -exec grep isHttpsNeeded '{}' \;
+      find /tmp -name core -type f -print | xargs /bin/rm -f
+      find . -name "*.xml" -print0 | xargs -0 grep 73.99     带0参数用来处理有空格的文件和目录
+      
+      
+
+当你尝试用rm 删除太多的文件，你可能得到一个错误信息：/bin/rm Argument list too long. 用xargs 去避免这个问题
+find . -name ‘*.log’ -print | xargs   rm -f
+
+
+20140225  rpm 指定代理安装新的 respository 
+rpm --httpproxy 192.168.8.26   --httpport 8080 -Uvh http://mirror.webtatic.com/yum/el6/
+latest.rpm
+
+rpm --httpproxy 192.168.8.26   --httpport 8080 -Uvh http://dl.iuscommunity.org/pub/ius/stable/Redhat/6/x86_64/ius-release-1.0-10.ius.el6.noarch.rpm
+
+20140225
+yum配置代理服务器 
+/etc/yum.conf
+proxy=http://192.168.8.26:8080
+
+安装
+yum install xfsprogs xfsdump        
+
+1.列出所有可更新的软件清单
+命令：yum check-update
+2.安装所有更新软件
+命令：yum update
+3.仅安装指定的软件
+命令：yum install <package_name>
+4.仅更新指定的软件
+命令：yum update <package_name>
+5.列出所有可安裝的软件清单
+命令：yum list
+用YUM删除软件包
+命令：yum remove <package_name>
+用YUM查询软件信息
+yum search   <keyword>
+7.使用YUM获取软件包信息
+命令：yum info <package_name>
+8.列出所有软件包的信息
+命令：yum info
+
+添加respository 之后，重新build cache 
+
+yum clean all 
+yum makecache 
+
+
+列出rpm包的内容：
+rpm -qpl *.rpm
+
+查看文件属于哪个rpm包
+rpm -qf /usr/lib/gconv/libKSC.so
+
+
+rpm 查看默认安装路径  rpm -qpl ext3grep-0.10.0-1.el5.rf.i386.rpm 
+替换换装路径  rpm -i --relocate /usr/bin=/home/easwy/bin --relocate /usr/share/doc=/home/easwy/doc ext3grep-0.10.0-1.el5.rf.i386.rpm
+
+解压rpm包的内容：（没有安装，就像解压tgz包一样rpm包）
+rpm2cpio *.rpm | cpio -div 
+
+ 
+20140114
+shell脚本数学运算
+date1=$((8-$time_zone))
+
+
+
+如果在bash脚本里面捕获错误信息，然后执行自定义操作
+脚本接收到信号后，它可以采取以下三种操作之一：
+    忽略该信号，不执行任何操作。如果脚本编写者没有理解该信号，那么大部分脚本通常都会采取这一操作。  trap ''  signals
+    使用 trap 捕捉信号并采取相应的操作。 trap 'command_list'  signals
+    采取默认操作。 
+除了下面的信号外，以上操作均适用：
+SIGKILL（信号 9）
+SIGSTOP （信号 17）
+SIGCONT（信号 19）
+
+kill -l 列出所有的signal ,SIG prefix is optional  SIGBUS=BUS
+
+kill [pid]
+send the TERM signal exclusively to the specified PID.
+
+
+1) SIGBUS(Bus error)意味着指针所对应的地址是有效地址，但总线不能正常使用该
+   指针。通常是未对齐的数据访问所致。
+2) SIGSEGV(Segment fault)意味着指针所对应的地址是无效地址，没有物理内存对
+   应该地址。
+   
+要重置 trap，使用：
+trap - signals
+
+
+trap 'command_list'  signals
+
+trap hello SIGSEGV  SIGBUS   3 15
+hello()
+{ echo 'received kill'
+}
+
+loop() 
+{
+while true
+do
+  echo 'running'
+sleep 10s 
+done
+}
+loop
+
+
+
+20131126 取固定的列
+
+ ps -ef |grep com.cicc.data.ppm.MDFKCurve  |grep -v grep  |awk '{print $2}'
+ 
+ 
+rsync同步大量文件的时候出现错误
+bjnppb01:/home/cvsroot # rsync -a /home/cvsroot/NP_release/ root@192.168.74.210:/localData/test/
+Read from remote host 192.168.74.210: Connection reset by peer
+rsync: writefd_unbuffered failed to write 16 bytes [sender]: Broken pipe (32)
+rsync: connection unexpectedly closed (4510 bytes received so far) [sender]
+rsync error: unexplained error (code 255) at io.c(459) [sender=2.6.8]
+
+
+需要注意的是，real并不等于user+sys的总和。real代表的是程序从开始到结束的全部时间，即使程序不占CPU也统计时间。而user+sys是程序占用CPU的总时间
+这个时间跟系统负荷无关，因此real总是大于或者等于user+sys的。
+
+用iftop来查看网络流量
+
+
+加上–no-iconv参数
+
+拿到shell绝对路径
+FULLPATH=$(cd "$(dirname "$0")"; pwd)
+
+
+20130225 bash判断上面一个程序的退出状态
+java
+public class Test{
+public static void main(String args[])
+{
+System.out.println("test");
+System.exit(0);
+}
+
+}
+
+shell
+
+java Test
+if [ $? -ne 0 ]
+then
+echo "it's not ok"
+else
+echo "it's ok"
+fi
+
+
+20120613
+linux mount winodws 资源
+
+mount -t cifs //192.168.8.242/account_update_info /test  -o username=wanzy,password=pass
+mount -t cifs //192.168.8.242/account_update_info /test  -o username=cicc/wanzy,password=pass
+
+
+20120702 日期函数几天前后
+
+date -d '-3 days' +%Y%m%d
+begindate=`date -d '-3 days' +%Y%m%d`
+enddate=$(date   +%Y%m%d)
+
+
+
+如果源删除，则目标也删除
+
+
+rsync -av --delete test1 test2
+rsync -av --delete root@192.168.129.195:/home/redmine/ /ciccdev/backup2/redmine/filebackup
+
+
+配置ssh key
+
+mkdir ~/.ssh
+chmod 700 ~/.ssh
+ssh-keygen -t rsa
+ssh-keygen -t dsa
+touch ~/.ssh/authorized_keys
+cd ~/.ssh
+on node1
+
+ssh bjnppb02 cat /home/oracle/.ssh/id_rsa.pub >> authorized_keys
+ssh bjnppb02  cat /home/oracle/.ssh/id_dsa.pub >> authorized_keys
+ssh root@192.168.129.195 cat /root/.ssh/id_rsa.pub >> authorized_keys
+ssh root@192.168.129.195  cat /root/.ssh/id_dsa.pub >> authorized_keys
+scp authorized_keys root@192.168.129.195:/root/.ssh/
+chmod 600 ~/.ssh/authorized_keys
+
+
+20120504
+This system is not registered with RHN
+在redhat5.4上利用yum安装一个软件的时候，出现了上述错误提示,原因是你的linux没有在红帽网络上注册，所以无法下载上面的软件包，替代方案可以使用centos。下面介绍下使用centos 的流程
+
+1.卸载rhel的默认安装的yum包
+查看yum包
+rpm -qa|grep yum
+卸载之
+rpm -qa|grep yum|xargs rpm -e --nodeps
+2.下载新的yum包
+下面三个软件包在http://centos.ustc.edu.cn/centos/5/os/i386/CentOS/目录下，根据具体的版本修改下面三条命令。
+下载三个软件包：
+wget http://centos.ustc.edu.cn/centos/5/os/i386/CentOS/yum-3.2.22-33.el5.centos.noarch.rpm
+wget http://centos.ustc.edu.cn/centos/5/os/i386/CentOS/yum-fastestmirror-1.1.16-14.el5.centos.1.noarch.rpm
+wget http://centos.ustc.edu.cn/centos/5/os/i386/CentOS/yum-metadata-parser-1.1.2-3.el5.centos.i386.rpm
+
+安装这三个软件包：
+rpm -ivh yum-*
+注意：yum和yum-fastestmirror相互依赖，所以同时安装即可。
+3.下载yum的配置源
+wget http://docs.linuxtone.org/soft/lemp/CentOS-Base.repo 下载到 /etc/yum.repos.d/ 目录下面
+4.1
+配置YUM使用代理
+/etc/yum.conf
+proxy=http://mycache.mydomain.com:3128
+proxy_username=yum-user
+proxy_password=qwerty
+
+4.运行yum makecache生成缓存
+
+
+
+linux查看所有目录文件数
+ls -lR 20101209/ | grep "^-"  | wc -l 
+
+安装rdac 
+/opt/mpp/lsvdev 查看设备映射关系
+mppUtil  -a
+
+
+清楚几天前的文件
+find /standby/archstandby -mtime +2 -name "*.dbf" -exec rm -rf {} \;
+find . -mtime +2 -name "*.dbf" -exec rm -rf {} \;
+
+find . -mtime +30 
+ linux可执行文件的内容分析工具nm objdump readelf ar ldd
+ ld.so.conf和ldconfig是维护系统动态链接库的
+ ld.so.conf 
+ /lib64
+ /lib64放在最前面，所以就直接找到 /lib64/libc.so.6 
+ 
+ .a 是静态链接库，用-static就可以
+ .o 是动态链接 
+1. 往/lib和/usr/lib里面加东西，是不用修改/etc/ld.so.conf的，但是完了之后要调一下ldconfig，不然这个library会找不到
+2. 想往上面两个目录以外加东西的时候，一定要修改/etc/ld.so.conf，然后再调用ldconfig，不然也会找不到
+比如安装了一个mysql到/usr/local/mysql，mysql有一大堆library在/usr/local/mysql/lib下面，这时就需要在/etc/ld.so.conf下面加一行/usr/local/mysql/lib，保存过后ldconfig一下，新的library才能在程序运行时被找到。
+3. 如果想在这两个目录以外放lib，但是又不想在/etc/ld.so.conf中加东西（或者是没有权限加东西）。那也可以，就是export一个全局变量LD_LIBRARY_PATH，然后运行程序的时候就会去这个目录中找library。一般来讲这只是一种临时的解决方案，在没有权限或临时需要的时候使用。
+4. ldconfig做的这些东西都与运行程序时有关，跟编译时一点关系都没有。编译的时候还是该加-L就得加，不要混淆了。
+5. 总之，就是不管做了什么关于library的变动后，最好都ldconfig一下，不然会出现一些意想不到的结果。不会花太多的时间，但是会省很多的事。
+
+20100805
+iozone测试性能
+
+先安装 gnuplot 
+
+make  linux-AMD64
+
+iozone -a -R -b nfs.xls -c -f ./test.file -g 1G 
+
+20100804
+dd if=/dev/zero  of=/fmnp/test.dmp bs=1024 count=1024000
+1024000+0 records in
+1024000+0 records out
+1048576000 bytes (1.0 GB) copied, 10.3228 seconds, 102 MB/s
+
+NFS速度能到局域网的上限
+
+MooseFs  性能
+hknpibf3:/mnt/mfs # /fmnp/soft/bonnie/Bonnie  
+Bonnie 1.4: File './Bonnie.20590', size: 104857600, volumes: 1
+Writing with putc()...         done:  48427 kB/s  55.6 %CPU
+Rewriting...                   done:  44732 kB/s   8.2 %CPU
+Writing intelligently...       done:  51939 kB/s   6.7 %CPU
+Reading with getc()...         done: 107304 kB/s 100.2 %CPU
+Reading intelligently...       done: 5560080 kB/s  86.9 %CPU
+Seeker 2...Seeker 1...Seeker 3...start 'em...done...done...done...
+              ---Sequential Output (nosync)--- ---Sequential Input-- --Rnd Seek-
+              -Per Char- --Block--- -Rewrite-- -Per Char- --Block--- --04k (03)-
+Machine    MB K/sec %CPU K/sec %CPU K/sec %CPU K/sec %CPU K/sec %CPU   /sec %CPU
+hknpib 1* 100 48427 55.6 51939  6.7 44732  8.2 107304  1005560080 86.9 1678.7  1.2 
+
+
+
+
+根据测试， 向本地硬盘写入数据时一般为90多M/s ，读出数据一般为110M/s左右 ， 但会受到本地服务器性能的影响导致读写速度降低。 向NFS写入数据一般为55M/s，读出速度一般为110M/s左右，与从本地磁盘读数据速度相当。
+
+本地数据读写对CPU的占用较高，向NFS读写数据的对本地服务器的资源占用较小。
+
+根据测试结果：
+
+如果数据文件读写频繁，且数据量较大，建议使用本地磁盘。
+如果文件读写不太频繁，并对数据的实时性要求不是特别高，可以使用NFS网络磁盘。
+
+ 
+测试类型       瞬间读/写（100M）  瞬间读/写CPU使用消耗  大文件持续读/写（1000M） 大文件持续读/写CPU使用消耗
+本地硬盘       写：95M/s           写：100%             写：98M/s                   写：100%
+               读：110M/s          读：100%             读：109M/s                  读：100%
+  
+NFS网络硬盘    写：53M/s           写：52%              写：55M/s                   写：50% 
+               读：104M/s          读：9.8%             读：111M/s                  读：6.3%
+
+
+
+以下为测试日志：
+
+hknpibf3:~ # /fmnp/soft/bonnie/Bonnie -d /usr 
+
+Bonnie 1.4: File '/usr/Bonnie.17429', size: 104857600, volumes: 1
+
+              ---Sequential Output (nosync)--- ---Sequential Input-- --Rnd Seek-
+
+              -Per Char- --Block--- -Rewrite-- -Per Char- --Block--- --04k (03)-
+
+Machine    MB K/sec %CPU K/sec %CPU K/sec %CPU K/sec %CPU K/sec %CPU   /sec %CPU
+
+hknpib 1* 100 95540 98.9886564  100 107202  5.0 110928 99.75417702  106 253260.7  253
+
+hknpibf3:~ # /fmnp/soft/bonnie/Bonnie -d /usr -s 1000
+
+Bonnie 1.4: File '/usr/Bonnie.17444', size: 1048576000, volumes: 1
+
+              ---Sequential Output (nosync)--- ---Sequential Input-- --Rnd Seek-
+
+              -Per Char- --Block--- -Rewrite-- -Per Char- --Block--- --04k (03)-
+
+Machine    MB K/sec %CPU K/sec %CPU K/sec %CPU K/sec %CPU K/sec %CPU   /sec %CPU
+
+hknpib 1*1000 74266 76.7208380 25.6 2177856 99.5 109937  1005607486  101 243249.8  243
+
+hknpibf3:~ # 
+
+hknpibf3:~ # 
+
+hknpibf3:~ # 
+
+hknpibf3:~ # /fmnp/soft/bonnie/Bonnie -d /fmnp/soft/test/ 
+
+Bonnie 1.4: File '/fmnp/soft/test//Bonnie.17458', size: 104857600, volumes: 1
+
+              ---Sequential Output (nosync)--- ---Sequential Input-- --Rnd Seek-
+
+              -Per Char- --Block--- -Rewrite-- -Per Char- --Block--- --04k (03)-
+
+Machine    MB K/sec %CPU K/sec %CPU K/sec %CPU K/sec %CPU K/sec %CPU   /sec %CPU
+
+hknpib 1* 100 53837 53.6106988  7.9 104329  9.8 107132  1005372507  105 46390.3 69.6
+
+hknpibf3:~ # /fmnp/soft/bonnie/Bonnie -d /fmnp/soft/test/ -s 1000
+
+Bonnie 1.4: File '/fmnp/soft/test//Bonnie.17468', size: 1048576000, volumes: 1
+
+              ---Sequential Output (nosync)--- ---Sequential Input-- --Rnd Seek-
+
+              -Per Char- --Block--- -Rewrite-- -Per Char- --Block--- --04k (03)-
+
+Machine    MB K/sec %CPU K/sec %CPU K/sec %CPU K/sec %CPU K/sec %CPU   /sec %CPU
+
+hknpib 1*1000 55282 52.2106583  6.0 107251  5.3 83703  1005717508  101 50023.8 75.0
+
+hknpibf3:~ # /fmnp/soft/bonnie/Bonnie -d /fmnp/soft/test/ -s 500
+
+Bonnie 1.4: File '/fmnp/soft/test//Bonnie.17641', size: 524288000, volumes: 1
+
+              ---Sequential Output (nosync)--- ---Sequential Input-- --Rnd Seek-
+
+              -Per Char- --Block--- -Rewrite-- -Per Char- --Block--- --04k (03)-
+
+Machine    MB K/sec %CPU K/sec %CPU K/sec %CPU K/sec %CPU K/sec %CPU   /sec %CPU
+
+hknpib 1* 500 55002 52.4108009  5.1 106272  6.3 110697  1003660672  100 53157.6 53.2
+
+hknpibf3:~ # /fmnp/soft/bonnie/Bonnie -d /usr -s 500
+
+Bonnie 1.4: File '/usr/Bonnie.17655', size: 524288000, volumes: 1
+
+              ---Sequential Output (nosync)--- ---Sequential Input-- --Rnd Seek-
+
+              -Per Char- --Block--- -Rewrite-- -Per Char- --Block--- --04k (03)-
+
+Machine    MB K/sec %CPU K/sec %CPU K/sec %CPU K/sec %CPU K/sec %CPU   /sec %CPU
+
+hknpib 1* 500 99490  1001060979  100 2291463  100 109226  1005693443 97.9 255705.4  281
+
+ 
+
+
+
+
+20100727
+mount iso 
+mount -o loop  wzy.iso /media
+
+添加swap 
+dd if=/dev/zero of=/swapfile bs=1024 count=4096000
+mkswap /swapfile
+swapon /swapfile
+添加到fstab
+/swapfile            swap              swap    defaults        0 0
+
+
+开源网络分析器Wireshark 
+
+
+20100707
+Linux下文件被删除后，空间没有被释放
+
+原因
+
+在Linux或者Unix系统中，通过rm或者文件管理器删除文件将会从文件系统的目录结构上解除链接(unlink).然而如果文件是被打开的（有一个进程正在使用），那么进程将仍然可以读取该文件，磁盘空间也一直被占用。
+
+解决方法
+
+首先我们获得一个已经被删除但是仍然被应用程序占用的文件列表：<!--IWMS_AD_BEGIN-->
+<script src="../../system/system60.js" type="text/javascript"></script>
+<!--IWMS_AD_END-->
+
+1.$ /usr/sbin/lsof|grep deleted
+
+2.ora    25575 data   33u      REG              65,65  4294983680   31014933 /oradata/DATAPRE/UNDOTBS009.dbf (deleted)
+
+从lsof的输出中，我们可以发现pid为25575的进程持有着以文件描述号（fd）为33打开的文件/oradata/DATAPRE /UNDOTBS009.dbf。
+
+在我们找到了这个文件之后可以通过结束进程的方式来释放被占用的空间。
+
+通过截断proc文件系统中的文件可以强制要求系统回收分配给正在使用的的文件。这是一项高级技术，仅到管理员确定不会对运行中的进程造成影响时使用。应用程序对这种方式支持的并不好，当一个正在使用的文件被截断可能会引发不可预知的问题
+
+1.$ echo > /proc/pid/fd/fd_number
+
+例如，根据之前lsof的输出：
+
+1.$ file /proc/25575/fd/33
+
+2./proc/25575/fd/33: broken symbolic link to `/oradata/DATAPRE/UNDOTBS009.dbf (deleted)'
+
+3.$ echo > /proc/25575/fd/33
+
+smbclient //192.168.0.100/share -Uadministrator
+开放 smb 服务端口
+iptables -I INPUT -p udp --dport 137 -j ACCEPT  
+iptables -I INPUT -p udp --dport 138 -j ACCEPT 
+iptables -I INPUT -p tcp --dport 139 -j ACCEPT    
+iptables -I INPUT -p tcp --dport 445 -j ACCEPT   
+
+20100612
+samba配置可匿名只读访问，特定用户可以写
+[marketdata]
+        path = /file/data/marketdata
+        guest ok = yes
+        public = yes
+        read only=yes
+        browseable = yes
+        write list=mdfdata
+        
+samba添加用户
+现在OS添加用户，然后设置权限，通过 smbpasswd -a 的方式添加samba同名用户
+
+* Red Hat Enterprise Linux (Server including virtualization):
+2515dd4e215225dd
++ Red Hat Enterprise Linux Virtualization Platform:
+49af89414d147589
+客户端:
+* Red Hat Enterprise Linux Desktop:
+660266e267419c67
++ Red Hat Enterprise Linux Desktop + Workstation Option:
+da3122afdb7edd23
++ Red Hat Enterprise Linux Desktop + Workstation + DualOS Option
+(Virtualization):
+7fcc43557e9bbc42
++ Red Hat Enterprise Linux Desktop + DualOS Option (Virtualization):
+fed67649ff918c77
+
+20100428
+/etc/ld.so.conf和ldconfig， PKG_CONFIG_PATH
+这个文件记录了编译时使用的动态链接库的路径。
+默认情况下，编译器只会使用/lib和/usr/lib这两个目录下的库文件
+如果你安装了某些库，比如在安装gtk+-2.4.13时它会需要glib-2.0 >= 2.4.0,辛苦的安装好glib后
+没有指定 --prefix=/usr 这样glib库就装到了/usr/local下，而又没有在/etc/ld.so.conf中添加/usr/local/lib
+因此当安装完一些库文件，(例如刚安装好glib)，或者修改ld.so.conf增加新的库路径后，需要运行一下 
+/sbin/ldconfig
+
+修改内核参数，控制file cache
+释放内存
+sync
+通过修改proc系统的drop_caches清理free的cache
+$echo 3 > /proc/sys/vm/drop_caches
+
+vi /etc/sysctl.ctl
+vm.dirty_ratio=10
+
+drop_caches的详细文档如下：
+Writing to this will cause the kernel to drop clean caches, dentries and inodes from memory, causing that memory to become free.
+To free pagecache:
+* echo 1 > /proc/sys/vm/drop_caches
+To free dentries and inodes:
+* echo 2 > /proc/sys/vm/drop_caches
+To free pagecache, dentries and inodes:
+* echo 3 > /proc/sys/vm/drop_caches
+As this is a non-destructive operation, and dirty objects are notfreeable, the user should run "sync" first in order to make sure allcached objects are freed.
+
+
+
+
+若你的系统对数据丢失不于考虑，可以关闭sync-bin,这时数据刷新到硬盘完全取决于操作系统的配置，相关的配置参数有如下：
+
+/proc/sys/vm/dirty_ratio
+
+这个参数控制一个进程在文件系统中的文件系统写缓冲区的大小，单位是百分比，表示系统内存的百分比，表示当一个进程中写缓冲使用到系统内存多少的时候，再有磁盘写操作时开始向磁盘写出数据。增大之会使用更多系统内存用于磁盘写缓冲，也可以极大提高系统的写性能。但是，当你需要持续、恒定的写入场合时，应该降低其数值，一般缺省是 40。更新方法
+
+echo 30 >/proc/sys/vm/dirty_ratio (或则修改/etc/sysctl.conf文件，增加sys.vm.dirty_ratio=30 重起机器)
+
+/proc/sys/vm/dirty_background_ratio
+
+这个参数控制文件系统的pdflush进程，在何时刷新磁盘。单位是百分比，表示系统总内存的百分比，意思是当磁盘的脏数据缓冲到系统内存多少的时候，pdflush开始把脏数据刷新到磁盘。增大会使用更多系统内存用于磁盘写缓冲，也可以极大提高系统的写性能。但是，当你需要持续、恒定的写入场合时，应该降低其数值，一般缺省是10。
+
+/proc/sys/vm/dirty_writeback_centisecs
+
+Pdflush写后台进程每隔多久被唤醒并执行把脏数据写出到硬盘。单位是 1/100 秒。缺省数值是500，也就是 5 秒。如果你的系统是持续地写入动作，那么实际上还是降低这个数值比较好，这样可以把尖峰的写操作削平成多次写操作。设置方法如下：
+
+echo 200 >/proc/sys/vm/dirty_writeback_centisecs
+
+/proc/sys/vm/dirty_expire_centisecs
+
+这个参数声明Linux内核写缓冲区里面的脏数据多“旧”了之后，pdflush 进程就开始考虑写到磁盘中去。单位是 1/100秒。缺省是 30000，也就是 30 秒的数据就算旧了，将会刷新磁盘。对于特别重载的写操作来说，这个值适当缩小也是好的，但也不能缩小太多，因为缩小太多也会导致IO提高太快。建议设置为 1500，也就是15秒算旧。
+
+echo 1500 >/proc/sys/vm/ dirty_expire_centisecs
+
+因此若没有调整这些参数，全部以缺省值，而且关闭sync-bin的话，那么最多丢失的数据是：
+
+5秒种（dirty_writeback_centisecs）之内的，小于1.6G的数据（dirty_background_ratio，16G/10=1.6G）
+
+当然，实际上5秒之内不太可能写1.6G的数据，因此最坏就是5秒钟之内的数据丢失。因此若要关闭sync-bin，又不想丢失太多数据的话，可以通过调整dirty_writeback_centisecs这个参数，如调整到 200（2秒），这样最多就丢2秒钟的数据。又可以提高数据的写能力。
+
+Mysql里还有一个参数可以调整，提高数据库的写能力，那就是
+
+innodb_flush_log_at_trx_commit
+
+这个参数默认是1，即每次事务Commit时，都刷新日志，以免数据丢失。因为我们的系统允许丢失少量数据，因此可以把innodb_flush_log_at_trx_commit设置为2，允许丢失一个事务的数据，经测试，发现2可以提高25%左右的性能。
+
+另外对于文件系统的mount方式，noatime方式也可以提高部分性能（数据库专用的服务器，一般是noatime）
+
+当数据有删除更新操作后，时间长后一般有碎片，导致索引空间不紧凑，占用更多的硬盘空间，因此会导致查询编码，解决办法是定期执行下面的语句：
+
+ALTER TABLE tbl_name ENGINE=INNODB
+
+另外若sql语句中有sort 和group by之类,需要增大sort_buffer_size
+
+这个参数是每客户端连接的,当有sort/group查询时,会分配 sort_buffer_size大小的内存,因此若连接很多,则要小心;合适的值可以查看SHOW GLOBAL STATUS里面Sort_merge_passes的信息以及Created_tmp_tables之类信息 
+
+
+安装python oracle插件
+
+bjnppb02:/file/soft/suse10sp2/suse/x86_64 # rpm -ivh  blt-2.4z-222.2.x86_64.rpm
+Preparing...                ########################################### [100%]
+   1:blt                    ########################################### [100%]
+bjnppb02:/file/soft/suse10sp2/suse/x86_64 # rpm -ivh  python-tk-2.4.2-18.13.x86_64.rpm
+Preparing...                ########################################### [100%]
+   1:python-tk              ########################################### [100%]
+bjnppb02:/file/soft/suse10sp2/suse/x86_64 # rpm -ivh  python-devel-2.4.2-18.13.x86_64.rpm
+Preparing...                ########################################### [100%]
+   1:python-devel           ########################################### [100%]
+
+解开 
+  python setup.py build
+  python setup.py install
+  
+
+
+查看rpm包
+rpm -qpl python-devel-2.4.2-18.13.x86_64.rpm 
+
+20091124
+/boot cannot be a logical volume.
+vgdisplay 
+lvdisplay
+lvcreate -L2G -n new_logical_volume new_vol_group
+lvextend 
+lvreduce 
+vgextend 
+pvcreate
+resize2fs 修改文件系统大小
+
+/etc/lvm/lvm.conf
+mkfs.reiserfs   /dev/system/lvol0
+
+
+fuser 可以达到和lsof 一样的效果
+umount -l 可以搞定很多无法 umount的问题
+
+删除缺省路由
+route del -net 0.0.0.0 netmask  255.255.255.255 
+添加缺省路由
+route add 0.0.0.0 gw 192.168.193.129
+
+ip route del default 
+ip addr add 172.16.100.1/24 dev eth1
+ip route add default via 192.168.73.1 dev eth7
+ip route add 172.16.10.0/24 via e.f.g.h dev eth2
+
+
+ip addr add 192.168.193.157/27 dev bond0
+
+
+管理ip
+　　对于接口的配置可以用下面的命令进行：
+Usage: ip addr [ add | del ] IFADDR dev STRING
+ip address add 115.158.113.164/25 dev eth0
+ip link set dev eth0 up
+
+　　例如：
+router># ip addr add 192.168.0.1/24 broadcast 192.168.0.255 label eth0 dev eth0
+　　上面表示，给接口eth0赋予地址192.168.0.1 掩码是255.255.255.0(24代表掩码中1的个数)，广播地址是192.168.0.255
+
+mount -t nfs -o resvport,soft,intr,rsize=32768,wsize=32768,timeo=900,retrans=3,proto=tcp,vers=3,async 
+
+
+    Samba mount by Nautilus: Read 24.4, write 18.6
+    Samba mount by command in terminal: Read 56.4, write 36.3
+    NFS mount by command in terminal: Read 42.5, write 20.6
+
+Bonnie++/Iozone/DD IO 测试性能软件
+
+nfs 挂载的时候用 -soft可以解决 nfs sever crash之后一直等待的情况的，soft模式下尝试一定次数后就放弃，但是可能会数据不一致
+
+ 
+  对于web的图片应用，基于文件不大，而且对相同文件无同时写操作，无需GFS系统，NFS绝对可以满足了，既稳定维护又方便，而且性能也能保障。如果你是用作流媒体的源服务器应用，那NFS的性能肯定会出问题的，而GFS系统的同时读写性能确实远远好于NFS。
+  
+用iozone测试文件系统功能 
+
+ext4目前性能最好 
+zfs不支持集群，只有gfs支持集群
+
+经深刻的个人实践证明,在 web 应用下, NFS 性能最佳.
+
+N个 App server 里有 N个 web 进程,gfs 的先进特性会让你难忘...(难用)
+在大量 IO 的WEB应用下,并发写好不好已经不重要. (大量IO就是大量读取)
+
+真正的应用后告诉我, GFS 不能用在 web 群集里. 响应速度会极慢.
+
+=======
+某目录下有 6千个 session 文件, 4台 gfs client 同时 ls ...
+
+只是 ls 操作都不行. PS: 目录里的文件是不段有php 程序在使用.
+
+估计 gfs 在不断传送 文件的状态,基本上没有实用价值.
+
+目前gfs和ocfs2一样，目前(7-8个月内)不适合放到一个复杂的系统中作为存储基础. 除非使用方本身在对两者的开发细节比较了解，对于实施过程中的大问题，大状况深刻了解，并有应对的措施.
+
+opensource的软件系统就是这样的路子.
+
+
+这一段时间并行文件系统搞得我有点疯掉了，ocfs2不稳定，polyserve也是一样，用户1T的数据没了，gfs又难用，同样不稳定，唉，linux就没有好用的并行文件系统，最后让用户在san之前弄了个服务器做NFS算了去年的时候看过一段时间gfs,后来发现对我的环境,nfs才是最佳选择.
+
+我唯一担心的是,将来服务器多了之后,怎么让nfs 服务器能多带client
+
+听说过一个dnfs的实现,但是不太了解.
+
+nfs我看过文档说16个以下比较好，这个肯定可以调试的。nfs的几个参数很重要，比如async和sync的差别。
+
+有人在研究ocfs2吗?
+下午刚弄好了,我就是被gfs那一大套东西搞烦了在改用这个的
+
+
+  据贾亚军介绍，在国内也找到了问题的解决者?D?D中科院，所采用的方式也是将nfs系统中的数据包进行分解，采用
+  
+  
+  
+  (分布式nfs)的方式进行数据传输，使系统消耗得以大幅降低。
+  
+    根据在新疆地球物理研究所进行的测试来看，应用了这一技术之后，mount 128个节点群后的i/o性能都能够呈现出线性分布。也就是说，采用了这一技术之后，高性能计算得出结果的时间能够比原来缩短一倍甚至几倍。
+  

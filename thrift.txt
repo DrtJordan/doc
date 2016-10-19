@@ -1,0 +1,114 @@
+客户端调用分析
+Client.add->Calculator.Client.add->Calculator.Client.send_add->Calculator.Client.sendBase(extend TServiceClient (abstract class ))->Calculator.Client. recv_add()->Calculator.Client.receiveBase(extend TServiceClient (abstract class ))
+服务端
+TSimpleServer->serve()->Calculator.Processor.process(extend TBaseProcessor (abstract class))->Calculator.Processor.add.process(extend ProcessFunction (abstract class))
+
+
+
+Non blocking server requires client to use TFramedTransport which would frame the data sent over the wire. 
+异步客户端不能再前面的异步方面返回前，执行一个新的方法
+
+
+Thrift允许你选择 protocol ，transport和server。因为Thrift 最早是有C++开发的，Thrift在C++实现中有最大的变化。
+
+Thrift支持 text 和 binary protocols，binary protocols要比text protocols 容量小，但是有时候 text protocols比较有用（例如：调试的时候）。
+支持的协议有：
+TBinaryProtocol  -直接的二进制格式
+TCompactProtocol  效率和高压缩编码数据
+TDenseProtocoal  和TCompactProtocol相似，但是省略了meta信息，从哪里发送的，增加了receiver。还在实验中，java实现还不可用。
+TJSONProtocoal 使用JSON
+TSImpleJSONProtocoal  只写的protocol使用JSON。适合被脚本语言转化
+TDebugProtocoal  使用人类可读的text 格式 帮助调试
+
+上面的protocol 说明了 什么被传送，Thrift  transports 说明了怎样传送。支持的transport：
+TSocket  使用 blocking socket I/O
+TFramedTransport   以帧的形式发送，每帧前面是一个长度。要求服务器使用non-blocking server
+TFileTransport   写到文件。没有包括在java实现中。
+TMemoryTransport   使用内存 I/O 。java实现中在内部使用了ByteArrayOutputStream
+TZlibTransport 压缩 使用zlib。在java实现中还不可用
+
+TNonblockingSocket    用在异步调用的时候
+
+最后，thrift 提供了servers：
+ 
+TThreadedSelectorServer 性能最好
+TSimpleServer 单线程处理io，单线程处理  使用标准的blocking IO  用于测试
+TNonblockingServer 单线程处理io，单线程处理，但是是异步的  使用 non-blocking IO （java实现中使用了NIO channels）。TFramedTransport必须使用在这个服务器
+THsHaServer  Half-Sync/Half-Async server   单线程处理io，线程池处理逻辑
+TThreadedSelectorServer   线程池处理io，线程池处理逻辑 
+TThreadPoolServer      一个客户端连接一个线程   使用标准的blocking IO
+
+多服务复用同一物理连接
+
+ TServerTransport serverTransport = new TServerSocket(9090);
+            TMultiplexedProcessor processor = new TMultiplexedProcessor();
+            //注册一个服务接口
+            Service1.Processor<Service1Impl> pro =
+                    new Service1.Processor<Service1Impl>(new Service1Impl());
+            processor.registerProcessor("service1", pro);
+            //注册一个服务接口
+            Service2.Processor<Service2Impl> test =
+                    new Service2.Processor<Service2Impl>(new Service2Impl());
+            processor.registerProcessor("service2", test);
+            TServer server = new TThreadPoolServer(new Args(serverTransport).processor(processor));
+            server.serve();//启动服务
+
+Server
+   TProcessor tprocessor = new HelloWorld.Processor<HelloWorld.Iface>(new HelloWorldImpl());  
+        // 传输通道 - 非阻塞方式    
+        TNonblockingServerSocket serverTransport = new TNonblockingServerSocket(SERVER_PORT);  
+        //异步IO，需要使用TFramedTransport，它将分块缓存读取。    
+        TNonblockingServer.Args tArgs = new TNonblockingServer.Args(serverTransport);  
+        tArgs.processor(tprocessor);  
+        tArgs.transportFactory(new TFramedTransport.Factory());  
+        //使用高密度二进制协议   
+        tArgs.protocolFactory(new TCompactProtocol.Factory());  
+        // 使用非阻塞式IO，服务端和客户端需要指定TFramedTransport数据传输的方式  
+        TServer server = new TNonblockingServer(tArgs);  
+        System.out.println("HelloTNonblockingServer start....");  
+        server.serve(); // 启动服务  
+        
+  客户端
+   public static void main(String[] args) throws TException {  
+        //设置传输通道，对于非阻塞服务，需要使用TFramedTransport，它将数据分块发送    
+        TTransport transport = new TFramedTransport(new TSocket(SERVER_IP, SERVER_PORT, TIMEOUT));  
+        // 协议要和服务端一致  
+        //HelloTNonblockingServer  
+        ////使用高密度二进制协议   
+        TProtocol protocol = new TCompactProtocol(transport);  
+        //HelloTHsHaServer  
+        ////使用二进制协议   
+        //TProtocol protocol = new TBinaryProtocol(transport);  
+        HelloWorld.Client client = new HelloWorld.Client(protocol);  
+        transport.open();  
+        String result = client.sayHello("jack");  
+        System.out.println("result : " + result);  
+        //关闭资源  
+        transport.close();  
+        
+        TThreadedSelectorServer 方式
+  
+  	TNonblockingServerSocket serverTransport = new TNonblockingServerSocket(8090);
+    	TThreadedSelectorServer.Args tArgs = new TThreadedSelectorServer.Args(serverTransport);
+		tArgs.processor(processor);
+		tArgs.transportFactory(new TFramedTransport.Factory());
+		tArgs.selectorThreads(2);
+		tArgs.workerThreads(4);
+		//二进制协议
+		tArgs.protocolFactory(new TBinaryProtocol.Factory());
+		// 多线程半同步半异步的服务模型
+		TServer server = new TThreadedSelectorServer(tArgs);
+		System.out.println("HelloTThreadedSelectorServer start....");
+		server.serve(); // 启动服务
+
+       System.out.println("Starting the simple server...");
+      server.serve();
+      
+      客户端
+        TTransport transport = new TFramedTransport(new TSocket("localhost", 8090, 3000));  
+        // 协议要和服务端一致  
+         ////使用二进制协议   
+        TProtocol protocol = new TBinaryProtocol(transport);  
+          transport.open();  
+          Calculator.Client client=  new Calculator.Client(protocol); 
+          

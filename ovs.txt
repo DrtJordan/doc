@@ -1,0 +1,172 @@
+
+
+使用ovs交换机的端口
+ip netns add ns1
+ip netns add ns2
+# create the switch
+BRIDGE=ovs-test
+ovs-vsctl add-br $BRIDGE
+#
+#### PORT 1
+# create an internal ovs port
+ovs-vsctl add-port $BRIDGE tap1 -- set Interface tap1 type=internal
+# attach it to namespace
+ip link set tap1 netns ns1
+# set the ports to up
+ip netns exec ns1 ip link set dev tap1 up
+ip netns exec ns1 ip link set dev lo up  
+ip netns exec ns1 ip addr add 10.0.8.3/24 dev tap1
+#
+#### PORT 2
+# create an internal ovs port
+ovs-vsctl add-port $BRIDGE tap2 -- set Interface tap2 type=internal
+# attach it to namespace
+ip link set tap2 netns ns2
+# set the ports to up
+ip netns exec ns2 ip link set dev tap2 up
+ip netns exec ns2 ip link set dev lo up  
+ip netns exec ns2 ip addr add 10.0.9.3/24 dev tap2
+
+ip addr add 10.0.9.1/24 dev ovs-test
+ip link set dev ovs-test up
+
+
+联通外网
+ip addr add 10.0.2.1/24 dev  ovs_br_test
+ip link set dev ovs_br_test up
+iptables -t nat -I POSTROUTING -s 10.0.2.0/24 -o team0 -j MASQUERADE  
+iptables -t nat -I POSTROUTING -s 10.0.8.0/24  -j MASQUERADE  
+iptables -t nat -I POSTROUTING  -s 10.0.8.0/24 -j SNAT --to 192.168.193.176
+iptables -t nat -A PREROUTING -p tcp --dport 80 -i eth0  -j DNAT --to 5.6.7.8:8080
+
+iptables 调试
+iptables -t raw -I OUTPUT -p icmp -i br-ovstap  -j TRACE
+iptables -t raw -I PREROUTING -p icmp -i br-ovstap -j TRACE
+modprobe ipt_LOG
+sysctl net.netfilter.nf_log.2=ipt_LOG
+sysctl net.ipv4.ip_forward=1
+
+日志在  /var/log/message
+
+清理规则
+iptables -F INPUT 
+iptables -F FORWARD 
+iptables -F POSTROUTING -t nat 
+
+查看 ovs mac地址
+ovs-appctl fdb/show ovs-test
+
+监控 ping 
+tcpdump -e -i any -p icmp  and   host 192.168.193.176 
+
+配置 gre tunel ，可以连接两个物理主机上的 ovs 端口
+ovs-vsctl add-port ovs-test gre0 -- set interface gre0 type=gre options:remote_ip=192.168.193.177
+
+
+配置两个不同网段的ovs port互联互通
+
+
+直接把 ovs switch对应的os 虚拟设备(比如switch名字为ovs-test,则host有个设备就是ovs-test)同时添加两个网段的地址，
+然后up该设备(ip link set dev ovs-test up)就可以，打开host的forward(sysctl net.ipv4.ip_forward=1)，就能通了
+
+添加到ovs的端口自动就能相互连通(如果路由和转发设置正确)，和network namespace没有关系
+
+但是linux的namespace自己有限制，不同的namespace相互不通，除非使用veth设备，或者真的把某个物理设备添加到namespace就能通了
+
+把一个物理网卡添加到ovs port，物理网卡的ip自动丢失，和外网的连接就ok了,可以把ovs的端口设置为该物理网卡的ip以方便管理
+
+
+
+比较好的做法是在host机器上添加一个两个虚拟port ，配置上两个网段的地址，然后打开转发，每个相关的vm机器配置好缺省网管就行了，支持vlan
+ovs-vsctl add-port $BRIDGE tap3 -- set Interface tap3 type=internal
+ovs-vsctl add-port $BRIDGE tap4 -- set Interface tap4 type=internal
+
+ip link set dev tap4 up
+ip link set dev tap3 up
+ip link set dev lo up  
+ip addr add 10.0.8.1/24 dev tap3
+ip addr add 10.0.9.1/24 dev tap4
+sysctl  net.ipv4.ip_forward=1
+
+ip netns exec ns1 ip route add default via 10.0.8.1
+ip netns exec ns2 ip route add default via 10.0.9.1
+
+就能互通了
+如果有vlan设置 比如 tap1 vlan=100  tap2 vlan=200
+则把 tap3也设置为vlan 100,tap4 vlan 200就可以通了
+
+连接外网(是否用vlan都一样) 或者直接把能连接外网的网卡挂到ovs switch上即可
+
+iptables -t nat -I POSTROUTING  -s 10.0.8.0/24 -j SNAT --to 192.168.193.134
+iptables -t nat -I POSTROUTING  -s 10.0.9.0/24 -j SNAT --to 192.168.193.134
+
+配置 vlan 
+ovs-vsctl add-port br0 tap1 tag=200
+修改 vlan 
+ovs-vsctl set port tap1 tag=100
+同一网段不同vlan缺省不能互通
+ovs-vsctl set port tap1 trunks=100,200
+清理设置
+ovs-vsctl clear port vnet1 tag
+
+
+二层交换机(linux bridge)只是简单地学习ip-mac,然后转发，如果找不到对应的mac,就群发到所有端口
+
+查看bridge 详细信息
+ovs-vsctl list bridge
+ovs-vsctl list port 这里面可以看到那些可以通过set指令设置
+
+
+_uuid               : 042bd219-1d5a-4455-aaf4-a0ba0b353a20
+bond_downdelay      : 0
+bond_fake_iface     : false
+bond_mode           : []
+bond_updelay        : 0
+external_ids        : {}
+fake_bridge         : false
+interfaces          : [4a7fe3f7-9cb7-4973-87a0-abde7ba86c25]
+lacp                : []
+mac                 : []
+name                : "tap1"
+other_config        : {}
+qos                 : []
+statistics          : {}
+status              : {}
+tag                 : 100
+trunks              : [100, 200]
+vlan_mode           : []
+
+ ovs-vsctl list port tap1
+ 
+ 
+ VXLAN 是非常新的一个 tunnel 技术，它是一个 L2 tunnel。Linux 内核的 upstream 中也刚刚加入 VXLAN 的实现。
+ 要让这三个网络互联，我们需要建立三个 GRE tunnel。如果网络数量再增长，那么需要的 tunnel 数量更多。换句话说，GRE tunnel 的扩展性太差，从根本上讲还是因为它只是一个 point to point 的 tunnel。
+ 其实 VLAN 在某种程度上也可以看作一个 L2 over L2 的 tunnel，只不过它多了一个新的 VLAN header，这其中有12 bit 是 VLAN tag。所以 VLAN 的第一个不足之处就是它最多只支持 4096 个 VLAN 网络(当然这还要除去几个预留的)，对于大型数据中心的来说，这个数量是远远不够的。
+ VXLAN 是 Virtual eXtensible LANs 的缩写，所以顾名思义，它是对 VLAN 的一个扩展，但又不仅限于此。
+从数量上讲，它确实把 12 bit 的 VLAN tag 扩展成了 24 bit，所以至少暂时够用的了。从实现上讲，它是 L2 over UDP，它利用了 UDP 同时也是 IPv4 的单播和多播，可以跨 L3 边界，很巧妙地解决了 GRE tunnel 和 VLAN 存在的不足，让组网变得更加灵活。
+
+
+ 
+ Trunk可以通过多个VLAN的数据，那么实际上Trunk是将广播域延伸到了另外一台交换机上
+ Trunk口，Trunk口上可以同时传送多个VLAN的包，一般用于交换机之间的链接。
+ Access口，Access口只能属于1个VLAN，一般用于连接计算机的端口。
+ Tag和Untag，tag是指vlan的标签，即vlan的id，用于指明数据包属于那个vlan，untag指数据包不属于任何vlan，没有vlan标记。
+ 
+ 处于不同VLAN 的计算机即使它们是在同一交换机上，它们之间的通信也必须使用路由器。
+ 可以在每个VLAN 上都有一个以太网口和路由器连接。采用这种方法，如果要实现N 个VLAN 间的通信，则路由器需要N 个以太网接口，
+ 同时也会占用了N 个交换上的以太网接口。单臂路由提供了一种解决方案。路由器只需要一个以太网接口和交换机连接，
+ 交换机的这个接口设置为Trunk 接口。在路由器上创建多个子接口和不同的VLAN 连接，子接口是路由器物理接口上的逻辑接口。
+ 如图11-1，当交换机收到VLAN1 的计算机发送的数据帧后，从它的Trunk 接口发送数据给路由器，由于该链路是Trunk 链路，
+ 帧中带有VLAN1的标签，帧到了路由器后，如果数据要转发到VLAN2 上，路由器将把数据帧的VLAN1 标签去掉，
+ 重新用VLAN2 的标签进行封装，通过Trunk 链路发送到交换机上的Trunk 接口;交换机收到该帧，去掉VLAN2 标签，
+ 发送给VLAN2 上的计算机，从而实现了VLAN 间的通信。
+　　单臂路由的缺点：
+　　VLAN 之间的通信需要路由器来完成
+　　数据量增大，路由器与交换机之间的通道会成为整个网络的瓶颈：
+
+采用单臂路由实现VLAN 间的路由时转发速率较慢，在实际工作中多在局域网内部采用三层交换的方式实现VLAN间路由。
+	
+　动态VLAN则是根据每个端口所连的计算机，随时改变端口所属的VLAN。这就可以避免上述的更改设定之类的操作。动态VLAN可以大致分为3类：
+　　l 基于MAC地址的VLAN(MAC Based VLAN)
+　　l 基于子网的VLAN(Subnet Based VLAN)
+　　l 基于用户的VLAN(User Based VLAN)

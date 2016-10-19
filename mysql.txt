@@ -1,0 +1,2354 @@
+
+LOAD DATA local INFILE '700_AC.CSV'  INTO TABLE  t_instrument_price  FIELDS TERMINATED BY ','   LINES TERMINATED BY '\n'    (@price_date,price, return_ratio)  SET VERSION_NUMBER =1, Ticker='00700' ,price_date=str_to_date(@price_date,'%Y/%c/%e') ;
+
+
+mycat支持sharding 基于阿里开源的Cobar(cobar基于Amoeba ）
+MySQL Proxy就是这么一个中间层代理，简单的说，MySQL Proxy就是一个连接池，负责将前台应用的连接请求转发给后台的数据库，并且通过使用lua脚本，可以实现复杂的连接控制和过滤，从而实现读写分离和负 载平衡。对于应用来说，MySQL Proxy是完全透明的，应用则只需要连接到MySQL Proxy的监听端口即可。当然，这样proxy机器可能成为单点失效，但完全可以使用多个proxy机器做为冗余，在应用服务器的连接池配置中配置到多 个proxy的连接参数即可。
+TinyDbRouter
+
+mysql 表名，列名大小写敏感
+20140827
+安装 5.6.20
+
+mysql 表明，列明大小写敏感
+
+rpm -Uvh --force MySQL-server-5.6.20-1.el6.x86_64.rpm
+You will find that password in  /root/.mysql_secret
+
+20140725
+sockethandler 直接和 innodb storage 打交道，提交和查询，绕过了,mysql的sql解析层，所以效率会快3-5倍
+
+
+20140423
+修改客户端字符集显示
+SHOW VARIABLES LIKE 'CHAR%';
+  character_set_client     | latin1                             | 
+| character_set_connection | latin1        
+
+导致mysql上去查到乱码
+修改方法 添加如下到 [mysql]
+default-character-set   = utf8
+
+5.6 支持 range/list/hash(用户提供算法)/key(mysql提供算法)/column(多个column考虑，支持rang_column和list_column) 分区， subpartition(hash/key)只能主partition是range/list,
+5.65 后支持事物复制 也支持delayed 复制  MySQL Cluster 支持同步复制
+ 5.5  支持的 Semisynchronous Replication 当有一个 salve收到日志后并且提交到slave的日志后，才返回给客户，如果slave不可用，
+自动转成异步复制
+
+mysql proxy 用来做监控，读写分离等等
+
+
+20140305
+安装5.5.36
+首先安装 cmake  ./bootstrap; gmake; make install   cmake是跨平台的make 
+清除cmake配置信息
+make clean 
+rm CMakeCache.txt 
+
+cmake . -LAH # all params with help text
+cmake -DCMAKE_INSTALL_PREFIX=/ciccdev/mysql/mysql -DWITH_INNOBASE_STORAGE_ENGINE=1 -DWITH_ARCHIVE_STORAGE_ENGINE=1 -DWITH_BLACKHOLE_STORAGE_ENGINE=1   -DWITH_PERFSCHEMA_STORAGE_ENGINE=1 -DWITH_PARTITION_STORAGE_ENGINE=1  -DDEFAULT_CHARSET=utf8 -DDEFAULT_COLLATION=utf8_general_ci
+
+
+(The MyISAM, MERGE, MEMORY, and CSV engines are mandatory (always compiled into the server) and need not be installed explicitly.)
+make
+make install
+运行配置脚本
+
+scripts/mysql_install_db --user=mysql  --basedir=/ciccdev/mysql/mysql   --datadir=/ciccdev/mysql/mysql/data
+scripts/mysql_install_db --user=wechat  --basedir=/home/wechat/mysql   --datadir=/home/wechat/mysql/data
+qirvelrodq!6
+
+启动 
+bin/mysqld_safe --user=mysql &
+check 运行
+bin/mysqladmin version
+bin/mysqladmin variables
+bin/mysqlshow
+bin/mysqlshow mysql
+修改密码
+/ciccdev/mysql/mysql/bin/mysqladmin -u root password 'mysql'
+关闭
+bin/mysqladmin -u root shutdown
+配置自启动
+cp support-files/mysql.server /etc/init.d/mysql
+chmod +x /etc/init.d/mysql
+chkconfig --add mysql
+chkconfig --level 345 mysql on
+
+
+
+cp support-files/my-innodb-heavy-4G.cnf /etc/my.cnf
+如果/etc/mysql/my.cnf有，优先级比 /etc/my.cnf 高
+配置文件
+[mysqld]
+datadir=/ciccdev/mysql/mysql/data
+socket=/var/tmp/mysql.sock
+port=3306
+user=mysql
+character-set-server=utf8
+collation-server=utf8_general_ci
+default-storage-engine = InnoDB
+max_connections = 500                                            
+table_open_cache = 10240
+user=mysql
+query_cache_size = 1024M
+query_cache_limit = 10M                                           
+transaction_isolation=READ-COMMITTED
+log-bin=mysql-bin 
+binlog_format=mixed                                              
+
+[mysql.server]
+basedir=/ciccdev/mysql/mysql/
+
+配置文件读取顺序
+Default options are read from the following files in the given order:
+/etc/my.cnf /etc/mysql/my.cnf /ciccdev/mysql/mysql/etc/my.cnf ~/.my.cnf 
+
+可以通过 --defaults-file=指定
+
+启动脚本 start.sh
+FULLPATH=$(cd "$(dirname "$0")"; pwd)
+cd $FULLPATH
+nohup /bin/sh $FULLPATH/bin/mysqld_safe --defaults-file=./my.cnf 
+
+关闭脚本
+
+FULLPATH=$(cd "$(dirname "$0")"; pwd)
+cd $FULLPATH
+bin/mysqladmin --socket=/tmp/mysql2.sock -u root --password=mysql shutdown
+
+
+mysql -u wechat -h 192.168.193.132 --port 3308 --password=wechat
+
+修改密码
+SET PASSWORD FOR 'root'@'localhost' = PASSWORD('newpwd');
+UPDATE mysql.user SET Password = PASSWORD('newpwd')    WHERE User = 'root'; FLUSH PRIVILEGES;
+DROP USER ''@'localhost';
+
+支持规则表达式查询
+SELECT * FROM pet WHERE name REGEXP '^b'
+
+
+
+GRANT ALL PRIVILEGES ON wechat.* TO 'wechat'@'%' IDENTIFIED BY 'wechat';
+这个不包含localhost?
+
+
+出现错误probes_mysql_nodtrace.h: No such file or directory 
+删除源代码目录，重新解开,ok,清除cmake配置信息无效
+
+然后
+ 
+ 备份 物理备份 可以用  mysqlbackup of MySQL Enterprise Backup 也支持memory engine 
+ 物理备份也可以直接文件copy(停机)或者 mysqlhotcopy 
+ 逻辑备份用mysqldump或者spool，支持memory engine
+ 也可以用OS级别的snapshot比如ZFS提供的
+ MySQL Enterprise Backup   InnoDB tables are copied using a hot backup mechanism. (Ideally, the InnoDB tables should represent a substantial majority of the data.) Tables from other storage engines are copied using a warm backup mechanism
+InnoDB/ MyISAM  mysqlbackup  
+MyISAM mysqlhotcopy
+
+ mysqldump also does not dump the MySQL Cluster ndbinfo information database. 
+使用--single-transaction 会导致  global read lock on all tables (using FLUSH TABLES WITH READ LOCK) at the beginning of the dump 
+可能会影响长时间的upate
+
+--single-transaction 会 sets the transaction isolation mode to REPEATABLE READ and sends a START TRANSACTION
+20131129
+Maria DB 10 安装
+./scripts/mysql_install_db --defaults-file=~/.my.cnf
+启动
+cd support-files/
+cp mysql.server /etc/init.d/mysql
+chmod +x /etc/init.d/mysql
+
+chkconfig --add mysql
+chkconfig --level 345 mysql on
+
+
+
+支持batch 支持自动重新连接
+支持 socketTimeout socket操作（读写）超时，单位：毫秒
+connectTimeout 	和数据库服务器建立socket连接时的超时，单位：毫秒。 0表示永不超时，适用于JDK 1.4及更高版本
+
+String connectionUrl="jdbc:mysql://192.168.1.100:3306/test?rewriteBatchedStatements=true&autoReconnect=true&failOverReadOnly=false"
+
+
+20130718
+5.6的高并发性能比5.5.差一点 但是支持半同步复制
+
+
+20110130
+mysql 也支持返回结果集，在 procedure
+http://www.mysqlperformanceblog.com/2010/09/10/percona-server-5-1-49-rel11-3/
+
+20100729
+mysql只要表一连接，就很慢，非常慢 (oracle上10S的，Mysql 100min52.12 sec)
+
+下载最新版本
+http://dev.mysql.com/
+
+配置 performance schema 
+./configure --prefix=/ciccdev/mysql555_performance --with-plugins=innobase,partition,perfschema,semisync,csv,heap,ndbcluster  --with-charset=utf8    --with-collation=utf8_general_ci 
+检查是否打开 SHOW ENGINES
+打开配置
+[mysqld]
+performance_schema
+
+
+检查performance schema 是否启动
+SHOW VARIABLES LIKE 'perf%';
+
+
+kill连接
+KILL [CONNECTION | QUERY] thread_id
+
+
+trouble shooting 
+
+
+查看统计信息
+ SHOW STATUS;
+查看进程信息
+show processlist;
+show full processlist;
+SHOW FULL PROCESSLIST\G
+
+
+mysqlreport 查看更加详细的统计信息
+
+mysqlard 是一个连接到 MySQL 服务器上的守护程序，负责每 5 分钟搜集一次数据，并将它们存储到后台的一个 Round Robin Database 中
+
+libexec/mysqld --verbose --help
+
+
+查看 innodb状态
+SHOW ENGINE INNODB STATUS\G
+
+ANALYZE TABLE  
+查看Index的状态 
+SHOW INDEX FROM mydb.mytable;
+
+ 查看 执行计划
+ explain select count(*) from no_part_tab where
+ explain partitions select count(*) from part_tab where
+ EXPLAIN EXTENDED select count(*) from no_part_tab where
+ 检查系统总的状态
+ show global status like 'Com_%';
+ show session status 
+Com_select:执行select操作的次数
+Com_insert:执行Insert操作的次数，对于批量插入的INSERT操作，只累加一次
+Com_update:执行update操作的次数
+Com_delete:执行Delete操作的次数
+
+上面这些参数对于所有存储引擎的表操作都会进行累加。下面有些参数只针对InnoDB存储引擎的，累加的算法也有点不一样。
+Innodb_rows_read:select查询返回的行数
+Innodb_rows_inserted:执行INSERT操作插入的行数
+Innodb_rows_updated:执行Update操作更新的行数
+Innodb_rows_deleted:执行Delete操作删除的行数
+
+Connections:试图连接Mysql服务器的次数（执行的命令是：show status like 'Con_%';）
+Uptime: 服务器工作时间（执行的命令是：show status like 'Up_%';）
+Slow_queries:慢查询的次数（执行的命令是：show status like 'Slow_%';）
+
+ 打开profile 
+set profiling=1;  (set profiling=0;)
+select count(*) from client where broker_id=2;
+
+show profiles;
+
++----------+------------+-------------------------------------------------------------------------+
+| Query_ID | Duration   | Query                                                                   |
++----------+------------+-------------------------------------------------------------------------+
+|        1 | 0.00009000 | select count(*) from client where broker_id=2                           |
+|        2 | 0.00008900 | SELECT DATABASE()                                                       |
+|        3 | 0.00022000 | show tables                                                             |
+|        4 | 0.00008700 | SELECT DATABASE()                                                       |
+|        5 | 0.00022500 | show tables                                                             |
+|        6 | 0.00019500 | select *from test                                                       |
+|        7 | 0.00057800 | select sum(duration) from information_schema.profiling where query_id=1 |
++----------+------------+-------------------------------------------------------------------------+
+7 rows in set (0.00 sec)
+mysql> show profile for query 7;  (show profile for query 1;)
+
++--------------------------------+----------+
+| Status                         | Duration |
++--------------------------------+----------+
+| starting                       | 0.000015 |
+| checking query cache for query | 0.000031 |
+| Opening tables                 | 0.000009 |
+| System lock                    | 0.000004 |
+| Table lock                     | 0.000019 |
+| init                           | 0.000012 |
+| optimizing                     | 0.000003 |
+| statistics                     | 0.000009 |
+| preparing                      | 0.000006 |
+| executing                      | 0.000002 |
+| Sending data                   | 0.000051 |
+| end                            | 0.000003 |
+| query end                      | 0.000002 |
+| freeing items                  | 0.000023 |
+| storing result in query cache  | 0.000003 |
+| logging slow query             | 0.000001 |
+| cleaning up                    | 0.000002 |
++--------------------------------+----------+
+select sum(duration) from information_schema.profiling where query_id=1;
+
+20100505
+wait_timeout 缺省8hours
+
+编译的时候用 -O3 -static 效率最高
+
+http://www.mysqlperformanceblog.com
+http://planet.mysql.com/
+
+postgresql（8.3.7） 和 mysql（5.1.30）+innodb(1.0.3)性能和并发差不多,但postgresql在write多的情况下可能性能更好一点
+postgresql对可用性支持的不太好，不如mysql
+mysql 5.5支持复制确认
+mysql 支持range,list,hash,key 和复合分区，postgresql只支持list和range
+
+对比测试性能
+
+create table shex_tik_innodb
+( 
+  TRANS_DATE TIMESTAMP,
+  SYMBOL     char(6),
+  MARKET     char(4),
+  LASTPRICE  decimal(10,3),
+  VOLUME     int
+  )
+ engine=InnoDB;
+
+LOAD DATA INFILE '/tmp/mdf/sh20100104.tik' INTO TABLE shex_tik_innodb   FIELDS TERMINATED BY ','   LINES TERMINATED BY '\n';
+
+
+mysql> LOAD DATA INFILE '/tmp/mdf/sh20100104.tik' INTO TABLE shex_tik_innodb   FIELDS
+ TERMINATED BY ','   LINES TERMINATED BY '\n';
+
+Query OK, 7317717 rows affected, 65535 warnings (1 min 24.89 sec)
+Records: 7317717  Deleted: 0  Skipped: 0  Warnings: 182942928
+
+如果 用 innodb_flush_log_at_trx_commi=1 (2 min 26.10 sec)
+换成 innodb_flush_log_at_trx_commi=0，(1 min 24.89 sec)
+create index idx_tik on shex_tik_innodb(symbol,TRANS_DATE);
+
+
+create table shex_tik_iasm
+( 
+  TRANS_DATE TIMESTAMP,
+  SYMBOL     char(6),
+  MARKET     char(4),
+  LASTPRICE  decimal(10,3),
+  VOLUME     int
+  )
+ engine=MyISAM;
+
+
+mysql>
+ LOAD DATA INFILE '/tmp/mdf/sh20100104.tik' INTO TABLE shex_tik_iasm   FIELDS TERMINATED BY ','   LINES TERMINATED BY '\n';
+Query OK, 7317717 rows affected, 65535 warnings (17.39S)
+Records: 7317717  Deleted: 0  Skipped: 0  Warnings: 175625212
+
+
+
+
+create index idx_tik_iasm on shex_tik_iasm(symbol,TRANS_DATE);
+
+
+
+select count(*) from shex_tik_innodb  where Ticker='600000' and TRANS_DATE <= ('2010-01-04 14:30:00') and TRANS_DATE >= ('2010-01-04 10:30:00') ;
+
+
+
+create table shex_bs_innodb
+(
+  TRANS_DATE    TIMESTAMP,             
+  Ticker        char(6),
+  Exchange char(4),
+  LASTPRICE     decimal(10,3),
+  HIGHPRICE     decimal(10,3),
+  LOWPRICE      decimal(10,3),
+  TOTALVOLUME   decimal(20),
+  TOTALTURNOVER decimal(20),
+  BIDPRICE01    decimal(10,3),
+  BIDVOLUME01   decimal(20),
+  BIDPRICE02    decimal(10,3),
+  BIDVOLUME02   decimal(20),
+  BIDPRICE03    decimal(10,3),
+  BIDVOLUME03   decimal(20),
+  BIDPRICE04    decimal(10,3),
+  BIDVOLUME04   decimal(20),
+  BIDPRICE05    decimal(10,3),
+  BIDVOLUME05   decimal(20),
+  BIDPRICE06    decimal(10,3),
+  BIDVOLUME06   decimal(20),
+  BIDPRICE07    decimal(10,3),
+  BIDVOLUME07   decimal(20),
+  BIDPRICE08    decimal(10,3),
+  BIDVOLUME08   decimal(20),
+  BIDPRICE09    decimal(10,3),
+  BIDVOLUME09   decimal(20),
+  BIDPRICE10    decimal(10,3),
+  BIDVOLUME10   decimal(20),
+  ASKPRICE01    decimal(10,3),
+  ASKVOLUME01   decimal(20),
+  ASKPRICE02    decimal(10,3),
+  ASKVOLUME02   decimal(20),
+  ASKPRICE03    decimal(10,3),
+  ASKVOLUME03   decimal(20),
+  ASKPRICE04    decimal(10,3),
+  ASKVOLUME04   decimal(20),
+  ASKPRICE05    decimal(10,3),
+  ASKVOLUME05   decimal(20),
+  ASKPRICE06    decimal(10,3),
+  ASKVOLUME06   decimal(20),
+  ASKPRICE07    decimal(10,3),
+  ASKVOLUME07   decimal(20),
+  ASKPRICE08    decimal(10,3),
+  ASKVOLUME08   decimal(20),
+  ASKPRICE09    decimal(10,3),
+  ASKVOLUME09   decimal(20),
+  ASKPRICE10    decimal(10,3),
+  ASKVOLUME10   decimal(20),
+  TOTALTRADES   decimal(20)) engine=InnoDB;
+ LOAD DATA INFILE '/tmp/mdf/sh20100104.bs' INTO TABLE shex_bs_innodb   FIELDS  TERMINATED BY ','   LINES TERMINATED BY '\n';
+ 
+LOAD DATA INFILE '/tmp/mdf/sh20100104.bs' INTO TABLE shex_bs_innodb   FIELDS  
+TERMINATED BY ','   LINES TERMINATED BY '\n';
+Query OK, 3310600 rows affected, 65535 warnings (1 min 7.53 sec)
+Records: 3310600  Deleted: 0  Skipped: 0  Warnings: 3522484
+
+
+
+create index idx_bs_innodb on shex_bs_innodb(Ticker,TRANS_DATE);
+
+create table shex_bs_iasm
+(
+  TRANS_DATE    TIMESTAMP,             
+  Ticker        char(6),
+  Exchange char(4),
+  LASTPRICE     decimal(10,3),
+  HIGHPRICE     decimal(10,3),
+  LOWPRICE      decimal(10,3),
+  TOTALVOLUME   decimal(20),
+  TOTALTURNOVER decimal(20),
+  BIDPRICE01    decimal(10,3),
+  BIDVOLUME01   decimal(20),
+  BIDPRICE02    decimal(10,3),
+  BIDVOLUME02   decimal(20),
+  BIDPRICE03    decimal(10,3),
+  BIDVOLUME03   decimal(20),
+  BIDPRICE04    decimal(10,3),
+  BIDVOLUME04   decimal(20),
+  BIDPRICE05    decimal(10,3),
+  BIDVOLUME05   decimal(20),
+  BIDPRICE06    decimal(10,3),
+  BIDVOLUME06   decimal(20),
+  BIDPRICE07    decimal(10,3),
+  BIDVOLUME07   decimal(20),
+  BIDPRICE08    decimal(10,3),
+  BIDVOLUME08   decimal(20),
+  BIDPRICE09    decimal(10,3),
+  BIDVOLUME09   decimal(20),
+  BIDPRICE10    decimal(10,3),
+  BIDVOLUME10   decimal(20),
+  ASKPRICE01    decimal(10,3),
+  ASKVOLUME01   decimal(20),
+  ASKPRICE02    decimal(10,3),
+  ASKVOLUME02   decimal(20),
+  ASKPRICE03    decimal(10,3),
+  ASKVOLUME03   decimal(20),
+  ASKPRICE04    decimal(10,3),
+  ASKVOLUME04   decimal(20),
+  ASKPRICE05    decimal(10,3),
+  ASKVOLUME05   decimal(20),
+  ASKPRICE06    decimal(10,3),
+  ASKVOLUME06   decimal(20),
+  ASKPRICE07    decimal(10,3),
+  ASKVOLUME07   decimal(20),
+  ASKPRICE08    decimal(10,3),
+  ASKVOLUME08   decimal(20),
+  ASKPRICE09    decimal(10,3),
+  ASKVOLUME09   decimal(20),
+  ASKPRICE10    decimal(10,3),
+  ASKVOLUME10   decimal(20),
+  TOTALTRADES   decimal(20)) engine=MyISAM;
+ LOAD DATA INFILE '/tmp/mdf/sh20100104.bs' INTO TABLE shex_bs_iasm   FIELDS  TERMINATED BY ','   LINES TERMINATED BY '\n';
+ 
+
+mysql>  LOAD DATA INFILE '/tmp/mdf/sh20100104.bs' INTO TABLE shex_bs_iasm   FIELDS  T
+ERMINATED BY ','   LINES TERMINATED BY '\n';
+Query OK, 3310600 rows affected, 65535 warnings (33.47 sec)
+Records: 3310600  Deleted: 0  Skipped: 0  Warnings: 3522484
+
+
+ create index idx_bs_iasm on shex_bs_iasm(Ticker,TRANS_DATE);
+
+然后
+ANALYZE table shex_tik_innodb,shex_bs_innodb;
+
+
+create table shex_tik_memory
+( 
+  TRANS_DATE TIMESTAMP,
+  SYMBOL     char(6),
+  MARKET     char(4),
+  LASTPRICE  decimal(10,3),
+  VOLUME     int
+  )
+ engine=memory;
+
+set max_heap_table_size=2199023255552;
+ LOAD DATA INFILE '/tmp/mdf/sh20100104.tik' INTO TABLE shex_tik_memory   FIELDS TERMINATED BY ','   LINES TERMINATED BY '\n';
+
+Query OK, 7317717 rows affected, 65535 warnings (23.52 sec)
+Records: 7317717  Deleted: 0  Skipped: 0  Warnings: 7317721
+
+mysql> SHOW INDEX FROM shex_tik_innodb\G;           
+*************************** 1. row ***************************
+        Table: shex_tik_innodb
+   Non_unique: 1
+     Key_name: idx_tik
+ Seq_in_index: 1
+  Column_name: Ticker
+    Collation: A
+  Cardinality: 5314
+     Sub_part: NULL
+       Packed: NULL
+         Null: YES
+   Index_type: BTREE
+      Comment: 
+Index_comment: 
+*************************** 2. row ***************************
+        Table: shex_tik_innodb
+   Non_unique: 1
+     Key_name: idx_tik
+ Seq_in_index: 2
+  Column_name: TRANS_DATE
+    Collation: A
+  Cardinality: 7317885
+     Sub_part: NULL
+       Packed: NULL
+         Null: 
+   Index_type: BTREE
+      Comment: 
+Index_comment: 
+2 rows in set (0.01 sec)
+
+
+
+
+create table tik_myiasm
+(
+Timestamp char(100),
+Ticker char(5),
+Exchange char(4),
+LastPrice decimal(10,3),
+HighPrice decimal(10,3),
+LowPrice decimal(10,3),
+TotalVolume int,
+TotalTurnover int,
+BidPrice01 decimal(10,3),
+BidVolume01 int,
+BidPrice02 decimal(10,3),
+BidVolume02 int,
+BidPrice03 decimal(10,3),
+BidVolume03 int,
+BidPrice04 decimal(10,3),
+BidVolume04 int,
+BidPrice05 decimal(10,3),
+BidVolume05 int,
+AskPrice01 decimal(10,3),
+AskVolume01 int,
+AskPrice02 decimal(10,3),
+AskVolume02 int,
+AskPrice03 decimal(10,3),
+AskVolume03 int,
+AskPrice04 decimal(10,3),
+AskVolume04 int,
+AskPrice05 decimal(10,3),
+AskVolume05 int) engine=MyISAM;
+
+
+LOAD DATA INFILE '/ciccdev/mysql/orc_bs_20100427.txt' INTO TABLE tik_myiasm
+  FIELDS TERMINATED BY ','   LINES TERMINATED BY '\n';
+
+Query OK, 7582169 rows affected, 65535 warnings (2 min 2.48 sec)
+Records: 7582169  Deleted: 0  Skipped: 0  Warnings: 205908
+
+create index idx_myiasm_ticker on tik_myiasm(Ticker);
+Query OK, 7582169 rows affected (54.65 sec)
+Records: 7582169  Duplicates: 0  Warnings: 0
+
+create index idx_myiasm_time on tik_myiasm(Timestamp);
+Query OK, 7582169 rows affected (1 min 12.97 sec)
+Records: 7582169  Duplicates: 0  Warnings: 0
+
+explain partitions  select Timestamp,Ticker,LastPrice from tik_myiasm_hash where Ticker='00001' and Timestamp like '201004271030%';
+
+select Timestamp,Ticker,LastPrice from tik_myiasm where Ticker='00001' and Timestamp like '201004271030%';
+24 rows in set (0.02 sec)
+
+  最快可以到113M/s 平均 大概70-80M/s
+  
+  autocommit=0
+
+create table tik_innodb
+(
+Timestamp varchar(100),
+Ticker char(5),
+Exchange char(4),
+LastPrice decimal(10,3),
+HighPrice decimal(10,3),
+LowPrice decimal(10,3),
+TotalVolume int,
+TotalTurnover int,
+BidPrice01 decimal(10,3),
+BidVolume01 int,
+BidPrice02 decimal(10,3),
+BidVolume02 int,
+BidPrice03 decimal(10,3),
+BidVolume03 int,
+BidPrice04 decimal(10,3),
+BidVolume04 int,
+BidPrice05 decimal(10,3),
+BidVolume05 int,
+AskPrice01 decimal(10,3),
+AskVolume01 int,
+AskPrice02 decimal(10,3),
+AskVolume02 int,
+AskPrice03 decimal(10,3),
+AskVolume03 int,
+AskPrice04 decimal(10,3),
+AskVolume04 int,
+AskPrice05 decimal(10,3),
+AskVolume05 int) engine=InnoDB;
+
+LOAD DATA INFILE '/ciccdev/mysql/orc_bs_20100427.txt' INTO TABLE tik_innodb
+  FIELDS TERMINATED BY ','   LINES TERMINATED BY '\n';
+
+Query OK, 7582169 rows affected, 65535 warnings (1 min 44.53 sec)
+Records: 7582169  Deleted: 0  Skipped: 0  Warnings: 205908
+
+create index idx_inno_ticker on tik_innodb(Ticker);
+Query OK, 7582169 rows affected (1 min 40.66 sec)
+Records: 7582169  Duplicates: 0  Warnings: 0
+
+create index idx_inno_time on tik_innodb(Timestamp);
+
+select Timestamp,Ticker,LastPrice from tik_myiasm where Ticker='00001' and Timestamp like '201004271030%';
+
+
+大概写入在50M左右
+
+create table tik_myiasm_hash
+(
+Timestamp char(100),
+Ticker char(5),
+Exchange char(4),
+LastPrice decimal(10,3),
+HighPrice decimal(10,3),
+LowPrice decimal(10,3),
+TotalVolume int,
+TotalTurnover int,
+BidPrice01 decimal(10,3),
+BidVolume01 int,
+BidPrice02 decimal(10,3),
+BidVolume02 int,
+BidPrice03 decimal(10,3),
+BidVolume03 int,
+BidPrice04 decimal(10,3),
+BidVolume04 int,
+BidPrice05 decimal(10,3),
+BidVolume05 int,
+AskPrice01 decimal(10,3),
+AskVolume01 int,
+AskPrice02 decimal(10,3),
+AskVolume02 int,
+AskPrice03 decimal(10,3),
+AskVolume03 int,
+AskPrice04 decimal(10,3),
+AskVolume04 int,
+AskPrice05 decimal(10,3),
+AskVolume05 int) engine=MyISAM   PARTITION BY Key( Ticker )    PARTITIONS 1024;
+
+LOAD DATA INFILE '/ciccdev/mysql/orc_bs_20100427.txt' INTO TABLE tik_myiasm_hash
+  FIELDS TERMINATED BY ','   LINES TERMINATED BY '\n';
+  
+   Query OK, 7582169 rows affected, 65535 warnings (1 min 12.76 sec)
+Records: 7582169  Deleted: 0  Skipped: 0  Warnings: 205908
+
+  create index idx_myiasm_time on tik_myiasm_hash(Timestamp);
+
+Query OK, 7582169 rows affected (1 min 14.51 sec)
+Records: 7582169  Duplicates: 0  Warnings: 0
+
+
+
+
+EXPLAIN PARTITIONS select Timestamp,Ticker,LastPrice from tik_myiasm_hash where Ticker='00001' and Timestamp like '201004271030%';
+
+
+
+create table tik_innodb_hash
+(
+Timestamp varchar(100),
+Ticker char(5),
+Exchange char(4),
+LastPrice decimal(10,3),
+HighPrice decimal(10,3),
+LowPrice decimal(10,3),
+TotalVolume int,
+TotalTurnover int,
+BidPrice01 decimal(10,3),
+BidVolume01 int,
+BidPrice02 decimal(10,3),
+BidVolume02 int,
+BidPrice03 decimal(10,3),
+BidVolume03 int,
+BidPrice04 decimal(10,3),
+BidVolume04 int,
+BidPrice05 decimal(10,3),
+BidVolume05 int,
+AskPrice01 decimal(10,3),
+AskVolume01 int,
+AskPrice02 decimal(10,3),
+AskVolume02 int,
+AskPrice03 decimal(10,3),
+AskVolume03 int,
+AskPrice04 decimal(10,3),
+AskVolume04 int,
+AskPrice05 decimal(10,3),
+AskVolume05 int) engine=InnoDB   PARTITION BY Key( Ticker )       PARTITIONS 1024;
+
+LOAD DATA INFILE '/ciccdev/mysql/orc_bs_20100427.txt' INTO TABLE tik_innodb_hash
+  FIELDS TERMINATED BY ','   LINES TERMINATED BY '\n';
+ Query OK, 7582169 rows affected, 65535 warnings (2 min 31.54 sec)
+Records: 7582169  Deleted: 0  Skipped: 0  Warnings: 205908 
+  
+  create index idx_inno_time on tik_innodb_hash(Timestamp);
+Query OK, 7582169 rows affected (2 min 33.73 sec)
+Records: 7582169  Duplicates: 0  Warnings: 0
+
+
+EXPLAIN PARTITIONS select Timestamp,Ticker,LastPrice from tik_innodb_hash where Ticker in('00001','00005') and Timestamp like '201004271030%';
+
+select Timestamp,Ticker,LastPrice from tik_myiasm_hash where Ticker in('01201','02318') and Timestamp like '201004271030%';
+
+select Timestamp,Ticker,LastPrice from tik_innodb_hash where Ticker in('01201','02318') and Timestamp like '201004141030%';
+
+select Timestamp,Ticker,LastPrice from hkbs where Ticker in('01201','02318') and  like '201004271030%';
+
+
+mysql> select count(*) from tik_myiasm_hash;
++----------+
+| count(*) |
++----------+
+| 96745304 |
++----------+
+1 row in set (0.01 sec)
+
+
+如果在大事物的时候被kill innodb 恢复的非常慢，而且在回复的时候无法使用
+
+
+性能测试
+| autocommit               | OFF 
+
+delimiter //
+
+ CREATE PROCEDURE test()
+    BEGIN
+    declare i int default 1;
+    while(i<=1000000) do
+    insert into emp values(i);
+    set i=i+1;
+   end while;
+    END;
+//
+ delimiter ;
+
+mysql>  call test();
+Query OK, 1 row affected (0.28 sec)
+delimiter //
+
+ CREATE PROCEDURE test_innodb()
+    BEGIN
+    declare i int default 1;
+    while(i<=10000) do
+    insert into test_innodb values(i);
+    set i=i+1;
+   end while;
+    END;
+//
+ delimiter ;
+ 
+ call test_innodb();
+  Query OK, 1 row affected (0.23 sec)
+  
+  | autocommit               | ON 
+ mysql>   call test_innodb();
+Query OK, 1 row affected (1.83 sec)
+mysql>  call test();
+Query OK, 1 row affected (1.85 sec)
+
+
+
+mysql> select * from test_iasm where id=100;
++------+
+| id   |
++------+
+|  100 |
++------+
+1 row in set (0.03 sec)
+
+mysql> select *from test_innodb where id=101;
++------+
+| id   |
++------+
+|  101 |
++------+
+1 row in set (0.01 sec)
+
+mysql> select * from test_iasm where id in(100,999,8111);
++------+
+| id   |
++------+
+|  100 |
+|  999 |
+| 8111 |
++------+
+3 rows in set (0.01 sec)
+
+mysql> select * from test_innodb  where id in(100,999,8111);         
++------+
+| id   |
++------+
+|  100 |
+|  999 |
+| 8111 |
++------+
+3 rows in set (0.01 sec)
+
+
+
+优化
+ mysqld_safe --key_buffer_size=64M --table_open_cache=1000  \
+           --sort_buffer_size=4M --read_buffer_size=1M 
+           
+           autocommit 应该关闭，性能提高很多 1.83->0.23s
+           
+连接参数
+back_log 当达到 max_connection 的时候，可以在连接堆栈里面保留的队列
+interactive_timeout
+table_cache 能够打开的表的数量  >1000
+max_connections 最大连接数
+max_packet_allowed 最大网络包
+thread_cache_size 线程缓存池
+thread_concurrency  设置为你的cpu数目x2
+查询缓存
+query_cache_min_res_unit
+query_cache_size
+query_cache_limit
+临时表
+tmp_table_size
+max_heap_table_size
+内存
+read_buffer_size
+sort_buffer_size
+join_buffer_size
+记录慢sql
+log_slow_queries
+long_query_time
+log_queries_not_using_indexes
+
+每个线程的内存大小由下面的参数控制
+A stack (default 192KB, variable thread_stack)
+A connection buffer (variable net_buffer_length)
+A result buffer (variable net_buffer_length) 
+mysql 也支持 huge page 
+优化 concurrent_insert设置为 2 效果最好
+优化磁盘 hdparm -m 16 -d 1 
+可以再 mount的时候用async,不需要保存最后的访问时间,不需要 -o noatime -o async
+用静态链接，快13%
+用unix socket比本地 tcp/ip快7.5%		   
+用本地 tcp/ip 比远程tcp/ip快8-11%
+如果用 --with-debug=full 大部分查询慢 20%
+如果用 ssl 在 benchmark 时，慢 55%
+当客户端终止后，thread 返回thread pool，可以再利用。
+通过 thread_cache_size  控制
+max_connections 控制最大并发客户端
+也可以设置 stack size，提高性能 --thread_stack=N (byte)
+tmp_table_size 和 max_heap_table_size 控制最大的内存表，如果超过任何一个值，转换成disk table
+
+mysql在处理客户端连接的时候需要反向解析ip或者dns，会导致性能下降，可以通过参数--skip-name-resolve
+
+分区性能提高5.7X(MyISAM) 提高2X(InnoDB) 比oracle快约6X
+
+MyIASM	    InnoDB	MyIASM                 InnoDB
+                   (key partition 1024)	(key partition 1024)
+
+0.286666667	0.06	   0.05	               0.0325
+
+innodb优化
+innodb_flush_log_at_trx_commit  0,每秒写一次log到os cache同时做fsync,1 每次commit写log到文件系统同时做fsync,2,每次commit写log但是每秒做fsync
+innodb_support_xa to 0, which will reduce the number of disk flushes due to synchronizing on disk data and the binary log. 
+innodb_file_per_table = 0
+innodb_flush_log_at_trx_commit = 2
+innodb_buffer_pool_size = 8G
+innodb_file_io_threads = 4
+innodb_flush_method=O_DIRECT 直接IO，效率高
+
+优化io scheduler noop性能比较好
+vm.swappiness =0
+
+参数设置
+character-set-server=utf8
+collation-server=utf8_general_ci
+default-storage-engine=InnoDB
+
+innodb_flush_log_at_trx_commi=1   When the value is 1 (the default), the log buffer is written out to the log file at each transaction commit and the flush to disk operation is performed on the log file. 
+innodb_buffer_pool_size=128M   The size in bytes of the memory buffer InnoDB uses to cache data and indexes of its tables
+innodb_file_io_threads =4
+innodb_log_file_size=50m
+innodb_log_files_in_group=3
+innodb_open_files=1024
+innodb_thread_concurrency=16
+join_buffer_size=50m  The size of the buffer that is used for plain index scans, range index scans, and joins that do not use indexes and thus perform full table scans. Normally, the best way to get fast joins is to add indexes. Increase the value of join_buffer_size to get a faster full join when adding indexes is not possible. 
+key_buffer_size=256M      (for myiasm index cache)
+key_cache_block_size=16384
+query_cache_size=128M
+query_cache_type=1
+query_cache_limit = 2M 
+read_buffer_size=1M  --顺序读缓存
+sort_buffer_size=1M
+myisam_sort_buffer_size = 8M 
+max_tmp_tables = 128
+tmp_table_size = 128M
+max_heap_table_size = 128M   
+ft_min_word_len = 4                                                                   
+
+thread_stack = 192K                                                                   
+transaction_isolation = READ-COMMITTED                                             
+
+
+binlog_cache_size = 1M  
+log-bin=archive/mysql-bin
+binlog_format=mixed    
+max_binlog_size=100M           
+log-output=TABLE,FILE
+general_log=1
+slow-query-log=1
+log_warnings=1
+                                                    
+sync_binlog=1
+innodb_support_xa=1
+open-files-limit=8192
+log_warnings
+long_query_time = 10
+
+server-id = 1
+ 
+
+To minimize disk I/O, the MyISAM storage engine exploits a strategy that is used by many database management systems. It employs a cache mechanism to keep the most frequently accessed table blocks in memory: *
+
+      For index blocks, a special structure called the key cache (or key buffer) is maintained. The structure contains a number of block buffers where the most-used index blocks are placed.
+      For data blocks, MySQL uses no special cache. Instead it relies on the native operating system file system cache. 
+      
+      
+
+table_cache =128           能够打开的表的数量  >1000
+max_connections =512         最大连接数
+max_user_connections=128  每个account的并发连接
+thread_cache_size=16           线程缓存池
+thread_concurrency=16     设置为你的cpu数目x2
+concurrent_insert=2         The concurrent_insert system variable can be set to modify the concurrent-insert processing. By default, the variable is set to 1 and concurrent inserts are handled as just described. If concurrent_insert is set to 0, concurrent inserts are disabled. If the variable is set to 2, concurrent inserts at the end of the table are allowed even for tables that have deleted rows.
+
+table_open_cache = 1024
+max_allowed_packet = 16M  最大网络包
+
+
+
+skip-name-resolve
+character_set_connection=utf8
+collation_connection =
+character_set_client=utf8
+character_set_results =utf8
+
+完整参数设置
+
+[client]
+#password	= [your_password]
+port		= 3306
+socket		= /tmp/mysql.sock
+[mysqld]
+port		= 3306
+socket		= /tmp/mysql.sock
+back_log = 50
+open-files-limit = 8192
+character-set-server=utf8
+collation-server=utf8_general_ci
+skip-name-resolve
+
+max_connections = 100
+max_connect_errors = 10
+table_open_cache = 2048
+#external-locking
+max_allowed_packet = 16M
+binlog_cache_size = 1M
+max_heap_table_size = 64M
+sort_buffer_size = 8M
+join_buffer_size = 8M
+thread_cache_size = 8
+thread_concurrency = 8
+query_cache_size = 64M
+query_cache_limit = 2M
+ft_min_word_len = 4
+#default-storage-engine = MYISAM
+default-storage-engine = InnoDB
+thread_stack = 192K
+transaction_isolation = REPEATABLE-READ
+tmp_table_size = 64M
+
+log-bin=/ciccdev/mysql/data/archive/mysql-bin
+log-output=TABLE,FILE
+general_log=1
+slow-query-log=1
+binlog_format=mixed
+long_query_time = 2
+
+# ***  Replication related settings 
+server-id = 1
+
+#*** MyISAM Specific options
+key_buffer_size = 32M
+read_buffer_size = 2M
+read_rnd_buffer_size = 16M
+bulk_insert_buffer_size = 64M
+myisam_sort_buffer_size = 128M
+myisam_max_sort_file_size = 10G
+myisam_repair_threads = 1
+myisam_recover
+
+# *** INNODB Specific options ***
+# Use this option if you have a MySQL server with InnoDB support enabled
+# but you do not plan to use it. This will save memory and disk space
+# and speed up some things.
+#skip-innodb
+innodb_additional_mem_pool_size = 16M
+innodb_buffer_pool_size = 2G
+innodb_data_file_path = ibdata1:10M:autoextend
+innodb_file_io_threads = 4
+#innodb_force_recovery=1
+innodb_thread_concurrency = 16
+innodb_flush_log_at_trx_commit = 1
+#innodb_fast_shutdown
+innodb_log_buffer_size = 8M
+innodb_log_file_size = 256M
+innodb_log_files_in_group = 3
+#innodb_log_group_home_dir
+innodb_max_dirty_pages_pct = 90
+#innodb_flush_method=O_DSYNC
+innodb_lock_wait_timeout = 120
+
+[mysqldump]
+max_allowed_packet = 16M
+
+[mysql]
+no-auto-rehash
+# Only allow UPDATEs and DELETEs that use keys.
+#safe-updates
+
+[myisamchk]
+key_buffer_size = 512M
+sort_buffer_size = 512M
+read_buffer = 8M
+write_buffer = 8M
+
+[mysqlhotcopy]
+interactive-timeout
+
+[mysqld_safe]
+# Increase the amount of open files allowed per process. Warning: Make
+# sure you have set the global system limit high enough! The high value
+# is required for a large number of opened tables
+
+
+------
+
+
+
+打上microslow补丁，支持最小微秒单位，同时还能显示执行计划
+
+用 char 来代替 varchar，MyISAM是这样，InnoDB则相反
+5.4 性能好很多
+
+mysql java driver 不支持真正的batch commit,只能通过参数 rewriteBatchedStatements=true来模拟 
+
+
+
+mysql profiling
+20100427
+切换日志脚本
+
+cd /var/lib/mysql/backup/mysql/scripts144
+log=log/mysql144_log_`date +%Y"-"%m"-"%d`.log
+date >> $log
+echo "start to swithcl log   of 144" >> $log
+mysqladmin -u root flush-logs
+date >> $log
+
+*/30 * * * 0-6 sh /var/lib/mysql/backup/mysql/scripts144/backuplog.sh
+
+全备份脚本
+
+log=log/mysql144_log_`date +%Y"-"%m"-"%d"_"%H":"%M":"%S`.log
+date >> $log
+echo "start to full backup of 144" >> $log
+mysqldump -u root --single-transaction --flush-logs --master-data=2   --all-databases --delete-master-logs > $ba
+ckupfile
+date >> $log
+
+mysqldump -u root --password=mysql   --socket=/tmp/mysql2.sock      --all-databases
+
+
+20100426
+frm、MYI、MYD   分别是   MyISAM   表的表结构\索引\数据文件   
+
+可以用 Xtrabackup 来备份 innodb和MyISAM
+
+? Mysqldump
+– Not something you want in big production
+? Mysqlhotcopy
+– Only MyISAM
+? LVM snapshots
+? ZFS snapshots
+? R1Soft
+– Commercial
+? InnoDB Hot Backup
+– Commercial, not extendible
+
+
+修改为二进制log
+/etc/my.cnf 
+log-bin=archive/mysql-bin
+sync_binlog=1
+innodb_support_xa=1
+
+flush logs切换日志 会关闭和重新打开 general log和slow query log，会创建一个新的binary 日志和一个新的error log
+
+
+INNODB HOT BACKUP 是一个商用的可执行文件。不过可以申请30天试用下。
+
+相比MYSQL自身的MYSQLDUMP 导入导出工具来说有以下优点：
+
+1.物理备份。
+
+2.还原速度快。
+
+而MYSQLDUMP在并发小的时候还可以用下。缺点如下：
+
+1.逻辑备份。
+
+2.还原速度慢。
+
+
+  查看当前日志状态
+  SHOW MASTER STATUS;   
+  
+  查看 bin-log内容
+mysqlbinlog log_file 
+使用innodb的时候，只有commit的时候，所有的日志才会从cache里面同步到日志
+
+When the thread that handles the transaction starts, it allocates a buffer of binlog_cache_size to buffer statements. If a statement is bigger than this, the thread opens a temporary file to store the transaction. The temporary file is deleted when the thread ends. 
+
+备份
+mysqldump --single-transaction --flush-logs --master-data=2   --all-databases --delete-master-logs >backup_sunday_1_PM.sql
+定期 flush log
+crontab 
+*/5 * * * * sh  /home/redmine/script/switchlog.sh
+cat  /home/redmine/script/switchlog.sh               
+mysqladmin -u backup --password=backup_v  flush-logs
+mysqladmin -u backup --password=backup_v  flush-logs
+
+mysqladmin flush-logs
+copy 日志
+
+恢复全备份
+mysqld_safe  --skip-grant-tables
+
+
+mysql < backup_sunday_1_PM.sql
+先kill mysql
+然后重新启动
+/etc/init.d/mysql start
+
+恢复增量
+mysqlbinlog mysql-bin.000002 |mysql -u root 
+mysqlbinlog mysql-bin.000003 |mysql -u root 
+
+指定时间点恢复
+mysqlbinlog --stop-datetime="2005-04-20 9:59:59"          /var/log/mysql/bin.123456 | mysql 
+
+mysqlbinlog --start-datetime="2005-04-20 10:01:00"   /var/log/mysql/bin.123456 | mysql -u root -p
+
+
+
+
+mysql> SHOW MASTER STATUS;   
++------------------+----------+--------------+------------------+
+| File             | Position | Binlog_Do_DB | Binlog_Ignore_DB |
++------------------+----------+--------------+------------------+
+| mysql-bin.000002 |       98 |              |                  | 
++------------------+----------+--------------+------------------+
+1 row in set (0.00 sec)
+
+mysql> insert into test values(3);
+Query OK, 1 row affected (0.00 sec)
+
+mysql> insert into test values(4);
+Query OK, 1 row affected (0.00 sec)
+
+mysql> commit;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> flush logs;
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> insert into test values(5);
+Query OK, 1 row affected (0.00 sec)
+
+mysql> commit;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> flush logs;
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> SHOW MASTER STATUS;   
++------------------+----------+--------------+------------------+
+| File             | Position | Binlog_Do_DB | Binlog_Ignore_DB |
++------------------+----------+--------------+------------------+
+| mysql-bin.000004 |       98 |              |                  | 
++------------------+----------+--------------+------------------+
+1 row in set (0.00 sec)
+
+
+select LogId,Time from Log order by Time desc   limit   10   ;
+
+20100408
+mysql 出现自动增长无效的问题
+ALTER TABLE mantis_bugnote_text_table AUTO_INCREMENT = 400;
+ALTER TABLE mantis_bugnote_table AUTO_INCREMENT = 400;
+
+Database query failed. Error received from database was #126: Incorrect key file for table 
+最后回复
+check table mantis_bugnote_text_table
+repair table mantis_bug_table;  
+
+ 
+查看状态
+show table status like  'mantis_bugnote_text_table'\G;
+    Name: mantis_bugnote_text_table
+         Engine: MyISAM
+        Version: 10
+     Row_format: Dynamic
+           Rows: 328
+ Avg_row_length: 1279
+    Data_length: 419692
+Max_data_length: 281474976710655
+   Index_length: 7168
+      Data_free: 0
+ Auto_increment: 355
+    Create_time: 2010-01-22 09:39:21
+    Update_time: 2010-04-01 19:18:23
+     Check_time: NULL
+      Collation: utf8_general_ci
+       Checksum: NULL
+ Create_options: 
+        Comment: 
+        
+20090917
+连接数据库
+java 
+ conn =
+       DriverManager.getConnection("jdbc:mysql://localhost/test?" +
+                                   "user=monty&password=greatsqldb");
+
+C++
+sql::mysql::MySQL_Driver *driver;
+sql::Connection *con;
+sql::Statement *stmt
+
+driver = sql::mysql::get_mysql_driver_instance();
+con = driver->connect("tcp://127.0.0.1:3306", "user", "password");
+
+stmt = con->createStatement();
+stmt->execute("USE " EXAMPLE_DB);
+stmt->execute("DROP TABLE IF EXISTS test");
+stmt->execute("CREATE TABLE test(id INT, label CHAR(1))");
+stmt->execute("INSERT INTO test(id, label) VALUES (1, 'a')");
+
+delete stmt;
+delete con;
+								   
+创建replication
+1.创建复制的用户
+on master
+GRANT REPLICATION SLAVE ON *.* TO 'slave'@'%' IDENTIFIED BY 'slave';
+打开 如下参数
+[mysqld]
+log-bin=mysql-bin
+server-id=1
+
+on slave
+打开 如下参数
+[mysqld]
+log-bin=mysql-bin
+server-id=2
+
+2 查看主库状态
+FLUSH TABLES WITH READ LOCK;  --同时锁住所有表，以保持一致
+mysql> SHOW MASTER STATUS;
++------------------+----------+--------------+------------------+
+| File             | Position | Binlog_Do_DB | Binlog_Ignore_DB |
++------------------+----------+--------------+------------------+
+| mysql-bin.000010 |      106 |              |                  |
++------------------+----------+--------------+------------------+
+1 row in set (0.00 sec)
+
+3.备份主库
+mysqldump -u root --all-databases --lock-all-tables > dbdump.db
+恢复
+mysql 
+use database_name
+source d:/dbdump.db 
+
+解开 lock 
+UNLOCK TABLES;
+4.导入数据到slave库
+mysql < fulldb.dump
+mysql -h 192.168.54.129 -u root < dbdump.db
+5.配置slave库
+ CHANGE MASTER TO
+       MASTER_HOST='192.168.54.122',
+       MASTER_USER='slave',
+         MASTER_PASSWORD='slave',
+      MASTER_LOG_FILE='mysql-bin.000010',
+      MASTER_LOG_POS=106;
+
+090917 10:41:25 [Warning] Neither --relay-log nor --relay-log-index were used; so replication may break when this MySQL server acts as a slave and has his hostname changed!! Please use '--relay-log=linux-90jy-relay-bin' to avoid this problem.
+Query OK, 0 rows affected (0.12 sec)
+
+启动slave进程
+START SLAVE; 
+关闭slave 进程
+stop slave;
+090917 10:42:19 [Note] Slave SQL thread initialized, starting replication in log 'mysql-bin.000010' at position 106, relay log './linux-90jy-relay-bin.000001' position: 4
+Query OK, 0 rows affected (0.00 sec)
+
+Slave I/O thread: connected to master 'slave@192.168.54.122:3306',replication started in log 'mysql-bin.000010' at position 106
+
+6.测试
+在主库上进行操作，在从库上进行查询确认
+混合模式可以基于列或者基于sql做日志记录
+MySQL Cluster Replication always uses row-based replication, and the NDBCLUSTER storage engine is incompatible with statement-based replication.
+
+基于sql的日志记录会有很多限制，很多时候不能记录，如LOAD_FILE()，而且锁的时间长
+从库可以打开 --log-slave-updates 记录自己复制的数据变化，可以实现再次复制
+从库也可以打开 --read-only 只能读不能写
+可以再从库上打开一些参数忽略一些表的复制 如 --replicate-ignore-table=db_name.tbl_name   --replicate-ignore-db=db_name  
+也可以在从库上对schema进行转换 --replicate-rewrite-db=from_name->to_name
+
+7.切换
+从库可以直接读写 
+也可以先停止 stop slave ;
+8.优化
+在主库上设置  sync_binlog=1  加快binlog的 flush
+避免同时在一个事物里面修改事务表和非事务表
+trigger在基于row的方式下不会被触发 
+truncate也可以被复制
+9.监控
+show processlist;
+SHOW SLAVE STATUS;
+mysql> SHOW SLAVE STATUS;
++----------------------------------+----------------+-------------+-------------+---------------+------------------+---------------------+-----------------------------+---------------+-----------------------+------------------+-------------------+-----------------+---------------------+--------------------+------------------------+-------------------------+-----------------------------+------------+------------+--------------+---------------------+-----------------+-----------------+----------------+---------------+--------------------+--------------------+--------------------+-----------------+-------------------+----------------+-----------------------+-------------------------------+---------------+---------------+----------------+----------------+
+| Slave_IO_State                   | Master_Host    | Master_User | Master_Port | Connect_Retry | Master_Log_File  | Read_Master_Log_Pos | Relay_Log_File              | Relay_Log_Pos | Relay_Master_Log_File | Slave_IO_Running | Slave_SQL_Running | Replicate_Do_DB | Replicate_Ignore_DB | Replicate_Do_Table | Replicate_Ignore_Table | Replicate_Wild_Do_Table | Replicate_Wild_Ignore_Table | Last_Errno | Last_Error | Skip_Counter | Exec_Master_Log_Pos | Relay_Log_Space | Until_Condition | Until_Log_File | Until_Log_Pos | Master_SSL_Allowed | Master_SSL_CA_File | Master_SSL_CA_Path | Master_SSL_Cert | Master_SSL_Cipher | Master_SSL_Key | Seconds_Behind_Master | Master_SSL_Verify_Server_Cert | Last_IO_Errno | Last_IO_Error | Last_SQL_Errno | Last_SQL_Error |
++----------------------------------+----------------+-------------+-------------+---------------+------------------+---------------------+-----------------------------+---------------+-----------------------+------------------+-------------------+-----------------+---------------------+--------------------+------------------------+-------------------------+-----------------------------+------------+------------+--------------+---------------------+-----------------+-----------------+----------------+---------------+--------------------+--------------------+--------------------+-----------------+-------------------+----------------+-----------------------+-------------------------------+---------------+---------------+----------------+----------------+
+| Waiting for master to send event | 192.168.54.122 | slave       |        3306 |            60 | mysql-bin.000010 |                 554 | linux-90jy-relay-bin.000002 |           699 | mysql-bin.000010      | Yes              | Yes               |                 |                     |                    |                        |                         |                             |          0 |            |            0 |                 554 |             859 | None            |                |             0 | No                 |                    |                    |                 |                   |                |                     0 | No                            |             0 |               |              0 |                |
++----------------------------------+----------------+-------------+-------------+---------------+------------------+---------------------+-----------------------------+---------------+-----------------------+------------------+-------------------+-----------------+---------------------+--------------------+------------------------+-------------------------+-----------------------------+------------+------------+--------------+---------------------+-----------------+-----------------+----------------+---------------+--------------------+--------------------+--------------------+-----------------+-------------------+----------------+-----------------------+-------------------------------+---------------+---------------+----------------+----------------+
+mysql> SHOW VARIABLES LIKE 'binlog_format';
++---------------+-------+
+| Variable_name | Value |  When MIXED mode is in use, row-based replication is preferred but replication switches automatically to statement-based format under certain conditions
++---------------+-------+
+| binlog_format | MIXED |
++---------------+-------+
+1 row in set (0.00 sec)
+停止一些无法执行的sql
+mysql> SET GLOBAL SQL_SLAVE_SKIP_COUNTER = N;
+mysql> START SLAVE;
+复制的时候是slave主动到master抓取log
+The master binary log is written to a local relay log on the slave before it is processed
+
+Slave I/O thread 接收Binlog dump thread的数据
+master对每个slave都有一个binlog dump进程
+and each slave has its own I/O and SQL threads. 
+
+windows下面启动mysql
+mysqld --console --bind-address=192.168.54.143
+2090916
+分区
+检查是否支持分区
+SHOW VARIABLES LIKE '%partition%';
+ SHOW PLUGINS;
+或者在编译的时候加上 --with-partition
+CREATE TABLE ti (id INT, amount DECIMAL(7,2), tr_date DATE)     ENGINE=INNODB     PARTITION BY HASH( MONTH(tr_date) )     PARTITIONS 6;
+CREATE TABLE tx (id INT, amount DECIMAL(7,2), tr_date DATE) PARTITION BY HASH( MONTH(tr_date) );
+SELECT TABLE_NAME, PARTITION_NAME, TABLE_ROWS, AVG_ROW_LENGTH, DATA_LENGTH    FROM INFORMATION_SCHEMA.PARTITIONS
+CREATE TABLE tr (id INT, name VARCHAR(50), purchased DATE)
+        PARTITION BY RANGE( YEAR(purchased) ) (
+            PARTITION p0 VALUES LESS THAN (1990),
+             PARTITION p1 VALUES LESS THAN (1995),
+            PARTITION p2 VALUES LESS THAN (2000),
+             PARTITION p3 VALUES LESS THAN (2005));
+
+hash分区字段必须要变成int才行
+key相当于oracle的hash
+
+按照线性哈希分区的优点在于增加、删除、合并和拆分分区将变得更加快捷，有利于处理含有极其大量（1000g）数据的表。它的缺点在于，与使用常规 hash分区得到的数据分布相比，各个分区间数据的分布不大可能均衡。
+
+
+
+在MYISAM下分区存储为不同的文件
+如
+-rw-rw---- 1 oracle dba   20 2009-09-16 21:15 tr#P#p1.MYD
+-rw-rw---- 1 oracle dba 1024 2009-09-16 21:15 tr#P#p1.MYI
+-rw-rw---- 1 oracle dba   20 2009-09-16 21:15 tr#P#p3.MYD
+-rw-rw---- 1 oracle dba 1024 2009-09-16 21:15 tr#P#p3.MYI
+-rw-rw---- 1 oracle dba   20 2009-09-16 21:15 tr#P#p2.MYD
+-rw-rw---- 1 oracle dba 1024 2009-09-16 21:15 tr#P#p2.MYI
+-rw-rw---- 1 oracle dba   40 2009-09-16 21:14 tr#P#p0.MYD
+-rw-rw---- 1 oracle dba 1024 2009-09-16 21:14 tr#P#p0.MYI
+-rw-rw---- 1 oracle dba 8626 2009-09-16 21:14 tr.frm
+-rw-rw---- 1 oracle dba   32 2009-09-16 21:14 tr.par
+
+查看建表脚本
+SHOW CREATE TABLE tr\G
+       Table: tr
+Create Table: CREATE TABLE `tr` (
+  `id` int(11) DEFAULT NULL,
+  `name` varchar(50) DEFAULT NULL,
+  `purchased` date DEFAULT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=latin1
+/*!50100 PARTITION BY RANGE ( YEAR(purchased))
+(PARTITION p0 VALUES LESS THAN (1990) ENGINE = MyISAM,
+ PARTITION p1 VALUES LESS THAN (1995) ENGINE = MyISAM,
+ PARTITION p2 VALUES LESS THAN (2000) ENGINE = MyISAM,
+ PARTITION p3 VALUES LESS THAN (2005) ENGINE = MyISAM) */
+查看表的状态
+SHOW TABLE STATUS  like 'tr%';
++------+--------+---------+------------+------+----------------+-------------+-----------------+--------------+-----------+----------------+---------------------+---------------------+------------+-------------------+----------+----------------+---------+
+| Name | Engine | Version | Row_format | Rows | Avg_row_length | Data_length | Max_data_length | Index_length | Data_free | Auto_increment | Create_time         | Update_time         | Check_time | Collation         | Checksum | Create_options | Comment |
++------+--------+---------+------------+------+----------------+-------------+-----------------+--------------+-----------+----------------+---------------------+---------------------+------------+-------------------+----------+----------------+---------+
+| tr   | MyISAM |      10 | Dynamic    |    5 |             20 |         100 |               0 |         4096 |         0 |           NULL | 2009-09-16 21:14:27 | 2009-09-16 21:15:32 | NULL       | latin1_swedish_ci |     NULL | partitioned    |         |
++------+--------+---------+------------+------+----------------+-------------+-----------------+--------------+-----------+----------------+---------------------+---------------------+------------+-------------------+----------+----------------+---------+
+查看分区过滤情况
+
+mysql> EXPLAIN PARTITIONS SELECT * from tr where purchased>='2002-01-01';
++----+-------------+-------+------------+--------+---------------+------+---------+------+------+-------+
+| id | select_type | table | partitions | type   | possible_keys | key  | key_len | ref  | rows | Extra |
++----+-------------+-------+------------+--------+---------------+------+---------+------+------+-------+
+|  1 | SIMPLE      | tr    | p3         | system | NULL          | NULL | NULL    | NULL |    1 |       |
++----+-------------+-------+------------+--------+---------------+------+---------+------+------+-------+
+
+
+mysql> delimiter //
+
+ CREATE PROCEDURE dorepeat(p1 INT)
+    BEGIN
+      SET @x = 0;
+      REPEAT SET @x = @x + 1; UNTIL @x > p1 END REPEAT;
+    END
+ //
+
+mysql> delimiter ;
+
+mysql> CALL dorepeat(1000);
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> SELECT @x;
++------+
+| @x   |
++------+
+| 1001 |
++------+
+
+创建trigger
+mysql> CREATE TRIGGER ins_sum BEFORE INSERT ON account FOR EACH ROW SET @sum = @sum + NEW.amount;
+
+mysql> delimiter //
+mysql> CREATE TRIGGER upd_check BEFORE UPDATE ON account
+    -> FOR EACH ROW
+    -> BEGIN
+    ->     IF NEW.amount < 0 THEN
+    ->         SET NEW.amount = 0;
+    ->     ELSEIF NEW.amount > 100 THEN
+    ->         SET NEW.amount = 100;
+    ->     END IF;
+    -> END;//
+mysql> delimiter ;
+
+可以通过 event_scheduler 来控制 job启动
+ SET GLOBAL event_scheduler = ON;
+ 
+ mysql> SHOW PROCESSLIST;
++----+-----------------+------------+-------+---------+------+------------------------+------------------+
+| Id | User            | Host       | db    | Command | Time | State                  | Info             |
++----+-----------------+------------+-------+---------+------+------------------------+------------------+
+|  1 | root            | localhost  | mysql | Sleep   |  700 |                        | NULL             |
+|  3 | root            | roger:4715 | mysql | Sleep   | 9268 |                        | NULL             |
+|  8 | root            | roger:2098 | mysql | Query   |    0 | NULL                   | SHOW PROCESSLIST |
+|  9 | event_scheduler | localhost  | NULL  | Daemon  |   11 | Waiting on empty queue | NULL             |
++----+-----------------+------------+-------+---------+------+------------------------+------------------+
+
+create table test_event(id INT NOT NULL AUTO_INCREMENT primary key,insert_date time);
+CREATE EVENT e_store_ts
+    ON SCHEDULE
+      EVERY 10 SECOND
+    DO
+      INSERT INTO mysql.test_event(insert_date) VALUES  (current_time());
+	  
+delimiter |
+CREATE EVENT e_daily
+    ON SCHEDULE
+      EVERY 1 DAY
+    COMMENT 'Saves total number of sessions then clears the table each day'
+    DO
+      BEGIN
+        INSERT INTO site_activity.totals (time, total)
+          SELECT CURRENT_TIMESTAMP, COUNT(*)
+            FROM site_activity.sessions;
+        DELETE FROM site_activity.sessions;
+      END |
+
+delimiter ;
+
+mysql> SELECT * FROM INFORMATION_SCHEMA.EVENTS
+     >     WHERE EVENT_NAME='e_store_ts'
+     >     AND EVENT_SCHEMA='myschema'\G
+
+	 DELETE FROM mysql.event
+    WHERE db = 'mysql'
+      AND definer = 'root@%'
+      AND name = 'e_store_ts';
+DROP EVENT [IF EXISTS] event_name;
+高可用解决方案
+DRBD (Distributed Replicated Block Device)  is a solution from Linbit supported only on Linux. DRBD creates a virtual block device (which is associated with an underlying physical block device) that can be replicated from the primary server to a secondary server. You create a file system on the virtual block device, and this information is then replicated, at the block level, to the secondary server. 
+replication (只能异步)
+cluster
+zfs replication
+MySQL proxy 可以拦截客户到server的通讯，可以实现一些特殊的功能 目前只是alpha版本，不能用于生产，只能用于5.1之后版本
+
+我在redhat as5 4G mem环境里面搭了一套cluster环境。
+4台Data node， 4台MySQL node，1台mgm node，2台LVS前置做load balance
+测试结果是：
+insert操作和标准mysql比较下降差不多80%
+select操作和标准mysql比较下降差不多50%
+LVS对性能影响不大，但能起到负荷分担作用
+
+
+设置配置文件 
+~/.my.cnf
+添加如下内容
+[mysqld]
+key_buffer_size=16M
+max_allowed_packet=8M
+ 或者通过 --defaults-file= 指定配置文件
+ 通过 --basedir=目录 指定mysql的缺省目录
+ 
+查询系统当前支持的engine
+show engines ;
+修改系统缺省引擎
+--default-storage-engine 
+或者set storage_engine=MYISAM;
+修改表的引擎 ALTER TABLE t ENGINE = MYISAM;
+ create table testisnm(id int) engine=innodb;
+
+ innodb不支持删除data file 只能dump然后import
+ innodb会自动做recover ，如果crash得话
+ innodb也有回滚段，redo log等等，和oracle一致，能够保持多版本一致
+ pk缺省就是clustered index
+ 
+ 
+可以查看表存储的引擎
+ show table  status  from wzy;
+ SHOW TABLE STATUS FROM  wzy LIKE 'tab%'
+查询支持的字符集
+SHOW CHARACTER SET;
+SHOW COLLATION LIKE 'utf8%';
+
+
+设置server级别的 character set 
+mysqld --character-set-server=utf8
+设置database级别的charset
+set character_set_server=utf8
+
+connection一级的character set
+SET NAMES 'utf8'
+
+或者在配置的时候指定 ./configure --with-charset=utf8   --with-collation=utf8_general_ci
+查看当前设置
+show variables like '%char%';
+show variables like '%collation%';
+
+
+
+SHOW VARIABLES LIKE 'character_set_database';
+
+
+CREATE DATABASE mydb
+  DEFAULT CHARACTER SET utf8
+  DEFAULT COLLATE utf8_general_ci;
+
+
+或者创建database的时候指定
+CREATE DATABASE db_name 
+    [[DEFAULT] CHARACTER SET charset_name]
+    [[DEFAULT] COLLATE collation_name]
+ALTER DATABASE db_name
+    [[DEFAULT] CHARACTER SET charset_name]
+    [[DEFAULT] COLLATE collation_name]
+可以通过变量
+character_set_database and collation_database 查看
+也可以在table一级设定
+CREATE TABLE tbl_name (column_list)
+    [[DEFAULT] CHARACTER SET charset_name]
+    [COLLATE collation_name]]
+
+ALTER TABLE tbl_name
+    [[DEFAULT] CHARACTER SET charset_name]
+    [COLLATE collation_name]
+也可以在字段级别指定
+CREATE TABLE t1
+(
+    col1 CHAR(10) CHARACTER SET utf8 COLLATE utf8_unicode_ci
+) CHARACTER SET latin1 COLLATE latin1_bin;
+
+mysql, mysqladmin, mysqlcheck, mysqlimport, and mysqlshow   支持 --default-character-set 指定客户端character set
+或者启动mysqld 的时候，加上 --init_connect="SET NAMES 'utf8'"
+或者直接在mysql命令行设置
+ mysql> charset utf8
+
+PHP程序在查询数据库之前，执行mysql_query("set names utf8;");
+
+MySQL中的字符集转换过程1. MySQL Server收到请求时将请求数据从character_set_client转换为 character_set_connection；
+2. 进行内部操作前将请求数据从character_set_connection转换为内部操作字符集，其确定方法如下：
+? 使用每个数据字段的CHARACTER SET设定值；
+? 若上述值不存在，则使用对应数据表的DEFAULT CHARACTER SET设定值(MySQL扩展，非SQL标准)；
+? 若上述值不存在，则使用对应数据库的DEFAULT CHARACTER SET设定值；
+? 若上述值不存在，则使用 character_set_server 设定值。
+3. 将操作结果从内部操作字符集转换为 character_set_results。
+
+支持query cache,同样的sql会从cache里面找数据满足，当cache数据失效的时候，cache自动失效
+可以把 query cache关闭 或者设置大小   query_cache_size  几十M合适，几百M的cache可能性能会下降
+SHOW VARIABLES LIKE 'have_query_cache';
+SHOW STATUS LIKE 'Qcache%';
+
+数据类型 
+
+char varchar=(varchar2)  blob text enum set  date datetime time year int bigint float(m,n)DECIMAL[(M[,D])]
+numeric(m,n)=decimal(m,n)=number(m,n)最大65位
+oracle number=double (最大308位数字) 64位
+myql numberic=decimal=oracle number(12,0)
+pg numberic=oracle number 
+char最大255，varchar 65535 ,txt
+ insert into ti values(1,12.1,'2009-02-01');
+ 
+数据类型 map 
+ 
+ MySQL Data Type                Oracle Data Type
+BIGINT                          NUMBER(19, 0)   
+BIT                             RAW             
+BLOB                            BLOB, RAW       
+CHAR                            CHAR            
+DATE                            DATE            
+DATETIME                        DATE            
+DECIMAL                         FLOAT (24)      
+DOUBLE                          FLOAT (24)      
+DOUBLE PRECISION                FLOAT (24)      
+ENUM                            VARCHAR2        
+FLOAT                           FLOAT           
+INT                             NUMBER(10, 0)   
+INTEGER                         NUMBER(10, 0)   
+LONGBLOB                        BLOB, RAW       
+LONGTEXT                        CLOB, RAW       
+MEDIUMBLOB                      BLOB, RAW       
+MEDIUMINT                       NUMBER(7, 0)    
+MEDIUMTEXT                      CLOB, RAW       
+NUMERIC                         NUMBER    不完全等，mysql的Numberic=number(10,0)       
+REAL                            FLOAT (24)      
+SET                             VARCHAR2        
+SMALLINT                        NUMBER(5, 0)    
+TEXT                            VARCHAR2, CLOB  
+TIME                            DATE            
+TIMESTAMP                       DATE            
+TINYBLOB                        RAW             
+TINYINT                         NUMBER(3, 0)    
+TINYTEXT                        VARCHAR2        
+VARCHAR                         VARCHAR2, CLOB  
+YEAR                            NUMBER          
+
+MySQL Type                 Java Type           
+CHAR                       String              
+VARCHAR                    String              
+LONGVARCHAR                String              
+NUMERIC                    java.math.BigDecimal
+DECIMAL                    java.math.BigDecimal
+BIT                        boolean             
+TINYINT                    byte                
+SMALLINT                   short               
+INTEGER                    int                 
+BIGINT                     long                
+REAL                       float               
+FLOAT                      double              
+DOUBLE                     double              
+BINARY                     byte []             
+VARBINARY                  byte []             
+LONGVARBINARY              byte []             
+DATE                       java.sql.Date       
+TIME                       java.sql.Time       
+TIMESTAMP                  java.sql.Tiimestamp 
+BLOB                       java.sql.Blob       
+CLOB                       java.sql.Clob       
+
+SERIAL is an alias for BIGINT UNSIGNED NOT NULL AUTO_INCREMENT UNIQUE.
+
+alter table t_message modify column operator int comment 'refer t_user.user_id';
+查看注释 show full columns from t_message;
+show create table t_message;
+
+create table t_message(msg_id serial,sender varchar(100),receiver varchar(100),
+message_sendtime_wechat datetime,message varchar(65535),operator int comment 'refer t_user.user_id';,insert_time datetime);
+
+
+create table t_user(user_id serial,login_id varchar(50),password varchar(100),user_type varchar(10) comment 'EXTERNAL,INTERNAL',user_status varchar(50)  default 'VALID' comment 'VALID,LOCKED' ,user_name_cn varchar(100),user_name_en varchar(100),email varchar(100),location varchar(100),
+ wechat_id varchar(100),verified boolean default false,CREATED_BY int,update_BY int
+,insert_time datetime,update_time datetime);
+
+
+
+/opt/java_64/jdk1.6.0_17/bin/java  -classpath /fmnp/soft/sms/mailandsms.jar com.cicc.data.SendMessage roger  "oracle 133 incremental backup  successful"
+
+
+缺省的myisam引擎 Lock table read 会 block write 
+lock table write 会 block read
+ unlock tables;
+ 并发度没有问题
+缺省情况，居然能看到未提交的数据.....
+myISAM 对index 在内存中建立 cache,data 则依赖文件系统的cache
+在一个database建立很多的table会影响速度
+innodb 支持data cache ，支持事物 目前有1TB的站点  Slashdot.org ，每秒 800/insert/update /s
+
+使用innodb启动事物
+START TRANSACTION;
+
+处理自动增长的字段，如果有问题的时候
+
+innodb_autoinc_lock_mode = 0  (“traditional” lock mode) 
+commit;
+
+
+监控  
+ status; 
+如果有运行的很慢的sql，则slow query会大于0
+可以通过show processlist 看到正在执行的sql 
+
+结果得到了30张图，在这里就不贴了。可以看出，每秒能够执行的select量从12000（数据量100万）缓步下降到7800（数据量3000万）。这个性能下降主要是因为每次查询可以得到的数据越来越多造成的，如果将SQL换成按主键索引，是否出现这种性能下降仍未可知。但是可以肯定的是，按照主键索引来查询数据，即使出现性能下降也会比二级索引要更缓慢。
+
+查看 innodb状态
+SHOW ENGINE INNODB STATUS
+
+ANALYZE TABLE  
+查看Index的状态 
+SHOW INDEX FROM mydb.mytable;
+
+
+
+打开profile 
+set profiling=1;  (set profiling=0;)
+select count(*) from client where broker_id=2;
+
+show profiles;
+
++----------+------------+-------------------------------------------------------------------------+
+| Query_ID | Duration   | Query                                                                   |
++----------+------------+-------------------------------------------------------------------------+
+|        1 | 0.00009000 | select count(*) from client where broker_id=2                           |
+|        2 | 0.00008900 | SELECT DATABASE()                                                       |
+|        3 | 0.00022000 | show tables                                                             |
+|        4 | 0.00008700 | SELECT DATABASE()                                                       |
+|        5 | 0.00022500 | show tables                                                             |
+|        6 | 0.00019500 | select *from test                                                       |
+|        7 | 0.00057800 | select sum(duration) from information_schema.profiling where query_id=1 |
++----------+------------+-------------------------------------------------------------------------+
+7 rows in set (0.00 sec)
+mysql> show profile for query 7;  (show profile for query 1;)
+
++--------------------------------+----------+
+| Status                         | Duration |
++--------------------------------+----------+
+| starting                       | 0.000015 |
+| checking query cache for query | 0.000031 |
+| Opening tables                 | 0.000009 |
+| System lock                    | 0.000004 |
+| Table lock                     | 0.000019 |
+| init                           | 0.000012 |
+| optimizing                     | 0.000003 |
+| statistics                     | 0.000009 |
+| preparing                      | 0.000006 |
+| executing                      | 0.000002 |
+| Sending data                   | 0.000051 |
+| end                            | 0.000003 |
+| query end                      | 0.000002 |
+| freeing items                  | 0.000023 |
+| storing result in query cache  | 0.000003 |
+| logging slow query             | 0.000001 |
+| cleaning up                    | 0.000002 |
++--------------------------------+----------+
+select sum(duration) from information_schema.profiling where query_id=1;
+
+Table locking is also disadvantageous under the following scenario:
+A session issues a SELECT that takes a long time to run.
+Another session then issues an UPDATE on the same table. This session waits until the SELECT is finished.
+Another session issues another SELECT statement on the same table. Because UPDATE has higher priority than SELECT, this SELECT waits for the UPDATE to finish, after waiting for the first SELECT to finish. 
+
+Here are some tips concerning table locks in MySQL:
+Concurrent users are not a problem if you do not mix updates with selects that need to examine many rows in the same table.
+You can use LOCK TABLES to increase speed, because many updates within a single lock is much faster than updating without locks. Splitting table contents into separate tables may also help.
+If you encounter speed problems with table locks in MySQL, you may be able to improve performance by converting some of your tables to InnoDB. See Section 13.6, “The InnoDB Storage Engine”. 
+
+备份
+导出文本格式数据
+select *  into outfile '/tmp/wzy.tab' from emp;
+mysqldump --tab=/path/to/some/dir --opt db_name
+mysqldump --single-transaction --all-databases > backup_sunday_1_PM.sql
+mysqlhotcopy db_name /path/to/some/dir （myisam,isam)
+
+：mysqldump本身支持排除掉部分表的  --ignore-table=name
+打开 binary log的时候，支持增量备份
+--log-bin
+flush logs 切换当前日志
+增量恢复
+mysqlbinlog gbichot2-bin.000007 gbichot2-bin.000008 | mysql
+指定时间回复
+mysqlbinlog --stop-datetime="2005-04-20 9:59:59"    /var/log/mysql/bin.123456 | mysql -u root -p
+mysqlbinlog --start-datetime="2005-04-20 9:55:00"  --stop-datetime="2005-04-20 10:05:00"  /var/log/mysql/bin.123456 > /tmp/mysql_restore.sql
+mysqlbinlog --stop-position="368312" /var/log/mysql/bin.123456          | mysql -u root -p
+
+通过如下命令查看日志里面的信息
+mysqlbinlog linux-kn5l-bin.000002 > my.sql
+其他参数详情请参考手册，我通常使用以下 SQL 来备份 MyISAM 表：
+/usr/local/mysql/bin/mysqldump -uyejr -pyejr \
+--default-character-set=utf8 --opt --extended-insert=false \
+--triggers -R --hex-blob -x db_name > db_name.sql
+使用以下 SQL 来备份 Innodb 表：
+/usr/local/mysql/bin/mysqldump -uyejr -pyejr \
+--default-character-set=utf8 --opt --extended-insert=false \
+--triggers -R --hex-blob --single-transaction db_name > db_name.sql
+压缩备份 
+shell> mysqldump --quick db_name | gzip > db_name.contents.gz
+恢复/转移到另一台的命令如下:
+shell> gunzip < db_name.contents.gz | mysql db_name
+
+定期重整表 
+OPTIMIZE TABLE does a table repair and a key analysis, and also sorts the index tree so that key lookups are faster.
+
+如果出现 
+120508 16:03:42 [ERROR] Native table 'performance_schema'.'setup_consumers' has the wrong structure
+则执行 mysql_upgrade进行修补
+
+
+CHECK TABLE 或 REPAIRE TABLE，检查或维护 MyISAM 表
+OPTIMIZE TABLE，优化 MyISAM 表
+ANALYZE TABLE，分析 MyISAM 表
+Innodb 表则可以通过执行以下语句来整理碎片，提高索引速度：
+ALTER TABLE tbl_name ENGINE = Innodb;
+
+压力测试 sql-bench
+ perl run-all-tests --user='root' --password='mysql' --socket=/tmp/mysql.sock --server=MySQL
+
+ 查看和其他系统的兼容性
+  The crash-me script also is located in the sql-bench directory. crash-me tries to determine what features a database system supports and what its capabilities and limitations are by actually running queries. For example, it determines: 
+  
+  测试系统性能
+  SELECT BENCHMARK(1000000,1+1);
+
+  如果database目录下有非mysql自己创建的文件，则drop database报错
+  ERROR 1010 (HY000): Error dropping database (can't rmdir './test/', errno: 17)
+  删除自己创建的文件就ok了。
+  
+  创建索引
+  create index idx_emp_s on emp_s(id);
+查看当前日志状态
+SHOW MASTER STATUS;
+
+ MySQL uses table-level locking for MyISAM, MEMORY, and MERGE tables, and row-level locking for InnoDB tables. 
+
+默认情况下，MySQL之允许本地登录，需要修改/etc/mysql/my.cnf文件：
+注释这一行：
+bind-address=127.0.0.1 ==> #bind-address=127.0.0.1
+对于需要远程登录的用户执行如下命令：
+mysql> GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY 'mysql';
+缺省授权 如 grant all on *.* to 'root'@'%' 是没有密码的
+
+revoke all PRIVILEGES on  agilefant.* from 'wzy';
+
+
+ CREATE USER 'francis'@'localhost' IDENTIFIED BY 'frank';
+ GRANT ALL ON customer.* TO 'francis'@'localhost'
+         WITH MAX_QUERIES_PER_HOUR 20
+              MAX_UPDATES_PER_HOUR 10
+             MAX_CONNECTIONS_PER_HOUR 5
+             MAX_USER_CONNECTIONS 2;
+
+GRANT USAGE ON *.* TO 'francis'@'localhost'
+   WITH MAX_QUERIES_PER_HOUR 100;
+   drop user 'francis'@'localhost';
+
+   
+   
+    CREATE USER 'wm'@'localhost' IDENTIFIED BY 'wm';
+	GRANT all ON wm.* TO 'wm'@'localhost'
+通过 ---log[=file_name] 方式显示提交到系统的sql
+可以通过  SET GLOBAL general_log = 'OFF' 来关闭log
+ When started with the --log-bin[=base_name]  option, mysqld writes a log file containing all SQL statements that update data (both DDL and DML statements). 
+ 
+ As of MySQL 5.1.29, use --slow_query_log[={0|1}] to enable or disable the slow query log, and optionally --slow_query_log_file=file_name  to specify a log file name. The --log-slow-queries option is deprecated. 
+ 
+ 权限管理不够到位，不能控制一个用户不能登录，不能控制create table 或者drop table权限
+ 查看某人权限 show grants for wzy;
+SHOW GRANTS FOR 'joe'@'office.example.com';
+
+20090915
+查看环境变量
+SHOW SESSION VARIABLES LIKE 'max_join_size';
+SHOW GLOBAL VARIABLES LIKE '%size%';
+ SHOW VARIABLES LIKE '%size%';
+ 修改环境变量
+  set autocommit=off;
+ 
+ show status like '%time%';
+ 查询当前sql mode
+ SELECT @@GLOBAL.sql_mode;
+ SELECT @@SESSION.sql_mode;
+
+查看统计信息
+ SHOW STATUS;
+查看进程信息
+show processlist
+show full processlist;
+
+ 
+ 
+20090912
+mysql 语法
+SELECT VERSION(), CURRENT_DATE;
+ SELECT SIN(PI()/4), (4+1)*5;
+
+SELECT VERSION(); SELECT NOW();
+
+SELECT USER();
+
+Under Unix, database names are case sensitive (unlike SQL keywords)
+If you want to supply your password on the command line after the -p option, you must do so with no intervening space (for example, as -pmypassword, not as -p mypassword).
+LOAD DATA LOCAL INFILE '/path/pet.txt' INTO TABLE pet LINES TERMINATED BY '\r\n';
+LOAD DATA INFILE '/local/access_log' INTO TABLE tbl_name
+FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"' ESCAPED BY '\\'
+
+
+mysql> SELECT name, birth, CURDATE(),
+    -> (YEAR(CURDATE())-YEAR(birth))
+    -> - (RIGHT(CURDATE(),5)<RIGHT(birth,5))
+    -> AS age
+    -> FROM pet;
+
+
+	You can employ MySQL user variables to remember results without having to store them in temporary variables in the client. (See Section 8.4, “User-Defined Variables”.)
+
+For example, to find the articles with the highest and lowest price you can do this:
+
+mysql> SELECT @min_price:=MIN(price),@max_price:=MAX(price) FROM shop;
+mysql> SELECT * FROM shop WHERE price=@min_price OR price=@max_price;
+
+也可以人工设置变量 
+set @id=1;
+select * from emp where id=@id;
+ The AUTO_INCREMENT attribute can be used to generate a unique identity for new rows:
+
+CREATE TABLE animals (
+     id MEDIUMINT NOT NULL AUTO_INCREMENT,
+     name CHAR(30) NOT NULL,
+     PRIMARY KEY (id)
+ );
+
+INSERT INTO animals (name) VALUES
+    ('dog'),('cat'),('penguin'),
+    ('lax'),('whale'),('ostrich');
+
+ To start with an AUTO_INCREMENT value other than 1, you can set that value with CREATE TABLE or ALTER TABLE, like this:
+
+mysql> ALTER TABLE tbl AUTO_INCREMENT = 100;
+
+
+20090911
+几个slow query log分析工具mysqlsla–重点推荐mysqldumpslowmysql-explain-slow-logmysql-log-filtermyprofi
+利用mysqlreport产生可读性更强的报告
+采用集群+复制(MySQL6.0+)
+导入数据时关闭AUTOCOMMIT以及UNIQUE_CHECKS、FOREIGN_KEY_CHECKS
+
+　　CREATE TABLE tblMyISAM (
+id INT NOT NULL AUTO_INCREMENT,
+PRIMARY KEY (id),
+value_a TINYINT
+) TYPE=MyISAM
+
+CREATE TABLE tblHeap (
+id INT NOT NULL AUTO_INCREMENT,
+PRIMARY KEY (id),
+value_a TINYINT
+) TYPE=Heap
+ALTER TABLE tblMyISAM CHANGE TYPE=InnoDB
+
+可以查看表存储的引擎
+ show table  status  from wzy;
+
+可以肯定的是，MyISAM的确快，但是如果你的逻辑设计需要事务处理，你就可以自由使用支持事务处理的引擎。进一步讲，由于MySQL能够允许你在表格这一层应用数据库引擎，所以你可以只对需要事务处理的表格来进行性能优化，而把不需要事务处理的表格交给更加轻便的MyISAM引擎。对于MySQL而言，灵活性才是关键。
+
+
+　如果MySQL正在运行，首先杀之： killall -TERM mysqld。
+
+　　启动MySQL：bin/mysqld_safe --skip-grant-tables &
+
+　　就可以不需要密码就进入MySQL了。
+
+　　然后就是
+
+　　>use mysql
+
+　　>update user set password=password("mysql") where user="root";
+
+　　>flush privileges;
+
+ 重新杀MySQL，用正常方法启动MySQL 
+ 
+采用 c,c++开发，存储引擎可以更换，模块化很好。
+5.0开始支持cursor和存储过程,trigger和view。
+目前最大的支持表为5000万记录
+
+安装mysql
+修改os参数 /etc/sysctl.conf
+fs.file-max = 65536
+fs.dquot-max = 8192
+fs.super-max = 1024
+
+修改.bash_profile
+export PATH=/ciccdev/mysql/bin:/ciccdev/mysql/libexec:$PATH
+cd /ciccdev/mysql
+
+
+ 从源代码安装
+
+./configure --prefix=/ciccdev/mysql --with-plugins=innobase --with-client-ldflags=-all-static  --with-mysqld-ldflags=-all-static --with-charset=utf8    --with-collation=utf8_general_ci
+静态的会有问题  cannot find -lncursesw
+./configure --prefix=/ciccdev/mysql --with-plugins=innobase,partition,perfschema  --with-charset=utf8    --with-collation=utf8_general_ci 
+
+
+./configure --prefix=/ciccdev/mysql554 --with-plugins=innobase,partition  --with-charset=utf8    --with-collation=utf8_general_ci
+
+bin/mysql_install_db --user=mysql --basedir=/ciccdev/mysql554   --datadir=/ciccdev/mysql554/data
+
+groupadd mysql
+useradd -g mysql mysql
+make
+make install
+cp support-files/my-medium.cnf /etc/my.cnf
+cd /oracle/soft/mysql51
+chown -R mysql:mysql  .
+chgrp -R mysql .
+bin/mysql_install_db --user=mysql --basedir=/ciccdev/mysql   --datadir=/ciccdev/mysql/data
+修改密码
+mysqladmin -u root password 'mysql'
+
+缺省的配置文件读取路径可以从 /ciccdev/mysql/libexec/mysqld --verbose --help看到
+Default options are read from the following files in the given order:
+/etc/my.cnf /etc/mysql/my.cnf /usr/local/mysql/etc/my.cnf ~/.my.cnf
+
+
+启动mysql
+bin/mysqld_safe --user=mysql  --log=mysql.out --log-error=mysql.err &
+bin/mysqld_safe    --log=mysql.out --log-error=mysql.err &
+
+关闭
+bin/mysqladmin -u root shutdown
+
+
+如果出错，
+rm config.cache
+make clean 
+查看版本
+ bin/mysqladmin version
+ bin/mysqladmin variables
+确认可以shutdown 
+  bin/mysqladmin -u mysql shutdown
+ 查看当前的库
+ bin/mysqlshow
+ +-----------+
+| Databases |
++-----------+
+| mysql     |
+| test      |
++-----------+
+
+shell> bin/mysqlshow mysql
+Database: mysql
+
+
+ bin/mysql -e "SELECT Host,Db,User FROM db" mysql
+
+ 压力测试
+cd sql-bench
+ perl run-all-tests --socket=/tmp/mysql.sock 
+
+
+
+ 变成服务启动
+cp ./share/mysql/mysql.server   /etc/init.d/mysql
+修改里面的 datadir=/ciccdev/mysql/data  
+chmod +x /etc/init.d/mysql
+
+ chown root:root /etc/init.d/mysql
+ chkconfig --add mysql
+ chkconfig --level 345 mysql on
+ 
+
+ 或者在rc.local里面添加
+ /bin/sh -c 'cd /usr/local/mysql; ./bin/mysqld_safe --user=mysql &'
+ 
+ vi /etc/my.cnf 
+
+
+
+修改mysql root密码
+bin/mysqladmin -u root  -S /var/lib/mysql/mysql.sock password 'mysql'
+
+
+可以直接打包所有的东西到新的服务器解开即可
+同时需要把my.cnf和/etc/init.d/mysql拷贝到新环境，设置自启动即可
+
+ bin/mysql -u root -S /var/lib/mysql/mysql.sock  
+ mysql -S /var/lib/mysql/mysql.sock -p
+
+create database discuz;
+
+use discuz;
+
+
+
+查看当前database
+select database();
+show tables;
+ describe emp;
+ create table emp(name varchar(100));
+ insert into emp values('wzy');
+ 
+ 授权远程用户连接
+ grant all PRIVILEGES on  discuz.* to 'discuz'@'localhost' Identified by 'discuz';
+ grant all PRIVILEGES on  discuz.* to 'discuz'@'%' Identified by 'discuz';
+ grant all PRIVILEGES on  *.* to 'root'@'10.0.4.80' Identified by 'mysql';
+  grant all PRIVILEGES on  *.* to 'root'@'%' Identified by 'mysql';
+  
+  grant all PRIVILEGES on  *.* to 'backup'@'bjnppb02'  Identified by 'backup_v';
+  
+  如果人工直接修改权限表，需要reload
+flush privileges;
+SET PASSWORD FOR 'abe'@'host_name' = PASSWORD('eagle');
+查看的当前用户
+select user();
+
+mysql.db ,host,user 记录权限信息
+
+远程连接一定要有密码才行
+select 182*2;
+
+如果用grant方式授权，马上生效，如果用 insert 方式，需要 reload table
+
+
+
+
+
+select password('Picc123') ;
+
+支持query cache.
+
+清空query cache 
+RESET QUERY CACHE
+
+
+
+查看版本
+show variables like '%version%';
+ 查看状态
+ status  
+ 帮助
+ 在mysql下面
+ help contents 
+ help  Account Management
+联合查询
+
+mysql> SELECT p1.name, p1.sex, p2.name, p2.sex, p1.species
+-> FROM pet AS p1 INNER JOIN pet AS p2
+-> ON p1.species = p2.species AND p1.sex = 'f' AND p2.sex = 'm';
+
+mysql> SELECT pet.name,
+-> (YEAR(date)-YEAR(birth)) - (RIGHT(date,5)<RIGHT(birth,5)) AS age,
+-> remark
+-> FROM pet INNER JOIN event
+-> ON pet.name = event.name
+-> WHERE event.type = 'litter';
+
+后台执行 
+mysql < mys.sql  >w.out
+
+mysqlaccess 检查权限和主机
+
+查看使用那个配置文件
+mysql --help 
+
+可以生成xml输出
+
+shell> mysql --xml -uroot -e "SHOW VARIABLES LIKE 'version%'"
+
+查看各个进程状态
+mysqladmin proc stat
+ 
+ 备份
+ shell> mysqldump db_name > backup-file.sql
+ 导入
+ mysqlimport --local test imptest.txt
+
+物理备份
+mysqlhotcopy for MyISAM tables, or ibbackup for InnoDB tables. 
+For restore, files copied at the file system level or with mysqlhotcopy can be copied back to their original locations with file system commands; ibbackup restores InnoDB tables, and ndb_restore restores NDB tables. 
+
+
+ 
+ mysql复制可以夸平台。
+ 只能是异步执行 ，可以复制数据库，复制表 复制是通过二进制的修改日志完成的
+ 
+ NDB cluster支持同步复制
+ 
+ 5.6支持半同步(只要一个salve确认收到写入即可)
+ MySQL 5.6 also supports delayed replication
+ DRDB直接做block复制，只能master/standby
+ 
+ 
+ 
+ 可以主的往多个slave复制
+ 数据复制得不到保证
+ 
+ DRDB是data block一级的复制
+ 
+ 通过 NDB Cluster storge engine 来实现cluster ,采用shared nothing 架构
+ 
+ 查看 执行计划
+ explain select count(*) from no_part_tab where
+ explain partitions select count(*) from part_tab where
+ 
+ 日志都在data目录下
+ 在/etc/my.cnf里面配置。
+ 
+ SET PASSWORD FOR 'root'@'localhost' = PASSWORD('newpwd');
+ mysql> UPDATE mysql.user SET Password = PASSWORD('newpwd')
+-> WHERE User = 'root';
+mysql> FLUSH PRIVILEGES;
+
+修改参数
+
+You should also add the following to /etc/my.cnf:
+[mysqld_safe]
+open-files-limit=8192
+
+ 
+ 安装完成之后，查看各种信息
+ C:\MySQL\bin>mysqladmin version status proc
+mysqladmin  Ver 8.41 Distrib 5.0.37, for Win32 on ia32
+Copyright (C) 2000-2006 MySQL AB
+This software comes with ABSOLUTELY NO WARRANTY. This is free software,
+and you are welcome to modify and redistribute it under the GPL license
+
+Server version          5.0.37-community
+Protocol version        10
+Connection              localhost via TCP/IP
+TCP port                3306
+Uptime:                 4 min 2 sec
+
+Threads: 1  Questions: 17  Slow queries: 0  Opens: 12  Flush tables: 1  Open tables: 6  Queries per second avg: 0.070
+Uptime: 242  Threads: 1  Questions: 17  Slow queries: 0  Opens: 12  Flush tables: 1  Open tables: 6  Queries per second avg: 0.070
+mysqladmin: process list failed; error: 'Access denied; you need the PROCESS privilege for this operation'
+
+
+
+mysqld_safe可以重启die的mysqld
+
+直接drop table 然后crash
+mysql> drop table ti;
+090917 10:27:58 - mysqld got signal 11 ;
+This could be because you hit a bug. It is also possible that this binary
+or one of the libraries it was linked against is corrupt, improperly built,
+or misconfigured. This error can also be caused by malfunctioning hardware.
+We will try our best to scrape up some info that will hopefully help diagnose
+the problem, but since we have already crashed, something is definitely wrong
+and this may fail.
+
+key_buffer_size=16777216
+read_buffer_size=262144
+max_used_connections=1
+max_threads=151
+threads_connected=1
+It is possible that mysqld could use up to
+key_buffer_size + (read_buffer_size + sort_buffer_size)*max_threads = 133890 K
+bytes of memory
+Hope that's ok; if not, decrease some variables in the equation.
+
+thd: 0x12c66e0
+Attempting backtrace. You can use the following information to find out
+where mysqld died. If you see no messages after this, something went
+terribly wrong...
+stack_bottom = 0x7f42bcecf100 thread_stack 0x40000
+mysqld(my_print_stacktrace+0x2e)[0x8abfbe]
+mysqld(handle_segfault+0x322)[0x5df252]
+/lib64/libpthread.so.0[0x7f42c17fea90]
+mysqld(_ZN12ha_partition15create_handlersEP11st_mem_root+0xa3)[0x6d44a3]
+mysqld(_ZN12ha_partition21get_from_handler_fileEPKcP11st_mem_root+0x320)[0x6d4a50]
+mysqld(_ZN12ha_partition17del_ren_cre_tableEPKcS1_P8st_tableP24st_ha_create_information+0x40)[0x6d9680]
+mysqld(_Z15ha_delete_tableP3THDP10handlertonPKcS4_S4_b+0x152)[0x6d0222]
+mysqld(_Z20mysql_rm_table_part2P3THDP10TABLE_LISTbbbb+0x7f2)[0x6e1292]
+mysqld(_Z14mysql_rm_tableP3THDP10TABLE_LISTcc+0x4d)[0x6e156d]
+mysqld(_Z21mysql_execute_commandP3THD+0xb5a)[0x5f007a]
+mysqld(_Z11mysql_parseP3THDPKcjPS2_+0x357)[0x5f5047]
+mysqld(_Z16dispatch_command19enum_server_commandP3THDPcj+0xe93)[0x5f5ee3]
+mysqld(_Z10do_commandP3THD+0xe6)[0x5f67a6]
+mysqld(handle_one_connection+0x246)[0x5e9146]
+/lib64/libpthread.so.0[0x7f42c17f7070]
+/lib64/libc.so.6(clone+0x6d)[0x7f42c0cbb0ed]
+Trying to get some variables.
+Some pointers may be invalid and cause the dump to abort...
+thd->query at 0x131b7b0 = drop table ti
+thd->thread_id=3
+thd->killed=NOT_KILLED
+The manual page at http://dev.mysql.com/doc/mysql/en/crashing.html contains
+information that should help you find out what is causing the crash.
+ERROR 2013 (HY000): Lost connection to MySQL server during query
+
+
+编译错误
+utf8的原因
+libtool: link: g++ -O3 -fno-implicit-templates -fno-exceptions -fno-rtti -rdynamic -o mysql mysql.o readline.o sql_string.o completion_hash.o -static  ../cmd-line-utils/libedit/libedit.a -lncursesw -lpthread ../libmysql/.libs/libmysqlclient.a -lcrypt -lnsl -lm -lz
+/usr/lib64/gcc/x86_64-suse-linux/4.1.2/../../../../x86_64-suse-linux/bin/ld: cannot find -lncursesw
+

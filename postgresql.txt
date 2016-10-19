@@ -1,0 +1,844 @@
+
+pg_shard 能根据hash算法自动拆分表到多个数据库，但是只有一个master node来做这个事情
+Postgres-XC (eXtensible Cluster) is a multi-master write-scalable PostgreSQL cluster based on shared-nothing architecture ,表可以分布式或者复制的，多个master node,全局数据一致
+Postgres-XL  based on storm db Postgres-XL distributes the data amongst multiple nodes, 是 XC的升级版 Fully ACID ,cluster-wide Multi-Version Concurrency Control (MVCC).  表可以分布式或者复制的，多个master node,全局数据一致,并行度更高
+PL/Proxy  skype 用 需用写调用函数，麻烦点 ,可以做分布式
+ Slony   基于trigger做复制
+ Stream 基于 WAL log做复制
+ Pgpool-II 	 支持分布式并行查询，可以做复制，支持跨界点并行查询，但是不是分布式的
+ 
+ Postgres-XL adds some significant performance improvements like MPP parallelism and replan avoidance on the data nodes that are not part of Postgres--XC. 
+ Postgres--XC currently focuses on OLTP workloads. Postgres-XL is more flexible in terms of the types of workloads it can handle including Big Data processing thanks to its parallelism. 
+  Additionally, Postgres-XL is more secure for multi--tenant environments.
+  This project used the name Postgres-XC originally, it is renamed to Postges-X2 from 2015 after it was moved to Github
+  
+  XL架构
+  有 coordinator 做连接用 ，兼任parse 和生产 plan ，汇总各节点结果，出最终结果 ，管理两阶段事物提交，存储 catalog
+  有data node，真实存放data ,只有 coordinator 连接上来 和peer data node连接做分布式join
+  global transaction manger (CTM) 提供global transaction 提供支持MVCC ,管理cluster wide的sequence,支持 standby
+  支持复制表和分布式表  
+  每份数据复制两份 ，coordinator 支持LB 
+  create table tt () distributed by hash ...to node 
+  XC会把sql发到数据节点再重新生成执行计划，XL直接生产计划到data node，不用再重新生成
+  
+ 
+20141210
+jsonb存进去就会变成bson格式,json只是原样当字符串存进去，所以jsonb存慢，查询快很多,用的是mongodb的library和格式
+支持row-lock和事物，join 
+
+检查是否存在
+-- String exists as array element:
+SELECT '["foo", "bar", "baz"]'::jsonb ? 'bar';
+-- String exists as object key:
+SELECT '{"foo": "bar"}'::jsonb ? 'foo';
+检查是否包含
+-- The array on the right side is contained within the one on the left:
+SELECT '[1, 2, 3]'::jsonb @> '[1, 3]'::jsonb;
+创建index
+CREATE INDEX idxgintags ON api USING gin ((jdoc -> 'tags'));
+
+CREATE INDEX idxgin ON api USING gin (jdoc); 支持 @>, ?, ?& and ?|  index key and value
+CREATE INDEX idxginp ON api USING gin (jdoc jsonb_path_ops); 支持 @> 性能好一点，效率更高 只 index value
+
+查询
+select * from json_each('{"a":"foo", "b":"bar"}')
+"a" ""foo""
+"b"  ""bar""
+
+20141128
+hstore用来存储文档(binary的  key value store )，效率高 比json快
+
+http://db-engines.com/en/ranking  看数据库排名
+http://www.leadit.us/hands-on-tech/PostgreSQL-vs-MySQL-Pros-Cons 专家解读video
+
+jdbc.driverClassName=org.postgresql.Driver
+jdbc.url=jdbc:postgresql://192.168.193.132:5433/wzy
+
+20140925
+ddl 迁移的时候 要注意date类型要变成 timestamp ，default sysdate/systimestamp 要变成 default current_timestamp
+oracle data迁移到 pg主要是日期函数，to_date 都要修改成 to_timestamp
+to_timestamp('01-09-2014 10:54:59.419134', 'dd-mm-yyyy hh24:mi:ss.ff') 换成 to_timestamp('26-08-2014 13:56:54.000000', 'dd-mm-yyyy hh24:mi:ss.us')
+
+修改用户shema owneer
+alter table  t_data_dictionary set schema gaf_dev;
+alter table T_DEPARTMENT owner to GAF_DEV;
+
+\i w.sql  执行脚本
+
+20140923
+查看当前连接和ip地址
+select current_user,inet_client_addr();
+查看列信息  
+   select table_catalog,table_schema,table_name,column_name,data_type FROM information_schema.columns where table_name='t1';
+
+获取当前transaction id 
+txid_current()
+
+每个database一个 catalog(=database)  ,有多个schema 
+
+
+pg的temp表和mysql都一样，在session建立的时候必须创建，session结束自动会被drop掉
+create TEMPORARY table temp_id(user_name varchar(50))
+ON COMMIT { PRESERVE ROWS | DELETE ROWS | DROP } ]
+
+orafce 用来实现对oracle的函数兼容的  The goal of this project is to implemente some functions from Oracle database. Some date functions (next_day, last_day, trunc, round, ...), string functions and some modules (DBMS_ALERT, DBMS_OUTPUT, UTL_FILE, DBMS_PIPE, ...) are implemented now. Funcionality was verified on Oracle 10g and module is useful for production work. 
+
+支持的event trigger
+the only supported events are ddl_command_start, ddl_command_end and sql_drop.
+
+
+MySQL通常被认为是针对网站与应用的快速数据库后端，能够进行快速的读取和大量的查询操作，不过在复杂特性与数据完整性检查方面不太尽如人意。PostgreSQL是针对事务型企业应用的严肃、功能完善的数据库，支持强ACID特性和很多数据完整性检查。他们二者都在某些任务上具有很快的速度，MySQL不同存储引擎的行为有较大差别。MyISAM引擎是最快的，因为它只执行很少的数据完整性检查，适合于后端读操作较多的站点，不过对于包含敏感数据的读/写数据库来说就是个灾难了，因为MyISAM表最终可能会损坏。MySQL提供了修复MySQL表的工具，不过对于敏感数据来说，支持ACID特性的InnoDB则是个更好的选择。
+
+与之相反，PostgreSQL则是个只有单一存储引擎的完全集成的数据库。你可以通过调整postgresql.conf文件的参数来改进性能，也可以调整查询与事务。PostgreSQL文档对于性能调优提供了非常详尽的介绍。
+
+MySQL与PostgreSQL都是高可配置的，并且可以针对不同的任务进行相应的优化。他们都支持通过扩展来添加额外的功能。
+
+PG支持同步复制，流复制
+Ora2Pg : Migrates Oracle to PostgreSQL   
+数据类型映射
+oracle  PG
+DATE timestamp
+LONG text
+LONG RAW bytea
+CLOB text
+NCLOB text
+BLOB bytea
+BFILE bytea
+RAW bytea
+ROWID oid
+FLOAT double precision
+DEC decimal
+DECIMAL decimal
+DOUBLE PRECISION double precision
+INT integer
+INTEGER integer
+REAL real
+SMALLINT smallint
+BINARY_FLOAT double precision
+BINARY_DOUBLE double precision
+TINESTAMP timestamp
+XMLTYPE xml
+BINARY_INTEGER integer
+PLS_INTEGER integer
+--（以下两条是10.0新加的）
+TIMESTAMP WITH TIME ZONE timestamp with time zone
+TIMESTAMP WITH LOCAL TIME ZONE timestamp with time zone
+
+pg XC 支持shared nothing 的pg 集群，性能大概5台机器能到3.5台
+pgbouncer 连接池
+
+ 支持 autonomous transaction
+BEGIN (start ordinary tx T0);
+|
+INSERT INTO t VALUES (1);
+:\
+: BEGIN SUBTRANSACTION (start AST tx T1, pushes T0 into stack);
+: |
+: INSERT INTO t VALUES (2);
+: |
+: COMMIT SUBTRANSACTION / ROLLBACK SUBTRANSACTION; (ends tx T1, pops tx T0 from stack);
+:/
+COMMIT / ROLLBACK; (ends tx T0)
+语法差异
+pg没有dual table,直接写 select 1 就行
+sequence nextval('sequence_name') 
+pg不支持 decode,用case when 代替 CASE WHEN c1 = 1 THEN 'match' ELSE 'no match' END
+不支持nvl,用 coalesce(expr1, expr2, expr3,....)代替
+日期加减用 select now() + interval '3 month';
+子查询  SELECT * FROM (SELECT * FROM table_a) as foo 必须有 as
+用标准用户来写 外关联  select a.field1, b.field2
+支持用comment on table/table.colum is 'txt'的方式注释
+支持递归函数
+from a
+left outer join b
+on a.item_id = b.item_id;
+ pg 支持 有dblink，同时还有一个dbi-link的东西，Foreign Data Wrappers可以连接到oracle和mysql上,redis ,mongodb
+ 不支持 connect by 用 WITH RECURSIVE代替
+ null和空字符串 ,oracle规则 null||字符串=字符串，pg null||字符串=null
+ pg用text代替 clob 
+ blob支持的不太好，最好别用can't dump them with pg_dump
+ 并行支持的还不太好
+ PostgreSQL的多版本实现与其它数据库的最大差别是没有回滚段
+ postgreSQL每个表的内部都有一个transaction id（xid,4个字节）字段。每次更新数据行时，并不会删除旧的数据行，而是生成一个新的数据行，新的数
+据行的xid字段填写当前的transaction id，而每发生一次事务transcaction id都会加1，这类似Oracle中的SCN号。查询时，如果发现一行的
+xid比当前的xid新，则表明这个行的数据是新事务的，则跳过，这样只返回小于等于当前xid的数据行，这样就实现了数据的一致性
+当然这些删除掉的行，仍然占用磁盘空间，这时PostgreSQL提供了vacuum命令手动或自动去清除这些过期数据
+
+没有回滚段，就没有MySQL和oracle回滚段所带来的问题
+回滚段如何损坏，则数据库无法启动,恢复速度快
+无oracle和MySQL回滚段满的问题，也没有oracle的ora-01555的问题
+ PostgreSQL回滚可以很快完成，而对于Innodb和oracle回滚一个大事务，会带来很多严重的问题。同时回滚的过程也会再次产生大量的redo日志
+  WAL日志要比oracle和Innodb简单，对于oracle不仅需要记录数据文件的变化，还要记录回滚段的变化
+  
+  PostgreSQL的主要劣势在于
+  最新版本和历史版本不分离存储，导致清理老旧版本需要作更多的扫描，代价比较大，但这个问题一般并不是突出，因为VACUUM中也有很多的优化  
+  由于索引中完全没有版本信息，不能实现Coverage index scan，即查询只扫描索引，直接从索引中返回所需的属性，还需要访问表。而oracle是完全实现了Covera index scan，
+Innodb是部分实现了
+
+  
+ 9.4支持jsonb类型，可以直接存json对象
+ PG支持压缩，进程模型,对windows支持的不太好 mysql是线程模型，对windows支持的不错
+ PG支持异步提交可以在用户级别，table级别,db级别设置
+ PG对多核的支持更好
+ PG 9.2支持 index-only scan，count(*)速度大大加快
+ PG不支持 undo space
+ mysql如果插入字符长度超过定义长度，自动给你truncate,很危险
+ mysql不支持check constraint,pg支持
+ pg支持用java/python/c/perl/tcl写stored procedure 
+ pg存储过程支持任何function和其他语言开发的的api，mysql只支持sql 
+ mysql 5.7支持前不支持多trigger在同一张表上，而且trigger里面修改的其他数据也不会触发trigger 
+ pg trigger支持某列修改的时候触发
+ mysql不支持 full outer join
+ mysql只有inndodb/ndb支持non-blocking index
+PostgreSQL可以对SQL硬解析一次，后面再执行时复用这个执行计划，但执行计划不能在session之间共享 
+PostgreSQL中的DDL与DML没有太大的差别，DDL也可以回滚
+不支持裸设备要求OS下有一个健壮的文件系统。在Linux下我们一般选XFS，对于solaris下选ZFS。
+不支持hint 
+
+trigger function+trigger=oracle trigger
+barman=rman  备份 pg_dump/pg_restore
+
+
+ MySQL Supports several forms of horizontal partitioning.
+
+    RANGE
+    LIST
+    HASH
+    KEY
+    Composite partitioning using a combination of RANGE or LIST with HASH or KEY subpartitions
+    MySQL supports a total of 1024 partitions + subpartitions per table. 
+    
+  PostgreSQL only supports RANGE and LIST partitioning[30].
+
+    HASH partitioning is supported via immutable functions.
+    Composite partitioning is also supported.
+    PostgreSQL partitions are tables that inherit from a master table.
+    I have (thus far) been unable to find a specific technical or practical upper limit to the number of partitions supported in PostgreSQL. Anecdotally, the practical limit is less than the technical limit. 
+    
+    
+ MySQL不支持 Common Table Expression就是 oracle 的with(query table )as 的语法
+ By contrast, PostgreSQL is not controlled by any single company, but relies on a global community of developers and companies to develop it.
+ MySQL is owned and sponsored by a single for-profit firm, Oracle. MySQL AB holds copyrights to most of the codebase. 
+ 
+
+MySQL is an open-source PRODUCT.
+Postgres is an open-source PROJECT.
+
+ 
+ 
+  
+  PostgreSQL 的稳定性极强 MVCC很强 
+  PG 的可以使用函数和条件索引，这使得PG数据库的调优非常灵活，mysql就没有这个功能
+  PG 的有多种集群架构可以选择，plproxy 可以支持语句级的镜像或分片，slony 可以进行字段级的同步设置，standby 可以构建WAL文件级或流式的读写分离集群，同步频率和集群策略调整方便，操作非常简单。
+  一般关系型数据库的字符串有限定长度8k左右，无限长 TEXT 类型的功能受限，只能作为外部大数据访问。而 PG 的 TEXT 类型可以直接访问，SQL语法内置正则表达式，可以索引，还可以全文检索，或使用xml xpath。用PG的话，文档数据库都可以省了。
+  对于WEB应用来说，复制的特性很重要，mysql到现在也是异步复制，pgsql可以做到同步，异步，半同步复制。还有mysql的同步是基于binlog复制，类似oracle golden gate,是基于stream的复制，做到同步很困难，这种方式更加适合异地复制，pgsql的复制基于wal，可以做到同步复制。同时，pgsql还提供stream复制。
+  
+  最后说一下我感觉 PG 不如 MySQL 的地方。
+第一，MySQL有一些实用的运维支持，如 slow-query.log ，这个pg肯定可以定制出来，但是如果可以配置使用就更好了。
+第二是mysql的innodb引擎，可以充分优化利用系统所有内存，超大内存下PG对内存使用的不那么充分，
+第三点，MySQL的复制可以用多级从库，但是在9.2之前，PGSQL不能用从库带从库。
+第四点，从测试结果上看，mysql 5.5的性能提升很大，单机性能强于pgsql，5.6应该会强更多.
+第五点，对于web应用来说,mysql 5.6 的内置MC API功能很好用，PGSQL差一些。
+
+  
+  这两款产品的根本思路不同，PostgreSQL是想做传统的RDBMS，说白了就是想做个开源的Oracle出来。而MySQL则是为互联网而生的，轻装上阵，摒弃那些强大但笨重（也不好开发）的特性，先占领了阵地。 
+  PG方案的成熟度不及MYSQL，上手也不容易
+XP上的使用远不及MYSQL
+PHP逐渐流行的过程中，平台对于MYSQL的支持好于PG 
+
+mysql用的人多，但mysql有它的局限性，一般在mysql上碰到钉子了才会考虑postgres，但问题是mysql能适用于绝大部分互联网项目。
+postgres也在慢慢流行起来了，毕竟它的优势在那里——对事务的良好支持，并发良好的支持，以及复杂查询的优化能力。这对于很多对一致性要求高的复杂系统都是很有必要的
+
+１、MySQL崛起那会，PG虽然已经有许多高级特性，但那些特性互联网用不着，互联网需要的特性——快速——那时的PG不具备。历史延续下来，造成了今天的局面。可以说互联网成就了MySQL.
+２、MySQL的主从复制、增量备份比PG设置简单（知道PG的增量备份多耗磁盘不！），这些特性在互联网是很有用的。而旧的pg　vacuum不如今天的友好。这些都限制了他在早期的崛起。
+４、今天两者性能、特性上相差不多，而我认为pg略胜一筹，但大局在适时间内难改变——习惯造成的。 
+mysql社区支持比较，踩过的地雷多，网上基本能找到解决方案，但是PG就不一样了，但是最近用的EMC的greenplum的底层数据库就是PG,还是不错的。可以学习，大范围WEB应用还是mysql比较普及。 
+简单使用过一下PG MySQL对于访问时延的优化比PG做的好 PG的查询优化也不是MySQL可以比的了的…
+
+
+Mysql不能在线添加或者修改column PG可以
+subquery支持的很差   PG很好
+错误信息不完整   PG很好
+mysql复制配置比较简单，
+简单查询 mysql快20%-30%，复杂查询慢5倍或者出不来
+mysql安装快，pg功能强大标准
+
+PG bsd license,mysql GNU
+pg就像开源的oracle explain analyze很强悍 
+ I found PostgreSQL to be more reliable, faster and better generally, 
+ 
+
+ 
+ 
+  
+  cluster 就是一个 running server管理的多个database，有一个postgres和template1 的 database，一个cluster下面的db都在一个统一的
+  目录下面
+  每一个创建的数据库都一些自己的meta data table,比如表的信息之类的
+
+安装 Suse10.3
+
+要求
+GNU make version 3.80 or newer
+C compiler
+tar 
+GNU Readline library
+zlib compression library
+You need Kerberos, OpenSSL, OpenLDAP, and/or PAM, if you want to support authentication or encryption using those services
+设置内核参数
+kernel.shmmax=17179869184
+kernel.shmall=4194304
+
+./configure --prefix=/ciccdev/postgre
+gmake 
+gmake install
+如果想从头编译  gmake distclean.
+
+bash配置
+LD_LIBRARY_PATH=/ciccdev/postgre/lib
+export LD_LIBRARY_PATH
+PATH=/ciccdev/postgre/bin:$PATH
+export PATH
+export PGDATA=/ciccdev/postgre/data
+
+初始化 cluster
+initdb -D /ciccdev/postgre/data
+启动cluster
+pg_ctl start -D  /ciccdev/postgre/data -l logfile 或者 postgres -D  /ciccdev/postgre/data >logfile 2>&1 &
+停止server 
+pg_ctl stop -m fast  -D /ciccdev/postgre/data
+kill某个session pg_terminate_backend()
+
+使用copy方式插入数据的时候，trigger和check constraint会被触发但是rule不会被触发
+通过 pg_dump/pg_dumpall来备份全库，最好用新版的来dump,用来升级，或者用pg_upgrade
+shared_mem通常不建议超过os ram 40%，因为pg大量使用os的cache,而不像oracle那样通过裸设备
+
+配置文件
+ postgresql.conf
+
+创建新的db 缺省会从locale里面会获取字符集信息等等
+createdb wzy/createdb wzy with owner pke
+shell
+createdb  -E utf8
+sql
+CREATE DATABASE korean WITH ENCODING ’EUC_KR’ LC_COLLATE=’ko_KR.euckr’ LC_CTYPE=’ko_KR.euckr
+查看创建的db
+psql -l
+
+shell \q 退出  (mydb=# 表示超级用户登录，正常是mydb=> ) 
+psql wzy  
+启动事物
+BEGIN;
+UPDATE accounts SET balance = balance - 100.00
+    WHERE name = 'Alice';
+-- etc etc
+COMMIT;
+4个billlion的transaction之后就必须要wrap transaction ID，只有32位导致
+
+配置用户远程访问  组和角色都是role，用户和角色的区别是角色没有login权限。 、
+pg_hba.conf 
+host    all             all             0.0.0.0/0               md5
+pg_ctl reload 
+
+创建用户
+CREATE USER wzy   ENCRYPTED  PASSWORD  'wzy' ;
+修改用户密码
+ alter user gaf_dev with ENCRYPTED password 'gaf_dev';
+赋予权限
+grant all on database wzy to wzy;
+修改成超级用户
+
+ALTER USER wzy WITH SUPERUSER;
+SELECT rolname FROM pg_roles;
+SET ROLE wheel;
+如果权限是Inheirt可以直接使用，但是像createdb/login/superuser之类的，就不能继承，必须用set role的方式来使用
+如果 grant wheel to dba,create role dba noinherit,grant dba to wzy,则wzy不能直接使用wheel的权限，只能通过 set role wheel来使用，因为dba使用了inherit
+
+创建schema 
+create schema wzys;
+修改schema owner 
+ALTER SCHEMA symmertric owner  TO symmertric;
+
+修改search path
+SHOW search_path;
+SET search_path TO myschema,public;
+
+Alternatively, use the default_tablespace parameter:
+SET default_tablespace = space1;
+CREATE TABLE foo(i int)
+tablespace是所有db共享
+不同的db用来隔离数据，同一个db不同schema用来共享和权限控制
+
+备份恢复
+pg_dump dbname -n schema -t table_name > dump.sql
+psql dbname <dump.sql  (内部是copy指令)恢复之前,db要创建，涉及的用户和role需要先建立
+pg_dumpall直接做全cluster所有db的备份
+直接压缩导出 pg_dump -Fc dbname > filename （必须os支持zlib才行)
+并行导出  pg_dump -j num -F d -f out.dir dbname
+pg_dump -h host1 dbname | psql -h host2 dbname
+pg_restore 用来恢复pg_dump导出的非plain dump  
+pg_dump并行模式在9.2之后通过同步snapshot来保证所有connection看到的数据一致
+pg_dump出来的信息不包含统计信息，所以导入后需要重新统计
+
+
+
+WAL 写在 pg_xlog目录
+设置 WAL
+在postgresql.conf
+wal_levle=archive
+archive_mode=on
+archive_command='test  ! -f /mnt/server/archivedir/%f  && cp %p /mnt/server/archivedir/%f'
+archive_command = ’gzip < %p > /var/lib/pgsql/archive/%f’ 
+restore_command = ’gunzip < /mnt/server/archivedir/%f > %p’
+archive_command = ’local_backup_script.sh "%p" "%f"’ 
+
+max_wal_senders=10
+WAL不支持hash index 
+WAL log apply的时候不支持替换create tablespace里面的路径名，所以主从机器目录要一直
+standby用文件的时候，是使用主库archive_command归档的wal文件，所以不会远程传输(通过nfs之类的支持),但是stream方式下，会主动到主库获取wal record
+使用这两个指令来监控 standby恢复情况
+They can be retrieved using pg_current_xlog_location on the primary and the
+pg_last_xlog_receive_location on the
+You can retrieve a list of WAL sender processes via the pg_stat_replication view. Large
+differences between pg_current_xlog_location and sent_location field might indicate
+that the master server is under heavy load, while differences between sent_location and
+pg_last_xlog_receive_location on the standby might indicate network delay, or that the
+standby is under heavy load.
+
+同步复制，要求数据同时在master和一个standby的Log写道磁盘之后才算成功
+需要主库上设置 synchronous_standby_names(可以写多个名字)和synchronous_commit=on,如果 synchronous_commit=remote_write，则不用等从库flush到os,
+性能会好一点 
+支持cascading standby 
+主库关闭的时候，如果使用的异步复制，则需要等WAL都传输到从库后才能shutdown 
+同步复制开关可以控制在整个cluster,用户级别(每个session)，或者单个tranasction级别	
+如果在同步状态下，复制事物的时候主库crash，而没有收到从库的回复，则主库重新起来的时候会认为该事物是commit,
+保证从库没有回复的时候，用户不会收到显示的提交信息
+使用pg_ctl promote来把standb变成主库，从库在恢复的时候一直可读 (设置 hot_standby=on),
+hot standby模式下，临时表也不能写
+如果主库执行drop table命令之类的传道从库后，从库正在查询改表，这apply被阻止，通过max_standby_archive_delay or max_standby_streaming_delay来让从库
+cancel该阻止指令 ，可以用pg_stat_database_conflicts 来查询canceled的指令，由于vacuum会清理修改和删除的记录，所以会导致conflict
+从库和主库物理保持一下，不能创建index
+archive_cleanup_command = ’pg_archivecleanup /mnt/server/archivedir %r’
+recovery_min_apply_delay 用来延迟恢复(时间是从主库提交的时间开始算
+
+
+
+wal_keep_segments和replication slot都用来保留standby需要的Log不被删除，但是 replication slot只保留需要的，更省空间
+
+recovery.conf
+standby_mode = ’on’
+primary_conninfo = ’host=192.168.1.50 port=5432 user=foo password=foopass’
+restore_command = ’cp /path/to/archive/%f %p’
+archive_cleanup_command = ’pg_archivecleanup /path/to/archive %r’
+
+可以设置 archive_timeout 来控制多长时间归档一次，避免损失数据
+也可以通过pg_switch_xlog来人工切换 log
+使用  pg_basebackup -D basebackup -x  -P 来做base备份(解开后就是data目录的内容)，用wal归档来增量恢复
+
+使用pg_locks来查看锁
+统计信息通过下面参数来控制，通过pg_stat_*表查看
+ #track_activities = on
+#track_counts = on
+#track_io_timing = off
+#track_functions = none                 # none, pl, all
+#track_activity_query_size = 1024       # (change requires restart)
+
+支持Dtrace(Sun)或者SystemTap(Linux)
+每张表有个file，可能还有个toast文件
+使用WAL就可以不用OS的journal功能了，避免性能损失
+
+支持异步提交log 用参数 synchronous_commit 控制，在session级别或者事物级别设置
+An immediate-mode shutdown is equivalent to a server crash, and will therefore
+cause loss of any unflushed asynchronous commits.
+如果 synchronous_commit =false(通常延迟3倍 wal_writer_delay=200ms )并且 fsync=false(完全由OS来决定什么时候flush到disk)则会导致 data corrupt 所以 synchronous_commit=false性能和fsync=false差不多，但是没有data corrupt的风险
+commit_delay(9.3之后做了很大的优化) 可以让完成的事物延迟时间提交，以便和别的tranasction打包一起提交，减少WAL的IO操作，提高吞吐率，但是如果fsync没有enable,就不会sleep，等于异步提交
+使用 pg_test_fsync 来确定这个值
+pg datafile没有checksum,但是WAL有 
+优化:
+max_connections=100，通常使用连接池来达到更好的效果
+shared_buffers=1/4 RAM
+effective_cache_size=3/4 RAM(包含shared_buffer部分)，这个不是PG使用的，而是把OS的file cache也算上，越大，越倾向使用index
+checkpoint_segments=64(16M一个,1G做一次checkpoint，及时这个没有达到缺省5分钟也会做一次checkpoint)
+checkpoint_timeout=1800(30min)
+checkpoint_completion_target =0.5 The completion target tells postgres how aggressively to write in the background so that it's x% complete before running a checkpoint,
+log_min_duration_statement=5000 (if sql run longer than 5s will be printed)
+log_line_prefix= '%t:%r:%u@%d:[%p]: ' : %t=timestamp, %u=db user name, %r=host connecting from, %d=database connecting to, %p=PID of connection
+log_statement=DDL
+work_mem=16 (每个连接单独占用，单位MB)
+default_statistics_target=100
+maintenance_work_mem=100 (单位MB)
+server_encoding =UTF8
+可以打开 commit_delay=100 (microseconds，延迟,统一提交) ，极端情况下可以打开 synchronous_commit=false
+if (CommitDelay > 0 && enableFsync && 
+        MinimumActiveBackends(CommitSiblings)) 
+        pg_usleep(CommitDelay); 
+
+log_temp_files =0 (如果有临时文件产生，就会记录log,比如排序内存空间不够啊)
+wal_buffer不用设置，9.1以后缺省等于shared_buffers的1/32，最大16M
+使用XFS文件系统
+
+
+使用chekcpoint指令强行进行checkpoint
+远程连接  psql -U wzy -W -h 192.168.193.132 wzy  
+ 官方建议是这样的：在管理员创建一个具体数据库后，应该为所有可以连接到该数据库的用户分别创建一个与用户名相同的模式，然后，将search_path设置为"$user"，
+\du 查看role
+\dn 查看schema
+  \ds[S+] [PATTERN]      list sequences
+  \dt[S+] [PATTERN]      list tables
+  \dv[S+] [PATTERN]      list views
+  \dy     [PATTERN]      list event triggers
+  \l[+]   [PATTERN]      list databases
+  \dp                     list privilege 
+  \d table name 查看表结构
+\d view name 查看view结构
+
+psql支持变量
+\set foo bar
+\echo :foo
+\unset foo 
+SELECT * FROM :foo;
+SELECT * FROM :"foo";
+psql支持用~/.psqlrc文件来在启动的时候自定义环境变量
+\timing on 显示查询时间
+vacuumdb 用来清理和统计表
+
+pg_xlogdump dump wal
+
+安装 dblink ,到源码 contrib/dblink ,make;make install
+然后到需要使用的database安装  create extension dblink; 
+检查是否安装成功 
+ select extname,extversion from pg_extension;
+ 使用dblink
+ select  id  from dblink('dbname=postgres','select id from t2') as t1(id int);
+安装  oracle_fdw 需要 Make sure that PostgreSQL is configured "--without-ldap" 因为oracle client也有ldap api，名字会和openldap冲突，如果不用ldap就没事 
+oracle_fdw uses transaction isolation level "serializable" on the Oracle side,
+which corresponds to PostgreSQL's repeatable read.  This is necessary because
+a single PostgreSQL statement can lead to multiple Oracle queries
+http://pgxn.org/dist/oracle_fdw/
+安装下载源代码，节约到 pg source的 contrib/oracle_fdw目录
+设置 ORACLE_HOME ,然后 make NO_PGXS=1  make install
+copy $ORACLE_HOME/lib/libnnz10.so和 libclntsh.so.10.1 到 $PG_HOME/lib
+然后 psql dev
+ CREATE EXTENSION oracle_fdw;
+ 检查 
+  select extname,extversion from pg_extension;
+  然后重启一下PG 
+ 先用sqlplus测试 sqlplus wzy/wzy@192.168.193.136:1521/nptest01
+ 在pg创建 db link
+ CREATE SERVER nptest01 FOREIGN DATA WRAPPER oracle_fdw   OPTIONS (dbserver '//192.168.193.136:1521/nptest01');
+GRANT USAGE ON FOREIGN SERVER nptest01 TO gaf_dev;
+创建map user 
+CREATE USER MAPPING FOR gaf_dev SERVER nptest01   OPTIONS (user 'rds_migration', password 'rds_migration_839');
+CREATE FOREIGN table T_ACCOUNT_PG
+( ACCOUNT_ID               numeric(12) not null,
+  PARENT_ACCOUNT_ID        numeric(12))
+  server nptest01 OPTIONS (schema 'RDS_MIGRATION', table 'T_ACCOUNT');
+支持 external表比oracle表多或者少字段  ,支持对外表的DML操作，where 条件会push 到oracle执行 "now()", "transaction_timestamp()", "current_timestamp","current_date" and "localtimestamp" 都支持
+9.4支持在外表上建trigger Prepared statements involving Oracle  不支持，支持事物，都是直接到oracle执行事物也支持执行计划(oracle的真正计划)也支持对外表做analyze 
+不能实现真正的两阶段提交的globle 事物 字符集，日期，中文，都能正确转换
+
+
+缺省创建的对象都在用户名字下面的schema下面
+图形化工具
+pgadminIII
+msvcr120.dll  缺少，下载vc2013 http://www.microsoft.com/en-us/download/details.aspx?id=40784
+
+smallint	2 字节	小范围整数	-32768 到 +32767
+integer	4 字节	常用的整数	-2147483648 到 +2147483647
+bigint	8 字节	大范围的整数	-9223372036854775808 到 9223372036854775807
+decimal	变长	用户声明精度，精确	无限制 up to 131072 digits before the decimal point; up to 16383 digits after the decimal point
+numeric	变长	用户声明精度，精确	无限制 =oracle number  up to 131072 digits before the decimal point; up to 16383 digits after the decimal point
+real	4 字节	变精度，不精确	6 位十进制数字精度
+double precision	8 字节	变精度，不精确	15 位十进制数字精度
+serial	4 字节	自增整数	1 到 2147483647
+bigserial	8 字节	大范围的自增整数	1 到 9223372036854775807
+varchar(n)  变长，有长度限制 longest possible character string that can be stored is about 1 GB
+text       变长，无长度限制
+timestamp [ (p) ] [ without time zone ]	8 字节	日期和时间	4713 BC	5874897 AD	1 microsecond / 14 位
+timestamp [ (p) ] with time zone	8 字节	日期和时间，带时区	4713 BC	5874897 AD	1 microsecond / 14 位
+interval [ (p) ]	12 字节	时间间隔	-178000000 年	178000000 年	1 microsecond / 14 位
+date	4 字节	只用于日期	4713 BC	5874897 AD	1 天
+time [ (p) ] [ without time zone ]	8 字节	只用于一日内时间	00:00:00	24:00:00	1 microsecond / 14 位
+time [ (p) ] with time zone	12 字节	只用于一日内时间，带时区	00:00:00+1459	24:00:00-1459	1 microsecond / 14 位
+bytea  =blob
+
+和java类型映射
+PG                java
+boolean     		 boolean
+shortint     			short
+int           		int
+bigint        long
+real          float
+double precision double
+varchar,text  String
+bytea        byte[]
+date        java.sql.Date
+time        java.sql.Time
+timestamp     java.sql.Timestamp
+other       String
+ 
+ java        <->         jdbc map
+ 
+Java Type                JDBC Type                          
+String                   CHAR, VARCHAR, or LONGVARCHAR      
+java.math.BigDecimal     NUMERIC                            
+boolean                  BIT                                
+byte                     TINYINT                            
+short                    SMALLINT                           
+int                      INTEGER                            
+long                     BIGINT                             
+float                    REAL                               
+double                   DOUBLE                             
+byte[]                   BINARY, VARBINARY, or LONGVARBINARY
+java.sql.Date            DATE                               
+java.sql.Time            TIME                               
+java.sql.Timestamp       TIMESTAMP                          
+Clob                     CLOB                               
+Blob                     BLOB                               
+Array                    ARRAY                              
+Struct                   STRUCT                             
+Ref                      REF                                
+Java class               JAVA_OBJECT                        
+
+ 
+ trigger instead 定义在view上，table上可以 FOR EACH ROW/FOR EACH STATEMENT ,view只能 FOR EACH ROW
+ 定义多个trigger的时候，会按照trigger名字字母排序运行
+ 
+ 如果trigger function里面不返回一个值，则其他trigger不会触发，如果是before类型的，则不会发生实际的修改
+ 
+ CREATE OR REPLACE FUNCTION process_emp_audit() RETURNS TRIGGER AS $$
+    BEGIN
+        --
+        -- Create a row in emp_audit to reflect the operation performed on emp,
+        -- make use of the special variable TG_OP to work out the operation.
+        --
+        IF (TG_OP = 'DELETE') THEN
+            INSERT INTO emp_audit SELECT 'D', now(), user, OLD.*;
+         --   RETURN OLD;
+        ELSIF (TG_OP = 'UPDATE') THEN
+            INSERT INTO emp_audit SELECT 'U', now(), user, NEW.*;
+           -- RETURN NEW;
+        ELSIF (TG_OP = 'INSERT') THEN
+            INSERT INTO emp_audit SELECT 'I', now(), user, NEW.*;
+            --RETURN NEW;
+        END IF;
+        RETURN NULL; -- result is ignored since this is an AFTER trigger
+    END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER emp_audit
+BEFORE INSERT OR UPDATE OR DELETE ON emp
+    FOR EACH ROW EXECUTE PROCEDURE process_emp_audit();
+    
+    
+    drop trigger emp_audit on emp;
+    
+    配置 ora2pg 
+    在windows上安装 activePerl http://www.activestate.com/activeperl/downloads/thank-you?dl=http://downloads.activestate.com/ActivePerl/releases/5.18.2.1802/ActivePerl-5.18.2.1802-MSWin32-x86-64int-298023.msi
+    下载 ora2pg
+    安装ora2pg
+    perl Makefile.PL
+	    dmake && dmake install
+	 安装 DBD::Oracle 打开 ppm.bat，选择 
+    
+    rule system用来改写sql 
+    
+    user_id users.user_id%TYPE; 定义和表字段数据类型一样
+    name table_name%ROWTYPE; 和表类型一样
+    BEGIN
+SELECT * INTO STRICT myrec FROM emp WHERE empname = myname;
+EXCEPTION
+WHEN NO_DATA_FOUND THEN
+RAISE EXCEPTION ’employee % not found’, myname;
+WHEN TOO_MANY_ROWS THEN
+RAISE EXCEPTION ’employee % not unique’, myname;
+END;
+执行动态sql
+EXECUTE ’SELECT count(*) FROM mytable WHERE inserted_by = $1 AND inserted <= $2’INTO c USING checked_user, checked_date;
+CREATE or replace FUNCTION insert_name(username varchar) RETURNS int
+AS $$
+DECLARE
+BEGIN
+execute 'insert into t values('abc')';
+RETURN 1;
+END
+$$ LANGUAGE plpgsql;
+
+
+IF number is not null THEN
+result := ’zero’;
+ELSIF number > 0 THEN
+result := ’positive’;
+ELSIF number < 0 THEN
+result := ’negative’;
+ELSE
+-- hmm, the only other possibility is that number is null
+result := ’NULL’;
+END IF;
+
+CREATE FUNCTION sum_n_product(x int, y int, OUT sum int, OUT prod int) AS $$
+BEGIN
+sum := x + y;
+prod := x * y;
+END;
+$$ LANGUAGE plpgsql;
+等于 
+CREATE FUNCTION sum_n_product(x int, y int, OUT sum int, OUT prod int) returns records AS $$
+BEGIN
+sum := x + y;
+prod := x * y;
+END;
+$$ LANGUAGE plpgsql;
+
+声明变量类型为 varNmae record，则变成复合类型，在赋值的时候才知道有具体的值
+
+IF x < y THEN ...
+what happens behind the scenes is equivalent to  PREPARE statement_name(integer, integer) AS SELECT $1 < $2;
+然后每次遇到if的时候就 execute，用最新的值
+
+EXECUTE ’UPDATE tbl SET ’
+|| quote_ident(colname)
+|| ’ = ’
+|| quote_literal(newvalue)
+|| ’ WHERE key = ’
+|| quote_literal(keyvalue);
+避免value里面还有单引号之类的
+或者使用这种方式比较更好 
+EXECUTE format(’UPDATE tbl SET %I = %L WHERE key = %L’, colname, newvalue, keyvalue);
+The format function can be used in conjunction with the USING clause:
+EXECUTE format(’UPDATE tbl SET %I = $1 WHERE key = $2’, colname) USING newvalue, keyvalue;
+使用cursor传回
+CREATE FUNCTION reffunc(refcursor) RETURNS refcursor AS ’
+BEGIN
+OPEN $1 FOR SELECT col FROM test;
+RETURN $1;
+END;
+’ LANGUAGE plpgsql;
+使用
+BEGIN;
+SELECT reffunc(’funccursor’);
+FETCH ALL IN funccursor;
+COMMIT;
+
+返回指定的errcode
+RAISE ’Duplicate user ID: %’, user_id USING ERRCODE = ’unique_violation’;
+RAISE ’Duplicate user ID: %’, user_id USING ERRCODE = ’23505’;
+可以定义一个后台程序随着pg一起启动，可以访问pg的内存，很方便，也很危险
+
+logical decoding=oracle streams，从WAL里面解析所有的修改，然后被消费
+Synchronous replication support for Logical  Decoding(但是只支持单个db级别)
+安装 function debuger
+http://git.postgresql.org/gitweb/?p=pldebugger.git;a=summary 下载 放到  pg source目录 contrib/debugger下面
+make;make install
+然后修改 postgresql.conf加上 shared_preload_libraries = '$libdir/plugin_debugger'
+然后再需要debug的database执行 CREATE EXTENSION pldbgapi;
+
+使用  PREPARE 来实现server side的prepare statement  当前session有效，parse一次，执行多次
+PREPARE fooplan (int, text, bool, numeric) AS
+INSERT INTO foo VALUES($1, $2, $3, $4);
+EXECUTE fooplan(1, ’Hunter Valley’, ’t’, 200.00);
+
+DEALLOCATE [ PREPARE ] { name | ALL }
+pl/java http://pgfoundry.org/projects/pljava/?userguide
+
+CASE
+WHEN x BETWEEN 0 AND 10 THEN
+msg := ’value is between zero and ten’;
+WHEN x BETWEEN 11 AND 20 THEN
+msg := ’value is between eleven and twenty’;
+END CASE
+
+<<ablock>>
+BEGIN
+-- some computations
+IF stocks > 100000 THEN
+EXIT ablock; -- causes exit from the BEGIN block
+END IF;
+-- computations here will be skipped when stocks > 100000
+END
+
+LOOP
+-- some computations
+EXIT WHEN count > 100;
+CONTINUE WHEN count < 50;
+-- some computations for count IN [50 .. 100]
+END LOOP;
+
+WHILE NOT done LOOP
+-- some computations here
+END LOOP;
+
+FOR i IN 1..10 LOOP
+-- i will take on the values 1,2,3,4,5,6,7,8,9,10 within the loop
+END LOOP;
+
+
+FOR mviews IN SELECT * FROM cs_materialized_views ORDER BY sort_key LOOP
+-- Now "mviews" has one record from cs_materialized_views
+RAISE NOTICE ’Refreshing materialized view %s ...’, quote_ident(mviews.mv_name);
+EXECUTE ’TRUNCATE TABLE ’ || quote_ident(mviews.mv_name);
+EXECUTE ’INSERT INTO ’
+|| quote_ident(mviews.mv_name) || ’ ’
+|| mviews.mv_query;
+END LOOP;
+输出信息
+
+for c in select *From t1 loop
+raise notice 'Return value is: %', c.id;
+end loop;
+
+declare
+curs1 refcursor;
+curs2 CURSOR FOR SELECT * FROM tenk1;
+begin
+OPEN curs1 FOR SELECT * FROM foo WHERE key = mykey;
+open  curs2;
+
+
+获取系统变量
+EXCEPTION WHEN OTHERS THEN
+GET STACKED DIAGNOSTICS text_var1 = MESSAGE_TEXT,
+text_var2 = PG_EXCEPTION_DETAIL,
+text_var3 = PG_EXCEPTION_HINT;
+或者 
+v_return_message:=SQLERRM;
+v_return_code:=SQLSTATE
+
+定义好函数后，运行select 函数，只会对in,inout的参数进行配对选择，对于out参数不需要，加上还会发现找不到
+
+可以把返回table类型的函数放在from后面
+支持函数重载
+CREATE MATERIALIZED VIEW mv_data AS select ***
+物化视图刷新 REFRESH MATERIALIZED VIEW sales_summary; 视图和物化视图都是用rule系统实现的
+使用rule来改写sql可能会比trigger快，特别是涉及到多行记录的时候，不太好理解不如trigger直观
+
+PL/pgSQL第一次运行的时候会编译并且缓存(session 级别)但是sql在真正第一次运行的时候才会解析缓存(session级别)
+'出现两次就行了 'a''a'=a'a
+
+支持自治事物，不支持在function里面commit,如果有exception，自动回滚
+使用quote_literal来解决有单引号的问题
+
+创建partition很麻烦，先定义Master table,然后定义字表，每张字表还需要定义check实现list/range,然后再主表上建立trigger，分发数据到字表
+可以用 https://github.com/keithf4/pg_partman 来管理，方便很多
+https://github.com/omniti-labs/mimeo table级别的stream复制
+ 
+
+select  * from t1 limit 2 offset 1; 来支持分页
+a BETWEEN x AND y is equivalent to a >= x AND a <= y
+a NOT BETWEEN x AND y is equivalent to a < x OR a > y
+SELECT pg_sleep(1.5);
+SELECT pg_sleep_for(’5 minutes’);
+SELECT pg_sleep_until(’tomorrow 03:00’);
+缺省情况下，string number可以转换成number,但number不能自动转成string
+The estimated cost is computed as (disk
+pages read * seq_page_cost) + (rows scanned * cpu_tuple_cost). By default, seq_page_cost is 1.0
+and cpu_tuple_cost is 0.01, so the estimated cost is (358 * 1.0) + (10000 * 0.01) = 458.
+explain select    explain analyze select 真正执行该sql然后显示执行计划
+查看统计信息 SELECT attname, inherited, n_distinct,
+array_to_string(most_common_vals, E’\n’) as most_common_vals
+FROM pg_stats
+WHERE tablename = ’road’;
+
+select count(*)之类的会比较慢，因为index里面row信息，还必须到base表去查询一次(因为有obsolted的row)
+scp copy文件不是atomic的，就意味着copy了一半的也会出现在目标端，会出现问题，rsync不会有这个问题
+
+oin_collapse_limit 参数用来控制 表按照sql顺序关联
