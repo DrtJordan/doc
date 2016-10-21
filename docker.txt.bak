@@ -55,7 +55,6 @@ Swarm将每一个主机上的docker-egnine管理起来，对外提供容器集群服务。最上面是Compos
 CPU配额硬限制。
 容器绑定独立IP这样外部可直接SSH了。
 Run only one process per container
-
 持续集成当然是Docker最纯粹的玩法了，通过『Dockerfile-构建镜像-创建新容器』来完成环境的变更
 
 

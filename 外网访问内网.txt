@@ -1,0 +1,574 @@
+VPN主要用IPSec(隧道模式隧道是封装、路由与解封装的整个 过程) SSL两类 SSL VPN是基于应用层的VPN，而IPsec VPN是基于网络层的VPN。IPsec VPN对所有的IP应用均透明；而SSL VPN保护基于Web的应用更有优势，当然好的产品也支持TCP/UDP的C/S应用，例如文件共享、网络邻居、Ftp、Telnet、Oracle等。 
+SSL VPN隧道可以穿透Firewall；而IPSec客户端需要支持“NAT穿透”功能才能穿透Firewall，而且需要Firewall打开UDP500端口。 
+ SSL VPN 更容易提供细粒度访问控制，可以对用户的权限、资源、服务、文件进行更加细致的控制，与第三方认证系统（如：radius、AD等）结合更加便捷。而IPSec VPN主要基于IP五元组对用户进行访问控制。 
+ openvpn 它大量使用了OpenSSL加密库中的SSLv3/TLSv1协议函数库。
+
+putty 命令行调用
+ 
+putty.exe -pw ora_cle -P 1088 -ssh oracle@127.0.0.1
+ 
+在最初的设计意图中,SSL(Secure Sockets Layer (SSL) and Transport Layer Security (TLS))被设计为加强Web安全传输(HTTP/HTTPS/)的协议(事实上还有SMTP/NNTP等),SSH(Secure Shell)更多的则被设计为加强Telnet/FTP安全的传输协议,默认地,它使用22端口.
+以SSL为例,基本上SSL在传输过程中所处的位置如下:
+－－－－－－－－－
+| HTTP |
+－－－－－－－－－
+| SSL |
+－－－－－－－－－
+| TCP |
+－－－－－－－－－
+| IP |
+－－－－－－－－－ 
+
+VPN的隧道协议主要有三种，PPTP、L2TP和IPSec，其中PPTP和L2TP协议工作在OSI模型的第二层，又称为二层隧道协议； IPSec是第三层隧道协议，也是最常见的协议。L2TP和IPSec配合使用是目前性能最好，应用最广泛的一种。
+
+TLS的主要目标是使SSL更安全，并使协议的规范更精确和完善。TLS 在SSL v3.0 的基础上，
+javax.net.ssl）包，提供了对 SSL 和 TLS 的支持
+
+从协议内部的功能层面上来看，SSL/TLS 协议可分为两层：
+
+1. SSL/TLS 记录协议（SSL/TLS Record Protocol），它建立在可靠的传输层协议（如 TCP）之上，为上层协议提供数据封装、压缩、加密等基本功能。
+2. SSL/TLS 握手协议（SSL/TLS Handshake Protocol），它建立在 SSL/TLS 记录协议之上，用于在实际的数据传输开始前，通讯双方进行身份认证、协商加密算法、交换加密密钥等初始化协商功能。
+
+
+Socks v4 不支持 UDP 传输协议的转发，而 Socks v5 支持。由于 DNS 使用 UDP 传输协议，当浏览器只支持 Socks v4 时，它会使用本地 DNS 服务试图解析域名（
+
+其次，SSL协议还是一种工作在TCP协议层之上的协议。使用SSL进行通讯，不改变IP报文头和TCP报文头，因而SSL报文对NAT和防火墙来说都是透明的，SSL VPN的部署不会影响现有的网络。这样用户从任何地方上网，只要能接入Internet，就能使用SSL VPN。
+
+(1) 在用户主机上部署IPsec VPN时，需要预先安装客户端软件。 维护IPsec VPN的客户端对企业网管或运营商都是一件麻烦的事情。
+(2) 访问控制不够细致。因为IPsec是在IP层实现的，所以对IP报文的内容无法识别，因而不能控制高层应用的访问请求，如：http报文、文件共享等。
+(3) 组网受限。在使用NAT的场合，IPsec VPN需要支持NAT穿越技术。由于各厂家的实现是不一致的，这给IPsec VPN的互连带来一定的障碍。另外，IPsec协议在原TCP/UDP头的前面增加了IPsec报文头，报文在穿越防火墙时，需要在防火墙上进行特殊的配置，允许AH或ESP协议报文通过。
+
+SSL VPN情况下 
+4) TCP接入客户端：如果用户采用TCP接入方式，则需要下载一个TCP客户端。该程序将与SSL VPN网关建立SSL连接，在TCP应用程序与远程服务器之间转发报文。
+ActiveX SSL VPN
+HTTP Tunnel 也可以用来在http协议上跑tcp协议，如果支持connect最好(只有第一个指令是connect到某个服务器，后面就是直接的包转发,不需要走http协议)
+，不支持就只能通过post/get来解包
+TUnnel 就是在一个协议上跑另外一个协议，比如SSH上跑TCP，Http上跑tcp
+
+xlightweb  支持 websocket
+
+Ipsec 在ip层上，tcp之下，TLS/SSL在tcp之上
+
+http://www.jcraft.com/jsch/   http://mina.apache.org/sshd-project/ 一个纯java的实现，实现了ssh的访问功能，tunnel等等
+还有GANYMED 
+Ganymed SSH地址：http://www.ganymed.ethz.ch/ssh2/
+vnn
+softether
+hamachi  rogertest123/123
+n2n
+
+没有可用有效软件许可证 
+删除 
+HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\MSLicensing
+HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Microsoft\MSLicensing
+HKEY_CURRENT_USER\Software\Classes\VirtualStore\MACHINE\SOFTWARE\Wow6432Node\Microsoft\MSLicensing
+
+IPvE vlan
+tunngle
+
+Openvpn 服务器加花生,现在可以从家里用Windows远程控制连接公司，效果比很多商用软件还好，基本办公是没有任何问题了
+
+
+- cd <my n2n directory>\bin
+- edge.exe -c <my community> -a <my IP address> -k <encryption key> -l <supernode IP:port>
+
+supersunfire.xicp.net
+
+
+openvpn 配置
+1.init-config
+1.1. vars
+2.clean-all
+3.build-ca
+build-key-server server
+build-key client1
+build-dh
+
+4.copy server.ovpn 到 config
+
+修改如下信息
+client-to-client
+proto tcp
+port 1194
+dev tap
+dh dh2048.pem
+server 10.8.0.0
+duplicate-cn
+
+客户端 
+http-proxy-retry
+http-proxy 192.168.8.26 8080
+client
+remote 192.168.129.160 1194
+
+5.copy 下列文件到 config
+ca.crt
+ca.key
+dh2048.pem
+server.crt
+server.csr
+
+6.打开自启动服务
+
+
+使用bridge的时候 客户端被设置为远程机器的物理ip地址 而不是虚拟地址 当使用routing的时候，使用虚拟地址，两边都添加路由
+ routed VPN will not pass IP broadcasts  bridging效率差一点 does not scale well.
+ A TAP device is a virtual ethernet adapter, while a TUN device is a virtual point-to-point IP link.
+ 
+ OpenVpn的技术核心是虚拟网卡
+ 
+ 
+ Bridging advantages
+    Broadcasts traverse the VPN -- this allows software that depends on LAN broadcasts such as Windows NetBIOS file sharing and network neighborhood browsing to work.
+    No route statements to configure.
+    Works with any protocol that can function over ethernet, including IPv4, IPv6, Netware IPX, AppleTalk, etc.
+    Relatively easy-to-configure solution for road warriors.
+
+Bridging disadvantages
+    Less efficient than routing, and does not scale well.
+
+Routing advantages
+    Efficiency and scalability.
+    Allows better tuning of MTU for efficiency.
+
+Routing disadvantages
+    Clients must use a WINS server (such as samba) to allow cross-VPN network browsing to work.
+    Routes must be set up linking each subnet.
+    Software that depends on broadcasts will not "see" machines on the other side of the VPN.
+    Works only with IPv4 in general, and IPv6 in cases where tun drivers on both ends of the connection support it explicitly.
+
+
+
+
+ SSH Tunnel 属于port forwarding, 它建立在ssh连接上的一个加密的通道，利用它可以传输没经加密的数据从而达到安全的目的。创建了SSH Tunnel之后，你不用直接去访问远程的服务(假使你是连接某个远程服务)，相反你访问你本机的某个端口，而SSH Client就会把你的数据通过已建立的加密通道转发到远程主机的目的端口去。
+ 
+ SSH Tunnel有三种，分别是本地Local（ssh -NfL），远程Remote（ssh -NfR），动态Dynamic（ssh -NfD）
+ ssh -NfL <local port>:<remote host>:<remote port> <SSH hostname>
+ ssh -NfR <local port>:<remote host>:<remote port> <SSH hostname>
+
+
+动态Dynamic（ssh -NfD）
+-N : 不執行任何命令
+-f : 在背景執行
+在公司，透過外面的電腦當proxy，連到外面。
+ssh -NfD 8888 remote_ip
+-N : 不執行任何命令
+-f : 在背景執行
+-D : 建socks5 的proxy
+這時候,瀏覽器和msn在socks 5 proxy設定的欄位填上localhost:8888 。
+連出去的連驗就是加密，並且是穿過remot_ip的連線。
+
+
+autossh -M 5122 -N -v -D localhost:8527 root@remote_ssh_server -p remote_ssh_port  
+
+用ssh 隧道的时候 firefox地址 填写 127.0.0.1 localhost不行， 并且 要选择用 socks不能勾选 http
+s4.playssh.com 9999 freevpnssh/freevpnssh
+
+开启 firefox远程 dns  about:config   network.proxy.socks_remote_dns
+qq能正常使用 不用测试代理 
+
+http://www.hostloc.com/forum.php
+http://www.vpser.net/
+本站建立在 Linode 和 DiaHosting 上。  Linode tokyo CA都很快
+本站强烈推荐：
+DiaHosting 、Linode 、 瑞豪开源、 VPSYou
+
+
+区分上最明显的，XEN VPS有swap区，OpenVZ VPS没有swap区。
+
+
+http://technet.microsoft.com/en-us/sysinternals
+里面有大量windows使用的监控工具
+TCPView 
+procmon 
+wireshark 过滤规则  tcp.srcport == 2558  or  tcp.srcport == 3587 or  tcp.srcport == 1307 or  tcp.srcport == 1456
+
+
+openvpn
+
+When a client connects via bridging to a remote network, it is assigned an IP address that is part of the remote physical ethernet subnet and is then able to interact with other machines on the remote subnet as if it were connected locally. Bridging setups require a special OS-specific tool to bridge a physical ethernet adapter with a virtual TAP style device. On Linux, for example, brctl is this tool. On Windows XP or higher, select your TAP-Win32 adapter and your ethernet adapter in Control Panel -> Network Connections, then right click and select Bridge Connections.
+When a client connects via routing, it uses its own separate subnet, and routes are set up on both the client machine and remote gateway so that data packets will seamlessly traverse the VPN. The "client" is not necessarily a single machine. It could be a subnet of several machines.
+Bridging and routing are functionally very similar, with the major difference being that a routed VPN will not pass IP broadcasts while a bridged VPN will.
+When you are bridging, you must always use --dev tap on both ends of the connection. If you are routing you can use either --dev tap or --dev tun, but you must use the same on both ends of the connection. --dev tun tends to be slightly more efficient for the routing case.
+
+
+ 简单来说，桥接就是把一台机器上的若干个网络接口“连接”起来。其结果是，其中一个网口收到的报文会被复制给其他网口并发送出去。以使得网口之间的报文能够互相转发。
+ linux内核支持网口的桥接（目前只支持以太网接口）。但是与单纯的交换机不同，交换机只是一个二层设备，对于接收到的报文，要么转发、要么丢弃。小型的交换机里面只需要一块交换芯片即可，并不需要CPU。而运行着linux内核的机器本身就是一台主机，有可能就是网络报文的目的地。其收到的报文除了转 发和丢弃，还可能被送到网络协议栈的上层（网络层），从而被自己消化。
+ 网桥设备br0绑定了eth0和eth1。对于网络协议栈的上层来说，只看得到br0，因为桥接是在数据链路层实现的，上层不需要关心桥接的细节。于是协议栈上层需要发送的报文被送到br0，网桥设备的处理代码再来判断报文该被转发到eth0或是eth1，或者两者皆是；反过来，从eth0或从eth1接收到的报文被提交给网桥的处理代码，在这里会判断报文该转发、丢弃、或提交到协议栈上层。
+ 
+而有时候eth0、eth1也可能会作为报文的源地址或目的地址，直接参与报文的发送与接收（从而绕过网桥）。
+        概括来说，网桥实现最重要的两点：
+
+        1． MAC学习：学习MAC地址，起初，网桥是没有任何地址与端口的对应关系的，它发送数据，还是得想HUB一样，但是每发送一个数据，它都会关心数据包的来源MAC是从自己的哪个端口来的，由于学习，建立地址-端口的对照表（CAM表）。
+        2． 报文转发：每发送一个数据包，网桥都会提取其目的MAC地址，从自己的地址-端口对照表(CAM表)中查找由哪个端口把数据包发送出去。
+网桥中的各个端口必须处于混杂模式，网桥才能正确工作
+众所周知，网桥需要维护一个MAC地址-端口映射表，端口是指网桥自身提供的端口，而MAC地址是指与端口相连的另一端的MAC地址。当网桥收到一个报文时，先获取它的源MAC，更新数据库，然后读取该报文的目标MAC地址，查找该数据库，如果找到，根据找到条目的端口进行转发；否则会把数据包向除入口端口以外的所有端口转发。
+ 桥建立时设置一个定时器，循环检测，如果发现有过期的MAC，则清除对应的数据项
+   网桥处理包遵循以下几条原则：
+
+      1.  在一个接口上接收的包不会再在那个接口上发送这个数据包；
+      2.  每个接收到的数据包都要学习其源地址；
+      3.  如果数据包是多播或广播包，则要在同一个网段中除了接收端口外的其他所有端口发送这个数据包，如果上层协议栈对多播包感兴趣，则需要把数据包提交给上层协议栈；
+       4.  如果数据包的目的MAC地址不能再CAM表中找到，则要在同一个网段中除了接收端口外的其他所有端口发送这个数据包；
+       5.  如果能够在CAM表中查询到目的MAC地址，则在特定的端口上发送这个数据包，如果发送端口和接收端口是同一端口则不发送；
+       网桥在整个网络子系统中处理可用下列简图说明：         
+      
+
+    iptables -A FORWARD -i tun+ -j ACCEPT 
+    
+    push "redirect-gateway local def1"
+   push "dhcp-option DNS 10.8.0.1"
+    push "route 10.66.0.0 255.255.255.0"
+will configure Windows clients (or non-Windows clients with some extra server-side scripting) to use 10.8.0.1 as their DNS server.
+Pushing the redirect-gateway option to clients will cause all IP network traffic originating on client machines to pass through the OpenVPN server. 
+
+ip link show
+ip tunnel show 
+ip tunnel add foo mode sit remote 192.168.1.42
+ip link set foo up
+ip link set foo down
+
+表
+     filter：   顾名思义，用于过滤的时候
+     nat：     顾名思义，用于做 NAT 的时候
+           NAT：Network Address Translator
+链
+     INPUT：     位于 filter 表，匹配目的 IP 是本机的数据包
+     FORWARD：   位于 filter 表，匹配穿过本机的数据包，
+     PREROUTING： 位于 nat 表，用于修改目的地址（DNAT）
+     POSTROUTING：位于 nat 表，用于修改源地址 （SNAT）
+netfilter是核心实现的过滤器，通过Iptables来管理
+iptables-save > /etc/sysconfig/iptables
+ iptables-restore  
+service iptables reload  重新载入  /etc/sysconfig/iptables 内容
+
+
+!表示非 如 ! -s 192.168.1.1 表示任何非192.168.1.1的地址
++表示类似的 比如 eth+ 任何eth开头的
+先加入的规则生效
+插入一个规则 到位置1 iptables -I INPUT 1 -i lo -p all -j ACC
+iptables -t table -A <chain> -j <target>
+-m 可以用来匹配一些match模块可用的东西，比如tcp状态,mac地址
+设置default policy
+iptables -P INPUT DROP
+iptables -P FORWARD DROP
+drop直接忽略包不返回消息给客户，reject会返回消息
+规则存在 /etc/sysconfig/iptables
+PREROUTING->routing decision ->FORWARD->POSTROUTING
+           ↓local                      ↑
+          INPUT ->local process        ->OUTPUT
+                           
+     
+ Destination local host
+ raw	PREROUTING->mangle	PREROUTING->nat	PREROUTING->mangle	INPUT->filter	INPUT
+ Source local host 
+ raw	OUTPUT->mangle	OUTPUT->nat	OUTPUT->filter	OUTPUT->mangle	POSTROUTING->nat	POSTROUTING
+ Forwarded packets
+  raw	PREROUTING->mangle	PREROUTING->nat	PREROUTING->mangle	FORWARD->filter	FORWARD->mangle	POSTROUTING->nat	POSTROUTING
+
+ 
+      QUEUE target, the packet is passed to user-space.
+                           
+The built-in chains for the filter table are as follows:
+INPUT — Applies to network packets that are targeted for the host.
+OUTPUT — Applies to locally-generated network packets.
+FORWARD — Applies to network packets routed through the host.
+
+The built-in chains for the nat table are as follows:
+PREROUTING — Applies to network packets when they arrive.
+OUTPUT — Applies to locally-generated network packets before they are sent out.
+POSTROUTING — Applies to network packets before they are sent out.
+
+The built-in chains for the mangle table are as follows:
+INPUT — Applies to network packets targeted for the host.
+OUTPUT — Applies to locally-generated network packets before they are sent out.
+FORWARD — Applies to network packets routed through the host.
+PREROUTING — Applies to incoming network packets before they are routed.
+POSTROUTING — Applies to network packets before they are sent out.
+
+The built-in chains for the raw table are as follows:
+OUTPUT — Applies to locally-generated network packets before they are sent out.
+PREROUTING — Applies to incoming network packets before they are routed.
+
+-F flush all rules means delete all rules
+-P set defaut rules
+-A Append f delete -I insert  -L list -R replace -Z set counter to zero 
+https://access.redhat.com/site/documentation/en-US/Red_Hat_Enterprise_Linux/6/html/Security_Guide/sect-Security_Guide-Command_Options_for_IPTables-IPTables_Match_Options.html
+
+iptables -L  --line-numbers   
+iptables -A FORWARD -s 192.168.122.0/24 -d 0.0.0.0 -j ACCEPT
+iptables -t filter  -D INPUT 5
+iptables -t filter  -I FORWARD 3  -d 192.168.122.0/24 -j ACCEPT 
+
+iptables -t nat -A PREROUTING -i ppp0 -p tcp --dport 80  -j DNAT --to 192.168.1.1 
+ 如果 forward defaut policy 是drop必须加上转发规则
+ iptables -A FORWARD -i eth0 -p tcp --dport 80 -d 172.31.0.23 -j ACCEPT 
+ #允许本机访问
+iptables -A INPUT -s 127.0.0.1 -d 127.0.0.1 -j ACCEPT
+# 允许已建立的或相关连的通行
+iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+#允许所有本机向外的访问
+iptables -A OUTPUT -j ACCEPT
+# 允许访问22端口
+iptables -A INPUT -p tcp --dport 22 -j ACCEPT
+#允许访问80端口
+iptables -A INPUT -p tcp --dport 80 -j ACCEPT
+#允许FTP服务的21和20端口
+iptables -A INPUT -p tcp --dport 21 -j ACCEPT
+iptables -A INPUT -p tcp --dport 20 -j ACCEPT
+#如果有其他端口的话，规则也类似，稍微修改上述语句就行
+#禁止其他未允许的规则访问
+iptables -A INPUT -j REJECT
+iptables -A FORWARD -j REJECT 
+
+iptables -I FORWARD 1 -d 10.0.8.0/24 -j REJECT --reject-with icmp-host-prohibited
+拒绝所有的ICMP消息
+iptables -I INPUT 1 -p icmp   -j REJECT
+
+保存iptables规则
+service iptables save
+
+mangle 表主要用于修改数据包的TOS（Type Of Service，服务类型）、TTL（Time To Live，生存周期）指以及为数据包设置Mark标记，以实现Qos(Quality Of Service，服务质量)调整以及策略路由等应用，由于需要相应的路由设备支持，因此应用并不广泛。
+
+因为每次拨号后，服务器地址都会变化，而iptables规则内的ip是不会随着自动变化的
+　　每次地址变化后都必须手工修改一次iptables，把规则里边的固定ip改成新的ip
+　　这样是非常不好用的
+　　MASQUERADE 就是针对这种场景而设计的，他的作用是，从服务器的网卡上，自动获取当前ip地址来做NAT
+　　比如下边的命令：
+　iptables -t nat -A POSTROUTING -s 10.8.0.0/255.255.255.0 -o eth0 -j MASQUERADE
+
+　如此配置的话，不用指定SNAT的目标ip了
+　　不管现在eth0的出口获得了怎样的动态ip，MASQUERADE会自动读取eth0现在的ip地址然后做SNAT出去
+　　这样就实现了很好的动态SNAT地址转换
+
+         数据包->iptables(在通过iptables时,iptables根据不同的ip来设置不同的mark)->tc(class)->tc(queue)
+          iptables -t mangle -A POSTROUTING -d 192.168.0.2 -j MARK --set-mark 10 
+          　在Linux操作系统中流量控制器(TC)主要是在输出端口处建立一个队列进行流量控制，控制的方式是基于路由，
+          亦即基于目的IP地址或目的子网的网络号的流量控制。流量控制器TC，其基本的功能模块为队列、分类和过滤器。
+          　　配置和使用流量控制器TC，主要分以下几个方面：分别为建立队列、建立分类、建立过滤器和建立路由，另外还需要对现有的队列、分类、过滤器和路由进行监视。 
+　　其基本使用步骤为：
+　　1) 针对网络物理设备(如以太网卡eth0)绑定一个CBQ队列；
+　　2) 在该队列上建立分类；
+　　3) 为每一分类建立一个基于路由的过滤器；
+　　4) 最后与过滤器相配合，建立特定的路由表。
+现在一般都使用ip命令来配置了
+
+iproute2是Linux上有關TCP／IP網路上的流量控制的一系列工具，現時由Stephen Hemminger負責維護。這一系列工具的原作是Alexey Kuznetsov，他亦是Linux內核中有關QoS實現的作者。這一系列的工具包括了以下幾個元件：
+
+    ifconfig
+    route
+    tc
+    ip
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+192.168.193.128 *               255.255.255.224 U     0      0        0 eth0
+*表示本机地址
+
+ip addr add 172.16.100.1/24 dev eth1
+ip route add default via a.b.c.d dev eth1
+ip route add 172.16.10.0/24 via e.f.g.h dev eth2
+
+路由的配置IP Route
+　　Linux最多可以支持255张路由表，其中有3张表是内置的：
+　　表255 本地路由表（Local table） 本地接口地址，广播地址，已及NAT地址都放在这个表。该路由表由系统自动维护，管理员不能直接修改。
+　　表254 主路由表（Main table） 如果没有指明路由所属的表，所有的路由都默认都放在这个表里，一般来说，旧的路由工具（如route）所添加的路由都会加到这个表。一般是普通的路由。
+　　表253 默认路由表 （Default table） 一般来说默认的路由都放在这张表，但是如果特别指明放的也
+
+Cisco 的网络操作系统 (Cisco IOS) 从11.0开始就采用新的策略性路由机制。而Linux是在内核2.1开始采用策略性路由机制的。策略性路由机制与传统的路由算法相比主要是引入了多路由表以及规则的概念。
+
+NAT 用 iptables 实现，路由用 route 实现,
+iptables 负责地址欺骗，route 负责路径选
+普通的静态路由使用目的地址进行路由
+而策略性路由使用源地址进行路由，还可以实现基于防火墙标记的路由（firemark） ，也能做基于目的地址策略路由 
+
+iptables 调试
+iptables -t raw -I OUTPUT -p icmp -j TRACE
+iptables -t raw -I PREROUTING -p icmp -j TRACE
+modprobe ipt_LOG
+sysctl net.netfilter.nf_log.2=ipt_LOG
+
+日志在  /var/log/message
+openvpn
+      
+     I would recommend using routing unless you need a specific feature which requires bridging, such as:
+    the VPN needs to be able to handle non-IP protocols such as IPX,
+    you are running applications over the VPN which rely on network broadcasts (such as LAN games), or
+    you would like to allow browsing of Windows file shares across the VPN without setting up a Samba or WINS server.
+So getting back to the "long cable" analogy, using a tun device would be like having a T1 cable connecting the computers and 
+using a tap device would be like having an ethernet network connecting the two computers. 
+People who are running applications that need the special features of ethernet (which won't work on an IP-only network) 
+will often bridge their physical local ethernet with a tap device (using a utility such as brctl on Linux), 
+then VPN the tap device to another similar setup at the other end. 
+This allows OpenVPN to route ethernet broadcasts and non-IP protocols such as Windows NetBios over the VPN. 
+If you don't need the special features of ethernet (such as bridging capability), it's better to use a tun device.
+
+
+实例背景
+
+如图所示，两个内部网通过远端路由器1与因特网相联，通过远端路由器2与上级网相联， Linux服务器做策略路由器，内有4块网卡。IP地址的分配情况如表所示。
+
+在应用需求方面，内网1允许通过远端路由器1（172.22.254.254）连接因特网，但只允许Http协议、Ftp协议经常性通过，其他协议分时间段开放（这样做是为了避免员工在上班时间打网络游戏和聊天），例如在上班时间（7:30～16:30）封闭，在下班时间（16:30～7:30）和周六、日全天开放。而且，内网1无权访问内网2及上级网，但可以访问内网2上的服务器。而允许内网2访问外网，上级网则只能访问内网2上的192.168.1.2服务器。而防火墙主要用来阻止外网主动访问内网，防止网络攻击。
+
+用户自定义chain 
+iptables中，target/jump决定了符合条件的包到何处去，语法是--jump target或-j target。
+    通过-N参数创建自定义链：
+    iptables -N BLOCK
+    之后将BLOCK链作为jump的目标：
+    iptables -I INPUT 6 -p tcp  --dport 80 -i p3p1 -j BLOCK
+    iptables显示
+    pkts bytes target     prot opt  in     out     source               destination         
+     0     0    BLOCK      tcp  --  p3p1   *       0.0.0.0/0            0.0.0.0/0            tcp dpt:80 
+     iptables -A BLOCK -p tcp -s 10.1.1.92/32 -i p3p1 --dport 80 -j DROP
+    
+    iptables显示
+     
+    pkts bytes target     prot opt in     out     source               destination          
+   18   912    DROP       tcp  --  p3p1   *       10.1.1.92            0.0.0.0/0            tcp dpt:80 
+   
+     
+实现过程
+
+这里我们选择Red Hat Enterprise Linux WS 3操作系统，其内核版本是2.4.21，对策略路由已经有了很好的支持，下面的配置也以此为基础。
+
+1．设置IP地址
+
+首先，执行如下命令：
+
+ifconfig eth0 10.89.9.1 netmask 255.255.255.0
+
+ifconfig eth1 192.168.1.1 netmask 255.255.255.0
+
+ifconfig eth2 172.22.254.14 netmask 255.255.255.0
+
+ifconfig eth3 10.140.133.14 netmask 255.255.255.0
+
+为了让计算机启动时自动设置IP地址，还需要分别修改/etc/sysconfig/network-scripts/下的四个文件：ifcfg-eth0、ifcfg-eth1、ifcfg-eth2、ifcfg-eth3，将ONBOOT属性设为yes，即“ONBOOT=yes”，文件格式如下：
+
+# Intel Corp.|82545EM Gigabit Ethernet Controller (Copper)
+
+DEVICE=eth0
+
+BOOTPROTO=none
+
+HWADDR=00:0c:76:20:54:71
+
+ONBOOT=yes
+
+TYPE=Ethernet
+
+USERCTL=yes
+
+PEERDNS=no
+
+NETMASK=255.255.255.0
+
+IPADDR=10.89.9.1
+
+如果你不喜欢命令行模式，也可以在图形模式下进行以上操作：主菜单→系统设置→网络,设好IP地址并激活，并且选中“当计算机启动时激活设备”选项。
+
+2．打开转发功能
+
+执行命令“echo “1” > /proc/sys/net/ipv4/ip_forward”，或者在/etc/sysconfig/network文件中添加“FORWARD_IPV4=yes”。
+
+3．创建路由表
+
+编辑 /etc/iproute2/rt_tables 文件，执行如下命令。在这里新添加了4个路由表，分别为int1 、int2、int3、int4。
+
+# reserved values
+
+#255 local
+
+#254 main
+
+#253 default
+
+#0 unspec
+
+# local
+
+#1 inr.ruhep
+
+1 int1
+
+2 int2
+
+3 int3
+
+4 int4
+
+4．添加路由
+
+执行如下命令：
+
+ip route add default via 10.89.9.1 table int1
+ip route add default via 192.168.1.1 table int2
+ip route add default via 172.22.254.254 table int3
+ip route add 192.168.0.0/16 via 10.140.133.254 table int4
+ip route add default via 172.22.254.254 table int4
+这里在int4路由表中添加了两条路由，当进入到该路由表之后，要到192.168.0.0/16的数据包则路由到10.140.133.254，其他数据包则路由到172.22.254.254。
+
+5．标记（MARK）特殊包
+
+执行如下两条命令：
+
+iptables -t mangle -A PREROUTING -p tcp -m multiport --dports 80,8080,20,21 -s 10.89.9.0/24 -j MARK --set-mark 1
+
+iptables -t mangle -A PREROUTING -p udp --dport 53 -s 10.89.9.0/24 -j MARK --set-mark 2
+
+这两条命令是将来自10.89.9.0/24的目的端口是80、8080、20或21的数据包和UDP端口是53的数据包分别标记为1或2，然后就可以针对这些标记过的数据包制定相应的规则了。（对外发出的DNS请求用的是UDP 53端口）
+
+为了实现防火墙的功能，只允许已经建立联机的数据包进入内网，就要把进入两个内网的已经建立联机的数据包进行标记。执行如下命令：
+
+iptables -t mangle -A PREROUTING -p ALL -d 10.89.9.0/24 -m state --state ESTABLISHED,RELATED -j MARK --set-mark 3
+
+iptables -t mangle -A PREROUTING -p ALL -d 192.168.1.0/24 -m state --state ESTABLISHED,RELATED -j MARK --set-mark 4
+如果要做NAT上公网
+iptables -t nat -A POSTROUTING -s 192.168.100.0/24 -j SNAT --to 115.158.113.164
+iptables -t nat -A POSTROUTING -s 192.168.200.0/24 -j SNAT --to 10.212.46.100
+
+6．创建路由规则
+
+执行如下命令：
+
+ip rule add from 192.168.1.0/24 pref 11 table int4
+
+ip rule add to 192.168.1.2 pref 21 table int2
+
+ip rule add fwmark 4 pref 31 table int2
+
+ip rule add fwmark 1 pref 41 table int3
+
+ip rule add fwmark 2 pref 42 table int3
+
+ip rule add fwmark 3 pref 51 table int1
+
+接着执行命令“ip route flush cache”，刷新路由缓冲，让以上的这些命令立刻生效，否则需要等上一段时间。
+
+7．实现分时间段控制
+
+若是按照以上的配置，内网1的用户只能上网浏览网页和下载，为了对其他功能实现分时间段开放，需要做以下工作：
+
+首先编辑命令脚本文件ropen (开放)和rclose (限制)。执行命令“vi /bin/ropen”，ropen文件内容如下：
+
+/sbin/ip rule add from 10.89.9.0/24 pref 40 table int3
+
+/sbin/ip route flush cache
+
+执行命令“vi /bin/rclose”，rclose文件内容如下：
+
+/sbin/ip rule del from 10.89.9.0/24 pref 40
+
+/sbin/ip route flush cache
+
+如果不习惯命令行方式，也可以在图形界面下生成这两个文件，生成文件之后，需要增加可执行属性方可执行：分别执行命令“chmod +x ropen”和“chmod +x rclose”。
+
+接着，利用crontab命令实现自动运行。这里需要编辑一个文本文件，格式如下：
+
+minute hour dayofmonth monthofyear dayofweek “命令”
+
+其中每部分名称及取值范围是：minute代表分钟，取值范围是00～59；hour代表小时，取值范围是00～23；dayofmonth代表某天，取值范围是01～31；monthofyear代表月份，取值范围是01～12；dayofweek代表星期，取值范围是01～07。若需要忽略其中某一部分就用星号（*）代替。例如，文件名设为mycron，内容可编辑如下：
+
+30 07 * * 01,02,03,04,05 "/bin/ropen"
+
+30 16 * * 01,02,03,04,05 "/bin/rclose"
+
+最后执行crontab命令，将所编辑的文件mycron装载并启动，命令为“crontab mycron”。 

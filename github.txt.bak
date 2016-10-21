@@ -75,7 +75,9 @@ Git Ìá¹©ÁËÒ»¸öÌø¹ýÊ¹ÓÃÔÝ´æÇøÓòµÄ·½Ê½£¬Ö»ÒªÔÚÌá½»µÄÊ±ºò£¬¸ø git commit ¼ÓÉÏ-a Ñ¡Ï
 Git µÄ·ÖÖ§¿ÉÎ½ÊÇÄÑÒÔÖÃÐÅµÄÇáÁ¿¼¶£¬ËüµÄÐÂ½¨²Ù×÷¼¸ºõ¿ÉÒÔÔÚË²¼äÍê³É£¬²¢ÇÒÔÚ²»Í¬·ÖÖ§¼äÇÐ»»ÆðÀ´Ò²²î²»¶àÒ»Ñù¿ì¡£ºÍÐí¶àÆäËû°æ±¾¿ØÖÆÏµÍ³²»Í¬£¬Git ¹ÄÀøÔÚ¹¤×÷Á÷³ÌÖÐÆµ·±Ê¹ÓÃ·ÖÖ§ÓëºÏ²¢£¬ÄÄÅÂÒ»ÌìÖ®ÄÚ½øÐÐÐí¶à´Î¶¼Ã»ÓÐ¹ØÏµ
 
 µ±Ê¹ÓÃ git commitÐÂ½¨Ò»¸öÌá½»¶ÔÏóÇ°£¬Git »áÏÈ¼ÆËãÃ¿Ò»¸ö×ÓÄ¿Â¼£¨±¾ÀýÖÐ¾ÍÊÇÏîÄ¿¸ùÄ¿Â¼£©µÄÐ£ÑéºÍ£¬È»ºóÔÚ Git ²Ö¿âÖÐ½«ÕâÐ©Ä¿Â¼±£´æÎªÊ÷£¨tree£©¶ÔÏó¡£Ö®ºó Git ´´½¨µÄÌá½»¶ÔÏó£¬³ýÁË°üº¬Ïà¹ØÌá½»ÐÅÏ¢ÒÔÍâ£¬»¹°üº¬×ÅÖ¸ÏòÕâ¸öÊ÷¶ÔÏó£¨ÏîÄ¿¸ùÄ¿Â¼£©µÄÖ¸Õë£¬Èç´ËËü¾Í¿ÉÒÔÔÚ½«À´ÐèÒªµÄÊ±ºò£¬ÖØÏÖ´Ë´Î¿ìÕÕµÄÄÚÈÝÁË
-git ´´½¨µÄÊÇsnapshot,²»ÊÇdifference log 
+
+git ´´½¨µÄÊÇsnapshot,²»ÊÇdifference log  Git stores a complete snapshot of the whole project in each revision.     µ«ÊÇºóÌ¨ Git does use deltas for storage.  Git does deltification only in packfiles
+
 Ã¿Ò»¸öcommit¶¼ÓÐ¸ö¸¸commit£¬·½±ã×·×Ù  ËùÒÔ merge µÄcommit»áÓÐÁ½¸öparent commit 
 branch remote-tracking brach tags ¶¼ÊÇÖ¸ÏòÒ»¸öcommit 
 ÏÖÔÚÀ´Ì¸·ÖÖ§¡£Git ÖÐµÄ·ÖÖ§£¬ÆäÊµ±¾ÖÊÉÏ½ö½öÊÇ¸öÖ¸Ïò commit ¶ÔÏóµÄ¿É±äÖ¸Õë¡£Git »áÊ¹ÓÃ master ×÷Îª·ÖÖ§µÄÄ¬ÈÏÃû×Ö¡£ÔÚÈô¸É´ÎÌá½»ºó£¬ÄãÆäÊµÒÑ¾­ÓÐÁËÒ»¸öÖ¸Ïò×îºóÒ»´ÎÌá½»¶ÔÏóµÄ master ·ÖÖ§£¬ËüÔÚÃ¿´ÎÌá½»µÄÊ±ºò¶¼»á×Ô¶¯ÏòÇ°ÒÆ¶¯¡£
@@ -114,6 +116,9 @@ git diff --staged
  ²é¿´Ìá½»ÀúÊ·  ÎÒÃÇ³£ÓÃ -p Ñ¡ÏîÕ¹¿ªÏÔÊ¾Ã¿´ÎÌá½»µÄÄÚÈÝ²îÒì£¬ÓÃ -2 Ôò½öÏÔÊ¾×î½üµÄÁ½´Î¸üÐÂ
  git log  (ÏÔÊ¾Ìá½»µÄÀúÊ·»òÕßÆäËûÐÅÏ¢)  
  git log --pretty=oneline formatÏÔÊ¾¸ñÊ½
+ git log --abbrev-commit  ÏÔÊ¾ short commit hash id
+ 
+ 
  git log since..until ÏÔÊ¾ ´Ósince¿ªÊ¼µ½UnitlµÄÌá½»ÀúÊ·
  ³·ÏúÉÏÒ»´ÎÌá½»£¬»òÕßÐÞ¸ÄÉÏÒ»´ÎÌá½»  ´ËÃüÁî½«Ê¹ÓÃµ±Ç°µÄÔÝ´æÇøÓò¿ìÕÕÌá½»¡£Èç¹û¸Õ²ÅÌá½»ÍêÃ»ÓÐ×÷ÈÎºÎ¸Ä¶¯£¬Ö±½ÓÔËÐÐ´ËÃüÁîµÄ»°£¬Ïàµ±ÓÚÓÐ»ú»áÖØÐÂ±à¼­Ìá½»ËµÃ÷£¬µ«½«ÒªÌá½»µÄÎÄ¼þ¿ìÕÕºÍÖ®Ç°µÄÒ»Ñù¡£
  git commit --amend 
