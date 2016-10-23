@@ -1,3 +1,143 @@
+20161021
+docker swarm mode使用 swarmkit构建 ，每个节点都可以是管理节点和工作节点，使用 raft协议做分布式存储和协调
+service 运行在多node上的一个image ，
+global services, 每个节点都运行该service
+task是指在某个具体的node上运行的image 
+对外使用 ingress network做负载均衡 ，不管有没有运行该service的node都支持通过该节点访问服务，对内使用 自带dns 负载均衡或者vip负载均衡
+
+Containers on the network share DNS mappings for the service via gossip so any container on the network can access the service via its service name.
+
+swarm mode  需要打开的端口
+TCP port 2377 for cluster management communications
+TCP and UDP port 7946 for communication among nodes
+TCP and UDP port 4789 for overlay network traffic
+
+iptables -I  INPUT -p tcp --dport 2377 -j ACCEPT
+iptables -I  INPUT -p udp --dport 7946 -j ACCEPT
+iptables -I  INPUT -p tcp --dport 7946 -j ACCEPT
+iptables -I  INPUT -p udp --dport 4789 -j ACCEPT
+
+docker swarm init --advertise-addr  10.163.89.11
+查看状态
+docker node ls
+ID                           HOSTNAME  STATUS  AVAILABILITY  MANAGER STATUS
+cme5m2g6wqtwnyuw7prz0hgwg *  D2-WZY11  Ready   Active        Leader
+添加node 
+docker swarm join --token SWMTKN-1-49r0sdbz4u3zwukbjzo63x50w66fnk20el3kfneasyf17j4r4s-cqhoua8fddrorzky43a8cmfj1     10.163.89.11:2377
+添加服务 通过NAT对外发布服务
+docker service create --replicas 3  --publish 8088:8080 --name myservice  tomcat     
+创建gloabal service       可以根据节点的metadata来做更精细的部署控制
+docker service create --name myservice --mode global alpine top 
+查看服务状态
+docker service ps myservice2
+docker service list
+扩容  (不会自动同步image ,如果其他节点没有image,就不能run )
+docker service scale myservice2=3
+删除服务
+docker service rm myservice2
+启动一个支持滚动升级的service
+docker service create \
+  --replicas 3 \
+  --name redis \
+  --update-delay 10s \
+  redis:3.0.6
+升级 
+docker service update --image redis:3.0.7 redis
+重新启动升级，如果已经因为各种原因暂停的 
+docker service update redis
+暂停一个node 接收service服务
+docker node update --availability drain D2-WZY12 
+docker node update --availability active D2-WZY12 
+建议把管理节点设置为drain不用来发布容器
+
+docker node promote   D2-WZY12 升级到 manage
+docker node demote     D2-WZY12 降级到 worker.
+
+swarm join-token --rotate  worker 生成新的worker 加入token ，避免旧的token被乱用
+获取当前 worker node 加入 token 
+docker swarm join-token worker 
+获取当前manager 加入token
+docker swarm join-token manager
+
+The docker swarm join command does the following:
+
+switches the Docker Engine on the current node into swarm mode.
+requests a TLS certificate from the manager.
+names the node with the machine hostname
+joins the current node to the swarm at the manager listen address based upon the swarm token.
+sets the current node to Active availability, meaning it can receive tasks from the scheduler.
+extends the ingress overlay network to the current node.
+
+service里面的程序修改无法动态生效？？？ 新加入 w1.jsp不生效
+ 
+[root@D2-WZY12 ~]# docker node ls
+ID                           HOSTNAME  STATUS  AVAILABILITY  MANAGER STATUS
+1fixpfc8pb1hpnvzi7mj6ull3 *  D2-WZY12  Ready   Active        Reachable
+87wwrlja6uu9t8rsbv307vaha    D2-WZY14  Ready   Active        Reachable
+cme5m2g6wqtwnyuw7prz0hgwg    D2-WZY11  Ready   Active        Leader
+
+Active means that the scheduler can assign tasks to a node.
+Pause means the scheduler doesn’t assign new tasks to the node, but existing tasks remain running.
+Drain means the scheduler doesn’t assign new tasks to the node. The scheduler shuts down any existing tasks and schedules them on an available node.
+
+查看节点自己的状态
+docker node inspect self --pretty
+创建 Overlay网络
+docker network create --driver overlay my-network
+docker service create \
+  --replicas 3 \
+  --network pub_net \
+  --env MYVAR=myvalue \
+  --workdir /tmp \
+  --user my_user  \
+  --publish 8080:80\
+  --name my-web \
+  tomcat
+  
+   docker network create \
+  --driver overlay \
+  --subnet 10.0.9.0/24 \
+  --opt encrypted \
+  my-network
+
+
+# Mount a read-write bind   要求所有的节点都有这个 path
+$ docker service create \
+  --mount type=bind,src=<HOST-PATH>,dst=<CONTAINER-PATH> \
+  --name myservice \
+  <IMAGE>
+查看service的VIP
+docker service inspect \
+  --format='{{json .Endpoint.VirtualIPs}}' \
+  my-web
+
+服务命令 my-web对应 的VIP会出现在动态dns 解析里面，同一个 network的都能看到
+通过  nslookup tasks.my-web 能看到所有的ip
+Name:      tasks.my-web
+Address 1: 10.0.0.4 my-web.1.7zvw57ffd0fk8wla3yfp4x5wd.my-network
+Address 2: 10.0.0.3 my-web.3.0hcyznnsvafshjcw2oqewh8or.my-network
+Address 3: 10.0.0.5 my-web.2.abhyt84z9zbypajq165ry8eah.my-network
+
+使用dns load balance   这种方式下 nslookup  my-dnsrr-service 会有三条记录
+ docker service create \
+  --replicas 3 \
+  --name my-dnsrr-service \
+  --network my-network \
+  --endpoint-mode dnsrr \
+  tomcat 
+  
+ Docker manager nodes store the swarm state and manager logs in the following directory:
+/var/lib/docker/swarm/raft
+
+You should never restart a manager node by copying the raft directory from another node. The data directory is unique to a node ID. A node can only use a node ID once to join the swarm. The node ID space should be globally unique.
+
+To cleanly re-join a manager node to a cluster:
+
+To demote the node to a worker, run docker node demote <NODE>.
+To remove the node from the swarm, run docker node rm <NODE>.
+Re-join the node to the swarm with a fresh state using docker swarm join.
+如果cluster完全摧毁，可以通过这种方式强行恢复
+docker swarm init --force-new-cluster --advertise-addr node01:2377   这个指令保留service/network/tasks信息，但是丢掉了member信息，变成一个节点的cluster
 
 20151111
 
@@ -45,6 +185,18 @@ embedded DNS server reachable at 127.0.0.11 will be listed in the container’s r
 overlay : 容器间通信用 基于 VxLan
 macvlan/ipvlan:容器间通信用，也可以用于容器直接对外提供服务
 
+Use Macvlan:
+When you only need to provide egress connection to the physical network to your VMs or containers.
+Because it uses less host CPU and provides slightly better throughput.
+
+macvlan bridge 模式同一个parent下面的容器能够直接通信，不通parent下面的在同一host的，也要走外部router路由
+macvlan模式下，container不能直接和主机的ip通信   一个父亲节点只能有一个子节点，但是可以通过 eth0.10这样的vlan方式来解决
+所以macvlan模式下，一个host的网卡，最多只能有4096个macvlan网络
+Use Bridge:
+When you need to connect VMs or containers on the same host.
+For complex topologies with multiple bridges and hybrid environments (hosts in the same Layer2 domain both on the same host and outside the host).
+You need to apply advanced flood control, FDB manipulation, etc.
+
 Swarm将每一个主机上的docker-egnine管理起来，对外提供容器集群服务。最上面是Compose项目，Compose项目主要用来提供基于容器的应用的编排。用户通过yml文件描述由多个容器组成的应用，然后由Compose解析yml，调用Docker API，在Swarm集群上创建出对应的容器。
 一般是要求 
 容器无状态，容器中不要留中间数据
@@ -54,7 +206,8 @@ Swarm将每一个主机上的docker-egnine管理起来，对外提供容器集群服务。最上面是Compos
 自动添加监控。
 CPU配额硬限制。
 容器绑定独立IP这样外部可直接SSH了。
-Run only one process per container
+Run only one process per container  如果确实需要多个进程，通过 supervisor这样的程序来启动 多个process
+
 持续集成当然是Docker最纯粹的玩法了，通过『Dockerfile-构建镜像-创建新容器』来完成环境的变更
 
 
@@ -144,6 +297,8 @@ docker logs name
 
 运行container 
 docker run -t -i centos:7 /bin/bash
+自动运行container 当系统重启后
+docker run -t -i  --restart always  centos:7 /bin/bash 
 
 -t flag assigns a pseudo-tty or terminal inside our new container and the -i flag allows us to make an interactive connection by grabbing the standard in (STDIN) of the container
 -P flag was used to automatically map any network ports inside it to a random high port from the range 49153 to 65535 on our Docker host
@@ -175,6 +330,7 @@ docker run -d -P --name web -v /webapp:/test training/webapp python app.py
 
 docker run --rm -v /foo -v awesome:/bar busybox top
 This command creates an anonymous /foo volume. When the container is removed, the Docker Engine removes the /foo volume but not the awesome volume.
+这种方式下 会在 /var/lib/docker下面创建一个新的data file给 container 的 /foo 用 ，使用了 --rm选项，就会在container退出后，自动删除，否则一直保留
 
 attach 到container ,用 ctrl+p 然后 ctrl+q退出
 docker attach container2
@@ -186,12 +342,30 @@ docker network disconnect my-bridge-network web
 创建network    
 docker network create -d bridge --subnet 172.25.0.0/16 isolated_nw
 docker network create -d host    --subnet 10.163.1.11/24 --gateway 10.163.89.1  host_nw
-docker network create -d macvlan    --subnet=10.163.89.11/24    --gateway=10.163.89.1     -o parent=eno16777984 pub_net
+docker network create -d macvlan    --subnet=10.163.89.0/24    --gateway=10.163.89.1     -o parent=eno16777984  pub_net
 
+docker network create -d macvlan    --subnet=10.163.89.0/24    --gateway=10.163.89.1     -o parent=eno16777984.10  pub2_net
+
+docker run --network=pub_net --ip=10.163.89.16 -itd   busybox
+
+macvlan  bridge模式下，host的网卡可以没有ip地址
+ In Macvlan you are not able to ping or communicate with the default namespace IP address
 bridge 模式下，缺省能联通外网 ，通过host主机联通 做了 post nat  MASQUERADE
+联通外网，可以通过nat方式，也可以通过macvlan/ipvlan或者 把host adapter直接挂到bridge 
+
 
 启动的时候关联network
 docker run --network=pub_net --ip=10.163.89.16 -itd --name=container6 busybox
+
+
+docker network  create  -d macvlan \
+    --subnet=192.168.50.0/24 \
+    --gateway=192.168.50.1 \
+    -o parent=eth0.50 macvlan50
+eth.50 表示vlan 50 ,docker创建网络的时候会自动创建 vlan相关的东西
+等于  ip link add link eth0 name eth0.50 type vlan id 50.
+
+
 
 通过datavolume container 共享
 
@@ -230,6 +404,7 @@ docker build -t <your username>/redis .
 
 
 Dockerfile  
+COPY  app 会把 app下面的东西都copy走，不包括 app自己
 FROM centos
 MAINTAINER Roger <SvenDowideit@docker.com>
 
@@ -243,6 +418,19 @@ RUN /bin/sed -i 's/.*session.*required.*pam_loginuid.so.*/session optional pam_l
 RUN /bin/echo -e "LANG=\"en_US.UTF-8\"" > /etc/default/local
 EXPOSE 22
 CMD ["/usr/sbin/sshd", "-D"]
+
+tomcat docker 
+FROM centos
+MAINTAINER Roger <Roger@docker.com>
+
+RUN mkdir /home/tomcat
+RUN mkdir /home/java
+COPY apache-tomcat-8.5.5 /home/tomcat/
+COPY jdk1.8.0_101      /home/java
+EXPOSE 8080
+ENV JAVA_HOME=/home/java
+ENV PATH=$JAVA_HOME/bin:$PATH
+CMD ["/home/tomcat/bin/catalina.sh","run"]    #必须使用run命令 
 
 
 配置veth pair
