@@ -1,3 +1,20 @@
+20161023
+Register 
+docker run -d -p 5000:5000 --restart=always --name registry   -v 、/app/docker/data:/var/lib/registry   registry:2
+把现有的Local image打上标签 
+docker tag ubuntu localhost:5000/myfirstimage
+然后push到 register 
+docker push localhost:5000/myfirstimage
+拉回来
+docker pull localhost:5000/myfirstimage
+
+
+docker pull ubuntu instructs docker to pull an image named ubuntu from the official Docker Hub. This is simply a shortcut for the longer docker pull docker.io/library/ubuntu command
+docker pull myregistrydomain:port/foo/bar instructs docker to contact the registry located  at myregistrydomain:port to find the image foo/bar
+
+
+docker dameon 日志 在 /var/log/message里面 
+
 20161021
 docker swarm mode使用 swarmkit构建 ，每个节点都可以是管理节点和工作节点，使用 raft协议做分布式存储和协调
 service 运行在多node上的一个image ，
@@ -185,7 +202,7 @@ eth1 该container通过host出去用
 
 查看对应 176的pair 
 
-查看对应的overlay网络
+查看对应的overlay网络  
 [root@D2-WZY11 run]# ip netns exec 1-6syxj3p6e8 ip a
 1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN 
     link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
@@ -252,10 +269,27 @@ systemctl stop docker
 
 systemctl restart docker
 docker dameon 在centos 7下面的 配置文件需要手工创建在  /etc/systemd/system/docker.service.d/docker.conf 
+mkdir -p /etc/systemd/system/docker.service.d
+vi /etc/systemd/system/docker.service.d/http-proxy.conf  
+[Service]
+Environment="HTTP_PROXY=http://192.168.31.77:8080"   "HTTPS_PROXY=http://192.168.31.77:8080"   "NO_PROXY=localhost,127.0.0.1,docker-registry.somecorporation.com"
+systemctl daemon-reload
+systemctl restart docker
+检查变量是否加载
+systemctl show --property=Environment docker
+
+show --property=Environment docker
+Environment=HTTP_PROXY=http://192.168.31.77:8080 HTTPS_PROXY=http://192.168.31.77:8080 NO_PROXY=lo
+
+vi /etc/systemd/system/docker.service.d/docker.conf  
+[Service]
+ExecStart=
+ExecStart=/usr/bin/dockerd -D
+
+
 查看 docker dameon的日志
 journalctl -u docker
-1.8 代理设置
-sudo HTTP_PROXY=http://192.168.8.26:8080/ docker -d &
+ 
  
 
 如果你的做好了所有代码，想分发给你的使用者，这种无疑代码放到image是最佳的，包括你的数据库初始化脚本等。例如wordpress .
@@ -286,8 +320,12 @@ When you only need to provide egress connection to the physical network to your 
 Because it uses less host CPU and provides slightly better throughput.
 
 macvlan bridge 模式同一个parent下面的容器能够直接通信，不通parent下面的在同一host的，也要走外部router路由
-macvlan模式下，container不能直接和主机的ip通信   一个父亲节点只能有一个子节点，但是可以通过 eth0.10这样的vlan方式来解决
-所以macvlan模式下，一个host的网卡，最多只能有4096个macvlan网络
+macvlan模式下，container不能直接和主机的ip(或者父节点)通信   一个父亲节点只能有一个子节点，但是可以通过 eth0.10这样的vlan方式来解决,同一Host 不通网段的container，也需要走外部router互联
+macvlan模式下，如果主机的网卡 down了，那么子节点也都down了，无法正常通信 
+macvlan模式下，docker的IPAM不会注意到外部DHCP的信息，所以需要特别管理
+
+所以macvlan模式下，一个host的网卡，最多只能有4096个macvlan网络，每个都有独立的ip和mac address
+ipvaln下，mac地址一样，ip不一样 ，有L3路由功能,所以同一Host的vm网段不一样，也可以直接通信，不需要通过外部的router 
 Use Bridge:
 When you need to connect VMs or containers on the same host.
 For complex topologies with multiple bridges and hybrid environments (hosts in the same Layer2 domain both on the same host and outside the host).

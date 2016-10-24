@@ -1,0 +1,11 @@
+java -jar jenkins.war --httpPort=1080 
+
+hosts文件需要有对应的 名字 ip
+
+Jenkins initial setup is required. An admin user has been created and a password generated.
+Please use the following password to proceed to installation:
+
+182837ed046e4636a92f52db533a1984
+
+
+iptables -I  INPUT -p tcp --dport 2377 -j ACCEPT

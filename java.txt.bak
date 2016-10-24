@@ -25,7 +25,7 @@ pinpoint (start 最多  2293 ）inspectIT(start 173( 和  还有  scouter (start 543)
   JVM提供一种当JVM启动完成后开启agent机制。这种情况下，Instrumention实例通过agent代码中的的agentmain传入。
 不但可以在启动时加载，也可以在启动后动态加载 
 javaagent是jvmti的java版本agent ,和jvm run在一起，所以在gc的时候，就不能正常使用了，但是 native的agent(和jvm run在同一个Process，但是不归jvm管理)就没这个问题了
-jvmti是jvm提供的一系列回调接口
+
 
 20160414 
 用itext操作 pdf 可编辑域，如果要处理中文 用  itext-2.1.7.jar和 iTextAsian.jar，然后加上 对应的字体即可.

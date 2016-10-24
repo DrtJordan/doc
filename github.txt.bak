@@ -1,3 +1,9 @@
+gitlab容器安装
+docker run -d     --hostname 10.163.89.14     --publish 443:443 --publish 80:80 --publish 88:22  \
+     --name gitlab     --restart always   \
+     --volume /app/gitlab/config:/etc/gitlab     --volume /app/gitlab/logs:/var/log/gitlab     --volume /app/gitlab/data:/var/opt/gitlab    \
+      gitlab/gitlab-ce:latest
+          
 github账户配置
  ssh-keygen -t rsa -C "wzy964@gmaill.com"
 git config --global user.name "wzy25"
@@ -76,7 +82,7 @@ Git 的分支可谓是难以置信的轻量级，它的新建操作几乎可以在瞬间完成，并且在不同分支
 
 当使用 git commit新建一个提交对象前，Git 会先计算每一个子目录（本例中就是项目根目录）的校验和，然后在 Git 仓库中将这些目录保存为树（tree）对象。之后 Git 创建的提交对象，除了包含相关提交信息以外，还包含着指向这个树对象（项目根目录）的指针，如此它就可以在将来需要的时候，重现此次快照的内容了
 
-git 创建的是snapshot,不是difference log  Git stores a complete snapshot of the whole project in each revision.     但是后台 Git does use deltas for storage.  Git does deltification only in packfiles
+git 创建的是snapshot,不是difference log  Git stores a complete snapshot of the whole project in each revision.    Git does actually delta-compress objects, but it's just for the sake of compression
 
 每一个commit都有个父commit，方便追踪  所以 merge 的commit会有两个parent commit 
 branch remote-tracking brach tags 都是指向一个commit 

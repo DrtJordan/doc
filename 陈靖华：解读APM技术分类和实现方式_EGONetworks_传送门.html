@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<!-- saved from url=(0029)http://chuansong.me/n/2683470 -->
+<html lang="zh-CN"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<link href="./陈靖华：解读APM技术分类和实现方式_EGONetworks_传送门_files/inspector.css" rel="stylesheet" type="text/css">
+<link href="./陈靖华：解读APM技术分类和实现方式_EGONetworks_传送门_files/main.css" rel="stylesheet" type="text/css">
+<link href="./陈靖华：解读APM技术分类和实现方式_EGONetworks_传送门_files/base.css" rel="stylesheet" type="text/css">
+<!--[if IE]>
+<link href="/static/css/ie.css" rel="stylesheet" type="text/css">
+<![endif]-->
+<!-- Le fav and touch icons -->
+<link rel="apple-touch-icon-precomposed" sizes="144x144" href="http://chuansong.me/static/img/ico/apple-touch-icon-ipad3.png">
+<link rel="apple-touch-icon-precomposed" sizes="114x114" href="http://chuansong.me/static/img/ico/apple-touch-icon-iphone4.png">
+<link rel="apple-touch-icon-precomposed" sizes="72x72" href="http://chuansong.me/static/img/ico/apple-touch-icon-ipad.png">
+<link rel="apple-touch-icon-precomposed" href="http://chuansong.me/static/img/ico/apple-touch-icon-iphone.png">
+<link rel="shortcut icon" type="image/x-icon" href="http://chuansong.me/static/favicon.ico">
+
+<title>陈靖华：解读APM技术分类和实现方式_EGONetworks_传送门</title>
+<meta name="keywords" content="陈靖华：解读APM技术分类和实现方式,EGONetworks,传送门">
+<meta name="description" content="2015年之后，APM技术被归类到了“IT基础设施可用性及性能管理”这一类中。从2015年的新数据中我们可以看出来，APM的技术发展还是比较快的，甚至快过了NPM技术的发展，预计在未来的2-5年达到成熟区。">
+
+<link rel="stylesheet" type="text/css" href="./陈靖华：解读APM技术分类和实现方式_EGONetworks_传送门_files/article_improve.css">
+
+<!--[if lt IE 9]><link rel="stylesheet" type="text/css" href="/static/css/article_pc.css"/> <![endif]-->
+<link media="screen and (min-width:1023px)" rel="stylesheet" type="text/css" href="./陈靖华：解读APM技术分类和实现方式_EGONetworks_传送门_files/article_pc.css">
+<style>ol,ul{list-style-position:inside;}</style>
+
+
+<script src="./陈靖华：解读APM技术分类和实现方式_EGONetworks_传送门_files/hm.js"></script><script src="./陈靖华：解读APM技术分类和实现方式_EGONetworks_传送门_files/share.js"></script><link rel="stylesheet" href="./陈靖华：解读APM技术分类和实现方式_EGONetworks_传送门_files/share_style1_16.css"><link rel="stylesheet" href="./陈靖华：解读APM技术分类和实现方式_EGONetworks_传送门_files/share_style2_24.css"></head>
+<body><div id="BAIDU_DUP_fp_wrapper" style="position: absolute; left: -1px; bottom: -1px; z-index: 0; width: 0px; height: 0px; overflow: hidden; visibility: hidden; display: none;"><iframe id="BAIDU_DUP_fp_iframe" src="./陈靖华：解读APM技术分类和实现方式_EGONetworks_传送门_files/o.html" style="width: 0px; height: 0px; visibility: hidden; display: none;"></iframe></div>
+<div>
+<div>
+<div>
+<div class="header wrapper" id="layout_header">
+<div class="contents">
+<div class="row relative">
+<div class="logo " style="padding: 5px 10px 5px;font-size: 15px;left: -60px;margin-left: -70px;">
+<a href="http://chuansong.me/" alt="传送门"><img src="./陈靖华：解读APM技术分类和实现方式_EGONetworks_传送门_files/logo@2X.png" width="60" height="40" style="margin-top: 3px"></a>
+</div>
+<div>
+<div class=" search full_search instant_results">
+<div class="search_contents navigator">
+<form class="search_form" action="http://chuansong.me/search" method="get" name="search_form">
+<div class="search_input">
+<div class="input_wrapper ">
+<input class="question_box light" name="q" type="text" maxlength="250" placeholder="搜索账号" tabindex="1">
+</div>
+</div>
+</form>
+</div>
+</div>
+</div>
+<div style="float: right;"><a href="http://werank.cn/" target="_blank" style="color: #666;padding: 0 8px;">排行榜</a></div>
+<div style="float: right;"><a href="http://chuansong.me/app" style="color: #666;padding: 0 8px;">客户端</a></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+<div class="home_page contents content">
+<div class="row">
+<div class="main e_col main_col" style="width: 700px; margin-left: -70px;">
+<div class="rich_media" id="js_article">
+
+<div class="rich_media_inner">
+<div id="page-content">
+<div class="rich_media_area_primary" id="img-content">
+<h2 class="rich_media_title" id="activity-name">
+                        陈靖华：解读APM技术分类和实现方式 
+                    </h2>
+<div class="rich_media_meta_list">
+<span class="rich_media_meta meta_original_tag" id="copyright_logo">原创</span>
+<em class="rich_media_meta rich_media_meta_text" id="post-date">2016-03-15</em>
+<em class="rich_media_meta rich_media_meta_text">陈靖华</em>
+<a class="rich_media_meta rich_media_meta_link rich_media_meta_nickname" href="http://chuansong.me/account/egonetworks" id="post-user">EGONetworks</a>
+<span class="rich_media_meta rich_media_meta_text rich_media_meta_nickname">EGONetworks</span>
+
+</div>
+<div class="rich_media_content " id="js_content">
+<section class="tn-Powered-by-XIUMI" style="border: 0px rgb(249, 110, 87); vertical-align: top; margin-bottom: 1em; font-size: 0.9em; font-family: inherit; text-decoration: inherit; color: rgb(255, 255, 255); box-sizing: border-box;"><section class="tn-Powered-by-XIUMI" style="width: 0px; margin-left: 55%; border-bottom-width: 13px; border-bottom-style: solid; border-bottom-color: rgb(249, 110, 87); border-left-width: 13px !important; border-left-style: solid !important; border-left-color: transparent !important; border-right-width: 13px !important; border-right-style: solid !important; border-right-color: transparent !important; box-sizing: border-box;"></section><section class="tn-Powered-by-XIUMI" style="height: 2.4em; border-radius: 1em; box-sizing: border-box; background-color: rgb(249, 110, 87);"><img class="tn-Powered-by-XIUMI" data-ratio="0.6578947368421053" data-type="png" data-w="38" src="./陈靖华：解读APM技术分类和实现方式_EGONetworks_传送门_files/image" style="height: 1.6em; vertical-align: top; margin: 0.3em 0.5em; box-sizing: border-box;"><section class="tn-Powered-by-XIUMI" style="display: inline-block; width: 70%; margin-top: 0.5em; text-align: center; overflow: hidden; box-sizing: border-box;"><section class="tn-Powered-by-XIUMI" style="display: inline-block; overflow: hidden; font-family: inherit; box-sizing: border-box;"><section class="tn-Powered-by-XIUMI" style="box-sizing: border-box;">点击“EGONetworks”订阅</section></section></section></section><section style="width: 0px; height: 0px; clear: both;"></section></section><p style="text-align: left;"><span style="font-size: 18px;"><img data-ratio="0.5557553956834532" data-s="300,640" data-type="jpeg" data-w="" src="./陈靖华：解读APM技术分类和实现方式_EGONetworks_传送门_files/image(1)"></span></p><p style="line-height: 1.75em;"><span style="font-size: 18px;"><br></span></p><p style="line-height: 1.75em;"><strong><span style="font-size: 36px; color: rgb(255, 104, 39);">“</span></strong><span style="font-size: 16px;">查看陈靖华关于APM的第一篇分享：<a csmlink="5sZQJc" href="http://chuansong.me/n/2675846" target="_blank">2个实例+5个维度解读APM技术</a></span></p><p style="line-height: 1.75em;"><span style="font-size: 18px;"><br></span></p><p style="line-height: 1.75em;"><span style="font-size: 18px;">在讲了APM的历史、作用和实际案例之后，下面我们来了解一下APM技术分类和实现方式以及它未来的发展趋势。在这之前，我们首先需要了解一下典型的互联网或移动互联网应用的整个应用交付链。</span></p><p style="line-height: 1.75em;"><span style="font-size: 18px;"><br></span></p><p style="text-align:center"><img data-ratio="0.51985559566787" data-s="300,640" data-type="png" data-w="554" src="./陈靖华：解读APM技术分类和实现方式_EGONetworks_传送门_files/image(2)"></p><p style="line-height: 1.75em; text-align: center;"><span style="font-size: 18px; color: rgb(136, 136, 136);">图1</span></p><p style="line-height: 1.75em;"><span style="font-size: 18px;">&nbsp;</span></p><p style="line-height: 1.75em;"><span style="font-size: 18px;">上面这张示意图给出的就是一种典型的互联网应用的应用交付链，在这个应用交付链最左端是部署在机房或云服务商上的相对可控的区域，例如负载均衡、Web服务、应用服务器、数据库、消息总线、存储、等等。越往右就是离应用的最终用户越近的部分，会涉及到机房或云服务的链路，第三方的服务<span style="font-size: 18px; color: rgb(136, 136, 136);">（例如云服务、CDN、推送、地图等等）</span>，用户设备接入的本地运营商、移动运营商、用户访问应用使用的不同终端设备，浏览器等等。</span></p><p style="line-height: 1.75em;"><br></p><p style="line-height: 1.75em;"><span style="font-size: 18px;">所有图上标注了炸弹的位置，都是整个应用交付链里容易出现性能问题和降低用户体验的问题点，例如浏览器或设备的不兼容、2G/3G/4G网络基站的拥塞、各地无良运营商的劫持、CDN节点的故障、第三方API接口的限流策略、骨干网运营商的线路维护、以及服务端的代码、服务、资源等问题。所有这些问题都是APM需要关注的问题，理论上，从左到右，对运维和研发人员来说，总体的可控度是递减的，而APM的引入就是希望能提高运维和研发人员对这些问题的可控度、降低TTR。</span></p><p style="line-height: 1.75em;"><span style="font-size: 18px;">&nbsp;</span></p><p style="line-height: 1.75em;"><span style="font-size: 18px;">因此APM需要关注或者说需要采集数据的位置也就是图上的这些炸弹的位置，而不同位置的数据采集就带来了APM技术的不同分类。</span></p><p style="line-height: 1.75em;"><span style="font-size: 18px;">&nbsp;</span></p><p style="line-height: 1.75em;"><span style="font-size: 18px;"></span></p><section class="tn-Powered-by-XIUMI" style="border: 0px; clear: both; box-sizing: border-box;"><section class="tn-Powered-by-XIUMI" style="padding: 8px; border-left-width: 6px; border-left-style: solid; border-color: rgb(249, 110, 87); font-size: 1em; line-height: 1.4; font-family: inherit; text-decoration: inherit; color: rgb(51, 51, 51); box-sizing: border-box;"><section class="tn-Powered-by-XIUMI" style="box-sizing: border-box;"><span style="line-height: 1.75em; font-size: 24px;">APM技术分类和实现</span></section></section></section><p style="line-height: 1.75em;"><span style="font-size: 18px;">从APM监测部署的位置<span style="font-size: 18px; color: rgb(136, 136, 136);">（或者叫做数据采集位置）</span>来分，基本上可以分成客户端和服务端两大类技术。分别针对最终用户侧和应用服务侧的APM技术。我们通常说的端到端的应用性能管理，指的就是从这两端来实现的APM技术组合。</span></p><p style="line-height: 1.75em;"><span style="font-size: 18px;">&nbsp;</span></p><p style="text-align:center"><img data-ratio="0.6624548736462094" data-s="300,640" data-type="png" data-w="554" src="./陈靖华：解读APM技术分类和实现方式_EGONetworks_传送门_files/image(3)"></p><p style="line-height: 1.75em; text-align: center;"><span style="font-size: 18px; color: rgb(136, 136, 136);">图2</span></p><p style="line-height: 1.75em;"><span style="font-size: 18px;">&nbsp;</span></p><p style="line-height: 1.75em;"><span style="font-size: 18px; line-height: 1.75em;">从客户端角度的APM技术分类上来看，又可以分为主动式的APM客户端监测技术</span><span style="font-size: 18px; line-height: 1.75em;">和</span><span style="font-size: 18px; line-height: 1.75em;">被动式的监测技术</span><span style="font-size: 18px; line-height: 1.75em;">两大类：</span></p><p style="line-height: 1.75em;"><span style="font-size: 18px;">&nbsp;</span></p><p style="line-height: 1.75em;"><strong><span style="font-size: 18px; color: rgb(255, 104, 39);">主动式的客户端监测技术称为Synthetic&nbsp;Monitoring：</span></strong><span style="font-size: 18px;">Synthetic，从字面的意思翻译是人工合成的，也就是说这种监测技术的数据采集不是真实用户产生而是人工模拟出来的，通过探针模拟真实用户的访问行为来对应用进行主动式的访问来采集数据，也就是通常说的拨测。这种监测方式需要部署一定数量的监测节点，通过定时调度的计划来主动访问应用来采集数据。</span></p><p style="line-height: 1.75em;"><span style="font-size: 18px;">&nbsp;</span></p><p style="line-height: 1.75em;"><span style="font-size: 18px;">主动式监测由于监测节点可控度非常高，理论上你可以利用这些监测点做任何的数据采集，因此此类技术的适用场景包括做应用性能特别是可用性的监测，做对比测试<span style="font-size: 18px; color: rgb(136, 136, 136);">（例如IDC/CDN/云服务商的对比和选型）</span>，竞品对标，压力测试等。</span></p><p style="line-height: 1.75em;"><span style="font-size: 18px;">&nbsp;</span></p><p style="line-height: 1.75em;"><span style="font-size: 18px;">由于主动式监测使用的是模拟的样本数据，需要有足够多的样本才能模拟出真实用户的性能体验，否则会存在较大的样本偏差，导致错误的结论。所以，如果要部署大量的监测节点的话，成本还是比较高的，因此目前此类监测很少有自己部署的，大部分使用的都是一些厂商提供的第三方监测服务。</span></p><p style="line-height: 1.75em;"><br></p><p style="line-height: 1.75em;"><strong><span style="font-size: 18px; line-height: 1.75em; color: rgb(255, 104, 39);">被动式客户端APM监测技术称为RUM：</span></strong><span style="font-size: 18px; line-height: 1.75em;">即真实用户的监测，利用的是真实的用户对应用的访问来采集性能数据。RUM有一个天然的优势就是基本上没有样本偏差，当全流量采集数据的时候，采集到的数据就是你的用户的真实体验数据。目前客户端的RUM技术会覆盖两部分的典型应用：Web&nbsp;App和Native&nbsp;App，这里面当然也包括现在比较流行的Hybrid&nbsp;App。</span></p><p style="line-height: 1.75em;"><br></p><p style="line-height: 1.75em;"><span style="font-size: 18px;">从客户端采集真实用户的性能数据基本上用的就是埋码这一条途径了，对于Web&nbsp;App，通过页面上插入JS，利用现代浏览器提供的Navigation&nbsp;Timing<span style="font-size: 18px; color: rgb(136, 136, 136);">（https://www.w3.org/TR/navigation-timing/）</span>和Resource&nbsp;Timing<span style="font-size: 18px; color: rgb(136, 136, 136);">（https://www.w3.org/TR/resource-timing/）</span>接口来采集性能数据。</span></p><p style="line-height: 1.75em;"><span style="font-size: 18px;"><br></span></p><p style="text-align:center"><img data-ratio="0.6353790613718412" data-s="300,640" data-type="png" data-w="554" src="./陈靖华：解读APM技术分类和实现方式_EGONetworks_传送门_files/image(4)"></p><p style="line-height: 1.75em; text-align: center;"><span style="font-size: 18px; line-height: 1.75em; color: rgb(136, 136, 136);">图3</span></p><p style="text-align:center"><span style="font-size: 18px;"><img data-ratio="0.42057761732851984" data-s="300,640" data-type="png" data-w="554" src="./陈靖华：解读APM技术分类和实现方式_EGONetworks_传送门_files/image(5)"><br></span></p><p style="line-height: 1.75em; text-align: center;"><span style="font-size: 18px; color: rgb(136, 136, 136);">图4</span></p><p style="line-height: 1.75em;"><span style="font-size: 18px;">&nbsp;</span></p><p style="line-height: 1.75em;"><span style="font-size: 18px;">雅虎的Boomerang就是基于Web页面埋码的性能数据采集框架。</span></p><p style="line-height: 1.75em;"><span style="font-size: 18px;">&nbsp;</span></p><p style="line-height: 1.75em;"><span style="font-size: 18px;">当然并不是所有浏览器都能很好地支持这些标准接口的，例如iOS&nbsp;8.0.1以后的所有iOS&nbsp;8版本就是因为性能的问题去掉了Navigation&nbsp;Timing接口，不过好消息是在iOS&nbsp;9之后这个接口终于又回来了。</span></p><p style="line-height: 1.75em;"><span style="font-size: 18px;">&nbsp;</span></p><p style="line-height: 1.75em;"><span style="font-size: 18px;">下面这两个图列出的目前各种浏览器版本对这两个API接口的支持程度。</span></p><p style="line-height: 1.75em;"><span style="font-size: 18px;"><br></span></p><p style="text-align:center"><span style="font-size: 18px;"><img data-ratio="0.5938628158844765" data-s="300,640" data-type="png" data-w="554" src="./陈靖华：解读APM技术分类和实现方式_EGONetworks_传送门_files/image(6)"><br></span></p><p style="line-height: 1.75em; text-align: center;"><span style="font-size: 18px; color: rgb(136, 136, 136);">图5</span></p><p style="line-height: 1.75em;"><br></p><p style="text-align:center"><img data-ratio="0.5288808664259927" data-s="300,640" data-type="png" data-w="554" src="./陈靖华：解读APM技术分类和实现方式_EGONetworks_传送门_files/image(7)"></p><p style="line-height: 1.75em; text-align: center;"><span style="font-size: 18px; color: rgb(136, 136, 136);">图6</span></p><p style="line-height: 1.75em;"><span style="font-size: 18px;">&nbsp;</span></p><p style="line-height: 1.75em;"><span style="font-size: 18px;">而对Native&nbsp;App的RUM监控就没有什么标准的接口可以用了，如果想自己做的话一般依赖于研发人员手工埋码，或者在开发App的时候使用一套统一的框架来进行埋码和采集。</span></p><p style="line-height: 1.75em;"><span style="font-size: 18px;">&nbsp;</span></p><p style="line-height: 1.75em;"><span style="font-size: 18px;">目前APM行业里通常的做法是提供一套可以自动埋码和采集数据的SDK来自动完成监控代码的注入工作。通过这种方式可以做到开发人员只需要修改少量代码甚至一行代码都无需修改就可以集成RUM的数据采集功能到App中。这里使用到的自动代码注入技术与服务端监控的代码注入机制类似。</span></p><p style="text-align:center"><img data-ratio="0.6263537906137184" data-s="300,640" data-type="png" data-w="554" src="./陈靖华：解读APM技术分类和实现方式_EGONetworks_传送门_files/image(8)"></p><p style="line-height: 1.75em; text-align: center;"><span style="font-size: 18px; color: rgb(136, 136, 136);">图7</span></p><p style="line-height: 1.75em;"><br></p><p style="line-height: 1.75em;"><span style="font-size: 18px;">如图，通过在需要监控的方法<span style="font-size: 18px; color: rgb(136, 136, 136);">（例如：需要监控HTTP访问请求的性能，需要监控的方法就是HttpURLConnection,&nbsp;AndroidHttpClient等类下的方法）</span>外面包上一层监控代码来采集方法的执行时间，异常等信息。</span></p><p style="line-height: 1.75em;"><span style="font-size: 18px;"><br></span></p><p style="line-height: 1.75em;"><span style="font-size: 18px;">在Android上实际上还可以有多种代码的注入方式：</span></p><p style="line-height: 1.75em;"><span style="font-size: 18px;">&nbsp;</span></p><p style="text-align:center"><img data-ratio="0.6263537906137184" data-s="300,640" data-type="png" data-w="554" src="./陈靖华：解读APM技术分类和实现方式_EGONetworks_传送门_files/image(9)"></p><p style="line-height: 1.75em; text-align: center;"><span style="font-size: 18px;"><span style="font-size: 18px; color: rgb(136, 136, 136);">图8</span></span></p><p style="line-height: 1.75em;"><span style="font-size: 18px;"><br></span></p><ol class=" list-paddingleft-2" style="list-style-type: decimal;"><li><p style="line-height: 1.75em;"><span style="font-size: 18px;">在编译打包过程注入，通过-javaagent加载探针的方式在dex转码阶段直接对字节码进行修改来加入监控代码。</span></p></li><li><p style="line-height: 1.75em;"><span style="font-size: 18px;">在C代码层面进行注入，对一些底层和native方法（例如DNS解析部分的性能采集）的监控，通常使用C对应用进行代码注入和挂钩子。</span></p></li><li><p style="line-height: 1.75em;"><span style="font-size: 18px;">直接修改APK包中的字节码，通常的步骤是APK解包，反编译成smali，修改smali代码再重新编译打包回去。这种方式不需要用户提供源代码即可完成监控代码的注入，不过对混淆过的代码这种方式就比较困难了。</span></p></li></ol><p style="line-height: 1.75em;"><span style="font-size: 18px;">&nbsp;</span></p><p style="line-height: 1.75em;"><span style="font-size: 18px;">在iOS上通常也有多种技术来对代码进行注入，例如使用swizzle的Object-C&nbsp;hook，消息转发和修改符号表技术等等。</span></p><p style="line-height: 1.75em;"><br></p><p style="line-height: 1.75em;"><span style="font-size: 18px;">客户端的RUM一个非常重要的技术难点就是对客户端资源的消耗的控制。包括计算资源<span style="font-size: 18px; color: rgb(136, 136, 136);">（CPU，内存）</span>以及网络资源<span style="font-size: 18px; color: rgb(136, 136, 136);">（流量）</span>。对计算资源的消耗最终可能影响应用本身的性能，如果控制不好会变成为了做性能监测反而引入新的性能问题。</span></p><p style="line-height: 1.75em;"><span style="font-size: 18px;">&nbsp;</span></p><p style="line-height: 1.75em;"><span style="font-size: 18px;">因此对性能数据的采集上一般会对不存在性能问题的样本数据在客户端上降低采样比例或者是只采集简单的汇总数据，而只对超过性能阈值和异常的数据进行详细的数据采集。同样在客户端进行一部分的数据汇总和合并，<span style="font-size: 18px; color: rgb(136, 136, 136);">（例如短时间内，客户端发生同一种网络故障是往往是重复出现的，可以合并以后再上报）</span>，在不同网络环境下使用不同的数据上报策略，这些都可以极大地降低对网络流量的消耗。</span></p><p style="line-height: 1.75em;"><br></p><p style="line-height: 1.75em;"><span style="font-size: 18px;">再来看看服务端的APM技术。目前比较常用的服务端APM技术大概可以分为以下四种：</span></p><ol class=" list-paddingleft-2" style="list-style-type: decimal;"><li><p style="line-height: 1.75em;"><span style="font-size: 18px; line-height: 1.75em;">无探针技术：无需安装探针，通过系统或服务自身提供的状态接口来进行组件的性能和状态的监控，例如通过SNMP等协议实现的监控，这种监测技术大家应该比较熟悉了，例如常见的Cacti,&nbsp;Zabbix等工具都属于这一类型的监控技术。无探针技术目前是作为APM中的辅助技术来提供第四个维度的应用组件性能和状态数据的。</span></p></li><li><p style="line-height: 1.75em;"><span style="font-size: 18px; line-height: 1.75em;">日志分析技术：日志分析能做的事情非常多，其中一部分就是APM，实际上日志分析是APM中非常重要的一种补充。通过采集系统、组件和应用的日志并进行实时的分析来进行性能评估和问题的定位。目前比较热门的ELKstack<span style="font-size: 18px; line-height: 1.75em; color: rgb(136, 136, 136);">（Elasticsearch,&nbsp;Logstash,&nbsp;Kibana，参考：https://www.gitbook.com/book/chenryn/kibana-guide-cn/details&nbsp;）</span>就是这方面技术的应用。</span></p></li><li><p style="line-height: 1.75em;"><span style="font-size: 18px;">&nbsp;</span><span style="font-size: 18px; line-height: 1.75em;">NPM技术：此类技术使用的是网络协议包监听和分析的技术来实现的应用性能管理，实际上是属于NPM<span style="font-size: 18px; line-height: 1.75em; color: rgb(136, 136, 136);">（Network&nbsp;Performance&nbsp;Management）</span>领域的产品，用在APM领域的时候通常叫做aaNPM<span style="font-size: 18px; line-height: 1.75em; color: rgb(136, 136, 136);">（Application&nbsp;Aware&nbsp;Network&nbsp;Performance&nbsp;Management，应用感知网络性能管理）</span>。NPM的厂商比较多了，也有一些开源的产品例如ntop<span style="font-size: 18px; line-height: 1.75em; color: rgb(136, 136, 136);">（http://www.ntop.org/）</span>大家有兴趣可以了解一下。aaNPM可以采集足够详细的应用网络性能方面的数据，但是无法提供代码级别的性能数据。</span></p></li><li><p style="line-height: 1.75em;"><span style="font-size: 18px;">&nbsp;</span><span style="font-size: 18px; line-height: 1.75em;">应用内探针技术：这个应该是目前APM行业里比较流行的技术，使用的是运行在应用内部<span style="font-size: 18px; line-height: 1.75em; color: rgb(136, 136, 136);">（应用服务器上）</span>的探针，由于探针与用户的代码在一起运行在应用内部，因此可以采集到非常详细的性能指标数据和业务指标数据，包括应用的响应时间，代码模块的执行时间，应用调用其他服务组件或API接口的响应时间，代码对系统资源的消耗等。</span></p></li></ol><p style="line-height: 1.75em;"><span style="font-size: 18px;">&nbsp;</span></p><p style="line-height: 1.75em;"><span style="font-size: 18px;">此外，运行在应用内部的探针还可以对代码的调用栈和应用之间的调用链进行跟踪，可以提供非常完整的业务调用栈性能数据和追踪数据。</span></p><p style="line-height: 1.75em;"><span style="font-size: 18px;">&nbsp;</span></p><p style="line-height: 1.75em;"><span style="font-size: 18px;">相比其他三种技术，应用内探针使用的是侵入式的探测技术，具有非常明显的优点就是调用栈的跟踪和代码的定位，但是也带来了对应用的性能和稳定性产生影响的风险。不过目前好的探针技术基本都可以做到在极低的性能和稳定性影响风险的情况下采集到足够详细的应用性能数据了。</span></p><p style="line-height: 1.75em;"><span style="font-size: 18px; line-height: 1.75em;"><br></span></p><p style="line-height: 1.75em;"><span style="font-size: 18px; line-height: 1.75em;">应用内探针技术通常有两种实现方式，一种是提供一整套的SDK框架，由开发人员按照要求在需要采集性能或业务数据的地方手工埋码来实现应用内探针的部署。这种方式典型的代表工具就是大众点评的开源项目CAT<span style="font-size: 18px; line-height: 1.75em; color: rgb(136, 136, 136);">（https://github.com/dianping/cat）</span>了。</span></p><p style="line-height: 1.75em;"><span style="font-size: 18px;">&nbsp;</span></p><p style="line-height: 1.75em;"><span style="font-size: 18px;">第二种方式使用的是自动插桩的方式来部署探针，通过JDK&nbsp;1.5以上版本提供的Instrumentation的特性，利用JavaAgent在应用运行的时候进行字节码修改的方案。该方案无需开发人员改动代码，即可将监控代码自动注入到需要采集性能和业务数据的位置，来实现应用内探针的部署。目前大部分的商业APM采用的都是这种方式来实现的。</span></p><p style="line-height: 1.75em;"><span style="font-size: 18px;">&nbsp;</span></p><p style="line-height: 1.75em;"><span style="font-size: 18px;">目前使用这种方案的一些Java开源APM项目有：</span></p><p style="line-height: 1.75em;"><span style="font-size: 18px;">Zorka<span style="font-size: 18px; color: rgb(136, 136, 136);">（http://zorka.io/）</span></span></p><p style="line-height: 1.75em;"><span style="font-size: 18px;">Pinpoint<span style="font-size: 18px; color: rgb(136, 136, 136);">（https://github.com/naver/pinpoint）</span></span></p><p style="line-height: 1.75em;"><span style="font-size: 18px;">SCOUTER<span style="font-size: 18px; color: rgb(136, 136, 136);">（https://github.com/scouter-project/scouter）</span></span></p><p style="line-height: 1.75em;"><span style="font-size: 18px;">&nbsp;</span></p><p style="line-height: 1.75em;"><span style="font-size: 18px; line-height: 1.75em;">列了这么多APM的技术大家可以看到，没有一项技术是可以完全取代另外一项的，不同的APM技术适用于不同的应用场景。这里给出了一张我们自己总结的APM技术使用场景对照表。</span></p><p><br></p><p style="text-align:center"><img data-ratio="1.35" data-s="300,640" data-type="png" data-w="20" src="./陈靖华：解读APM技术分类和实现方式_EGONetworks_传送门_files/image(10)"></p><p style="line-height: 1.75em;"><br></p><p style="line-height: 1.75em;"><span style="font-size: 18px;">同时在APM的技术发展上，越来越复杂的应用架构和应用场景，越来越需要将不同的APM技术组合在一起使用，对端到端的性能数据进行相关性分析，才能快速准确地定位性能问题点。Gartner也是在2015年第一次将APM魔力象限的名称从Application&nbsp;Performance&nbsp;Monitoring改成了Application&nbsp;Performance&nbsp;Monitoring&nbsp;Suites.</span></p><p style="line-height: 1.75em;"><br></p><p style="line-height: 1.75em;"><span style="font-size: 18px;">由于客户端APM和服务端APM探针部署的位置差异导致各自只能看到完整调用链中一部分的性能数据和现象，因此只有把两端的数据关联在一起分析才能更精确的定位问题。同样的在服务端的应用中，完成一个业务/事务的处理往往需要在不同的应用系统、组件和服务之间相互调用和传递数据，只有将各应用和组件之间的性能数据通过业务的调用链关联起来才有可能对性能问题进行快速有效的追踪和定位。这就是APM分析中的跨应用分析和追踪技术，这项技术的实现就很大程度上依赖于应用内探针技术。</span></p><p style="line-height: 1.75em;"><br></p><p style="line-height: 1.75em;"><span style="font-size: 18px;">通过应用内探针技术，在对应用进行自动埋码进行性能数据采集的同时，还可以对应用的响应信息和应用对外的服务调用请求进行适当的修改，加入用来追踪的数据<span style="font-size: 18px; color: rgb(136, 136, 136);">（例如在HTTP请求头里加入追踪的会话ID等等）</span>，而在客户端和其他应用组件内部的探针就可以对这些追踪数据做相应的处理，并且在数据采集的时候对每个请求做关联了。</span></p><p style="line-height: 1.75em;"><br></p><p style="line-height: 1.75em;"><span style="font-size: 18px;">通过跨应用追踪技术，在客户端就可以迅速了解一个请求慢是由于服务端的接口响应慢还是网络延时高导致的，而在服务端的接口数据里，又可以详细地钻取到最终导致应用的复杂调用链响应慢情况下特定的服务组件或代码。</span></p><p style="line-height: 1.75em;"><span style="font-size: 18px;">&nbsp;</span></p><p style="line-height: 1.75em;"><span style="font-size: 18px;"></span></p><section class="tn-Powered-by-XIUMI" style="border: 0px; clear: both; box-sizing: border-box;"><section class="tn-Powered-by-XIUMI" style="padding: 8px; border-left-width: 6px; border-left-style: solid; border-color: rgb(249, 110, 87); font-size: 1em; line-height: 1.4; font-family: inherit; text-decoration: inherit; color: rgb(51, 51, 51); box-sizing: border-box;"><section class="tn-Powered-by-XIUMI" style="box-sizing: border-box;"><span style="line-height: 1.75em; font-size: 24px;">APM技术的发展趋势</span></section></section></section><p style="line-height: 1.75em;"><span style="font-size: 18px;">从2014年Gartner发布的IT运维管理的技术Hype&nbsp;Cycle<span style="font-size: 18px; color: rgb(136, 136, 136);">（技术成熟度曲线）</span>可以了解到2014年的时候，APM技术在其中的位置处于第三阶段，也就是在退烧阶段。在这个阶段，大家对APM技术将会有更理性的认识，而在这个阶段坚持下来的厂商将会推动该技术进入爬坡期，慢慢走向成熟。预计在5-10年的时间内达到平台期。</span></p><p style="line-height: 1.75em;"><span style="font-size: 18px;">&nbsp;</span></p><p style="line-height: 1.75em;"><span style="font-size: 18px;">2015年之后，原来的“IT运维管理”的Hype&nbsp;Cycle图被拆成了3个图。其中，APM技术被归类到了“IT基础设施可用性及性能管理”这个图里。从2015年的新数据中我们可以看出来，APM的技术发展还是比较快的，甚至快过了NPM技术的发展，预计在未来的2-5年<span style="font-size: 18px; color: rgb(136, 136, 136);">（2014年的时候预测是5-10年）</span>达到成熟区<span style="font-size: 18px; color: rgb(136, 136, 136);">（平台期）</span>。</span></p><p style="line-height: 1.75em;"><span style="font-size: 18px;">&nbsp;</span></p><p style="line-height: 1.75em;"><span style="color: rgb(255, 104, 39);"><strong><span style="font-size: 18px;">1.&nbsp;移动APM的需求会快速增长</span></strong></span></p><p style="line-height: 1.75em;"><span style="font-size: 18px; line-height: 1.75em;">从整个互联网的发展趋势来看，越来越多的用户选择移动设备而不是桌面PC来访问互联网，移动应用的用户已经超过了桌面应用的用户数。而在移动应用的体验上，由于移动设备屏幕的独占性，用户通常对性能和用户体验会有更高的要求，然而我们却往往在移动应用上面会碰到更多的问题和挑战，例如在设备、运营商、地理位置、网络接入、应用开发框架方面，都存在着比桌面应用更多的各种性能瓶颈，严重影响用户的移动体验。</span></p><p style="line-height: 1.75em;"><span style="font-size: 18px;">&nbsp;</span></p><p style="line-height: 1.75em;"><span style="font-size: 18px;">更进一步的是用户对同时在不同的移动设备上进行无缝切换使用的要求<span style="font-size: 18px; color: rgb(136, 136, 136);">（例如iOS&nbsp;的Handoff）</span>，也对移动应用开发和性能管理提出了新的挑战。</span></p><p style="line-height: 1.75em;"><span style="font-size: 18px;">&nbsp;</span></p><p style="line-height: 1.75em;"><strong><span style="font-size: 18px; color: rgb(255, 104, 39);">2.&nbsp;APM将融合更多新兴的技术，从单纯的性能监控走向真正的性能管理</span></strong></p><p style="line-height: 1.75em;"><span style="font-size: 18px; line-height: 1.75em;">通过大数据，机器学习，云，容器等技术的融合，APM将提供更智能的性能管理，例如应用基线的智能学习和计算，无需用户设置阈值，并且在探测到性能问题和异常的时候可以根据用户设定的策略自动调整系统的负载调度和资源的伸缩，而不只是仅仅通知用户。</span></p><p style="line-height: 1.75em;"><span style="font-size: 18px;">&nbsp;</span></p><p style="line-height: 1.75em;"><span style="color: rgb(255, 104, 39);"><strong><span style="font-size: 18px;">3.&nbsp;APM将更加关注最终用户体验和业务</span></strong></span></p><p style="line-height: 1.75em;"><span style="font-size: 18px; line-height: 1.75em;">最终用户体验一直以来都是APM中最重要的维度<span style="font-size: 18px; line-height: 1.75em; color: rgb(136, 136, 136);">（这也是为什么Gartner将其列为5个维度中的第一个）</span>，在未来的今年内，随着移动互联网和IoT的快速发展，对最终用户体验的关注将成为重中之重。</span></p><p style="line-height: 1.75em;"><br></p><p style="line-height: 1.75em;"><span style="font-size: 18px;">于此同时，业务指标也将成为APM的另外一个关注点，APM将不仅仅只是关注应用的性能，而会更加关注性能对用户体验和业务指标的影响，将业务的表现关联到性能指标上。例如通过APM系统将可以实时了解到一个数据库查询的故障将直接影响到多少订单的成交。</span></p><p style="line-height: 1.75em;"><span style="font-size: 18px;">&nbsp;</span></p><p style="line-height: 1.75em;"><strong><span style="font-size: 18px; color: rgb(255, 104, 39);">4.&nbsp;用户期待更完整的统一IT管理平台</span></strong></p><p style="line-height: 1.75em;"><span style="font-size: 18px;">几年内，微服务，云计算，容器技术以及多语言编程的兴起，将带来越来越复杂的应用，对应用需要监控和管理的点越来越多，我们已经看到用户将迫切需要一个将各类IT监控和管理技术融合在一起的统一IT管理平台。因此融合APM技术以及相关的NPM、EUEM、ITOA已经BSM技术将是未来IT管理的必然趋势。</span></p><p><br></p><section class="tn-Powered-by-XIUMI" style="margin: 0.8em 1em; line-height: 25.6px; white-space: normal; box-sizing: border-box; border: 0px;"><section class="tn-Powered-by-XIUMI" style="padding: 10px; border: 2px dotted rgb(255, 129, 36); line-height: 1.4; word-wrap: break-word; border-radius: 15px; font-size: 1.2em; font-family: inherit; text-decoration: inherit; color: rgb(51, 51, 51); box-sizing: border-box;"><p style="box-sizing: border-box; line-height: 1.75em;"><strong><span style="font-size: 16px;"><span style="line-height: 1.75em;">&nbsp;</span><span style="line-height: 1.75em;">加入我们</span></span></strong></p><p style="box-sizing: border-box; line-height: 1.75em;"><span style="line-height: 1.75em; font-size: 16px;">EGO聚集了众多业界技术牛人（<a csmlink="ZsZQJc" href="http://chuansong.me/n/2304653" target="_blank">查看EGO初始108位会员</a>），并且每周都会请一位大牛会员做一次只面对EGO会员的内部分享。同时EGO紧跟时下热点，邀请业界各种你想见却见不到的大牛为会员做分享~想与大牛面对面交流？快戳“<span style="line-height: 1.75em; color: rgb(255, 104, 39);">阅读原文</span>”，EGO期待优秀的你的加入！</span></p></section></section><p style="white-space: normal; line-height: 1.75em; text-align: center;"><span style="color: rgb(136, 136, 136);"><br></span></p><p style="white-space: normal; line-height: 1.75em; text-align: center;"><span style="color: rgb(136, 136, 136);">—————— END——————</span></p><p style="white-space: normal; line-height: 1.75em; text-align: center;"><br></p><section class="tn-Powered-by-XIUMI" style="margin-top: 0.8em; margin-bottom: 0.5em; line-height: 25.6px; white-space: normal; border: 0px; text-align: center; box-sizing: border-box;"><span class="tn-Powered-by-XIUMI" style="padding: 0.3em 0.5em; display: inline-block; border-radius: 0.5em; color: rgb(255, 255, 255); font-size: 1em; box-shadow: rgb(165, 165, 165) 0.2em 0.2em 0.1em; font-family: inherit; text-decoration: inherit; border-color: rgb(249, 110, 87); box-sizing: border-box; background-color: rgb(249, 110, 87);"><section class="tn-Powered-by-XIUMI" style="box-sizing: border-box;">&nbsp;推 荐&nbsp;</section></span></section><p style="white-space: normal; line-height: 1.75em;"><span style="font-size: 18px;"></span></p><ul class=" list-paddingleft-2" style="width: 528.188px; line-height: 25.6px; white-space: normal;"><li><p style="color: rgb(42, 52, 58); font-size: 1.2em;"><a csmlink="xsZQJc" href="http://chuansong.me/n/1713325" target="_blank"><span style="font-size: 14px;">Facebook研发团队高效秘诀</span></a><span style="font-size: 14px;">&nbsp;</span></p></li><li><p style="color: rgb(42, 52, 58); font-size: 1.2em;"><span style="font-size: 14px;"><a csmlink="7sZQJc" href="http://chuansong.me/n/1713258" target="_blank">美团论剑——人才招聘与管理</a></span></p></li><li><p><a csmlink="IsZQJc" href="http://chuansong.me/n/1713212" target="_blank"><span style="font-size: 14px;">范凯：公司高速发展是对团队最好的管理</span></a></p></li><li><p style="color: rgb(42, 52, 58); line-height: 25.6px;"><span style="font-size: 14px; line-height: 22.4px;"><a csmlink="vsZQJc" href="http://chuansong.me/n/2097559" target="_blank">阿里巴巴是如何发展和激励人才的</a></span></p></li><li><p style="color: rgb(42, 52, 58); line-height: 25.6px;"><span style="font-size: 14px; line-height: 22.4px;"><a csmlink="SsZQJc" href="http://chuansong.me/n/1713238" target="_blank">史海峰：架构与管理是相通的</a></span></p></li><li><p style="color: rgb(42, 52, 58); line-height: 25.6px;"><a csmlink="fsZQJc" href="http://chuansong.me/n/1713261" target="_blank"></a><a csmlink="gsZQJc" href="http://chuansong.me/n/1713242" style="max-width: 100%; white-space: pre-wrap; font-size: 14px; line-height: 22.4px; box-sizing: border-box !important; word-wrap: break-word !important; background-color: rgb(255, 255, 255);" target="_blank"><span style="line-height: 22.4px;">刘建国：怎样带出一个2.5倍速的研发团队</span></a></p></li><li><p style="color: rgb(42, 52, 58); line-height: 25.6px;"><a csmlink="msZQJc" href="http://chuansong.me/n/1713250" target="_blank"></a><a csmlink="tsZQJc" href="http://chuansong.me/n/1949714" style="max-width: 100%; white-space: pre-wrap; font-size: 14px; line-height: 22.4px; box-sizing: border-box !important; word-wrap: break-word !important; background-color: rgb(255, 255, 255);" target="_blank"><span style="line-height: 22.4px;">酒仙网宗刚：那些技术创业踩过的坑</span></a></p></li><li><p style="color: rgb(42, 52, 58); line-height: 25.6px;"><span style="font-size: 14px; line-height: 22.4px;"><a csmlink="FsZQJc" href="http://chuansong.me/n/1713220" target="_blank">杨卫华谈技术人成长： 要善用社区提升自身影响力</a></span></p></li></ul><p style="white-space: normal; line-height: 1.75em; text-align: center;"><img class="tn-Powered-by-XIUMI" data-ratio="0.15" data-type="png" data-w="400" src="./陈靖华：解读APM技术分类和实现方式_EGONetworks_传送门_files/image(11)" style="margin-right: auto; margin-left: auto; line-height: 1.6; box-sizing: border-box;"></p><p style="white-space: normal; line-height: 1.75em; text-align: center;"><span style="font-family: inherit; font-size: 14px; line-height: 1.6; text-decoration: inherit; color: rgb(42, 52, 58);">回复关键字查看更多干货</span></p><p style="white-space: normal; line-height: 1.75em; text-align: center;"><span style="color: rgb(136, 136, 136); font-size: 14px; font-family: inherit; text-decoration: inherit; line-height: 25.6px;">人才招聘 | 团队管理 | 企业架构 |</span></p><p style="white-space: normal; line-height: 1.75em; text-align: center;"><span style="color: rgb(136, 136, 136); font-size: 14px; font-family: inherit; text-decoration: inherit; line-height: 25.6px;">个人成长 | 创业之路</span></p><p style="margin-top: 0.5em; line-height: 25.6px; white-space: normal; border: none; text-align: center; box-sizing: border-box;"><img class="tn-Powered-by-XIUMI" data-ratio="0.15" data-type="png" data-w="400" src="./陈靖华：解读APM技术分类和实现方式_EGONetworks_传送门_files/image(12)" style="margin-right: auto; margin-left: auto; box-sizing: border-box;"></p><p style="margin-top: 0.5em; line-height: 25.6px; white-space: normal; border: none; text-align: center; box-sizing: border-box;"><span style="font-size: 13px; line-height: 1.75em; color: rgb(42, 52, 58); background-color: rgb(255, 255, 255);">版权所有 欢迎转载 转载请注明：</span></p><p style="white-space: normal; max-width: 100%; min-height: 1em; color: rgb(42, 52, 58); text-align: center; font-size: 1.2em; line-height: 1.75em; box-sizing: border-box !important; word-wrap: break-word !important; background-color: rgb(255, 255, 255);"><span style="max-width: 100%; font-size: 13px; line-height: 28.4444px; box-sizing: border-box !important; word-wrap: break-word !important;">本文来源EGO（微信号：egonetworks）</span></p><p><br></p><section class="tn-Powered-by-XIUMI" style="white-space: normal; line-height: 28.4444px;"><section class="tn-Powered-by-XIUMI" style="margin-bottom: -0.4em; padding-right: 5px; padding-left: 5px; max-width: 100%; box-sizing: border-box; font-size: 1.2em; font-family: inherit; text-align: right; text-decoration: inherit; color: rgb(255, 129, 36); word-wrap: break-word !important;"><section class="tn-Powered-by-XIUMI" style="max-width: 100%; box-sizing: border-box; word-wrap: break-word !important;">EGONetworks</section></section><section class="tn-Powered-by-XIUMI" style="max-width: 100%; box-sizing: border-box; width: 502.917px; height: 2em; line-height: 2em; display: inline-block; vertical-align: top; font-size: 1em; font-family: inherit; text-decoration: inherit; color: rgb(255, 255, 255); border-color: transparent; word-wrap: break-word !important; background-color: rgb(255, 129, 36);"><section class="tn-Powered-by-XIUMI" style="margin-left: 7.5em; max-width: 100%; box-sizing: border-box; overflow: hidden; word-wrap: break-word !important;"><section class="tn-Powered-by-XIUMI" style="max-width: 100%; box-sizing: border-box; word-wrap: break-word !important;">EGO超级极客邦</section></section></section><section class="tn-Powered-by-XIUMI" style="margin-right: 1em; margin-left: 1em; max-width: 100%; box-sizing: border-box; width: 502.917px; word-wrap: break-word !important;"><section class="tn-Powered-by-XIUMI" style="margin-top: -3.8em; max-width: 100%; box-sizing: border-box; display: inline-block; vertical-align: top; width: 6em; word-wrap: break-word !important;"><img class="tn-Powered-by-XIUMI" data-ratio="1" data-type="jpeg" data-w="96" src="./陈靖华：解读APM技术分类和实现方式_EGONetworks_传送门_files/image(13)" style="box-sizing: border-box; word-wrap: break-word !important; width: 6em !important; visibility: visible !important;" width="6em"><img class="tn-Powered-by-XIUMI" data-ratio="0.5208333333333334" data-type="png" data-w="96" src="./陈靖华：解读APM技术分类和实现方式_EGONetworks_传送门_files/image(14)" style="box-sizing: border-box; word-wrap: break-word !important; width: 6em !important; visibility: visible !important;" width="6em"></section><section class="tn-Powered-by-XIUMI" style="padding-right: 5px; padding-left: 5px; max-width: 100%; box-sizing: border-box; display: inline-block; vertical-align: top; font-size: 1em; font-family: inherit; text-decoration: inherit; word-wrap: break-word !important;"><section class="tn-Powered-by-XIUMI" style="max-width: 100%; box-sizing: border-box; word-wrap: break-word !important;">全球最具影响力的</section><section class="tn-Powered-by-XIUMI" style="max-width: 100%; box-sizing: border-box; word-wrap: break-word !important;">高端技术人社交网络</section></section></section></section><p><span style="font-size: 13px; line-height: 28.4444px;">↓↓↓↓</span><span style="font-size: 13px; max-width: 100%; line-height: 1.75em; box-sizing: border-box !important; word-wrap: break-word !important;">了解EGO更多信息和会员报名请戳“</span><span style="max-width: 100%; line-height: 1.75em; font-size: 14px; color: rgb(247, 150, 70); box-sizing: border-box !important; word-wrap: break-word !important;">阅读原文</span><span style="font-size: 13px; max-width: 100%; line-height: 1.75em; box-sizing: border-box !important; word-wrap: break-word !important;">”</span><br></p>
+</div>
+<link href="http://chuansong.me/n/2683470" rel="stylesheet" type="text/css">
+<div class="rich_media_tool" id="js_toobar3">
+<a class="media_tool_meta meta_primary" csmlink="OsZQJc" href="http://chuansong.me/r/OsZQJc" id="js_view_source" rel="nofollow" target="_blank">阅读原文</a>
+
+
+
+</div>
+</div>
+
+
+</div>
+
+</div>
+</div>
+<script type="text/javascript" async="" src="./陈靖华：解读APM技术分类和实现方式_EGONetworks_传送门_files/ga.js"></script><script src="./陈靖华：解读APM技术分类和实现方式_EGONetworks_传送门_files/ca-pub-3728791995114007.js"></script><script type="text/javascript" async="" src="./陈靖华：解读APM技术分类和实现方式_EGONetworks_传送门_files/acsm"></script><script type="text/javascript" async="" src="./陈靖华：解读APM技术分类和实现方式_EGONetworks_传送门_files/acsm(1)"></script><script type="text/javascript" async="" src="./陈靖华：解读APM技术分类和实现方式_EGONetworks_传送门_files/acsm(2)"></script><script type="text/javascript">
+var cpro_id="u2312677";
+(window["cproStyleApi"] = window["cproStyleApi"] || {})[cpro_id]={at:"3",rsi0:"700",rsi1:"250",pat:"6",tn:"baiduCustNativeAD",rss1:"#FFFFFF",conBW:"0",adp:"1",ptt:"0",titFF:"%E5%BE%AE%E8%BD%AF%E9%9B%85%E9%BB%91",titFS:"14",rss2:"#000000",titSU:"0",ptbg:"90",piw:"0",pih:"0",ptp:"0"}
+</script>
+<script src="./陈靖华：解读APM技术分类和实现方式_EGONetworks_传送门_files/c.js" type="text/javascript"></script><div id="BAIDU_SSP__wrapper_u2312677_0"><iframe id="iframeu2312677_0" src="./陈靖华：解读APM技术分类和实现方式_EGONetworks_传送门_files/acsm.html" width="700" height="250" align="center,center" vspace="0" hspace="0" marginwidth="0" marginheight="0" scrolling="no" frameborder="0" style="border:0; vertical-align:bottom;margin:0;" allowtransparency="true"></iframe></div>
+<div style="padding:5px 5px 0px 5px;border-bottom:1px dotted #C8D8F2; height:30px;margin:5px 0px 0px 0px;border-top:1px dotted #C8D8F2;">
+<div class="bdsharebuttonbox bdshare-button-style1-16" data-tag="share_bottom" style="font-size:13px; line-height:16px; float:right;" data-bd-bind="1477203438325"><a href="http://chuansong.me/n/2683470#" class="bds_weixin" data-cmd="weixin" title="分享到微信">微信</a><a href="http://chuansong.me/n/2683470#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间">QQ空间</a><a href="http://chuansong.me/n/2683470#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博">新浪微博</a><a href="http://chuansong.me/n/2683470#" class="bds_tqq" data-cmd="tqq" title="分享到腾讯微博">腾讯微博</a><a href="http://chuansong.me/n/2683470#" class="bds_renren" data-cmd="renren" title="分享到人人网">人人</a><a href="http://chuansong.me/n/2683470#" class="bds_twi" data-cmd="twi" title="分享到Twitter">Twitter</a><a href="http://chuansong.me/n/2683470#" class="bds_douban" data-cmd="douban" title="分享到豆瓣网">豆瓣</a><a href="http://chuansong.me/n/2683470#" class="bds_tieba" data-cmd="tieba" title="分享到百度贴吧">百度贴吧</a><a href="http://chuansong.me/n/2683470#" class="bds_more" data-cmd="more"></a></div>
+<div style="float:right;line-height:28px; color:#6c6c6c; font-size:12px;padding-right:15px;">觉得不错，分享给更多人看到</div>
+</div>
+<div class="RecentPosts">
+<div><a href="http://chuansong.me/account/egonetworks" style="color: #19558d;">EGONetworks</a> 最新文章:</div>
+<div class="feed_body">
+
+<div class="pagedlist_item" tabindex="-1">
+<div class="feed_item" style="border-bottom: none;">
+<div class="e_col p1 w6" style="padding: 6px 0;">
+<div class="row">
+<div>
+<div class="feed_item_question">
+<h2>
+<span>
+<span class="timestamp" style="color: #999">2016-10-22</span>&nbsp;&nbsp;&nbsp;
+<a class="question_link" href="http://chuansong.me/n/1006459851576">《创业小败局》：创业路上你将怎样死去？|【EGO图书荟】</a>
+</span>
+</h2>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="pagedlist_item" tabindex="-1">
+<div class="feed_item" style="border-bottom: none;">
+<div class="e_col p1 w6" style="padding: 6px 0;">
+<div class="row">
+<div>
+<div class="feed_item_question">
+<h2>
+<span>
+<span class="timestamp" style="color: #999">2016-10-22</span>&nbsp;&nbsp;&nbsp;
+<a class="question_link" href="http://chuansong.me/n/1006459951567">《创业小败局》精选语录及案例集锦|【EGO图书荟】</a>
+</span>
+</h2>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="pagedlist_item" tabindex="-1">
+<div class="feed_item" style="border-bottom: none;">
+<div class="e_col p1 w6" style="padding: 6px 0;">
+<div class="row">
+<div>
+<div class="feed_item_question">
+<h2>
+<span>
+<span class="timestamp" style="color: #999">2016-10-21</span>&nbsp;&nbsp;&nbsp;
+<a class="question_link" href="http://chuansong.me/n/1003234551672">大企业人才“空降”中小企业，如何实现“软着陆”？</a>
+</span>
+</h2>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="pagedlist_item" tabindex="-1">
+<div class="feed_item" style="border-bottom: none;">
+<div class="e_col p1 w6" style="padding: 6px 0;">
+<div class="row">
+<div>
+<div class="feed_item_question">
+<h2>
+<span>
+<span class="timestamp" style="color: #999">2016-10-21</span>&nbsp;&nbsp;&nbsp;
+<a class="question_link" href="http://chuansong.me/n/1003234651676">中外大厂「奇葩说」：谁是技术界的嘴炮王者?丨今晚直播</a>
+</span>
+</h2>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="pagedlist_item" tabindex="-1">
+<div class="feed_item" style="border-bottom: none;">
+<div class="e_col p1 w6" style="padding: 6px 0;">
+<div class="row">
+<div>
+<div class="feed_item_question">
+<h2>
+<span>
+<span class="timestamp" style="color: #999">2016-10-20</span>&nbsp;&nbsp;&nbsp;
+<a class="question_link" href="http://chuansong.me/n/1000103651550">10人创业团队，如何管理才能活下去？</a>
+</span>
+</h2>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="pagedlist_item" tabindex="-1">
+<div class="feed_item" style="border-bottom: none;">
+<div class="e_col p1 w6" style="padding: 6px 0;">
+<div class="row">
+<div>
+<div class="feed_item_question">
+<h2>
+<span>
+<span class="timestamp" style="color: #999">2016-10-19</span>&nbsp;&nbsp;&nbsp;
+<a class="question_link" href="http://chuansong.me/n/994923351165">4大行业8年实战千人团队：从敏捷转型到精益企业</a>
+</span>
+</h2>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="pagedlist_item" tabindex="-1">
+<div class="feed_item" style="border-bottom: none;">
+<div class="e_col p1 w6" style="padding: 6px 0;">
+<div class="row">
+<div>
+<div class="feed_item_question">
+<h2>
+<span>
+<span class="timestamp" style="color: #999">2016-10-19</span>&nbsp;&nbsp;&nbsp;
+<a class="question_link" href="http://chuansong.me/n/994923451140">欢迎6位技术大牛加入EGO大家庭</a>
+</span>
+</h2>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="pagedlist_item" tabindex="-1">
+<div class="feed_item" style="border-bottom: none;">
+<div class="e_col p1 w6" style="padding: 6px 0;">
+<div class="row">
+<div>
+<div class="feed_item_question">
+<h2>
+<span>
+<span class="timestamp" style="color: #999">2016-10-18</span>&nbsp;&nbsp;&nbsp;
+<a class="question_link" href="http://chuansong.me/n/989608451842">一文读懂创业公司股权激励大法</a>
+</span>
+</h2>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="pagedlist_item" tabindex="-1">
+<div class="feed_item" style="border-bottom: none;">
+<div class="e_col p1 w6" style="padding: 6px 0;">
+<div class="row">
+<div>
+<div class="feed_item_question">
+<h2>
+<span>
+<span class="timestamp" style="color: #999">2016-10-18</span>&nbsp;&nbsp;&nbsp;
+<a class="question_link" href="http://chuansong.me/n/989608551871">保卫数据——安全世界的攻与防 | EGO10月北京分会活动</a>
+</span>
+</h2>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="pagedlist_item" tabindex="-1">
+<div class="feed_item" style="border-bottom: none;">
+<div class="e_col p1 w6" style="padding: 6px 0;">
+<div class="row">
+<div>
+<div class="feed_item_question">
+<h2>
+<span>
+<span class="timestamp" style="color: #999">2016-10-17</span>&nbsp;&nbsp;&nbsp;
+<a class="question_link" href="http://chuansong.me/n/983822851048">创业公司寻找技术合伙人的正确姿势</a>
+</span>
+</h2>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+<script type="text/javascript">
+var cpro_id="u2326060";
+(window["cproStyleApi"] = window["cproStyleApi"] || {})[cpro_id]={at:"3",rsi0:"700",rsi1:"250",pat:"6",tn:"baiduCustNativeAD",rss1:"#FFFFFF",conBW:"0",adp:"1",ptt:"0",titFF:"%E5%BE%AE%E8%BD%AF%E9%9B%85%E9%BB%91",titFS:"14",rss2:"#000000",titSU:"0",ptbg:"90",piw:"0",pih:"0",ptp:"0"}
+</script>
+<script src="./陈靖华：解读APM技术分类和实现方式_EGONetworks_传送门_files/c.js" type="text/javascript"></script><div id="BAIDU_SSP__wrapper_u2326060_0"><iframe id="iframeu2326060_0" src="./陈靖华：解读APM技术分类和实现方式_EGONetworks_传送门_files/acsm(3).html" width="700" height="250" align="center,center" vspace="0" hspace="0" marginwidth="0" marginheight="0" scrolling="no" frameborder="0" style="border:0; vertical-align:bottom;margin:0;" allowtransparency="true"></iframe></div>
+
+<div class="RecentPosts">
+<div><a href="http://chuansong.me/account/egonetworks" style="color: #19558d;">EGONetworks</a> 热门文章:</div>
+<div class="feed_body">
+
+<div class="pagedlist_item" tabindex="-1">
+<div class="feed_item" style="border-bottom: none;">
+<div class="e_col p1 w6" style="padding: 6px 0;">
+<div class="row">
+<div>
+<div class="feed_item_question">
+<h2>
+<span>
+<a class="question_link" href="http://chuansong.me/n/316956251648">洪强宁：如何保持团队的技术氛围？</a>
+&nbsp;&nbsp;&nbsp;<span class="timestamp" style="color: #999">阅读/点赞 : 11760/25</span>
+</span>
+</h2>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="pagedlist_item" tabindex="-1">
+<div class="feed_item" style="border-bottom: none;">
+<div class="e_col p1 w6" style="padding: 6px 0;">
+<div class="row">
+<div>
+<div class="feed_item_question">
+<h2>
+<span>
+<a class="question_link" href="http://chuansong.me/n/1713212">丁香园技术副总裁范凯：公司高速发展是对团队最好的管理</a>
+&nbsp;&nbsp;&nbsp;<span class="timestamp" style="color: #999">阅读/点赞 : 7256/27</span>
+</span>
+</h2>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="pagedlist_item" tabindex="-1">
+<div class="feed_item" style="border-bottom: none;">
+<div class="e_col p1 w6" style="padding: 6px 0;">
+<div class="row">
+<div>
+<div class="feed_item_question">
+<h2>
+<span>
+<a class="question_link" href="http://chuansong.me/n/388248451654">为什么给了高工资，依然留不住好员工？</a>
+&nbsp;&nbsp;&nbsp;<span class="timestamp" style="color: #999">阅读/点赞 : 6440/23</span>
+</span>
+</h2>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="pagedlist_item" tabindex="-1">
+<div class="feed_item" style="border-bottom: none;">
+<div class="e_col p1 w6" style="padding: 6px 0;">
+<div class="row">
+<div>
+<div class="feed_item_question">
+<h2>
+<span>
+<a class="question_link" href="http://chuansong.me/n/626285651272">冯大辉：如何抓住技术浪潮变革的红利？| GTLC精华演讲</a>
+&nbsp;&nbsp;&nbsp;<span class="timestamp" style="color: #999">阅读/点赞 : 5200/51</span>
+</span>
+</h2>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="pagedlist_item" tabindex="-1">
+<div class="feed_item" style="border-bottom: none;">
+<div class="e_col p1 w6" style="padding: 6px 0;">
+<div class="row">
+<div>
+<div class="feed_item_question">
+<h2>
+<span>
+<a class="question_link" href="http://chuansong.me/n/493552951654">全球技术领导力峰会也开始赠票了？？？</a>
+&nbsp;&nbsp;&nbsp;<span class="timestamp" style="color: #999">阅读/点赞 : 4197/21</span>
+</span>
+</h2>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="pagedlist_item" tabindex="-1">
+<div class="feed_item" style="border-bottom: none;">
+<div class="e_col p1 w6" style="padding: 6px 0;">
+<div class="row">
+<div>
+<div class="feed_item_question">
+<h2>
+<span>
+<a class="question_link" href="http://chuansong.me/n/653002251567">韩军：忘记技术的CTO，才是完美的CTO｜GTLC精华演讲</a>
+&nbsp;&nbsp;&nbsp;<span class="timestamp" style="color: #999">阅读/点赞 : 3505/15</span>
+</span>
+</h2>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="pagedlist_item" tabindex="-1">
+<div class="feed_item" style="border-bottom: none;">
+<div class="e_col p1 w6" style="padding: 6px 0;">
+<div class="row">
+<div>
+<div class="feed_item_question">
+<h2>
+<span>
+<a class="question_link" href="http://chuansong.me/n/463540751678">前1号店CTO韩军：准确把握技术趋势的5个秘诀｜GTLC讲师专访</a>
+&nbsp;&nbsp;&nbsp;<span class="timestamp" style="color: #999">阅读/点赞 : 3324/18</span>
+</span>
+</h2>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="pagedlist_item" tabindex="-1">
+<div class="feed_item" style="border-bottom: none;">
+<div class="e_col p1 w6" style="padding: 6px 0;">
+<div class="row">
+<div>
+<div class="feed_item_question">
+<h2>
+<span>
+<a class="question_link" href="http://chuansong.me/n/617290451290">技术大咖齐亮相，与EGO一起重新定义技术领导力｜附讲师全套PPT下载</a>
+&nbsp;&nbsp;&nbsp;<span class="timestamp" style="color: #999">阅读/点赞 : 3142/15</span>
+</span>
+</h2>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="pagedlist_item" tabindex="-1">
+<div class="feed_item" style="border-bottom: none;">
+<div class="e_col p1 w6" style="padding: 6px 0;">
+<div class="row">
+<div>
+<div class="feed_item_question">
+<h2>
+<span>
+<a class="question_link" href="http://chuansong.me/n/481585751893">普元CTO焦烈焱：从程序员到CTO，我在普元的15年成长之路｜GTLC讲师专访</a>
+&nbsp;&nbsp;&nbsp;<span class="timestamp" style="color: #999">阅读/点赞 : 2047/20</span>
+</span>
+</h2>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="pagedlist_item" tabindex="-1">
+<div class="feed_item" style="border-bottom: none;">
+<div class="e_col p1 w6" style="padding: 6px 0;">
+<div class="row">
+<div>
+<div class="feed_item_question">
+<h2>
+<span>
+<a class="question_link" href="http://chuansong.me/n/2215469">访谈 | Mobvista CTO王平：英雄不问出处，学历≠能力</a>
+&nbsp;&nbsp;&nbsp;<span class="timestamp" style="color: #999">阅读/点赞 : 1019/15</span>
+</span>
+</h2>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<script type="text/javascript">
+var cpro_id="u2721229";
+(window["cproStyleApi"] = window["cproStyleApi"] || {})[cpro_id]={at:"3",rsi0:"700",rsi1:"250",pat:"6",tn:"baiduCustNativeAD",rss1:"#FFFFFF",conBW:"0",adp:"1",ptt:"0",titFF:"%E5%BE%AE%E8%BD%AF%E9%9B%85%E9%BB%91",titFS:"14",rss2:"#000000",titSU:"0",ptbg:"90",piw:"0",pih:"0",ptp:"0"}
+</script>
+<script src="./陈靖华：解读APM技术分类和实现方式_EGONetworks_传送门_files/c.js" type="text/javascript"></script><div id="BAIDU_SSP__wrapper_u2721229_0"><iframe id="iframeu2721229_0" src="./陈靖华：解读APM技术分类和实现方式_EGONetworks_传送门_files/acsm(4).html" width="700" height="250" align="center,center" vspace="0" hspace="0" marginwidth="0" marginheight="0" scrolling="no" frameborder="0" style="border:0; vertical-align:bottom;margin:0;" allowtransparency="true"></iframe></div>
+<script async="" src="./陈靖华：解读APM技术分类和实现方式_EGONetworks_传送门_files/adsbygoogle.js"></script>
+<ins class="adsbygoogle" style="display:inline-block;width:700px;height:250px" data-ad-client="ca-pub-3728791995114007" data-ad-slot="6875744170" data-adsbygoogle-status="done"><ins id="aswift_0_expand" style="display:inline-table;border:none;height:250px;margin:0;padding:0;position:relative;visibility:visible;width:700px;background-color:transparent"><ins id="aswift_0_anchor" style="display:block;border:none;height:250px;margin:0;padding:0;position:relative;visibility:visible;width:700px;background-color:transparent"><iframe width="700" height="250" frameborder="0" marginwidth="0" marginheight="0" vspace="0" hspace="0" allowtransparency="true" scrolling="no" allowfullscreen="true" onload="var i=this.id,s=window.google_iframe_oncopy,H=s&amp;&amp;s.handlers,h=H&amp;&amp;H[i],w=this.contentWindow,d;try{d=w.document}catch(e){}if(h&amp;&amp;d&amp;&amp;(!d.body||!d.body.firstChild)){if(h.call){setTimeout(h,0)}else if(h.match){try{h=s.upd(h,i)}catch(e){}w.location.replace(h)}}" id="aswift_0" name="aswift_0" style="left:0;position:absolute;top:0;" src="./陈靖华：解读APM技术分类和实现方式_EGONetworks_传送门_files/saved_resource.html"></iframe></ins></ins></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+<div class="side e_col side_col w2_5" style="margin-top: 10px;width: 300px;">
+<div class="row section section_top" style="margin-bottom: 5px">
+<a style="padding: 6px" class="download-ios" href="https://itunes.apple.com/cn/app/chuan-song-men-wei-xin-gong/id969898148?ls=1&amp;mt=8" target="_blank">传送门 for iOS 下载</a>
+</div>
+<div class="section">
+<div>
+<h3>EGONetworks 微信二维码</h3>
+<div class="inline_editor_content">
+<span class="inline_editor_value">
+<div class="inline">
+<img width="210px" height="210px" src="./陈靖华：解读APM技术分类和实现方式_EGONetworks_传送门_files/egonetworks.jpg" alt="EGONetworks 微信二维码">
+</div>
+</span>
+</div>
+</div>
+</div>
+<div class="section share_question ">
+<h3>分享这篇文章</h3>
+<div class="row share_icons_row">
+<div class="bdsharebuttonbox bdshare-button-style2-24" data-tag="share_right" data-bd-bind="1477203438336"><a href="http://chuansong.me/n/2683470#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a><a href="http://chuansong.me/n/2683470#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"></a><a href="http://chuansong.me/n/2683470#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a><a href="http://chuansong.me/n/2683470#" class="bds_tqq" data-cmd="tqq" title="分享到腾讯微博"></a><a href="http://chuansong.me/n/2683470#" class="bds_douban" data-cmd="douban" title="分享到豆瓣网"></a><a href="http://chuansong.me/n/2683470#" class="bds_tieba" data-cmd="tieba" title="分享百度贴吧"></a><a href="http://chuansong.me/n/2683470#" class="bds_twi" data-cmd="twi" title="分享Twitter"></a><a href="http://chuansong.me/n/2683470#" class="bds_more" data-cmd="more"></a></div>
+</div>
+</div>
+
+<div class="section">
+<h3>数据</h3>
+<div class="inline_editor_content">
+<span class="inline_editor_value">
+<div class="StatsRow">
+<span>阅读</span>
+<span><strong>585</strong></span>
+</div>
+<div class="StatsRow">
+<span>点赞</span>
+<span><strong>6</strong></span>
+</div>
+<div class="StatsRow">
+<span>更新</span>
+<span><strong>3月16日 20:23</strong></span>
+</div>
+</span>
+</div>
+</div>
+
+<div class="section">
+<script async="" src="./陈靖华：解读APM技术分类和实现方式_EGONetworks_传送门_files/adsbygoogle.js"></script>
+<ins class="adsbygoogle" style="display: inline-block; width: 300px; height: 250px;" data-ad-client="ca-pub-3728791995114007" data-ad-slot="5808773776" data-adsbygoogle-status="done"><ins id="aswift_1_expand" style="display:inline-table;border:none;height:250px;margin:0;padding:0;position:relative;visibility:visible;width:300px;background-color:transparent"><ins id="aswift_1_anchor" style="display:block;border:none;height:250px;margin:0;padding:0;position:relative;visibility:visible;width:300px;background-color:transparent"><iframe width="300" height="250" frameborder="0" marginwidth="0" marginheight="0" vspace="0" hspace="0" allowtransparency="true" scrolling="no" allowfullscreen="true" onload="var i=this.id,s=window.google_iframe_oncopy,H=s&amp;&amp;s.handlers,h=H&amp;&amp;H[i],w=this.contentWindow,d;try{d=w.document}catch(e){}if(h&amp;&amp;d&amp;&amp;(!d.body||!d.body.firstChild)){if(h.call){setTimeout(h,0)}else if(h.match){try{h=s.upd(h,i)}catch(e){}w.location.replace(h)}}" id="aswift_1" name="aswift_1" style="left:0;position:absolute;top:0;" src="./陈靖华：解读APM技术分类和实现方式_EGONetworks_传送门_files/saved_resource(1).html"></iframe></ins></ins></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+<div class="section">
+<div>
+<h3>EGONetworks 最新文章</h3>
+<div class="inline_editor_content">
+<span class="inline_editor_value">
+<div class="inline">
+<div class="feed_body">
+
+<div class="pagedlist_item" tabindex="-1">
+<div class="feed_item" style="border-bottom: none;">
+<div class="e_col p1 w2_5" style="padding: 6px 0;">
+<div class="row">
+<div>
+<div class="feed_item_question">
+<h2>
+<span>
+<a class="question_link" href="http://chuansong.me/n/1006459851576">《创业小败局》：创业路上你将怎样死去？|【EGO图书荟】</a>
+&nbsp;<span class="timestamp" style="color: #999">2016-10-22</span>
+</span>
+</h2>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="pagedlist_item" tabindex="-1">
+<div class="feed_item" style="border-bottom: none;">
+<div class="e_col p1 w2_5" style="padding: 6px 0;">
+<div class="row">
+<div>
+<div class="feed_item_question">
+<h2>
+<span>
+<a class="question_link" href="http://chuansong.me/n/1006459951567">《创业小败局》精选语录及案例集锦|【EGO图书荟】</a>
+&nbsp;<span class="timestamp" style="color: #999">2016-10-22</span>
+</span>
+</h2>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="pagedlist_item" tabindex="-1">
+<div class="feed_item" style="border-bottom: none;">
+<div class="e_col p1 w2_5" style="padding: 6px 0;">
+<div class="row">
+<div>
+<div class="feed_item_question">
+<h2>
+<span>
+<a class="question_link" href="http://chuansong.me/n/1003234551672">大企业人才“空降”中小企业，如何实现“软着陆”？</a>
+&nbsp;<span class="timestamp" style="color: #999">2016-10-21</span>
+</span>
+</h2>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="pagedlist_item" tabindex="-1">
+<div class="feed_item" style="border-bottom: none;">
+<div class="e_col p1 w2_5" style="padding: 6px 0;">
+<div class="row">
+<div>
+<div class="feed_item_question">
+<h2>
+<span>
+<a class="question_link" href="http://chuansong.me/n/1003234651676">中外大厂「奇葩说」：谁是技术界的嘴炮王者?丨今晚直播</a>
+&nbsp;<span class="timestamp" style="color: #999">2016-10-21</span>
+</span>
+</h2>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="pagedlist_item" tabindex="-1">
+<div class="feed_item" style="border-bottom: none;">
+<div class="e_col p1 w2_5" style="padding: 6px 0;">
+<div class="row">
+<div>
+<div class="feed_item_question">
+<h2>
+<span>
+<a class="question_link" href="http://chuansong.me/n/1000103651550">10人创业团队，如何管理才能活下去？</a>
+&nbsp;<span class="timestamp" style="color: #999">2016-10-20</span>
+</span>
+</h2>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="pagedlist_item" tabindex="-1">
+<div class="feed_item" style="border-bottom: none;">
+<div class="e_col p1 w2_5" style="padding: 6px 0;">
+<div class="row">
+<div>
+<div class="feed_item_question">
+<h2>
+<span>
+<a class="question_link" href="http://chuansong.me/n/994923351165">4大行业8年实战千人团队：从敏捷转型到精益企业</a>
+&nbsp;<span class="timestamp" style="color: #999">2016-10-19</span>
+</span>
+</h2>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="pagedlist_item" tabindex="-1">
+<div class="feed_item" style="border-bottom: none;">
+<div class="e_col p1 w2_5" style="padding: 6px 0;">
+<div class="row">
+<div>
+<div class="feed_item_question">
+<h2>
+<span>
+<a class="question_link" href="http://chuansong.me/n/994923451140">欢迎6位技术大牛加入EGO大家庭</a>
+&nbsp;<span class="timestamp" style="color: #999">2016-10-19</span>
+</span>
+</h2>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="pagedlist_item" tabindex="-1">
+<div class="feed_item" style="border-bottom: none;">
+<div class="e_col p1 w2_5" style="padding: 6px 0;">
+<div class="row">
+<div>
+<div class="feed_item_question">
+<h2>
+<span>
+<a class="question_link" href="http://chuansong.me/n/989608451842">一文读懂创业公司股权激励大法</a>
+&nbsp;<span class="timestamp" style="color: #999">2016-10-18</span>
+</span>
+</h2>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="pagedlist_item" tabindex="-1">
+<div class="feed_item" style="border-bottom: none;">
+<div class="e_col p1 w2_5" style="padding: 6px 0;">
+<div class="row">
+<div>
+<div class="feed_item_question">
+<h2>
+<span>
+<a class="question_link" href="http://chuansong.me/n/989608551871">保卫数据——安全世界的攻与防 | EGO10月北京分会活动</a>
+&nbsp;<span class="timestamp" style="color: #999">2016-10-18</span>
+</span>
+</h2>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="pagedlist_item" tabindex="-1">
+<div class="feed_item" style="border-bottom: none;">
+<div class="e_col p1 w2_5" style="padding: 6px 0;">
+<div class="row">
+<div>
+<div class="feed_item_question">
+<h2>
+<span>
+<a class="question_link" href="http://chuansong.me/n/983822851048">创业公司寻找技术合伙人的正确姿势</a>
+&nbsp;<span class="timestamp" style="color: #999">2016-10-17</span>
+</span>
+</h2>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+</span>
+</div>
+</div>
+</div>
+<div class="section">
+<script async="" src="./陈靖华：解读APM技术分类和实现方式_EGONetworks_传送门_files/adsbygoogle.js"></script>
+<ins class="adsbygoogle" style="display: inline-block; width: 300px; height: 250px;" data-ad-client="ca-pub-3728791995114007" data-ad-slot="4579059379" data-adsbygoogle-status="done"><ins id="aswift_2_expand" style="display:inline-table;border:none;height:250px;margin:0;padding:0;position:relative;visibility:visible;width:300px;background-color:transparent"><ins id="aswift_2_anchor" style="display:block;border:none;height:250px;margin:0;padding:0;position:relative;visibility:visible;width:300px;background-color:transparent"><iframe width="300" height="250" frameborder="0" marginwidth="0" marginheight="0" vspace="0" hspace="0" allowtransparency="true" scrolling="no" allowfullscreen="true" onload="var i=this.id,s=window.google_iframe_oncopy,H=s&amp;&amp;s.handlers,h=H&amp;&amp;H[i],w=this.contentWindow,d;try{d=w.document}catch(e){}if(h&amp;&amp;d&amp;&amp;(!d.body||!d.body.firstChild)){if(h.call){setTimeout(h,0)}else if(h.match){try{h=s.upd(h,i)}catch(e){}w.location.replace(h)}}" id="aswift_2" name="aswift_2" style="left:0;position:absolute;top:0;" src="./陈靖华：解读APM技术分类和实现方式_EGONetworks_传送门_files/saved_resource(2).html"></iframe></ins></ins></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+
+<div class="section">
+<div>
+<h3>EGONetworks 热门文章</h3>
+<div class="inline_editor_content">
+<span class="inline_editor_value">
+<div class="inline">
+<div class="feed_body">
+
+<div class="pagedlist_item" tabindex="-1">
+<div class="feed_item" style="border-bottom: none;">
+<div class="e_col p1 w2_5" style="padding: 6px 0;">
+<div class="row">
+<div>
+<div class="feed_item_question">
+<h2>
+<span>
+<a class="question_link" href="http://chuansong.me/n/316956251648">洪强宁：如何保持团队的技术氛围？</a>
+&nbsp;<span class="timestamp" style="color: #999">11760阅读</span>
+</span>
+</h2>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="pagedlist_item" tabindex="-1">
+<div class="feed_item" style="border-bottom: none;">
+<div class="e_col p1 w2_5" style="padding: 6px 0;">
+<div class="row">
+<div>
+<div class="feed_item_question">
+<h2>
+<span>
+<a class="question_link" href="http://chuansong.me/n/1713212">丁香园技术副总裁范凯：公司高速发展是对团队最好的管理</a>
+&nbsp;<span class="timestamp" style="color: #999">7256阅读</span>
+</span>
+</h2>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="pagedlist_item" tabindex="-1">
+<div class="feed_item" style="border-bottom: none;">
+<div class="e_col p1 w2_5" style="padding: 6px 0;">
+<div class="row">
+<div>
+<div class="feed_item_question">
+<h2>
+<span>
+<a class="question_link" href="http://chuansong.me/n/388248451654">为什么给了高工资，依然留不住好员工？</a>
+&nbsp;<span class="timestamp" style="color: #999">6440阅读</span>
+</span>
+</h2>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="pagedlist_item" tabindex="-1">
+<div class="feed_item" style="border-bottom: none;">
+<div class="e_col p1 w2_5" style="padding: 6px 0;">
+<div class="row">
+<div>
+<div class="feed_item_question">
+<h2>
+<span>
+<a class="question_link" href="http://chuansong.me/n/626285651272">冯大辉：如何抓住技术浪潮变革的红利？| GTLC精华演讲</a>
+&nbsp;<span class="timestamp" style="color: #999">5200阅读</span>
+</span>
+</h2>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="pagedlist_item" tabindex="-1">
+<div class="feed_item" style="border-bottom: none;">
+<div class="e_col p1 w2_5" style="padding: 6px 0;">
+<div class="row">
+<div>
+<div class="feed_item_question">
+<h2>
+<span>
+<a class="question_link" href="http://chuansong.me/n/493552951654">全球技术领导力峰会也开始赠票了？？？</a>
+&nbsp;<span class="timestamp" style="color: #999">4197阅读</span>
+</span>
+</h2>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="pagedlist_item" tabindex="-1">
+<div class="feed_item" style="border-bottom: none;">
+<div class="e_col p1 w2_5" style="padding: 6px 0;">
+<div class="row">
+<div>
+<div class="feed_item_question">
+<h2>
+<span>
+<a class="question_link" href="http://chuansong.me/n/653002251567">韩军：忘记技术的CTO，才是完美的CTO｜GTLC精华演讲</a>
+&nbsp;<span class="timestamp" style="color: #999">3505阅读</span>
+</span>
+</h2>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="pagedlist_item" tabindex="-1">
+<div class="feed_item" style="border-bottom: none;">
+<div class="e_col p1 w2_5" style="padding: 6px 0;">
+<div class="row">
+<div>
+<div class="feed_item_question">
+<h2>
+<span>
+<a class="question_link" href="http://chuansong.me/n/463540751678">前1号店CTO韩军：准确把握技术趋势的5个秘诀｜GTLC讲师专访</a>
+&nbsp;<span class="timestamp" style="color: #999">3324阅读</span>
+</span>
+</h2>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="pagedlist_item" tabindex="-1">
+<div class="feed_item" style="border-bottom: none;">
+<div class="e_col p1 w2_5" style="padding: 6px 0;">
+<div class="row">
+<div>
+<div class="feed_item_question">
+<h2>
+<span>
+<a class="question_link" href="http://chuansong.me/n/617290451290">技术大咖齐亮相，与EGO一起重新定义技术领导力｜附讲师全套PPT下载</a>
+&nbsp;<span class="timestamp" style="color: #999">3142阅读</span>
+</span>
+</h2>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="pagedlist_item" tabindex="-1">
+<div class="feed_item" style="border-bottom: none;">
+<div class="e_col p1 w2_5" style="padding: 6px 0;">
+<div class="row">
+<div>
+<div class="feed_item_question">
+<h2>
+<span>
+<a class="question_link" href="http://chuansong.me/n/481585751893">普元CTO焦烈焱：从程序员到CTO，我在普元的15年成长之路｜GTLC讲师专访</a>
+&nbsp;<span class="timestamp" style="color: #999">2047阅读</span>
+</span>
+</h2>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="pagedlist_item" tabindex="-1">
+<div class="feed_item" style="border-bottom: none;">
+<div class="e_col p1 w2_5" style="padding: 6px 0;">
+<div class="row">
+<div>
+<div class="feed_item_question">
+<h2>
+<span>
+<a class="question_link" href="http://chuansong.me/n/2215469">访谈 | Mobvista CTO王平：英雄不问出处，学历≠能力</a>
+&nbsp;<span class="timestamp" style="color: #999">1019阅读</span>
+</span>
+</h2>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+</span>
+</div>
+</div>
+</div>
+
+<div class="section">
+<script async="" src="./陈靖华：解读APM技术分类和实现方式_EGONetworks_传送门_files/adsbygoogle.js"></script>
+<ins class="adsbygoogle" style="display: block; height: 600px;" data-ad-client="ca-pub-3728791995114007" data-ad-slot="9009258978" data-ad-format="auto" data-adsbygoogle-status="done"><ins id="aswift_3_expand" style="display:inline-table;border:none;height:600px;margin:0;padding:0;position:relative;visibility:visible;width:300px;background-color:transparent"><ins id="aswift_3_anchor" style="display:block;border:none;height:600px;margin:0;padding:0;position:relative;visibility:visible;width:300px;background-color:transparent"><iframe width="300" height="600" frameborder="0" marginwidth="0" marginheight="0" vspace="0" hspace="0" allowtransparency="true" scrolling="no" allowfullscreen="true" onload="var i=this.id,s=window.google_iframe_oncopy,H=s&amp;&amp;s.handlers,h=H&amp;&amp;H[i],w=this.contentWindow,d;try{d=w.document}catch(e){}if(h&amp;&amp;d&amp;&amp;(!d.body||!d.body.firstChild)){if(h.call){setTimeout(h,0)}else if(h.match){try{h=s.upd(h,i)}catch(e){}w.location.replace(h)}}" id="aswift_3" name="aswift_3" style="left:0;position:absolute;top:0;" src="./陈靖华：解读APM技术分类和实现方式_EGONetworks_传送门_files/saved_resource(3).html"></iframe></ins></ins></ins>
+<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+</div>
+</div>
+</div>
+
+
+
+<div>
+<div class=" footer wrapper">
+<div class="contents">
+<div class="footer_nav row">
+<div class="e_col footer_links w8_5" style="margin-left: -70px">
+<ul class="nav_list">
+<li class="about"><a href="http://chuansong.me/about">关于</a></li>
+<li><span class="bullet"> • </span></li>
+<li class="about"><a href="http://chuansong.me/submit/account">提交</a></li>
+<li><span class="bullet"> • </span></li>
+<li class="about"><a href="http://chuansong.me/app">App</a></li>
+<li class="about" style="float: right"><a href="http://werank.cn/" target="_blank">热榜</a></li>
+
+</ul>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-40292976-1']);
+_gaq.push(['_setDomainName', '.chuansong.me']);
+_gaq.push(['_setAllowLinker', true]);
+_gaq.push(['_trackPageview']);
+(function() {
+var ga = document.createElement('script');
+ga.type = 'text/javascript';
+ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0];
+s.parentNode.insertBefore(ga, s);
+})();
+</script>
+<script language="javascript" src="./陈靖华：解读APM技术分类和实现方式_EGONetworks_传送门_files/jquery-1.4.2.min.js"></script>
+<script language="javascript" src="./陈靖华：解读APM技术分类和实现方式_EGONetworks_传送门_files/common.js"></script>
+<script>window._bd_share_config={"common":{"bdSnsKey":{"tsina":"2919864620"},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"1","bdSize":"16"},"share":[{"tag":"share_bottom","bdSize":16},{"tag":"share_right","bdSize":24,"bdStyle":"2"}]};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+<script>
+var _hmt = _hmt || [];
+(function() {
+var hm = document.createElement("script");
+hm.src = "//hm.baidu.com/hm.js?9d416cb1bdca85038c8810fc14eeee57";
+var s = document.getElementsByTagName("script")[0];
+s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+</body></html>
