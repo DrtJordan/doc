@@ -1,3 +1,29 @@
+protected branches 
+it prevents pushes from everybody except users with Master permission
+it prevents anyone from force pushing to the branch
+it prevents anyone from deleting the branch
+
+fork出来的项目，可以通过 pull request要求合并到原来的source
+
+ For example, you could set "Allowed to push" to "No one", and "Allowed to merge" to "Developers + Masters", to require everyone to submit a merge request for changes going into the protected branch.
+ However, there are workflows where that is not needed, and only protecting from force pushes and branch removal is useful. For those workflows, you can allow everyone with write access to push to a protected branch by setting "Allowed to push" to "Developers + Masters".
+
+You can set the "Allowed to push" and "Allowed to merge" options while creating a protected branch or afterwards by selecting the option you want from the dropdown list in the "Already protected" area.
+
+Git flow
+
+典型的长期维护master分支和develop分支，因为是FDD（功能驱动开发），所以会在协作开发中衍生出 功能分支（feature branch）、补丁分支（hotfix branch）、预发版分支（release branch），完成之后会合并到develop或者master分支，之后删除。优点是清晰可控，但这个模式是基于“版本发布”的，目标是一段时间产出一个新版本，不适合“持续发布”的网站开发。
+
+
+
+Github flow
+
+只有一个master长期分支，需要协同的人可以fork代码（其实就是新建了一个自己的分支，并且pull到了master上的代码），当你的功能需求代码完成之后，或者需要讨论的时候，就向master发起一个pull request。通知到别人评审、讨论、review你的代码，方便的是，在request提交之后评审的过程中，你还可以提交代码。等到你的request被accept，分支会合并到master，重新部署后，你原来的那个分支就可以删除啦。缺点是有时你的产品发布的代码版本和你master最新的版本并不是一个（比如因为苹果审核需要时间，那么你的代码就需要另一个分支来保留线上版本）。
+Gitlab flow
+
+引入了“上游优先”（upsteam first）的原则。只存在一个主分支master，它是所有其他分支的"上游"。只有上游分支采纳的代码变化，才能应用到其他分支。版本发布"的项目，建议的做法是每一个稳定版本，都要从master分支拉出一个分支。使用gitlab建立group project，可以将成员全部添加进小组中，每个人的提交都以分支合并进master分支的方式进行，我们可以将master设置成protected branch，这样就做到了强制代码review的机制，利于提升代码的质量。Issue 用于 Bug追踪和需求管理。建议先新建 Issue，再新建对应的功能分支。
+
+
 gitlab容器安装
 docker run -d     --hostname 10.163.89.14     --publish 443:443 --publish 80:80 --publish 88:22  \
      --name gitlab3     --restart always   \
