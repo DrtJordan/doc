@@ -277,6 +277,7 @@ systemctl daemon-reload
 systemctl restart docker
 检查变量是否加载
 systemctl show --property=Environment docker
+
 show --property=Environment docker
 Environment=HTTP_PROXY=http://192.168.31.77:8080 HTTPS_PROXY=http://192.168.31.77:8080 NO_PROXY=lo
 

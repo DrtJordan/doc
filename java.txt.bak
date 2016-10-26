@@ -1,3 +1,34 @@
+20161025
+安装 pinpoint 
+需要打开collect server的端口
+iptables -I  INPUT -p tcp --dport 9994 -j ACCEPT
+iptables -I  INPUT -p tcp --dport 9995 -j ACCEPT
+iptables -I  INPUT -p udp --dport 9995 -j ACCEPT
+iptables -I  INPUT -p tcp --dport 7946 -j ACCEPT
+iptables -I  INPUT -p udp --dport 7946 -j ACCEPT
+iptables -I  INPUT -p udp --dport 9996 -j ACCEPT
+
+iptables -I  INPUT -p tcp --dport 9996 -j ACCEPT
+iptables -I  INPUT -p tcp --dport 9997 -j ACCEPT
+iptables -I  INPUT -p tcp --dport 8080 -j ACCEPT
+iptables -I  INPUT -p tcp --dport 8009 -j ACCEPT
+需要打开 web  server的端口
+
+iptables -I  INPUT -p tcp --dport 8081 -j ACCEPT
+监控地址
+http://10.163.89.12:8081/#/main
+http://10.163.89.12:8081/stat.html 
+
+hbase地址
+http://10.163.89.12:16010/master-status
+
+启动客户端
+java  -jar  -javaagent:./pinpoint-agent-1.5.2/pinpoint-bootstrap-1.5.2.jar -Dpinpoint.agentId=jenkins1 -Dpinpoint.applicationName=jenkins jenkins.jar --httpPort=1080
+
+BTrace天生就为解决这类问题而来，它可以动态地跟踪java运行程序。通过hotswap技术，动态将跟踪字节码注入到运行类中，对运行代码侵入较小，对性能上的影响可以忽略不计。 
+BTrace在使用上有很多限制条件，如不能创建对象、数组、抛出和捕获异常、循环等，具体限制条件参考用户文档中的BTrace Restrictions。用户文档地址: http://kenai.com/projects/btrace/pages/UserGuide。 
+
+
 20161023
 APM application performance management 
 做的最好的是   AppDynamics and New Relic 
@@ -25,7 +56,7 @@ pinpoint (start 最多  2293 ）inspectIT(start 173( 和  还有  scouter (start 543)
   JVM提供一种当JVM启动完成后开启agent机制。这种情况下，Instrumention实例通过agent代码中的的agentmain传入。
 不但可以在启动时加载，也可以在启动后动态加载 
 javaagent是jvmti的java版本agent ,和jvm run在一起，所以在gc的时候，就不能正常使用了，但是 native的agent(和jvm run在同一个Process，但是不归jvm管理)就没这个问题了
-
+jvmti是jvm提供的一系列回调接口
 
 20160414 
 用itext操作 pdf 可编辑域，如果要处理中文 用  itext-2.1.7.jar和 iTextAsian.jar，然后加上 对应的字体即可.
