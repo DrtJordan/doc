@@ -1,6 +1,8 @@
 20161023
 Register 
 docker run -d -p 5000:5000 --restart=always --name registry   -v 、/app/docker/data:/var/lib/registry   registry:2
+和本地时间同步
+ -v /etc/localtime:/etc/localtime 
 把现有的Local image打上标签 
 docker tag ubuntu localhost:5000/myfirstimage
 然后push到 register 
