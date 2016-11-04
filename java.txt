@@ -1,3 +1,9 @@
+20161104 
+jvisual vm 可以直接连接到jdk1.7, jdk 1.5需要启动时加参数
+jconsole 也可以自动attch 到java程序，显示信息，还能修改一些参数
+jinfo也能动态修改参数
+jrunscript 可以直接运行 javascript脚本
+ctrl
 20161025
 安装 pinpoint 
 需要打开collect server的端口
@@ -24,7 +30,7 @@ http://10.163.89.12:16010/master-status
 
 启动客户端
 java  -jar  -javaagent:./pinpoint-agent-1.5.2/pinpoint-bootstrap-1.5.2.jar -Dpinpoint.agentId=jenkins1 -Dpinpoint.applicationName=jenkins jenkins.jar --httpPort=1080
-
+监控单独的java程序，需要配置profile里面的 profiler.entrypoint=wzy.TestWrapper.test  package.class.method
 appdynamic 客户端
 -javaagent:./appdynamic/javaagent.jar -Dappdynamics.controller.hostName=10.163.89.12 -Dappdynamics.controller.port=8090 -Dappdynamics.agent.applicationName=app_main  -Dappdynamics.agent.tierName=appmain2  -Dappdynamics.agent.nodeName=node1
 BTrace天生就为解决这类问题而来，它可以动态地跟踪java运行程序。通过hotswap技术，动态将跟踪字节码注入到运行类中，对运行代码侵入较小，对性能上的影响可以忽略不计。 
