@@ -18,6 +18,7 @@ iptables -I  INPUT -p tcp --dport 9996 -j ACCEPT
 iptables -I  INPUT -p tcp --dport 9997 -j ACCEPT
 iptables -I  INPUT -p tcp --dport 8080 -j ACCEPT
 iptables -I  INPUT -p tcp --dport 8009 -j ACCEPT
+
 需要打开 web  server的端口
 
 iptables -I  INPUT -p tcp --dport 8081 -j ACCEPT

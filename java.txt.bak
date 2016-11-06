@@ -3,7 +3,7 @@ jvisual vm 可以直接连接到jdk1.7, jdk 1.5需要启动时加参数
 jconsole 也可以自动attch 到java程序，显示信息，还能修改一些参数
 jinfo也能动态修改参数
 jrunscript 可以直接运行 javascript脚本
-
+ctrl
 20161025
 安装 pinpoint 
 需要打开collect server的端口
