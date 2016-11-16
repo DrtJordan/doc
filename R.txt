@@ -1,11 +1,171 @@
-R 里面都是对象 ，有 mode(obj) length(obj)等基本方法  ，可以通过class(obj)来看对象
+20161115
+画图相关
+colors()显示所有的内置颜色
+palette() 设置当前调色板
+legend 在指定位置画图或者文字  legend(5,35,c(4,6,8),pch=2:4,col=2:4,bty="n")
+text在任意文字写入文字，title加标题 ,mtext在四周加文字
+画个新的图 plot(c(0:5),col="white")
+lines 画线,ablines可以画直线 
+library and require load and attach add-on packages.
+par用来设置画图相关的参数 mfrow 从左到右画，mfcol 从上到下画 ，分成不同的区域
+layout可以不均匀的分割画布，做出不同的图形来
+segments用来画两点直接的线段
+arrows 添加线段和箭头
+grid画网格线 
+axis 绘制坐标轴
+在绘图函数中直接指定坐标值 用 xlim/ylim 
+R中图形和margin一般顺序是下左上右
+windows/X11分别打开OS的作图屏幕，画完图后，可以保存为图片
+输出图形到 pdf pdf("w.pdf") ;plot ; dev.off() 保存
+plot/hist等都会画一个新的区域 ,lines/ablines在当前图形区域上画
+qqplot/qqnorm 画qq图
+sunflowerplot 用来画向日葵散点图，重叠的地方用向日葵滑板数量来表示
+heatmap热度图 contor 绘制等高图
+lattice 和ggplot2是相对高级的绘图
+20161114 
+
+
+ Jupyter Notebook  同时支持python/R/Julia 的IDE
+
+手动安装 Windows: 下载package.zip文件 打开R的菜单栏->Packages->"Install package from local zip file..." 选择package.zip文件 Linux: 下载package.tar.gz文件 在Shell终端（注意不是R）输入: sudo R CMD INSTALL package.tar.gz 有人说要用 sudo R CMD INSTALL --build 
+install.packages("~/Downloads/Rwordseg_0.2-1.tar", repos=NULL, type="source")
+
+
+source 用来执行脚本，sink ('filename')做输出定向
+split=true，可以同时输出到console和文件
+rm 删除内存中的变量
+gc() 查看内存使用情况
+hel
+rank函数用来对向量 rank
+order函数对数据进行排序，比如对 
+alls=data.frame(name=c('s1','s2','s3'),math=c(80,70,90),english=c(10,20,50))
+ order(alls$math)
+[1] 2 1 3
+ alls[order(alls$math),]
+  name math english
+2   s2   70      20
+1   s1   80      10
+3   s3   90      50
+
+随机抽样函数在 sampling 包中，包含 srswr(可重复抽样) srswor(不可重复抽样)  sampling三个函数
+quantmod 是一个可以抓取金融数据，画各种股票图相关的包
+
+LETTERS 26个大写字母 letters 小写字母
+s<-srswr(5,26)  抽取5个随机采样，从26个值中
+obs<-(1:26)[s!=0] 把不等于0的值找出来
+n<-s[s!=0] 把重复次数找出来
+obs<-rep(obs,times=n) 重复位置
+ LETTERS[obs] 把采样点值取出来
+ 或者 sample(LETTERS,5)
+ round(4.563,2)=4.56 保留两位小数
+ 
+ signif(4.563,2)=4.6 保留2位有效数字
+as.Date智能转换为日期函数，  as.POSIXit 能转换带时间的函数
+scan从键盘输入数据
+
+stop 函数停止当前的执行，开始执行异常环节
+
+
+iter <- 12
+try(if(iter > 10) stop("too many iterations"))
+
+
+查看日期差
+ dates=c('2016-12-01','2016-12-03')
+> difftime(dates[2],dates[1])
+scale函数是将一组数进行处理，默认情况下是将一组数的每个数都减去这组数的平均值后再除以这组数的均方根。
+
+rnorm 生产随机正态分布值 
+dnorm 计算随机函数密度
+
+字符串匹配 
+grep/grep1 用正则表达式  sub(["ak"],txt} 只替换第一个遇到的字母，gsub替换所有  paste 连接字符串 
+> txt
+[1] "whaterver" "test1"     "wzy"  
+
+ sub("[et]","k",txt)
+[1] "whakerver" "kest1"     "wzy"      
+> gsub("[et]","k",txt)
+[1] "whakkrvkr" "kksk1"     "wzy"     
+paste("AB",1:5,sep=",') 
+> paste("AB",1:5,sep="-") 
+[1] "AB-1" "AB-2" "AB-3" "AB-4" "AB-5"
+> paste("AB",1:5,sep="-",collapse = ";")  collapse 代表合成一个字串
+[1] "AB-1;AB-2;AB-3;AB-4;AB-5"
+|竖直分隔符代表选择。例如“gray|grey”可以匹配grey或gray。
++加号代表前面的字符必须至少出现一次。（1次、或多次）。例如，“goo+gle”可以匹配google、gooogle、goooogle等;
+?问号代表前面的字符最多只可以出现一次。（0次、或1次）。例如，“colou?r”可以匹配color或者colour;
+*星号代表前面的字符可以不出现，也可以出现一次或者多次。（0次、或1次、或多次）。例如，“0*42”可以匹配42、042、0042、00042等。
+圆括号可以用来定义操作符的范围和优先度。例如，“gr(a|e)y”等价于“gray|grey”，“(grand)?father”匹配father和grandfather。
+{n,m}	m和n均为非负整数，其中n<=m。最少匹配n次且最多匹配m次。例如，“o{1,3}”将匹配“fooooood”中的前三个o。“o{0,1}”等价于“o?”。请注意在逗号和两个数之间不能有空格。
+.	匹配除“\n”之外的任何单个字符。要匹配包括“\n”在内的任何字符，请使用像“(.|\n)”的模式。
+[xyz]	字符集合（character class）。匹配所包含的任意一个字符。
+[^xyz]	排除型（negate）字符集合。匹配未列出的任意字符
+[a-z]	字符范围。匹配指定范围内的任意字符。例如，“[a-z]”可以匹配“a”到“z”范围内的任意小写字母字符。
+\b	匹配一个单词边界，也就是指单词和空格间的位置。例如，“er\b”可以匹配“never”中的“er”，但不能匹配“verb”中的“er”。
+\B	匹配非单词边界。“er\B”能匹配“verb”中的“er”，但不能匹配“never”中的“er”。
+
+Time difference of 2 days  
+
+中午分词软件  Rwordseg 是一个R环境下的中文分词工具，使用 rJava 调用 Java 分词工具 Ansj。
+
+Ansj 也是一个开源的 Java 中文分词工具，基于中科院的 ictclas 中文分词算法， 采用隐马尔科夫模型（Hidden Markov Model, HMM）。作者孙健重写了一个Java版本， 并且全部开源，使得 Ansi 可用于人名识别、地名识别、组织机构名识别、多级词性标注、 关键词提取、指纹提取等领域，支持行业词典、 用户自定义词典。
+install.packages("rJava")
+Sys.setenv(JAVA_HOME="C:/Program Files/Java/jre1.8.0_45")
+从 https://r-forge.r-project.org/R/?group_id=1054 下载zip包，然后本地安装
+library(rJava)
+library(Rwordseg)
+
+> txt<-"江州市长江大桥，参加了长江大桥的通车仪式。" 
+> segmentCN(txt)
+ [1] "江"   "州"   "市"   "长江" "大桥" "参加" "了"   "长江" "大桥" "的"   "通车"
+[12] "仪式"
+
+jiebaR是“结巴”中文分词（Python）的R语言版本，支持最大概率法（Maximum Probability），隐式马尔科夫模型（Hidden Markov Model），索引模型（QuerySegment），混合模型（MixSegment）共四种分词模式，同时有词性标注，关键词提取，文本Simhash相似度比较等功能。项目使用了Rcpp和CppJieba进行开发。目前托管在GitHub上
+安装jiebaR
+install.packages("devtools")
+install_github("qinwf/jiebaR")
+或者
+install.packages("jiebaR")
+ library(jiebaR)
+cutter = worker()
+word="江州市长江大桥，参加了长江大桥的通车仪式。" 
+cutter <= word
+mpseg=worker(type="mp")
+hmmseg=worker(type="hmm")
+
+> library(jiebaR)
+载入需要的程辑包：jiebaRD
+> cutter = worker()
+> cutter <=txt
+[1] "江州"     "市长"     "江大桥"   "参加"     "了"       "长江大桥" "的"      
+[8] "通车"     "仪式"    
+> hmmseg<=txt
+[1] "江州市"   "长江大桥" "参加"     "了"       "长江大桥" "的"       "通车"    
+[8] "仪式"    
+> mpseg<=txt
+[1] "江州"     "市长"     "江大桥"   "参加"     "了"       "长江大桥" "的"      
+[8] "通车"     "仪式" 
+
+t提取关键字
+> keys=worker("keywords",topn=1)
+> keys<=txt
+   22.3853 
+"长江大桥" 
+
+apply/lappy/sapply/tapply/mapply 对对象的每个值使用函数                  
+ aggregate(mtcars[,c(1,3)],by=list(cyl,gear),FUN=mean) 分组使用函数
+ 
+R
+ 里面都是对象 ，有 mode(obj) length(obj)等基本方法  ，可以通过class(obj)来看对象
 对象类型有
 "numeric", "logical", "character" or "list", but "matrix", "array", "factor" and "data.frame" 
 读取文件
-
+从获得细节上来看 mode()<class()<typeof() 
 dat = read.csv("Stock_Bond.csv")
-
-
+sapply(cvar,function)可以对变量用一个函数
+read.table 读取txt文件
+xlsx包可以用来读取207 excel 
 生成序列 
 seq(-pi, pi, by=)
 
@@ -13,7 +173,7 @@ R开N次方  x^(1/n)   Pi =pi
 安装新的包
 install.packages("Ecdat")
 install.packages("quadprog")
-> x <- array(1:20, dim=c(4,5))    变成4行5列的，以列优先进行处理
+> x <- array(1:20, dim=c(4,5))    变成4行5列的，以列优先进行处理  R里面矩阵缺省是列优先填充
 > x
      [,1] [,2] [,3] [,4] [,5]
 [1,]    1    5    9   13   17
@@ -21,7 +181,15 @@ install.packages("quadprog")
 [3,]    3    7   11   15   19
 [4,]    4    8   12   16   20
 > 
+矩阵命名 
+rownames(b)<-c('row1','row2','row3')
+colnames(b)<-c('row1','row2','row3')
+m1=rbind(m1,c(1,2,3))  对矩阵进行行扩展， cbind是对矩阵进行列扩充
+> x1=c(1:27)
+> b1=array(x1,dim=c(3,3,3))
+array是多维数组
 
+storage.mode(b1) 查看存储方式 
 
  t(A) transpose(转置）
  
@@ -43,6 +211,11 @@ install.packages("quadprog")
   Lst2 <- list(name2="Fred", wife2="Mary", no.children2=3,              child.ages=c(4,7,9))
 
   Lst$name  或者  Lst[[1]]  Lst["name"]
+  list再增加属性  Lst<-c(Lst,list(mylist=c("lis1","list2")))
+  
+  dataframe访问 
+  df[1,]
+  df$colname
   
   attach(x) 把 data.frame的变量变成公共变量，可以直接引用
   detach() 取消attach 
@@ -52,17 +225,26 @@ install.packages("quadprog")
    load R 内置 data data(infert)
      data(package="rpart")
      
-     hist(eruptions)
+     if (condition) {expre1}　else if (condition2) {expr2} else {expr3} 
      
-     for (name in expr_1) 
+     y<-"apple" 
+     switch(y,f1="bana",f2="orange",f3="apple")
+     
+     
+     hist(eruptions)
+     varx<-c(1,2,5)
+     for (name in c) 
      {expr_1;
-     expr_2}
+     expr_2;
+     cat(name^2);  //也可以使用print输出
+     
+     }
      
      repeat expr
      while (condition) expr  支持 break/ next 
      
      定义 function ，返回
-     addFun=function(x,y) {c=x*2+y;x=x+1;c}
+     addFun=function(x,y) {c=x*2+y;x=x+1;return(c);}
      fun1 <- function(data, data.frame, graph=TRUE, limit=20) { … }
      
      函数内的变量作用域只在函数内 ,在函数内对全局变量赋值 需要 <<-  x<<-x+1 
@@ -113,7 +295,8 @@ methods(class="data.frame")
 
 rJava
 Rserve (integration with rJava is discussed in R Tutorial: How to integrate R with Java using Rserve tutorial)
-rJava is used as an API i.e. it does not involve any client server communication. The program using rJava directly uses it to execute the R code. On the other hand Rserve works in a client server manner. 
+rJava is used as an API i.e. it does not involve any client server communication. The program using rJava directly uses it to execute the R code. 
+On the other hand Rserve works in a client server manner. 
 
 Rserve支持多线程的客户连接(linux）下
 

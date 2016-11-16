@@ -1,3 +1,9 @@
+代码质量检查
+
+Monitor FindBugs, Checkstyle, PMD, Warnings and TODOs
+ Emma  测试覆盖率 检查
+ https://www.cloudbees.com/blog/emma-plugin-jenkins-easy-code-coverage-reports
+ 
 java -jar jenkins.war --httpPort=1080 
 
 hosts文件需要有对应的 名字 ip
@@ -8,4 +14,4 @@ Please use the following password to proceed to installation:
 182837ed046e4636a92f52db533a1984
 
 
-iptables -I  INPUT -p tcp --dport 2377 -j ACCEPT
+iptables -I  INPUT -p tcp --dport 1080 -j ACCEPT

@@ -1,3 +1,9 @@
+代码质量检查
+
+Monitor FindBugs, Checkstyle, PMD, Warnings and TODOs
+ Emma  测试覆盖率 检查
+ https://www.cloudbees.com/blog/emma-plugin-jenkins-easy-code-coverage-reports
+ https://www.cloudbees.com/jenkins/about/code-quality-analysis
 java -jar jenkins.war --httpPort=1080 
 
 hosts文件需要有对应的 名字 ip
