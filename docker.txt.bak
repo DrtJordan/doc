@@ -2,7 +2,7 @@
 Register 
 docker run -d -p 5000:5000 --restart=always --name registry   -v 、/app/docker/data:/var/lib/registry   registry:2
 和本地时间同步
--v /etc/localtime 
+ -v /etc/localtime:/etc/localtime 
 把现有的Local image打上标签 
 docker tag ubuntu localhost:5000/myfirstimage
 然后push到 register 
@@ -356,14 +356,21 @@ Twitter，几乎完全是在Mesos上面运行的
 Apache Mesos从研究论文开始，2010年成为Apache孵化项目，后来从ASF“毕业”，并于2013年建立商业实体Mesosphere。
 
 
-Docker可以使用COW（copy-on-write）文件系统来缓存Dockerfile指令， 类似于LVM的快照，
+Docker可以使用COW（copy-on-write）文件系统来缓存Dockerfile指令， 类似于LVM的快照， 
+联合文件是把不通目录来源的文件统一以一个目录的方式展示，分层，需要修改到下面层的时候，会copy一份出来 最上层的container 层是可读写的
+Docker uses a copy-on-write technology with both images and containers. 
+This sharing of image layers is what makes Docker images and containers so space efficient.
+docker能共享iamge,不用每个都加载一次
+OverlayFS supports page cache sharing. This means multiple containers accessing the same file can share a single page cache entry
+Btrfs does not support page cache sharing. This means that n containers accessing the same file require n copies to be cached
+
 到现在仍然仅仅支持满是问题的AuFS（AnotherUnionFS）。
 支持下面的存储方式(支持层级的文件系统 union在一起）
 AuFS最稳定，最早
-Devicemapper redhat/centos 专用
-overlayfs      新一代，快，稳定
-btrfs 不太稳定
-ZFS 也不太稳定 
+Devicemapper redhat/centos 专用  块复制，但是底层的文件不share内存 ，适合io密集型
+overlayfs      新一代，快，稳定 有 overlyafs2 ，修改的时候是整个文件copy，所以大文件性能差，不适合密集io
+btrfs 不太稳定  块复制，但是底层的文件不share内存 
+ZFS 也不太稳定  块复制，但是底层的文件不share内存  
 
 
 代码是用于调试，代码是不应该在image里面的，用volume挂载合适
