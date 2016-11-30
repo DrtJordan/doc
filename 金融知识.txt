@@ -1,0 +1,71 @@
+Delta One是将一系列的衍生品打包形成的一种高级金融衍生品，该衍生品紧密追踪标的资产的走势，让持有者可以很轻易地建立多种资产类别头寸，其构成包括股权互换、远期、期货、ETF、远期利率协议等等。但是它是一种线性的，具有对称回报的衍生品，所以期权以及内嵌期权的产品不能用来设计Delta One。
+
+对于金融衍生品来说，Delta (Δ)是用来度量该衍生品对标的资产价格变化的敏感度。
+
+Delta (Δ) = 衍生品价格的变化幅度 / 标的资产变化幅度
+
+从上式可知，当Δ=1时，衍生品价格的变化幅度将等于标的资产变化幅度。
+
+该产品之所以起名 Delta One 是想强调衍生品价格的变动幅度与标的资产几乎是完全一致的。
+
+组成Delta的金融衍生品往往都带有很大的杠杆，决定了组合而成的Delta One 也带有很高的杠杆，加上他与标的资产的高度相关性，当你想做多/做空某种资产，但是又没有便利的途径或者没有足够的资金的时候，Delta One无疑是个非常好的选择。
+Delta One 设计之初是用来对冲一些系统性风险的，投行最初是想从衍生品和标的资产的微弱差价中赚取利润，但随着市场的成熟，这种差价越来越小，投行便开始跟客户对赌，甚至与其他投行对赌。
+
+alpha指超额收益， Beta指市场正常收益
+
+互换的目的在于降低资金成本和利率风险
+
+互换可分为利率互换、货币互换、信用违约互换、商品互换、股票互换五种。
+其中以名义本金衡量，利率互换是互换市场中规模最大的产品，占去 83%的市场规模，且仍在逐年增加中
+股票收益互换还能有效实现股票市场的风险转移与交易复制。如图 3-4 中所述，名义本金相同的情况下，不将收益轧差，
+投资者 A、B 分别将各自所持股票 a、b 收益完全支付给对方，不考虑交易费用，实质上相当于 A 持有股票 b，B 持有股票 a。
+这种所有权不转移但风险转移的方式能帮助投资者跨过部分市场的监管，间接完成本受监管限制的交易。例如开户未满两年的投资者希望能进入创业板市场，他就可以买入挂钩创业板股票收益互换合约，支付一定的固定收益，虽然有一定的成本支出，但可以在不符合开户要求的前提下获得创业板收益。
+
+
+信用衍生产品可以粗略分为三大类：信用违约互换CDS（Credit Default Swap）、总收益互换（Total Return Swap）、信用期权（Credit Option）。
+
+
+
+
+总收益互换（Total return swap）
+
+假设A 有较高评级，它在市场上能够得到的利率分别是固定利率11%，浮动利率Libor. 
+假设B 评级较低，它在市场上能够得到的利率分别是固定利率12.5%，浮动利率Libor+0.5%. 
+
+可以看到，在两个市场A都比B要有优势，但是A在固定利率市场的优势（11%-12.5%=1.5%）要比浮动利率市场的优势（0.5%）大。这便成为A在固定利率市场上的比较优势。如果这时A想要付浮动利率（原因可能是A对未来利率的预测或本身经营情况的需要）则A便产生了利率互换的意愿，B反之亦然。 
+
+假设A借浮动B借固定，没有互换发生，则两家公司总利率为Libor+12.5% 
+假设A借固定B借浮动，两家公司总利率为Libor加11.5%。 
+这少了的1%就是利用A和B各自的比较优势获得的。这1%可以按照双方协定分配，假设平分： 
+
+A借固定11%，B借浮动Libor+0,5%； 
+A向B支付Libor，B向A支付11.5%。 
+A最终付Libor-0.5%，B最终付12%， 
+
+双方各得到0.5%的好处。
+
+
+
+
+风险敞口（risk exposure）指未加保护的风险，即因债务人违约行为导致的可能承受风险的信贷余额， 指实际所承担的风险，一般与特定风险相连
+
+
+中文意思翻译叫做对冲基金中介人，为刚成立的对冲基金提供法律顾问，IT平台支持，为已有的对冲基金提供资产托管，leverage, securities lending, securities leverage等服务。在英美投行中属于小众的部门，每年招的人都很少。全球prime brokerage industry 竞争很激烈，领头有高盛和摩根斯坦利，每年的行业利润有几十亿美元，是一个revenue making industry， 很多人以为是后台，其实是front office pay。
+
+Prime brokerage is the generic name 
+for a bundled package of services offered by investment banks and securities firms to 
+hedge funds and other professional investors needing the ability to borrow securities and cash to be able to invest on a netted basis and achieve an absolute return. The prime broker provides a centralized securities clearing facility for the hedge fund so the hedge fund's collateral requirements are netted across all deals handled by the prime broker. These two features are advantageous to their clients.
+The prime broker benefits by earning fees ("spreads") on financing the client's margined long and short cash and security positions, and by charging, in some cases, fees for clearing and other services. It also earns money by rehypothecating the margined portfolios of the hedge funds currently serviced and charging interest on those borrowing securities and other investments.[1]
+
+
+资产挂钩票据（英文：Equity-Linked Note，简称ELN）是一种包含股票成分，并以赚取高利息为招徕的短线衍生性金融商品，
+所以俗称高息票据。它是一种场外期权，组成部分包括一张无风险的票据或债券和一个与股票挂钩的股票期权。投资者可选定某一只蓝筹股之ELN，
+由银行订出行使价、结算日、到期日及息率等条款。到期日一般介乎1至6个月，而息率一般为年息10至30厘不等，要视乎挂钩股票的波动及风险等因素而定。
+当票据到期时，如被挂钩股票的股价高于或等于行使价，票据持有人须收回票据面值，赚取利息；如股价低于行使价，票据持有人须以行使价买入股份。
+
+
+
+An Equity-Linked Note (ELN) is a debt instrument, usually a bond, that differs from a standard fixed-income security in that the final payout is based on the return of the underlying equity, which can be a single stock, basket of stocks, or an equity index. A typical ELN is principal-protected, i.e. the investor is guaranteed to receive 100% of the original amount invested at maturity but receives no interest.
+Usually, the final payout is the amount invested, times the gain in the underlying stock or index times a note-specific participation rate, which can be more or less than 100%. For example, if the underlying equity gains 50% during the investment period and the participation rate is 80%, the investor receives 1.40 dollars for each dollar invested. If the equity remains unchanged or declines, the investor still receives one dollar per dollar invested (as long as the issuer does not default). Generally, the participation rate is better in longer maturity notes, since the total amount of interest given up by the investor is higher.
+Equity-linked note can be thought of as a combination of a zero-coupon bond and an equity option. Indeed, the issuer of the note usually covers the equity payout liability by purchasing an identical option. In some equity-linked notes, the payout structure is more complicated, resembling anexotic option. Equity-linked notes are one type of Structured product .
+Most equity-linked notes are not actively traded on the secondary market and are designed to be kept to maturity. However, the issuer or arranger of the notes may offer to buy back the notes. Unlike the maturity payout, the buy-back price before maturity may be below the amount invested in first place.

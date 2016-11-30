@@ -1,0 +1,161 @@
+glusterfs
+
+yum配置代理服务器 
+/etc/yum.conf
+proxy=http://192.168.8.26:8080
+
+安装xfs
+yum install xfsprogs xfsdump        xfsprogs-devel xfsprogs-qa-devel       
+  mkfs.xfs -i size=512 /dev/vdb1
+  mkdir -p /export/sdb1 
+   mount -t xfs /dev/vdb1 /export/sdb1  
+   mkdir -p /export/sdb1/brick
+
+/dev/vdb1 /export/sdb1 xfs defaults 0 0
+   
+安装 glusterfs
+下载rpm包，要求所有版本都一致，不要用centos里面带的，会由于版本不一致出现问题
+
+http://bits.gluster.com/gluster/glusterfs/3.4.2qa5/x86_64/
+
+启动 /etc/init.d/glusterd start
+
+打开防火墙的限制
+iptables -I INPUT 1     -j ACCEPT
+
+优化
+I found that setting noatime and using the nfs mount with gluster 3.2 yeilded a 48x performance improvement on a php webapp
+increasing io-threads for improved performance
+We used glusterfsd in porduction since one year now with no real problem.
+but very slow, so in the middle of 2013, we’ve used this :
+http://raobharata.wordpress.com/2012/10/29/qemu-glusterfs-native-integration/
+to integrate native glusterfs in qemu and not the using of fuse anymore. 
+GlusterFS with its pluggable translator model can serve as a flexible storage backend for QEMU. QEMU has to just talk to GlusterFS and GlusterFS will hide different file systems and storage types underneath. Various GlusterFS storage features like replication and striping will automatically be available for QEMU. Efforts are also on to add block device backend in Gluster via Block Device (BD) translator that will expose underlying block devices as files to QEMU. This allows GlusterFS to be a single storage backend for both file and block based storage types.
+
+添加对方
+gluster peer probe kvm4
+检查peer状态
+gluster peer status
+删除peer 
+gluster peer detach server
+
+gluster volume create gv0 replica 2 kvm3:/export/sdb1/brick kvm4:/export/sdb1/brick
+
+查看 volume信息
+gluster volume info
+
+Volume Name: gv0
+Type: Replicate
+Volume ID: 3f8559ff-885b-4691-8084-8e02440ee5a1
+Status: Created
+Number of Bricks: 1 x 2 = 2
+Transport-type: tcp
+Bricks:
+Brick1: kvm3:/export/sdb1/brick
+Brick2: kvm4:/export/sdb1/brick
+
+gluster volume status
+Status of volume: gv0
+Gluster process                                         Port    Online  Pid
+------------------------------------------------------------------------------
+Brick kvm3:/export/sdb1/brick                           49152   Y       19414
+Brick kvm4:/export/sdb1/brick                           49152   Y       20123
+NFS Server on localhost                                 2049    Y       19426
+Self-heal Daemon on localhost                           N/A     Y       19430
+NFS Server on kvm4                                      2049    Y       20314
+Self-heal Daemon on kvm4                                N/A     Y       20322
+
+
+启动卷 监听 24007 port
+gluster volume start gv0
+
+配置信息缺省在 /var/lib/glusterd/
+自动启动
+chkconfig glusterd on
+
+客户端配置
+安装 glusterfs-3.3.0-1.x86_64.rpm glusterfs-fuse-3.3.0-1.x86_64.rpm glusterfs-rdma-3.3.0-1.x86_64.rpm(infiniband)
+从源代码安装
+./configure
+可以通过nfs/samba mount但是不带failover功能，必须另外配置
+
+mount -t glusterfs -o backupvolfile-server=kvm4,fetchattempts=2, log-level=WARNING,log-file=/var/log/gluster.log kvm3:/gv0 /mnt/glusterfs/
+
+GlusterFS native FUSE client is terrible with large amount of small files
+小文件适合用 NFS
+
+How ever if the crash happened in the middle of your application writing data, the data in transit may be lost. All file systems are vulnerable to such loses
+That that for a write-heavy load the native client will perform better.
+
+port 
+24007 – Gluster Daemon
+24008 – Management
+24009 and greater (GlusterFS versions less than 3.4) OR
+49152 (GlusterFS versions 3.4 and later) - Each brick for every volume on your host requires it’s own port. For every new brick, one new port will be used starting at 24009 for GlusterFS versions below 3.4 and 49152 for version 3.4 and above. If you have one volume with two bricks, you will need to open 24009 – 24010 (or 49152 – 59153).
+34865 – 34867 – this is required if you by the Gluster NFS service.
+The following ports are TCP and UDP:
+
+111 – portmapper
+
+iperf 测试网络性能
+iozone/bonnie++ (http://www.coker.com.au/bonnie++/)  io性能
+
+/usr/local/sbin/bonnie++  -D 
+
+
+在Client端和Server端都是需要做一些优化的，主要是增加io-cache，write-behind，quick-read，io-threads这些选项
+其中对性能提高最大的应该是write-behind，它相当于是个异步写
+
+下载GlusterFS源码编译rpm包。
+# wget http://ftp.gluster.com/pub/gluster/glusterfs/2.0/LATEST/glusterfs-2.0.0.tar.gz
+# tar -xvzf glusterfs-2.0.0.tar.gz
+# cp glusterfs-2.0.0.tar.gz /usr/src/redhat/SOURCES/
+# rpmbuild -bb glusterfs-2.0.0/glusterfs.spec
+# cp /usr/src/redhat/RPMS/i386/glusterfs* .
+# rm glusterfs-debuginfo-2.0.0-1.i386.rpm
+# rpm -ivh glusterfs-*.rpm
+
+
+启动出现错误
+[2014-02-25 14:03:01.382170] E [mem-pool.c:349:mem_get0] (-->gluster(cli_rpc_init+0x30) [0x4085d0] (-->/usr/lib64/libglusterfs.so.0(dict_new+0xb) [0x7f876a1771cb] (-->/usr/lib64/libglusterfs.so.0(get_new_dict_full+0x25) [0x7f876a177085]))) 0-mem-pool: invalid argument
+rpm -Uvh 
+升级安装 glusterfs-api-3.4.2-1.el6.x86_64.rpm 和 glusterfs-libs-3.4.2-1.el6.x86_64.rpm
+
+volume create: gv0: failed: /export/sdb1/brick or a prefix of it is already part of a volume
+
+删除目录，然后重建，就ok了
+
+错误 
+Unable to self-heal contents of '<gfid:00000000-0000-0000-0000-000000000001>' (possible split-brain
+
+删除该文件 然后 heal gluster volume heal gv0 info
+find . -name "00000000-0000-0000-0000-000000000001"
+
+
+
+
+错误
+posix-aio.c:367: error: (Each undeclared identifier is reported only once
+
+
+性能测试对比
+FUSE mount 	qemu-system-x86_64 –enable-kvm –nographic -smp 4 -m 2048 -drive file=/mnt/F17,if=virtio,cache=none => /mnt is GlusterFS FUSE mount point
+GlusterFS block driver in QEMU (FUSE bypass) 	qemu-system-x86_64 –enable-kvm –nographic -smp 4 -m 2048 -drive file=gluster://bharata/test/F17,if=virtio,cache=none
+Base (VM image accessed directly from brick) 	qemu-system-x86_64 –enable-kvm –nographic -smp 4 -m 2048 -drive file=/test/F17,if=virtio,cache=none => /test is brick directory
+
+http://raobharata.wordpress.com/2012/10/29/qemu-glusterfs-native-integration/
+http://www.techforce.com.br/news/linux_blog/glusterfs_tuning_small_files#.U0u4QqLDuTo
+FIO READ numbers
+	                   									         aggrb (KB/s) 	minb (KB/s) 	maxb (KB/s)
+FUSE mount            										     15219 	    				3804     	5792
+QEMU’s GlusterFS block driver (FUSE bypass) 	  39357 	          9839 			12946
+Base 																						43802 						10950 		12918
+
+
+FIO WRITE numbers
+																							aggrb (KB/s) 	minb (KB/s) 	maxb (KB/s)
+FUSE mount 																		24579 					6144 					8423
+QEMU’s GlusterFS block driver (FUSE bypass) 	42707 					10676 				17262
+Base 																					42393 					10598 				15646
+
+

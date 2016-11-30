@@ -1,0 +1,91 @@
+agilfant 
+Tasks describe how a particular story will be implemented, whereas a story describes
+what will be implemented.
+product包含project,然后project包含story/task
+
+select * from issues where  id=519  key subject,description
+select * from journals where  journalized_id=519  key  notes
+select *From issues where lower(description) like '%delete%from%t_ca_ssi%'
+select *From journals where notes like '%@rds_ng_prod%'
+
+20121126 重新恢复到 192.168.193.133 /ciccdev/oracle/redmine/redminev2
+
+安装服务器 root/redmine
+
+下载集成安装包
+http://bitnami.org/files/stacks/redmine/1.4.1-0/bitnami-redmine-1.4.1-0-linux-installer.bin
+然后
+chmod 755 bitnami-redmine-1.4.1-0-linux-installer.bin
+安装
+启动脚本
+ 			 
+ 			 ./ctlscript.sh (start|stop|restart)
+       ./ctlscript.sh (start|stop|restart) mysql
+       ./ctlscript.sh (start|stop|restart) apache
+       ./ctlscript.sh (start|stop|restart) redmine
+       ./ctlscript.sh (start|stop|restart) subversion
+
+MySQL admin user is called 'root', and its password is also one
+you set at installation time.
+mysql   :    root/admin
+redmine user : root/admin
+
+mysql 连接 mysql -u root -p --socket=/ciccdev/oracle/redmine/redminev2/mysql/tmp/mysql.sock 
+ mysql -u root -p   --port=3308 -h 192.168.193.133
+database用的是 bitnami_redmine
+
+
+然后修改  /home/redmine/apps/redmine/config/configuration.yml
+
+email_delivery:
+    delivery_method: :smtp
+    smtp_settings:
+      tls: false
+      address: 192.168.20.43
+      port: 25
+      domain: cicc.com.cn
+      authentication: :none
+      #user_name: "iti_alert"
+      #password: "iti_alert"
+      
+
+备份
+备份放在 133上
+
+# Attachments
+rsync -a /home/redmine/apps/redmine/files  /home/redmine/backup
+
+GRANT select on  *.* TO 'backup'@'localhost' IDENTIFIED BY 'backup_v';
+GRANT reload  on  *.*  to 'backup'@'localhost' IDENTIFIED BY 'backup_v';
+GRANT REPLICATION CLIENT  on *.* to  'backup'@'localhost' IDENTIFIED BY 'backup_v';
+
+mysqldump -u backup --password=backup_v -h 192.168.129.195 --flush-logs --master-data=2  --single-transaction  --all-databases  2>$errorlog > $backupfile
+
+
+crontab 
+*/5 * * * * sh  /home/redmine/script/switchlog.sh
+
+cat  /home/redmine/script/switchlog.sh               
+
+mysqladmin -u backup --password=backup_v  flush-logs
+
+full script to backup:
+
+#!bin/bash
+#log insert to database
+cd  /fmnp/scripts/redmine
+
+backupfile=/ciccdev/backup2/redmine/mysqlbackup/redmine_full_`date +%Y"-"%m"-"%d"_"%H":"%M":"%S`.sql
+log=log/redmine_log_`date +%Y"-"%m"-"%d"_"%H":"%M":"%S`.log
+errorlog=log/redmin_error_log_full_`date +%Y"-"%m"-"%d"_"%H":"%M":"%S`.log
+date >> $log
+echo "start to full backup of redmine@192.168.129.195" >> $log
+mysqldump -u backup --password=backup_v -h 192.168.129.195 --flush-logs --master-data=2  --single-transaction   --all-databases  2>$errorlog > $backupfile
+date >> $log
+errorsize=`du -s $errorlog | cut -f1`
+rsync -a root@192.168.129.195:/home/redmine/ /ciccdev/backup2/redmine/filebackup >>$log
+find /ciccdev/backup2/redmine/mysqlbackup -mtime +20 -name "*.sql" -exec rm -rf {} \;
+
+恢复
+
+mysql --socket=mysql/tmp/mysql.sock -u root -p < /ciccdev/backup2/redmine/mysqlbackup/redmine_full_2012-11-22_01\:30\:01.sql 

@@ -1,0 +1,89 @@
+webflow
+spring配置中引入别的配置文件
+
+<import resource="webmvc-config.xml"/>
+
+Spring Web Flow 的基本元素
+
+Flow 可看作是客户端与服务器的一次对话（ conversation ）。
+ Flow 的完成要由分多个步骤来实现，在 Spring Web Flow 的语义中，
+ 步骤指的就是 state 。 Spring Web Flow 提供了五种 state ，
+ 分别是 Action State 、 View State 、 Subflow State 、 Decision State 、 End State ，
+ 这些 state 可用于定义 flow 执行过程中的各个步骤。除了 End State 外，其他 state 都可以转换到别的 state ，
+ 一般通过在 state 中定义 transition 来实现到其他 state 的转换，转换的发生一般由事件（ event ）来触发。
+
+
+针对 Java Servlet 规范中的这个缺陷， Spring Web Flow 2.0 中提供了以下两种范围：
+
+  flow 范围。此范围内的对象在 flow 开始时创建， flow 结束时销毁，在 flow 定义文件中可通过“ flowScope ”变量名来访问。
+   conversation 范围。此范围内的对象与 flow 范围对象基本相似，唯一不同在于 conversation 范围内的对象所在的 flow 如果调用了其他 subflow ，那么在 subflow 中也可访问该对象。
+   flow 适合任何比较复杂的、有状态的、需要在多个页面之间跳转的业务过程 
+   
+   FlowRegistry
+
+FlowRegistry 是存放 flow 的仓库，每个定义 flow 的 XML 文档被解析后，都会被分配一个唯一的 id ，并以 FlowDefinition 对象的形式存放在 FlowResigtry 中 
+
+  <webflow:flow-registry id="flowRegistry" flow-builder-services="builder">   
+    <webflow:flow-location path="/WEB-INF/login-webflow.xml" id="login"/>     
+  </webflow:flow-registry>     
+  
+  FlowExecutor
+
+FlowExecutor 是 Spring Web Flow 的一个核心接口，启动某个 flow ，都要通过这个接口来进行。从配置角度来说，只要保证有个 FlowExecutor 就可以了， Spring Web Flow 的默认行为已经足够。
+  <webflow:flow-executor id="flowExecutor" flow-registry="flowRegistry">
+    <webflow:flow-execution-attributes>
+      <webflow:always-redirect-on-pause value="false"/>
+      <webflow:redirect-in-same-state value="false" />
+    </webflow:flow-execution-attributes>
+    <webflow:flow-execution-listeners>
+      <webflow:listener ref="terminateWebSessionListener" />
+    </webflow:flow-execution-listeners>
+  </webflow:flow-executor>
+      
+在默认配置情况下，如果客户端发送了如下URL请求：
+
+http://localhost:8080/CartApp/spring/shopping
+
+则从 Spring Web Flow 的角度来看，这个 URL 就表示客户想要执行一个 id 为“ shopping ”的 flow ，于是就会在 FlowRegistry 中查找名为“ shopping ”的 flow，由FlowExecutor负责执行。
+
+Spring Web Flow 2.0 提供了两种方案可供选择。第一种方案是自己编写实现了 FlowHandler 接口的类，让这个类来实现这个功能。第二种方案是使用一个现成的叫做 FlowController 的控制器。
+
+<bean id="flowController" class="org.springframework.webflow.mvc.servlet.FlowController">
+  <property name="flowExecutor" ref="flowExecutor"/>
+</bean>
+
+cas的配置
+
+<bean id="flowUrlHandler" class="org.jasig.cas.web.flow.CasDefaultFlowUrlHandler"/>
+ <bean class="org.springframework.webflow.mvc.servlet.FlowHandlerAdapter"
+        p:flowExecutor-ref="flowExecutor"
+        p:flowUrlHandler-ref="flowUrlHandler"/>
+        
+        
+<action-state> 是专为执行业务逻辑而设的 state 。如果某个应用的业务逻辑代码即不适合放在 transition 中由客户端来触发，
+也不适合放在 Spring Web Flow 自定义的切入点，那么就可以考虑添加 <action-state> 元素专用于该业务逻辑的执行
+
+
+<action-state id="addToCart">
+  <evaluate expression="cart.addItem(productService.getProduct(productId))"/>
+  <transition to="productAdded"/>
+</action-state>
+  
+  on start之后，进入 decision-state 根据 decision-state的判断结果进行调整
+  action-state就是被人调用的
+  
+  这种方式定义的evaluate会在 transition 之前做完
+  <transition on="submit" to="bookingConfirmed">
+    <evaluate expression="bookingAction.makeBooking(booking, messageContext)" />
+</transition>
+
+  这种方式定义的evaluate 会根据 evaluate 执行结果进行 transition
+
+ <action-state id="warnPassRedirect">                                  
+                <evaluate expression="generateServiceTicketAction" />         
+                <transition on="success" to="pwdWarningPostView" />           
+                <transition on="error" to="generateLoginTicket" />            
+                <transition on="gateway" to="gatewayServicesManagementCheck" />
+        </action-state>     
+        
+ 当进入view state之后，流程暂停 然后等待      

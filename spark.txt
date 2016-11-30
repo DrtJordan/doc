@@ -1,0 +1,37 @@
+spark
+安装 
+  ./sbt/sbt assembly
+  
+  storm(分布式容错实时流式处理框架) spark(分布式流式处理框架)
+  storm trident(事物)能够保证严格的 exactly once 逻辑，spark就是exactly once
+  storm和 kafka集成的更好，spark和hdfs集成更好
+  storm 单机能处理约10,000 messasge ,spark stream能处理400,000message/s
+  storm换成了netty(0.9原来是zeromq)
+  storm重度使用ZK,可能会成为一个瓶颈 ，ZK每次都会发生物理IO，所以最好使用SSD
+  storm 和kafka一起使用的时候，spout 并行度取决于kafka
+  storm支持按照fields分组到特定的task处理
+
+spark速度比hadoopy快10-100倍，使用hdfs作为存储
+RDD=Resilient Distributed Dataset  可以认为是数据库的表 支持transformation(返回一个新的rdd)和 Action 返回一个计算的值 支持partion
+SPARK SQL　DataFrame是一个分布式的，按照命名列的形式组织的数据集合。DataFrame基于R语言中的data frame概念，与关系型数据库中的数据库表类似。Spark SQL提供SQLContext封装Spark中的所有关系型功能。可以用之前的示例中的现有SparkContext创建SQLContext。下述代码片段展示了如何创建一个SQLContext对象。
+  流工作的方式是将数据流按照预先定义的间隔(N秒)划分为批(称微批次)然后将每批数据视为一个弹性分布式数据集(Resilient Distributed Datasets，RDDs)。随后我们就可以使用诸如map、reduce、reduceByKey、join和window这样的操作来处理这些RDDs。这些RDD操作的结果会以批的形式返回。通常我们会将这些结果保存到数据存储中以供未来分析并生成报表与面板，或是发送基于事件的预警。Dstream(离散流，Discretized Stream，的缩写)是Spark流中最基本的抽象，它描述了一个持续的数据流。DStream既可以从诸如Kafka、Flume与Kinesis这样的数据源中创建，也可以对其他DStream实施操作。在内部，一个DStream被描述为一个RDD对象的序列。与Spark中的Spark上下文(SparkContext)相似，流上下文(StreamingContext)是所有流功能的主入口。
+流上下文拥有内置方法可以将流数据接收到Spark流程序中。
+使用该上下文，我们可以创建一个描述基于TCP数据源的流数据的DStream，可以用主机名与端口号指定TCP数据源
+推荐引擎一般有两种算法实现：基于内容过滤和协同过滤。
+协调过滤的解决方案比其他算法要好，Spark MLlib实现了ALS协同过滤算法。Spark MLlib的协同过滤有两种形式：显式反馈和隐试反馈。显式反馈是基于用户购买的商品（比如，电影），显式反馈虽好，但很多情况下会出现数据倾斜；隐试反馈是基于用户的行为数据，比如，浏览、点击、喜欢等行为。隐试反馈现在大规模应用在工业上进行数据预测分析，因为其很容易收集各类数据。
+另外有基于模型的方法实现推荐引擎，这里暂且略过。神经网络技术被用来进行销售点的异常监测。比如像PayPal等公司使用不同的机器学习算法（比如，线性回归，神经网络和深度学习）来进行风险管理。
+
+  2015年6月，Spark 1.4发布引入R语言作为Spark的接口。R语言接口在问世一个多月之后的调查中就有18%的用户使用。
+  Spark目前支持四种语言的接口，除了上面提到的R语言的使用率以外，Python的使用率也有很大提升，从2014年的38%提升到2015年的58%；而Scala接口的使用率有所下降，从84%下降到71%。同时Spark的部署环境也有所变化，51%的部署在公有云上，48% 使用standalone方式部署，而在YARN上的只有40%了。
+  腾讯的Spark规模到了8000+节点，日处理数据1PB+。阿里巴巴运行着目前最长时间的Spark Job：1PB+数据规模的Spark Job长达1周的时间。百度的硅谷研究院也在探索Spark+Tachyon的应用场景。
+
+Spark MLlib的ALS算法已经在很多互联网公司用于其推荐系统中。基本上主流的互联网公司都已经部署了Spark平台并运行了自己的业务。上面说的更多的互联网的应用，实际上Spark的应用场景有很多。在Databricks公司的调查中显示主要应用依次是：商务智能、数据仓库、推荐系统、日志处理、欺诈检测等。
+Apache Kylin是一个开源的分布式分析引擎，提供Hadoop之上的SQL查询接口及多维分析（OLAP）能力以支持超大规模数据，最初由eBay Inc. 开发并贡献至开源社区
+在eBay，已经上线两个生产环境平台，有着诸多的应用，包括用户行为分析、点击分析、商户分析、交易分析等应用
+
+应用案例
+prada 每件衣服有RFID，可以精确跟踪每个用户试衣时间
+塔基特百货通过分析用户购买确定是否怀孕
+
+  
+  

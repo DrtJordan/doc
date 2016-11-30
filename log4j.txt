@@ -1,0 +1,162 @@
+SL4J可以通过占位符来避免自己拼字符串
+比如
+log4j的写法 logger.debug("Processing trade with id: " + id + " symbol: " + symbol);
+slf4j       logger.debug("Processing trade with id: {} and symbol : {} ", id, symbol);
+而且延迟做真正的字符合并，如果 log 没有打开的话，就不会做字符合并，效率高一点
+设置参数文件
+
+
+输出格式说明
+%c 输出日志信息所属的类的全名
+%d 输出日志时间点的日期或时间，默认格式为ISO8601，也可以在其后指定格式，比如：%d{yyy-MM-dd HH:mm:ss }，输出类似：2002-10-18- 22：10：28
+%f 输出日志信息所属的类的类名
+%l 输出日志事件的发生位置，即输出日志信息的语句处于它所在的类的第几行
+%m 输出代码中指定的信息，如log(message)中的message
+%n 输出一个回车换行符，Windows平台为“rn”，Unix平台为“n”
+%p 输出优先级，即DEBUG，INFO，WARN，ERROR，FATAL。如果是调用debug()输出的，则为DEBUG，依此类推
+%r 输出自应用启动到输出该日志信息所耗费的毫秒数
+%t 输出产生该日志事件的线程名
+
+
+log4j.rootLogger=debug, stdout, R
+
+log4j.appender.stdout=org.apache.log4j.ConsoleAppender
+log4j.appender.stdout.layout=org.apache.log4j.PatternLayout
+
+# Pattern to output the caller's file name and line number.
+log4j.appender.stdout.layout.ConversionPattern=%d{yyyy-MM-dd HH:mm:ss:SSS} [%t]  %-5p  %c - %m%n
+
+log4j.appender.R=org.apache.log4j.RollingFileAppender
+log4j.appender.R.File=${catalina.home}/logs/eds.log
+
+log4j.appender.R.MaxFileSize=10240KB
+# Keep one backup file
+log4j.appender.R.MaxBackupIndex=30
+
+log4j.appender.R.layout=org.apache.log4j.PatternLayout
+log4j.appender.R.layout.ConversionPattern=%d{yyyy-MM-dd HH:mm:ss:SSS} [%t]  %-5p  %c - %m%n
+
+log4j.logger.com.cicc=error,stdout,R
+
+
+我们可以按下面的方式配置 DailyRollingFileAppender：
+
+log4j.rootCategory=INFO,file
+log4j.appender.file=org.apache.log4j.DailyRollingFileAppender
+log4j.appender.file.DatePattern='.'yyyy-MM-dd
+log4j.appender.file.File=run.log
+log4j.appender.file.Append=true
+log4j.appender.file.Threshold=DEBUG
+log4j.appender.file.layout=org.apache.log4j.PatternLayout
+log4j.appender.file.layout.ConversionPattern=%d{yyyy-MM-dd HH:mm:ss:SSS} [%t]  %-5p  %c - %m%n
+
+
+log4j.appender.email=org.apache.log4j.net.SMTPAppender 
+log4j.appender.email.Threshold=ERROR 
+log4j.appender.email.BufferSize=10 
+log4j.appender.email.From=CICCHKSOnlineSupport@cicc.com.cn
+log4j.appender.email.SMTPUsername=it_support_app_sende
+log4j.appender.email.SMTPPassword=setupandindex
+log4j.appender.email.SMTPHost=192.168.20.43
+log4j.appender.email.Subject=<Neo_OMS_EMS_Bridge[Test env 193.173] Error Msg>
+log4j.appender.email.To=test@cicc.com.cn
+log4j.appender.email.layout=org.apache.log4j.PatternLayout 
+log4j.appender.email.layout.ConversionPattern=%d{yyyy-MM-dd HH:mm:ss:SSS} [%t]  %-5p  %c - %m%n
+
+
+
+
+直接print 异常
+  log.error("error message ",exception);
+  
+
+ log4j.additivity.org.apache=true
+additivity的作用在于 children-logger是否使用 rootLogger的配置，例如 输出终端。
+
+
+
+
+
+设置环境变量
+linux
+export CATALINA_OPTS="-Dlog4j.configuration=log4j.properties"
+
+-Dlog4j.configuration=
+-Dlog4j.debug=true
+windows
+set CATALINA_OPTS=-Dlog4j.configuration=log4j.properties
+
+把这个文件放到 web-inf/classess下面即可
+
+获取file的名字
+	logger.debug("CATALINA_HOME="+System.getenv("CATALINA_HOME"));
+	Logger rootlog=logger.getRootLogger();
+
+	RollingFileAppender rfa=(RollingFileAppender) rootlog.getAppender("R");
+	logger.debug("log file="+rfa.getFile());
+
+
+
+配置daily生成log文件
+
+log4j.rootLogger=debug,stdout,R
+
+log4j.appender.stdout=org.apache.log4j.ConsoleAppender
+log4j.appender.stdout.layout=org.apache.log4j.PatternLayout
+
+# Pattern to output the caller's file name and line number.
+log4j.appender.stdout.layout.ConversionPattern=%d{yyyy-MM-dd HH:mm:ss:SSS} [%t]  %-5p  %c - %m%n
+
+log4j.appender.R=org.apache.log4j.DailyRollingFileAppender
+log4j.appender.R.File=d:/logs/mylog
+log4j.appender.R.Threshold=info
+
+log4j.appender.R.DatePattern='.'yyyy-MM-dd
+
+
+log4j.appender.R.layout=org.apache.log4j.PatternLayout
+log4j.appender.R.layout.ConversionPattern=%d{yyyy-MM-dd HH:mm:ss:SSS} [%t]  %-5p  %c - %m%n
+
+log4j.logger.org.hibernate.type=TRACE
+log4j.logger.org.hibernate.sql=TRACE
+log4j.logger.org.hibernate.type.descriptor.sql.BasicBinder=TRACE
+
+
+PropertyConfigurator.configure("d:/log4j.properties");
+
+
+
+import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
+import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.DailyRollingFileAppender;
+
+
+
+
+public class LogTest {
+	static Logger logger = Logger.getLogger(LogTest.class.getName());
+	/**
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+	Logger logger2 = Logger.getLogger(LogTest.class.getName());
+	PropertyConfigurator.configure("d:/log4j.properties");
+	
+	//	BasicConfigurator.configure();
+	Logger rootlog=logger.getRootLogger();
+
+	DailyRollingFileAppender r=(DailyRollingFileAppender) rootlog.getAppender("R");
+	
+	logger.debug("log file="+r.getFile().toString());
+	logger.debug("log name="+r.getName());
+
+	     logger.info("info application.");
+	     logger.debug("debug now ");
+	     logger.warn("warn now ");
+
+	}
+
+}
+

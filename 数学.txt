@@ -1,0 +1,45 @@
+理解协方差矩阵的关键就在于牢记它计算的是不同维度之间的协方差，而不是不同样本之间，拿到一个样本矩阵，我们最先要明确的就是一行是一个样本还是一个维度，心中明确这个整个计算过程就会顺流而下，这么一来就不会迷茫了~
+而协方差也只能处理二维问题，那维数多了自然就需要计算多个协方差
+计算协方差需要计算均值，那是按行计算均值还是按列呢，我一开始就老是困扰这个问题。前面我们也特别强调了，协方差矩阵是计算不同维度间的协方差，要时刻牢记这一点。样本矩阵的每行是一个样本，每列为一个维度，所以我们要### 按列计算均值
+                         
+协方差  cov(x,y)= 
+
+协方差矩阵本身的含义，即随机变量之间的线性相关关系
+
+这个定义还是很容易理解的，我们可以举一个简单的三维的例子，假设数据集有{x,y,z}{x,y,z}三个维度，则协方差矩阵为
+		cov(x,x)   cov(x,y)     cov(x,z)
+C=	 cov(y,x)   cov(y,y)    cov(y,z)
+        cov(z,x)   cov(z,y)     cov(z,z)
+可见，协方差矩阵是一个对称的矩阵，而且对角线是各个维度上的方差。
+
+
+Vectors are a type of matrix having only one column or one row. 
+For example, matrix a is a column vector, and matrix a' is a row vector.
+Li
+a =
+11	
+12
+33
+	
+a' = 	11	12	33	
+Symmetric matrix. If the transpose of a matrix is equal to itself, that matrix is said to be symmetric. 
+Diagonal matrix. A diagonal matrix is a special kind of symmetric matrix. It is a symmetric matrix with zeros in the off-diagonal elements. Two diagonal matrices are shown below.
+A =    	
+1	0	
+0	3
+B =    	
+5	0	0	
+0	3	0
+0	0	1
+Scalar matrix. A scalar matrix is a special kind of diagonal matrix. It is a diagonal matrix with equal-valued elements along the diagonal. Two examples of a scalar matrix appear below.
+A =    	
+3	0	
+0	3
+B =    	
+5	0	0	
+0	5	0
+0	0	5
+ Matrices may be added or subtracted only if they have the same number of rows and the same number of columns.
+ The matrix product AB is defined only when the number of columns in A is equal to the number of rows in B. Similarly, the matrix product BA is defined only when the number of columns in B is equal to the number of rows in A.
+ A= i x j matrix, B =j x k  matric  C=A*B=i x k  
+ Cik = Σj AijBjk

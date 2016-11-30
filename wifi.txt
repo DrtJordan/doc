@@ -1,0 +1,208 @@
+http://www.desipro.de/ddwrt/K3-AC-Arm/ 下载地址 dd-wrt 
+
+关于CHK文件和BIN文件的区别：
+CHK文件更新的次数不多，主要用于原生固件过渡到DDWRT时使用；
+BIN文件更新次数更为频繁些，K大根据相应的bug做出修复以及功能的添加
+
+tune2fs -m 0.05 /dev/sdb1
+
+noip.com wzy964@gmail.com wzykknd   wzy964.no-ip.biz
+重置直接按reset直到重启
+
+<input type="password" maxlength="63" size="20" value="d6nw5v1x2pc7st9m" name="http_passwdConfirm" onblur="valid_name(this,management.pass_conf,SPACE_NO)">
+dd和tomato 都有效
+ 重置web 密码
+ setuserpasswd [username] [password] 
+IE: setuserpasswd root admin 
+nvram set http_passwd = "admin" 
+*pressed enter* 
+nvram commit 
+*pressed enter* 
+
+可以安装很多软件 
+http://ipkg.nslu2-linux.org/feeds/optware/ddwrt/cross/stable/
+
+
+
+Push reset button for 30 secs.
+30/30/30 (硬复位)【即插电30秒 断电30秒 再插电30秒】
+按住路由器后部的复位按钮30秒，保持按住的状态拔掉电源30秒，然后同样保持按住的状态重新插上路由器。此操作将重置 nvram，确保您在纯净的环境下载入固件。"恢复出厂默认设置" 功能并不总是清理整个 nvram 区段。
+替代方法:
+telnet 登录至路由器，执行以下命令：
+erase nvram
+reboot
+
+对于不同版本的 WRT54G，长按复位按钮 30 秒应当足以完成复位并允许您登录。有一名用户报告此步骤并不必要。
+通过命令行刷新
+
+cd /tmp
+wget http://www.dd-wrt.com/dd-wrtv2/downloads/stable/dd-wrt.v2x_generic.bin
+write dd-wrt.v2x_generic.bin linux
+使用 erase nvram 命令或者重置按钮恢复出厂默认设置
+如果 DD-WRT 已经安装在您的路由器上，您可以直接通过网页界面或 TFTP 升级至新版固件。不管怎样，强烈建议您在升级前后均使用复位按钮将路由器恢复至默认设置。千万不要使用从旧版固件中备份出的配置文件！跳过这些步骤，您的路由器可能变砖
+
+Signal: (in dBm) A small negative number is good (-40 is good, -98 is bad)
+Noise: (in dBm) A large negative number is good (-98 is good, -40 is terrible, -70 would be pretty bad in the real world)
+SNR: (in dB) High is good (should be the same as difference between noise and signal, a difference of 20 would be great, a difference of 1 may barely work)
+SNR(dB) = Signal(dBm) - Noise(dBm)
+
+/usr/sbin/iptables -I INPUT 1 -p tcp --dport 21 -j logaccept
+带宽  Up 9100kbps down 875 kbps
+
+nvram 具有多层含义。首先它是非可变性 RAM (non-volatile RAM) 的缩写，这种 RAM 是一种持久性内存，可在断电时保留数据。路由器内的闪存就是一种 nvram。 nvram 命令用于管理硬件设置，这些设置保存在闪存的最后一块内。这个内存段通常称为 “nvram”
+免费的快速提示：如果您无意间禁用了此 Web 界面，但仍有 telnet 或 SSH，可以以这种方式重新启用它：
+root@linksys:~# nvram set http_enable=1 
+root@linksys:~# nvram commit 
+root@linksys:~# reboot
+更改会在重新启动之后应用。还记得 boot_wait 设置吧？GUI 不会让您更改其长度，但 nvram 可以。首先，查明它有多长：
+root@linksys:/etc# nvram show |grep wait 
+boot_wait=on 
+wait_time=5
+我是比较紧张的类型，所以我想要它长 10 秒：
+root@linksys:/etc# nvram set wait_time=10 
+root@linksys:~# nvram commit
+
+例如我想删除“dr_lan_rx=0”这个参数，请执行：
+nvram unset dr_lan_rx 
+
+如何清除任何值的变量可参考如下所示：
+
+root@linksys:~# nvram set http_enable="" 
+root@linksys:~# nvram commit
+
+如果不想让某个特定的更改在重新启动后仍存在，可以省略 nvram commit，这是在试验阶段可以采用的一种很好的策略，因为仅仅是重新启动就可以放弃更改。
+
+
+ ipkg（针对嵌入式设备的 ItsyPackage Management System）
+ 
+
+For example, to specify a single IP address enter xxx.xxx.xxx.xxx/32. Be careful to enter netmask as /32 because leaving it /0 means ALL IPs!.
+The netmask is the number of bits of the IP address to match. For example, the entry 192.168.1.0/24 matches 192.168.1.x addresses. An entry of 192.168.0.0/16 matches 192.168.x.x addresses
+
+
+Journalling Flash File System (JFFS/JFFS2) is a re-writable area within a DD-WRT-enabled device.
+
+v
+
+
+远程下载  http://yuancheng.xunlei.com/  就能直接下载到你的路由器上
+
+DD-WRT是sveasoft的基础上再开发（就是现在我们在DD-WRT里仍能见到Openwrt的身影），Openwrt的强项用户可以随意的安装软件，和使用linux的命令像配置一台硬件防火墙一样的配置路由器，DD-WRT基于Openwrt但重点放在的Web配置方式上，这使得DD-WRT的Web功能比Openwrt强大N多，正因为DD-WRT功能强大而且很易用，使得DD-WRT的用户比Openwrt多很多，DD-WRT不断壮大，现在的DD-WRT以经和Openwrt没多大关系了，从里至外基本都是自己开发了，现在的DD-WRT也可以自己装软件,但只能装在jffs或mmc（前提是你自己加了mmc或sd卡）目录中，DD-WRT中除jffs,mmc,tmp目录其它的目录是不可写的，所以你是不能修其它目录中的文件的，改了一重起又恢复了，命令的话如果你想其能永久生效你要把它保存到NVRAM的Startup表或Firewall表中（Web页中的Commands页就能很直观的完成这一操作），因此DD-WRT和Openwrt各有优缺点，熟悉linux的高级用户Openwrt是不错的选译，像我们这种对命令不太懂的用户用DD-WRT更适合。
+ 
+ Linksys Wireless-G Router (model WRT54G)，Cisco / Linksys 在2003 年发行的这款无线路由器使用802.11g 标准使得带宽在理论上能够达到54M（2003年的时候），相对于当时业界普遍使用802.11b 的11M 带宽，不能不说实现了一次飞跃。它可以通过自带的DSL / Cable 接口接入宽带互联网，对于内网则支持4 个以太口交换与无线广播接入。2005 年初国内开始销售这款路由器。国外销售价格大概为$60，相对于其他产品来说的话就跟摆地摊的货差不多了。好了，我不是像跟你谈这些参数的问题。关键是：同年有好事者在 Linux Kernel Mailing List 搜索 WRT54G，发现它的IOS 是基于Linux，然而Linux 基于GPL 发布许可证，就是 GNU General Public License. 该许可证规定Cisco 应该把WRT54G 的IOS 的源代码公开。本来Cisco 拒绝公开源代码，最后，03 年三月份的时候，基于公众压力Linksys 公开了WRT54G 的源代码。故事本来到这里就结束了，然而相反，结果越闹越大：有了源代码以后，开发者便清楚知道代码如何控制路由器的硬件，并且掌握了一些通过增加新的代码到原有的IOS 当中去 —— 使得硬件支持更多的Feature 的技术。这些开发者组成了一个项目开发团队，不断对原来的IOS 进行更新，编码，加入新的特性…… 现在他们手上的WRT54G 无线路由器的能力已经大大超过了原来Cisco 设计的地摊货的设计思路。不但如此，随着这两年互联网Web2.0 技术的发展，不同的开发团队之间找到了更好的协同工作平台，其规模不亚于TAC. 他们最近建立了一个DD-WRT 项目的Wiki 站点将全套文档以及代码公开发布。使用DD-WRT 项目提供的源代码，重新升级WRT54G 以后你就能够获得一台相当于$600 左右的中端无线路由器了。支持的特征集包括：
+13 languages 
+802.1x (EAP (Extensible Authentication Protocol) encapsulation over LANs) 
+Access Restrictions 
+Adhoc Mode 
+Afterburner 
+Client Isolation Mode 
+Client Mode (supports multiple connected clients) 
+Client Mode WPA 
+DHCP Forwarder (udhcp (http://udhcp.busybox.net/)) 
+DHCP Server (udhcp (http://udhcp.busybox.net/) or Dnsmasq (http://thekelleys.org.uk/dnsmasq/doc.html)) 
+DNS forwarder (Dnsmasq (http://thekelleys.org.uk/dnsmasq/doc.html)) 
+DMZ 
+Dynamic DNS (DynDNS (http://www.DynDNS.org/), TZO (http://www.TZO.com/), ZoneEdit (http://www.ZoneEdit.com/)) 
+Hotspot Portal (Sputnik Agent (http://www.sputnik.com) ,Chillispot (http://www.chillispot.org/)) 
+IPv6 Support 
+JFFS2 (http://sourceware.org/jffs2/) 
+MMC/SD Card Support 
+NTP client in a client-server basis 
+Port Triggering 
+Port Forwarding (max. 30 entries) 
+QoS Bandwidth Management (Optimize for Gaming and Services / Netmask / MAC / Ethernet Port Priority) 
+QoS L7 Packet Classifier l7-filter (http://l7-filter.sourceforge.net/)) 
+PPTP VPN Server & Client 
+Ntop Remote Statistic 
+Syslog to remote server 
+RFlow/MACupd 
+Routing: Static entries and Gateway, BGP, OSPF & RIP2 via (BIRD (http://bird.network.cz/)) 
+Samba FS Automount 
+Rx/Tx Antenna (Select or Auto) 
+Show Status of Wireless Clients and WDS with System Uptime/Processor Utilization 
+Site Survey 
+SNMP 
+SSH server & client (dropbear (http://matt.ucc.asn.au/dropbear/dropbear.html)) 
+Startup, Firewall, and Shutdown scripts (startup script (http://wrt-wiki.bsr-clan.de/index.php?title=Startup_Scripts)) 
+Static DHCP Assignment 
+Style (Changeable GUI; v.23) 
+Supports New Devices (WRT54G V3, V3.1, V4, V5 and WRT54GS V2.1, V3, V4) 
+Telnet server & client 
+Transmit Power Adjustment (0-251mW, default is 28mW, 100mW is safe) 
+UPnP 
+VLAN 
+Wake On Lan client (WOL (http://ahh.sourceforge.net/wol/)) 
+WDS Connection Watchdog 
+WDS Repeater Mode 
+Wireless MAC Addresses Cloning 
+Wireless MAC filter 
+WMM (Wi-Fi MultiMedia QoS) 
+WPA over WDS 
+WPA/TKIP with AES 
+WPA2 
+Xbox Kaid (Kai Engine (http://www.teamxlink.co.uk/)) 
+
+1. 关于 OpenWrt
+当Linksys 释放 WRT54G/GS 的源码后，网上出现了很多不同版本的 Firmware 去增强原有的功能。大多数的 Firmware 都是99%使用 Linksys的源码，只有1%是加上去的，每一种 Firmware 都是针对特定的市场而设计，这样做有2个缺点，第一个是难以集合各版本Firmware的长处，第二个是这版本距离 Linux 正式发行版越来越远。
+OpenWrt 选择了另一条路，它从零开始，一点一点的把各软件加入去，使其接近 Linksys 版 Firmware的功能，而OpenWrt 的成功之处是它的文件系统是可写的，开发者无需在每一次修改后重新编译，另它更像一个小型的 Linux 电脑系统，也加快了开发速度。
+2. 为什么使用 OpenWrt因为 Linux 为我们提供了很多免费的软件，我们可以用一个很低的价钱购买像WRT54G的硬件，做成一个小型的 Linux 系统，现在OpenWrt已经提供了100多个已编译好的软件，而且数量还在不断增加，而 OpenWrt SDK 更简化了开发软件的工序
+3. OpenWrt 的历史OpenWrt 项目由 2004 年 1 月开始, 第一个版本是基于 Linksys 提供的 GPL 源码及 uclibc 中的 buildroot 项目, 这个版本称为 “stable” 版, 在网上至今仍有很多项目使用这个版本, 较为有名 Freifunk-Firmware 和 Sip@Home.
+到了2005年初, 一些新的开发人员加入了这项目, 几个月后他们释出了第一个 “experimental” 版本, 这和以前版本不同的是, 这版本差不多完全舍弃了 Linksys 的 GPL 源码, 使用了 buildroot2 作为核心技术, 将 OpenWrt 完全模块化，OpenWrt 使用 Linux 正式发行的核心源码（2.4.30），加上了一些补丁和网络驱动，开发队伍更为OpenWrt添加了许多免费的工具，你可以直拉把Image写入Flash (mtd)里面，设定无线功能和VLAN交换功能，这个版本名为“White Russian”，而1.0版本大概于2005年底公布。
+
+4. 为什么是OpenWrt？
+虽然几年前已看过一些和嵌入式 Linux 相关的报道, 但由于我的工作和 Linux , 甚至嵚入式 Linux 完全扯不上关系, 所以一直没有机会接触嵌入式 Linux。而且在香港, 要找到嵚入式系统的开发工具并不是那么容易的。有一次, 我为了在宿舍内安装无线网桥, 买了一对Linksys WRT54G, 回来后才知道买错了(应该买WAP54G才对), 于是我上网看看有没有其他办法, 在这偶然的情况下, 我发现 OpenWRT 可以实现这功能, 便开始了改装这路由器的研究...Linksys WRT54G 是一个几乎在任何电脑商场都可以买到的无线路由器, 只需拿出4-5百元, 你就可以拥有一个配备 200MHz CPU, 4MB Flash, 16MB Ram的嵌入式开发系统, 而且在你完成你的开发后, 你还可以应用在生活上, 一点都不浪费。由于它使用 Linux 作为操作系统, 并公开源码及驱动, 在网络上已有很多为它而设计的开源项目, 包括HyperWRT, OpenWRT, SIP Phone等等, 实在是学习嵌入式 Linux 的入门级首选。为什么学习OpenWRT?你不需要对 MIPS 处理器有很深入的了解, 也不用懂得如何去设计一个 MIPS 处理器专用的内核, 因为这些在网上已有人为你做好, 你只需懂得如何安装和使用就行了, 不过你也可以去 http://www.linux-mips.org 找到相关的资料。如果你对 Linux 系统有一定的认识, 并想学习或接触嵌入式 Linux 的话, OpenWRT很适合你, 你将学会一些无线路由器的基本知识, 以及一般嵌入式 Linux 的开发过程, 你会发现无论是 ARM, PowerPC 或 MIPS 的处理器, 都必需经过以下的开发过程:1. 创建 Linux 交叉编译环境2. 建立 Bootloader3. 移植 Linux 内核4. 建立 Rootfs (根文件系统)5. 安装驱动程序6. 安装软件7. 调试随着 Linux 的成熟, 大量不同的处理器内核和应用软件相继出现, 当你熟悉这些嵚入式 Linux 的基本开发流程后, 你不再局限于 MIPS 处理器和无线路由器, 你可以尝试在其它处理器, 或者非无线路由器的系统移植嵌入式 Linux, 定制合适自己的应用软件, 并建立一个完整的嵌入式产品。
+
+
+
+数字信号调制
+2ask 0 无载波，1有载波
+2fsk 0 一个频率的载波，1另外一个频率的载波
+2PSK 0/1变化的时候才变化
+802.11b 1M、2M是先用barker码扩频（1M扩展到11M），然后再用BPSK/QPSK调制，俗称DSSS
+802.11b 5M、11M是用CCK编码进行扩频，然后再进行BPSK/QPSK调制，俗称CCK
+802.11g 是使用OFDM的方式，分为许多个子信道，然后在每个子信道上使用QAM调制方式
+QAM是用两路独立的基带信号对两个相互正交的同频载波进行抑制载波双边带调幅，利用这种已调信号的频谱在同一带宽内的正交性，实现两路并行的数字信息的传输。该调制方式通常有二进制QAM（4QAM）、四进制QAM（l6QAM）、八进制QAM（64QAM）
+QAM是一种矢量调制，将输入比特先映射（一般采用格雷码）到一个复平面（星座）上，形成复数调制符号，然后将符号的I、Q分量（对应复平面的实部和虚部，也就是水平和垂直方向）采用幅度调制，分别对应调制在相互正交（时域正交）的两个载波（coswt和sinwt）上。这样与幅度调制（AM）相比，其频谱利用率将提高1倍。QAM是幅度、相位联合调制的技术，它同时利用了载波的幅度和相位来传递信息比特，因此在最小距离相同的条件下可实现更高的频带利用率
+OFDM(正交频分复用)技术实际上是MCM(Multi-Carrier Modulation，多载波调制)的一种。其主要思想是：将信道分成若干正交子信道，将高速数据信号转换成并行的低速子数据流，调制到在每个子信道上进行传输。正交信号可以通过在接收端采用相关技术来分开，这样可以减少子信道之间的相互干扰(ICI)。每个子信道上的信号带宽小于信道的相关带宽，因此每个子信道上的可以看成平坦性衰落，从而可以消除符号间干扰。而且由于每个子信道的带宽仅仅是原信道带宽的一小部分，信道均衡变得相对容易。
+　　结合简要介绍OFDM的工作原理，输入数据信元的速率为R，经过串并转换后，分成M个并行的子数据流，每个子数据流的速率为R/M，在每个子数据流中的若干个比特分成一组，每组的数目取决于对应子载波上的调制方式，如PSK、QAM等。M个并行的子数据信元编码交织后进行IFFT变换，将频域信号转换到时域，IFFT块的输出是N个时域的样点，再将长为Lp的CP(循环前缀)加到N个样点前，形成循环扩展的OFDM信元，因此，实际发送的OFDM信元的长度为Lp＋N，经过并/串转换后发射。接收端接收到的信号是时域信号，此信号经过串并转换后移去CP，如果CP长度大于信道的记忆长度时，ISI仅仅影响CP，而不影响有用数据，去掉CP也就去掉了ISI的影响。
+
+
+WISP和WDS有什么区别呢？
+
+1、WDS中继需要到对方路由设置自己路由的MAC，绝大部分品牌是需要的，但是例如普联TPLINK某些同类型号之间可以不用设置MAC就可以实现桥接。
+     WISP万能中继是不需要设置对方设置自己的MAC就可以实现信号中继。
+2、WISP可以接收WEP、WPA、WPA2加密的无线信号，经放大信号后再转为网线和无线信号同时输出。
+     WDS据我了解很多型号之间只能通过WEP实现桥接加密，例如网件路由器，要高端型号才可以使用WPA2加密桥接。
+3.   WDS模式以后，无线有线都不会降速，DD万能中继有无线降速的情况，但是也有没有降速的情况。
+     WISP就是客户端网卡+AP的组合，不存在降速这一说。但是从理论上来说可能网路间转发设备增多，延迟会增加。
+4、WDS桥接时，第二台AP须关闭DHCP服务功能，IP分配交由第一台上游主AP，这一点很不方便。而WISP则不需要关闭DHCP。
+5、WDS和Bridge的区别不大，BRIDGE可一对多，WDS可多对一。
+　WDS(Wireless Distribution System)，无线分布式系统。WDS可以把有线网络的数据，通过无线网络当中继架构来传输，
+藉此可将数据传送到另外一个无线网络环境，或者是另外一个有线网络。因为通过无线网络形成虚拟的线路，
+所以通常被称为无线桥接功能。
+最简单地说：就是WDS可以让无线设备之间通过无线进行转发，同时具备覆盖的功能
+中继，顾名思义就是中间继承，将AP的Wi-Fi信号放大；
+2.在配置方面，Repeater路由器要关闭DHCP功能，同时在它的Wi-Fi配置页面要配置AP的SSID（可以通过扫描获得）；
+3.Reperter路由器要开启WDS功能，用于该路由器与AP路由器之间的桥接
+在中继器模式下，DAP-1360通过扩大其他AP或无线路由器的覆盖范围来增大无线网络范围。AP和无线路由器（若使用）必须处于双方范围内，请确保所有的客户端、AP和无线路由器使用相同SSID（无线网络名）和信道。
+  
+  　　中继模式是工作在桥接（二层）方式, 从某一接入点接收的信息包可以通过WDS连接转发到另一个接入点；
+　　桥接模式是工作在路由（三层）方式，通过WDS连接接收的信息包只能被转发到有线网络或无线主机。
+MIMO（多输入多输出）技术挺神奇的，因为根据人们对通信理解的常识：发射端两个天线在同一个时刻用同样的频率发信号肯定互相干扰，然后接收端用两个天线去接收信号也肯定无法排除这种同频干扰。怎么能消除这种同频干扰呢？
+回答这个问题前要先分清MIMO和接收与发射分集。假设两个发射天线都发相同的内容，这样就能增强天线的覆盖范围，称为发射分集。两个接收天线都接收相同的内容、提高接收的稳定性称为接收分集。分集不能提高传递信息的速率，只能提高覆盖区间或者稳定性。而MIMO完全不同，它能成倍提高传递信息的速率，2*2（双发双收）的MIMO速率变为2倍，4*4（4发4收）的MIMO速率变为4倍。成倍提高通信速率的优势是MIMO最吸引人的地方，所以4G、WIFI才会采用。
+MIMO的原理是个数学问题，无法用物理学的概念说清楚。假设一个天线发射信息为X，另一个天线发射信息为Y。信息X和Y传递到接收天线1和接收天线2上。接收天线1的信号为aX+bY，接收天线2的信号为cX+dY，（a，b，c，d是空间传输的衰减系数）。根据接收天线1和2的信号来得到发射天线的信号X和Y，其实就是一个解方程的问题，也就是必须要知道a,b,c,d系数。如果知道a,b,c,d这些空间传播系数，解出X和Y就不成问题了，MIMO通过双发双收传递双份信息的目的也就实现了。
+问题简化为如何知道空间传递系数a,b,c,d。答案也很简单，数学上，令X=0，Y=1，就可以求得b,d。令X=1，Y=0就可以求得a,c。实际操作上，就是让发射天线发一个双方都已知的校准信号，接收天线测试到的校准信号里就包含了空间传递系数。
+天线分集的最明显特征是只有一路发送器，而它能够选择最"优"的天线。分集天线具有重要的应用价值，尤其当多径干扰影响发送时，他可以很精确地将信号分离出间距，使其中一路成为有效的"热点"，而另一路则被打入"冷宫"。一般而言，这个"间距"也就半个波长，在2.4G Hz频谱上，波长也就几个厘米。由于收发器经常在天线间切换，很多时候，天线分集也被称为"切换分集"。
+而在实际应用环境中充斥大量的WLAN设备，同一空间中可能有5-6个AP同时工作在一个信道。此信道中所有的WLAN设备，特别强调所有的AP设备将共同享有该信道资源，此时所有的这些AP也只能达到20M的性能，甚至由于设备的增多、竞争激烈会造成整体性能还可能低于“一个AP的性能”。
+802.11协议在2.4GHz 频段定义了14 个信道，从中可以选择三个相互不重叠的信道规划网络，通常使用1、6、11信
+在中国开放的5G频段就包含5个非重叠信道
+802.11n协议定义了两种信道工作模式：20MHz和40MHz。40MHz信道工作模式使用两个20MHz信道进行捆绑，以获取更高的吞吐量。而40MHz频宽虽然可以获得更多的频谱利用率和吞吐量，但是对于2.4GHz频段有限的频谱资源来说却显得有些尴尬，因为在2.4GHz频谱中可用的非重叠信道只有3个，无法实现两个相互不干扰的40MHz信道的划分，因此在2.4G频段11n一般都采用20Mz的工作模式。
+然而5GHz频段具有丰富的频谱资源，FCC分配了23个互不重叠20MHz信道，在中国也有5个互不重叠20MHz信道，有足够的信道来实现40MHz信道的捆绑。但在高密场景的实际部署中，需要考虑多个AP之间的信道隔离与重用，同时为了达到覆盖一致性的效果，建议5G同样采用20Mhz信道工作模式，以有效保障WLAN网络整体接入能力。同时由于在中国只开放5个20MHz不重叠5G信道，在40MHz模式下，很难达到蜂窝部署的要求-同信道之间相互隔离，而在20Mhz模式下，蜂窝覆盖的效果可以得到较好地保证，如图1所示。
+桥接一般用来连接两个不同的网段
+该模式的几点说明：
+1.双方路由器可以配置自己的SSID，在双方路由器的BSSID需要配置成对端的SSID，双方均需要开启WDS功能；
+2.双方路由器的子网之间要通信，则双方路由器的子网必须是同一网段；
+3.双方可以都开启DHCP功能，但是应该设置不同的地址池，以避免冲突；
+桥接模式下不能用作AP，只是相当于无线连接两个网段
+带AP的网桥模式与网桥模式大致相同，但DAP-1360也可以作为AP使用，这个不是wifi标准
+接入点模式用来无线连接客户端

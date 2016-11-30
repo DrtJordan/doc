@@ -1,0 +1,932 @@
+192.168.193.136上的cas配置ldap url在cas.properties 
+cas 
+Yale CAS使用了Ticket Granting Cookie （简称TGC）去作为获取Service Ticket（简称ST）的凭据，这个TGC 是保存在客户端的cookie，即当第2次被其他CAS Client重定向的时候，CAS Server实际上已经从用户的Cookie中抓取到TGC，然后知道TGC对应的用户，因此避免了再次登录，如果CAS Server抓取不到TGC，则用户需要登陆。
+众所周知，cookie是不能跨域的。但是CAS能够做abc.com和xyz.com的sso，因为CAS Server缓存了所有的ticket，所以Client无需共享cookies。
+
+
+AD目前的密码要求
+最少6位，满足下面三个范围
+1.小写字母
+2.大写字母
+3.数字
+4.非字母的特殊字符
+密码历史5次，最长使用180天
+3次错误锁定
+
+CAD的要求
+-严格符合密码创建指引的要求
+-密码长度至少8位以上字符 
+- 密码必须定期更换，同一密码连续使用不得超过60天
+- 不能重复使用前十二次的密码
+- 从公司外部远程登录公司内网需采用动态密码令牌和SSL加密认证机制。
+- 密码连续3次输入错误，帐号将被锁定。
+- 个别关键系统需采用一次性密码或生理特征等强认证措施
+
+
+
+
+图是一个最基础的 CAS 协议， CAS Client 以 Filter 方式保护 Web 应用的受保护资源，过滤从客户端过来的每一个 Web 请求，
+同时， CAS Client 会分析 HTTP 请求中是否包请求 Service Ticket( 上图中的 Ticket) ，
+如果没有，则说明该用户是没有经过认证的，于是， CAS Client 会重定向用户请求到 CAS Server （ Step 2 ）。 
+Step 3 是用户认证过程，如果用户提供了正确的 Credentials ，
+ CAS Server 会产生一个随机的 Service Ticket ，然后，缓存该 Ticket ，并且重定向用户到 CAS Client （
+ 附带刚才产生的 Service Ticket ）， Service Ticket 是不可以伪造的，
+ 最后， Step 5 和 Step6 是 CAS Client 和 CAS Server 之间完成了一个对用户的身份核实，
+ 用 Ticket 查到 Username ，因为 Ticket 是 CAS Server 产生的，因此，所以 CAS Server 的判断是毋庸置疑的
+
+该协议完成了一个很简单的任务，就是 User(david.turing) 打开 IE ，直接访问 helloservice 应用，
+它被立即重定向到 CAS Server 进行认证， User 可能感觉到浏览器在 helloservcie 和 casserver 之间重定向，
+但 User 是看不到， CAS Client 和 CAS Server 相互间的 Service Ticket 核实 (Validation) 过程。
+当 CAS Server 告知 CAS Client 用户 Service Ticket 对应确凿身份， CAS Client 才会对当前 Request 的用户进行服务。 
+
+
+CAS 可以很简单的实现跨域的 SSO ，因为，单点被控制在 CAS Server ，用户最有价值的 TGC-Cookie 只是跟 CAS Server 相关， CAS Server 就只有一个，因此，解决了 cookies 不能跨域的问题。
+回到 CAS 的基础协议图，当 Step3 完成之后， CAS Server 会向 User 发送一个 Ticket granting cookie (TGC) 给 User 的浏览器，这个 Cookie 就类似 Kerberos 的 TGT ，下次当用户被 Helloservice2 重定向到 CAS Server 的时候， CAS Server 会主动 Get 到这个 TGC cookie ，然后做下面的事情：
+1，              如果 User 的持有 TGC 且其还没失效，那么就走基础协议图的 Step4 ，达到了 SSO 的效果。
+2，              如果 TGC 失效，那么用户还是要重新认证 ( 走基础协议图的 Step3) 。 
+
+
+因此，某些人认为 CAS 可以不使用 SSL 的想法需要更正一下， CAS 的传输安全性仅仅依赖与 SSL 。
+ 
+ 配置TGT和ST的timeout(https://wiki.jasig.org/display/casum/ticket+expiration+policy)
+ cas.properties  (在ticketExpirationPolicies.xml里面引用)
+tgt.maxTimeToLiveInSeconds=28800  8hours      total time regardless of access 
+tgt.timeToKillInSeconds=7200       2hours     timeToKillInMilliSeconds - if not accessed will expire.
+
+当 TGT timeToKillInSeconds 超时后，并且 cleanup job 起来的时候(会有日志Beginning ticket cleanup，缺省 30分钟run一次，配置文件ticketRegistry.xml)
+会对应用发起 logout 的请求
+
+
+st.timeToKillInSeconds=600  5min
+
+cas的tgt是session级别的，也就是说关闭浏览器，tgt失效，如果没有关闭浏览器，会有效至timeToKillInSeconds
+st是一次性的，如果使用过了，就自动失效
+
+TGT timeout后 会调用应用的logout 
+AuthenticationFilter 先检查是否有st,如果有到 ValidationFilter,如果没有ST检查是否有a ssert Session，如果有，通过，如果没有，到cas login
+ValidationFilter 检查是否有st，如果有，到cas 验证，验证通过之后把st失效，然后返回客户端，写入 assert session,验证不通过，到cas login，如果有TGT，自动发ST如果没有TGT，login
+,如果没有st,直接通过
+assert session 失效时间取决于客户端的session timeout 和cas server没有关系，如果 客户端session time>cas TGT 时间，则TGT失效后，客户任然正常使用
+如果session timeout<TGT，则自动到cas重新获取新的ST
+
+Password must be atleast 8 characters long and contain atleast one of each of the following: 
+Uppercase letter 
+Lowercase letter 
+Punctuation 
+Number 
+
+	
+https://wiki.jasig.org/display/CAS/Proxy+CAS+Walkthrough?
+CAS Proxy的目的是，当浏览器用户Peter访问应用A，应用A引用了应用B1, B2的授权性资源(Authorized Resource)，应用A想代表Peter去访问应用B1, B2，因此应用A需要告诉应用B1, B2当前用户是谁，以便B1,B2对Peter的Request进行授权。这就是CAS代理(Proxy)。
+
+这种情况很可能出Portal中，比如我在一个Web应用中要求同时从mail.163.com(应用B1)，mail.126.com(应用B2)收取邮件并Load入到现在的应用A中去。这种场景中，应用A不可能分别Redirect用户Peter到163.com或者126.com去(因为用户是想要A展示B1,B2的内容，他并不是要访问163,126)，只不过B1,B2需要认证才能访问，因此，A承担着这样一个角色，代表用户peter去load B1,B2的邮件。?
+
+
+
+PGT是ST签发的。用户凭借ST去访问Proxy service，Proxy service去CAS验证ST（同时传递PgtUrl参数给CAS），如果ST验证成功，则CAS用ST签发一个PGT，PGT对象里的ticketGrantingTicket是签发ST的TGT对象。
+
+    3）PT是PGT签发的。Proxy service代理back-end service去CAS获取PT的时候，CAS根据传来的pgt参数，获取到PGT对象，然后调用其grantServiceTicket方法，生成一个PT对象。?
+
+
+修改 default/ui/casLogoutView.jsp，在<jsp:directive.include file="includes/header.jsp" />下面加上,实现自动
+<meta http-equiv="REFRESH" content="3;url=https://s.cicc.group/ServicesPortal">
+
+
+        
+
+ <!-- 注册一个工作流  id是子路径  为flow入口-->
+    <webflow:flow-registry id="flowRegistry" flow-builder-services="builder">
+        <webflow:flow-location path="/WEB-INF/login-webflow.xml" id="login" />
+    </webflow:flow-registry>
+<webflow:flow-builder-services id="builder" view-factory-creator="viewFactoryCreator" expression-parser="expressionParser" />
+webflow:flow-registry节点就是注册了一个webflow流程，该流程的入口，也就是ID=“login”。
+这样，交给springMVC的请求路径如果是login的，则有springMVC交给webflow处理。
+
+on-start标签定义了用户第一次进入流程中的预处理动作。该标签对应spring中的id为 initialFlowSetupAction 的bean
+
+    
+    CAS Client端的API应用1．用户可以通过以下两种方式的任意一种，从JSP或servlet中获取通过认证的用户名：
+引用
+String username = (String)session.getAttribute(CASFilter.CAS_FILTER_USER);
+或者
+String username = (String)session.getAttribute("edu.yale.its.tp.cas.client.filter.user"); 
+
+CASReceipt  receipt = (CASReceipt )session.getAttribute(CASFilter.CAS_FILTER_RECEIPT);
+或者
+CASReceipt  receipt = (CASReceipt )session.getAttribute("edu.yale.its.tp.cas.client.filter.receipt"); 
+
+
+ 如果应用是以普通的C/S模式运行，则需要应用程序自己来维护这个ticket在上下文环境中的传输和保存了。这时候就需要手工调用ServiceTicketValidator / ProxyTicketValidator对象的方法，向CAS 服务器提交认证，并获取认证结果进行相应的处理。 
+ 
+ 
+ . In its default configuration (as of CAS 3.3.3), CAS provides for the following:
+
+    Ticket-granting tickets (TGT) that expire after more than 2 hours of inactivity.
+    One-time-use service tickets (ST) that must be validated within 5 minutes.
+
+下面解释一下认证的流程。假定cas服务器的地址是：http://cas.ustc.edu.cn，web应用的地址是：http://web1.ustc.edu.cn。
+认证的流程如下：
+1.	用户浏览器访问http://web1.ustc.edu.cn/。
+2.	web1让用户浏览器去访问cas服务器的登录URL，并带上自己的处理登录请求的URL。在cas中，这个URL叫做service。如：
+http://cas.ustc.edu.cn/login?service=http://web1.ustc.edu.cn/caslogin
+请注意：http://cas.ustc.edu.cn/login是cas服务器处理用户登录的URL。
+service=http://web1.ustc.edu.cn/caslogin是传递给cas服务器的参数，告诉服务器现在是http://web1.ustc.edu.cn/caslogin在请求登录。注意这里为了方便查看和理解，没有对service=后面的URL进行URL编码。在实际环境中，这个URL是需要进行URL编码的。
+3.	cas对用户进行验证。如果用户没有登录cas，则出现一个登录界面，让用户输入用户名和密码进行登录。登录成功时，cas服务器会在用户浏览器中放置一个cookie(CAS中简称之为TGC)，这个cookie在浏览器关闭以后就会失效。如果用户浏览器不接受cookie，则不能保持登录状态。
+4.	完成登录以后，cas服务器会把用户浏览器转向到service的URL，同时提供一个ticket，如http://web1.ustc.edu.cn/caslogin?ticket=ST-29-pZvV4kcz5z0TaQxiCVf0。这个ticket称为service ticket。
+5.	Web1接到用户的请求，获取service ticket以后，到cas服务器去验证service ticket的有效性。此时web1会访问cas服务器的验证地址：http://cas.ustc.edu.cn/serviceValidate?service=http://web1.ustc.edu.cn/caslogin&ticket=ST-29-pZvV4kcz5z0TaQxiCVf0。这里带两个参数：service ticket和service。注意这里是web1直接访问cas服务器去验证。
+6.	cas服务器会验证ticket的有效性，把ST失效，然后给出验证结果。Web1根据cas服务器给出的结果判断是否允许用户登录。
+
+一、用户第一次访问web1应用
+1、Web1的客户端检测到session中无令牌凭证信息，被authentication filter拦截将用户重定向到Cas-server端进行验证。
+2、s端检测到传来的请求没有带ST参数，所以跳到Login页面进行用户登录验证。
+3、s端认证结束后，生成TGT令牌和随机Ticket-ST，并且在用户的浏览器中写入Cookie-STC(cas server domain下)，随后让用户的浏览器重定向到Web1应用中，并将随机参数ST带上一起传参过去，之后Web1的cas客户端validation filter 将检测到此ST参数，发送到server端进行校验，校验成功之后，服务端主动销毁此ST，并继续返回到web1应用中，web1应用此时将令牌信息写入到自己的session中，从而完成用户的单点登录认证，服务端同样的也会用一个Map记录web1加入到单点登录范围内。
+4、带上ST参数重定向到web1应用。
+5、web1拿到ST参数发送到s端进行校验。
+6、校验成功把ST失效，进入W1应用，w1将令牌凭证TGT写入session，与此同时，完成用户第一次访问应用web1的情形。
+
+
+
+二、用户第一次访问web2应用
+1、此时，用户第一次访问Web2应用，web2在自己的session中无法找到令牌信息，所以将用户重定向到S端，S端拿到用户的浏览器传来的cookie，从里面读出TGT，生成一个随机的ST，发回w2，w2拿到ST,就立即和S端进行校验，S端校验成功后，立即销毁此ST，并将web2加入到单点登录范围内，用户此时可以在Web2中进行业务操作，web2也同样的会在session中记录此令牌凭证，至此，完成用户的单点登录功能。当用户下次访问web1或者web2的时候，由于各自的session中能够拿到TGT信息，所以，只需要从中读到每次请求时所带的ST参数即可和S端进行交互，验证正确之后达到一站登录，N站访问的SSO效果。
+2、w2让用户浏览器带cookie重定向到S端。
+3、s端认证结束后，生成TGT令牌和随机Ticket-ST，并且在用户的浏览器中写入Cookie-STC，随后让用户的浏览器重定向到Web1应用中，并将随机参数ST带上一起传参过去，之后Web1的cas客户端将检测到此ST参数，发送到server端进行校验，校验成功之后，服务端主动销毁此ST，并继续返回到web1应用中，web1应用此时将令牌信息写入到自己的session中，从而完成用户的单点登录认证，服务端同样的也会用一个Map记录web1加入到单点登录范围内。
+4、w2根据参数ST发回到s端进行校验
+5、校验成功把ST失效，可以访问W2，W2令牌写入session
+
+如果访问的时候URL里面带有ticket参数(验证通过之后就不会有了,除非session信息失效)，则会去检查service ticket 是否有效,如果失效会删除该service ticket，同时会返回user信息，以便组装成 
+
+
+
+?	Service：在cas中，servicer指的是通过cas验证用户身份的web应用。具体表现为一个URL，web应用在这个URL里检查service ticket是否合法。
+?	Service ticket：简称ST，是cas服务器为service颁发的一个用户认证的凭证。这个ticket与用户、service都相关。Web应用可以凭这个ST到cas服务器检查用户是否登录。
+?	Ticket-granting cookie：简称TGC。这是一个cookie，是cas服务器放到用户浏览器里的用以标识用户身份的cookie。
+
+
+安装配置
+https://wiki.jasig.org/display/CASUM/Demo
+tips:不要使用localhost作为机器名，也不建议使用ip地址，一定要使用SSL
+
+生成服务器证书(用jdk 7的keytool)
+keytool -genkey -alias casserver -keypass ciccit -keyalg RSA  -ext san=ip:192.168.193.136
+输入keystore密码：
+再次输入新密码:
+您的名字与姓氏是什么？
+  [Unknown]：  casserver
+您的组织单位名称是什么？
+  [Unknown]：  cicc
+您的组织名称是什么？
+  [Unknown]：  cicc
+您所在的城市或区域名称是什么？
+  [Unknown]：  bj
+您所在的州或省份名称是什么？
+  [Unknown]：  bj
+该单位的两字母国家代码是什么
+  [Unknown]：  cn
+CN=casserver, OU=cicc, O=cicc, L=bj, ST=bj, C=cn 正确吗？
+  [否]：  Y
+
+把生成的.keystore copy 到tomcat目录，然后配置tomcat支持SSL
+Connector port="8443" protocol="HTTP/1.1" SSLEnabled="true"
+               maxThreads="150" scheme="https" secure="true"
+               keystoreFile="${catalina.home}/key/.keystore" keystorePass="ciccit"
+               clientAuth="false" sslProtocol="TLS" />
+               
+               
+导出 证书 ，然后导入到 local server 的trust store
+keytool -export -alias casserver -keypass ciccit -file casserver.crt
+keytool -import -file casserver.crt -keypass ciccit -keystore /usr/java/default/jre/lib/security/cacerts
+导入ldap的证书
+/usr/java/jdk1.6.0_17/bin/keytool -import -alias ldapserver -file ldapcert.crt -keypass ciccit -keystore /usr/java/default/jre/lib/security/cacerts
+
+--导入出现错误 keytool error: java.io.IOException: Keystore was tampered with, or password was incorrect 
+删除 cacerts  后重新导入 ，
+然后把hosts文件加上如下映射
+192.168.193.136 casserver
+
+/usr/java/default/bin/keytool   -import -file casserver.crt -keypass ciccit -keystore /usr/java/default/jre/lib/security/cacerts 
+               
+
+生成客户端证书(用jdk 7的keytool)客户端可以不启用SSL
+keytool -genkey -alias casclient -keypass ciccit -keyalg RSA  -ext san=ip:127.0.0.1
+然后把服务器的导出的证书导入到客户端的jre/lib/cacerts
+/usr/java/default/bin/keytool   -import -file casserver.crt -keypass ciccit -keystore /usr/java/default/jre/lib/security/cacerts
+
+cas客户端   如果已经授权获得ticker成功，那么不会每次访问客户端的时候去调用服务器验证ticker是否有效
+
+3.2客户端配置 web.xml  需要 cas-client-core-3.2.1.jar 和  commons-logging-1.1.jar
+
+ <filter>                                                                                    
+       <filter-name>UrlExcludeFilter</filter-name>                                             
+       <filter-class>com.cicc.sso.filter.UrlExcludeFilter</filter-class>                       
+       <init-param>                                                                            
+           <param-name>urlExcludePattern</param-name>                                          
+           <param-value>/UserPusher</param-value>                                              
+       </init-param>                                                                           
+   </filter>  
+   <!-- 配置使用logout call back -- >                                                                                 
+    <filter>                                                                                   
+       <filter-name>CAS Single Sign Out Filter</filter-name>                                   
+       <filter-class>org.jasig.cas.client.session.SingleSignOutFilter</filter-class>           
+       <init-param>                                                                            
+           <param-name>logoutCallBack</param-name>                                             
+           <param-value>com.cicc.rds.sso.RdsLogoutCallback</param-value>                       
+       </init-param>                                                                           
+    </filter>                                                                                  
+    <listener>                                                                                 
+        <listener-class>org.jasig.cas.client.session.SingleSignOutHttpSessionListener</listener-class>        
+    </listener>                                                                                
+    <filter>                                                                                   
+       <filter-name>CASAuthenticationFilter</filter-name>                                      
+       <filter-class>org.jasig.cas.client.authentication.AuthenticationFilter</filter-class>   
+       <init-param>                                                                            
+           <param-name>casServerLoginUrl</param-name>                                          
+           <param-value>https://192.168.193.136:8443/cas/login</param-value>                   
+       </init-param>                                                                           
+       <init-param>                                                                            
+           <param-name>serverName</param-name>                                                 
+           <param-value>http://192.168.193.136:8900</param-value>                              
+       </init-param>                                                                           
+    </filter>                                                                                  
+    <filter>                                                                                   
+       <filter-name>CASValidationFilter</filter-name>                                          
+        <filter-class>org.jasig.cas.client.validation.Cas20ProxyReceivingTicketValidationFilter</filter-class>
+       <init-param>                                                                            
+           <param-name>casServerUrlPrefix</param-name>                                         
+           <param-value>https://192.168.193.136:8443/cas</param-value>                         
+       </init-param>                                                                           
+       <init-param>                                                                            
+           <param-name>serverName</param-name>                                                 
+           <param-value>http://192.168.193.136:8900</param-value>                              
+       </init-param>                                                                           
+       <init-param>                                                         
+   <init-param>                                                                            
+           <param-name>loginCallBack</param-name>                                              
+           <param-value>com.cicc.rds.sso.RdsLoginCallback</param-value>                        
+       </init-param>                                                                           
+    </filter>                                                                                  
+    <filter>                                                                                   
+       <filter-name>CASHttpServletRequestWrapperFilter</filter-name>                           
+       <filter-class>org.jasig.cas.client.util.HttpServletRequestWrapperFilter</filter-class>  
+    </filter>                                                                                  
+    <filter>                                                                                   
+       <filter-name>CASAssertionThreadLocalFilter</filter-name>                                
+       <filter-class>org.jasig.cas.client.util.AssertionThreadLocalFilter</filter-class>       
+    </filter>                                                                                  
+ <filter-mapping>                                                                              
+       <filter-name>UrlExcludeFilter</filter-name>                                             
+       <url-pattern>/*</url-pattern>                                                           
+    </filter-mapping>                                                                          
+ <filter-mapping>                                                                              
+       <filter-name>CAS Single Sign Out Filter</filter-name>                                   
+       <url-pattern>/*</url-pattern>                                                           
+    </filter-mapping>                                                                          
+    <filter-mapping>                                                                           
+       <filter-name>CASAuthenticationFilter</filter-name>                                      
+       <url-pattern>/*</url-pattern>                                                           
+    </filter-mapping>                                                                          
+    <filter-mapping>                                                                           
+       <filter-name>CASValidationFilter</filter-name>                                          
+       <url-pattern>/*</url-pattern>                                                           
+    </filter-mapping>                                                                          
+    <filter-mapping>                                                                           
+       <filter-name>CASHttpServletRequestWrapperFilter</filter-name>                           
+       <url-pattern>/*</url-pattern>                                                           
+    </filter-mapping>                                                                          
+                                                                                               
+    <servlet>                                                                                  
+       <servlet-name>sso account sync</servlet-name>                                           
+       <servlet-class>com.cicc.sso.user.servlet.UserPusher</servlet-class>                     
+       <init-param>                                                                            
+           <param-name>whiteList</param-name>                                                  
+           <param-value>192.168.193.136;192.168.74.161</param-value>                           
+       </init-param>                                                                           
+       <init-param>                                                                            
+           <param-name>openAccountClass</param-name>                                           
+           <param-value>com.cicc.rds.sso.AccountOpenCallback</param-value>  
+        </init-param>                                                                           
+    </servlet>                                                                                 
+    <servlet-mapping>                                                                          
+       <servlet-name>sso account sync</servlet-name>                                           
+       <url-pattern>/UserPusher</url-pattern>                                                  
+</servlet-mapping>                                                                             
+
+修改session timeout时间 timeout is independent of the CAS web application session timeout
+修改 <session-timeout>5</session-timeout> will change the interval of time in which CAS remembers the user's place in the login workflow
+
+
+spring-configuration/ticketExpirationPolicies.xml
+修改 webapps/cas/WEB-INF/cas.properties  
+host.name=ssoserver.cicc.com
+server.name=http://192.168.193.136:8000
+
+
+修改 deployerConfigContext.xml   这个是登陆service的密码 如果使用了ldap，这里需要填写一个ldap的 name,不然验证通不过
+ <sec:user-service id="userDetailsService">
+        <sec:user name="admin" password="admin" authorities="ROLE_ADMIN" />
+    </sec:user-service>
+
+
+配置使其使用mysql存储service 
+
+修改 deployerConfigContext.xml
+<bean id="serviceRegistryDao" class="org.jasig.cas.services.JpaServiceRegistryDaoImpl"
+   p:entityManagerFactory-ref="entityManagerFactory" />
+ 
+<!-- This is the EntityManagerFactory configuration for Hibernate -->
+    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="jpaVendorAdapter">
+            <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+                <property name="generateDdl" value="true"/>
+                <property name="showSql" value="true" />
+            </bean>
+        </property>
+        <property name="jpaProperties">
+            <props>
+                <prop key="hibernate.dialect">org.hibernate.dialect.MySQL5InnoDBDialect</prop>
+                <prop key="hibernate.hbm2ddl.auto">update</prop>
+            </props>
+        </property>
+    </bean>
+ 
+    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+        <property name="entityManagerFactory" ref="entityManagerFactory"/>
+    </bean>
+ 
+    <tx:annotation-driven transaction-manager="transactionManager"/>
+    
+    <bean
+  id="dataSource"
+  class="com.mchange.v2.c3p0.ComboPooledDataSource"
+  p:driverClass="com.mysql.jdbc.Driver"
+  p:jdbcUrl="jdbc:mysql://192.168.193.132:3308/sso?autoReconnect=true"
+  p:user="sso"
+  p:password="sso"
+  p:initialPoolSize="5"
+  p:minPoolSize="5"
+  p:maxPoolSize="10"
+  p:maxIdleTimeExcessConnections="60"
+  p:checkoutTimeout="1000"
+  p:acquireIncrement="1"
+  p:acquireRetryAttempts="30"
+  p:acquireRetryDelay="1000"
+  p:idleConnectionTestPeriod="60"
+  p:preferredTestQuery="select 1"
+  />
+  
+ 
+
+
+修改  ticketRegistry.xml 把ticker存储到mysql
+
+<bean id="ticketRegistry" class="org.jasig.cas.ticket.registry.JpaTicketRegistry" />
+<bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor"/>
+
+ <bean id="ticketRegistryCleaner"
+    class="org.jasig.cas.ticket.registry.support.DefaultTicketRegistryCleaner"
+    p:ticketRegistry-ref="ticketRegistry"
+    p:lock-ref="cleanerLock" />
+    
+  <bean id="cleanerLock"
+    class="org.jasig.cas.ticket.registry.support.JpaLockingStrategy"
+    p:uniqueId="${host.name}"
+    p:applicationId="cas-ticket-registry-cleaner" />
+    
+
+
+ <bean id="ticketRegistryCleanerJobDetail"
+    class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean"
+    p:targetObject-ref="ticketRegistryCleaner"
+    p:targetMethod="clean" />
+ 
+  <bean id="periodicTicketRegistryCleanerTrigger"
+    class="org.springframework.scheduling.quartz.SimpleTriggerBean"
+    p:jobDetail-ref="ticketRegistryCleanerJobDetail"
+    p:startDelay="20000"
+    p:repeatInterval="1800000" />
+    
+    
+修改cas.properties
+database.hibernate.dialect=org.hibernate.dialect.MySQL5InnoDBDialect
+ticket.cleaner.database.platform=SQL92
+
+需要检查是否存在两个index
+ show index from TICKETGRANTINGTICKET where column_name='ticketGrantingTicket_ID';
+ show index from SERVICETICKET where column_name='ticketGrantingTicket_ID';
+确保 表 TICKETGRANTINGTICKET 和 SERVICETICKET 使用了LONGBLOB，如果不是修改 ALTER TABLE TICKETGRANTINGTICKET MODIFY SERVICES_GRANTED_ACCESS_TO LONGBLOB;
+
+
+
+
+使用JpaLockingStrategy 会自动创建LOCKS 表以防止多个cas server同时清理，如果使用jdbc的需要自己创建该表
+CREATE TABLE locks (
+ application_id VARCHAR(50) NOT NULL,
+ unique_id VARCHAR(50) NULL,
+ expiration_date TIMESTAMP NULL
+);
+ALTER TABLE locks ADD CONSTRAINT pk_locks
+ PRIMARY KEY (application_id);
+ 
+
+修改配置，使其使用ldap authentication  如果需要使用 ldaps，需要把ldap的证书导入到cas的服务器trust store
+使用 FastBindLdapAuthenticationHandler 效率最高  BindLdapAuthenticationHandler 需要先search然后bind
+需要  spring-ldap-1.3.1.RELEASE-all.jar  和 cas-server-support-ldap-3.5.2.1.jar
+<bean id="contextSource" class="org.springframework.ldap.core.support.LdapContextSource">
+  <!-- DO NOT enable JNDI pooling for context sources that perform LDAP bind operations. -->
+  <property name="pooled" value="false"/>
+ 
+  <property name="url" value="ldap://192.168.193.136:1080" />
+ 
+  <property name="userDn" value="uid=wanzy,ou=it,dc=cicc,dc=com"/>
+  <property name="password" value="123"/>
+ 
+  <property name="baseEnvironmentProperties">
+    <map>
+      <entry key="com.sun.jndi.ldap.connect.timeout" value="3000" />
+      <entry key="com.sun.jndi.ldap.read.timeout" value="3000" />
+      <entry key="java.naming.security.authentication" value="simple" />
+    </map>
+  </property>
+</bean>
+
+ <bean id="dirContextValidator"
+  class="org.springframework.ldap.pool.validation.DefaultDirContextValidator"
+  p:base=""
+  p:filter="objectclass=*">
+  <property name="searchControls">
+    <bean class="javax.naming.directory.SearchControls"
+      p:timeLimit="1000"
+      p:countLimit="1"
+      p:searchScope="0"
+      p:returningAttributes="" />
+  </property>
+</bean>
+
+<bean id="pooledContextSource"
+  class="org.springframework.ldap.pool.factory.PoolingContextSource"
+  p:minIdle="3"
+  p:maxIdle="10"
+  p:maxActive="50"
+  p:maxWait="10000"
+  p:timeBetweenEvictionRunsMillis="600000"
+  p:minEvictableIdleTimeMillis="1200000"
+  p:testOnBorrow="false"
+  p:testWhileIdle="true"
+  p:dirContextValidator-ref="dirContextValidator"
+  p:contextSource-ref="contextSource" />
+ 
+ 
+ 
+ <bean id="authenticationManager"
+  class="org.jasig.cas.authentication.AuthenticationManagerImpl">
+  <property name="credentialsToPrincipalResolvers">
+    <list>
+      <bean class="org.jasig.cas.authentication.principal.CredentialsToLDAPAttributePrincipalResolver">
+      <!-- The Principal resolver form the credentials -->
+      <property name="credentialsToPrincipalResolver">
+          <bean class="org.jasig.cas.authentication.principal.UsernamePasswordCredentialsToPrincipalResolver" >
+           <property name="attributeRepository" ref="attributeRepository" />
+           </bean>
+      </property>
+      <!-- The query made to find the Principal ID. "%u" will be replaced by the resolved Principal -->
+      <property name="filter" value="(uid=%u)" />
+      <!-- The attribute used to define the new Principal ID -->
+      <property name="principalAttributeName" value="uid" />
+      <property name="searchBase" value="dc=cicc, dc=com" />
+      <property name="contextSource" ref="contextSource" />
+      <property name="attributeRepository">
+          <ref bean="attributeRepository" />
+      </property>
+     </bean>
+  
+    <bean class="org.jasig.cas.authentication.principal.HttpBasedServiceCredentialsToPrincipalResolver" />
+   </list>
+  </property>
+ 
+  <property name="authenticationHandlers">
+    <list>
+      <!--
+        | This is the authentication handler that authenticates services by means of callback via SSL, thereby validating
+        | a server side SSL certificate.
+        +-->
+      <bean class="org.jasig.cas.authentication.handler.support.HttpBasedServiceCredentialsAuthenticationHandler"
+        p:httpClient-ref="httpClient" />
+ 
+   <bean class="org.jasig.cas.adaptors.ldap.BindLdapAuthenticationHandler"
+  p:filter="uid=%u"
+  p:searchBase="dc=cicc,dc=com"
+  p:contextSource-ref="contextSource"
+  p:searchContextSource-ref="pooledContextSource" />
+  
+    </list>
+  </property>
+ 
+</bean>
+
+
+
+自定义属性不能有空格
+<bean id="attributeRepository" class="org.jasig.services.persondir.support.ldap.LdapPersonAttributeDao">
+  <property name="contextSource" ref="pooledContextSource" />
+  <property name="baseDN" value="dc=cicc,dc=com" />
+  <property name="requireAllQueryAttributes" value="true" />
+ 
+  <!--
+  Attribute mapping between principal (key) and LDAP (value) names
+  used to perform the LDAP search.  By default, multiple search criteria
+  are ANDed together.  Set the queryType property to change to OR.
+  -->
+  <property name="queryAttributeMapping">
+    <map>
+      <entry key="username" value="uid" />
+    </map>
+  </property>
+ 
+  <property name="resultAttributeMapping">
+    <map>
+      <!-- Mapping beetween LDAP entry attributes (key) and Principal's (value) -->
+      <entry value="Name" key="cn" />
+      <entry value="Sure_Name" key="sn" />
+      <entry value="Password" key="userPassword" />
+    </map>
+  </property>
+</bean>
+
+
+设置数据库返回多属性
+<bean id="attributeRepository" class="org.jasig.services.persondir.support.jdbc.SingleRowJdbcPer
+sonAttributeDao">
+  <constructor-arg index="0" ref="dataSource"/>                               
+    <constructor-arg index="1" value="select * from t_user where {0}" />      
+  <!--                                                                        
+  Attribute mapping between principal (key) and LDAP (value) names            
+  used to perform the LDAP search.  By default, multiple search criteria      
+  are ANDed together.  Set the queryType property to change to OR.            
+  -->                                                                         
+  <property name="queryAttributeMapping">
+    <map>                                                                     
+      <entry key="username" value="login_id" />                               
+    </map>                                                                    
+  </property>
+                                                                              
+  <property name="resultAttributeMapping">                                    
+    <map>                                                                     
+      <entry value="appUserId" key="app_user_id" />                           
+    </map>                                                                    
+  </property>                                                                 
+</bean>                                                                       
+               
+                 
+  
+  
+一次验证 发放ticket时间 208 ms
+2014-04-25 15:24:02,813 ->02,819 验证完成->02,844 tikket 生成->  03,021  ticket 插入到mysql 
+
+
+把 mysql-connector-java-5.1.27-bin.jar 和 commons-dbcp-1.4.jar/commons-pool-1.6.jar 以及hibernage相关的包 
+hibernate-commons-annotat  
+hibernate-core-4.1.1.Fina  
+hibernate-entitymanager-4  
+hibernate-jpa-2.0-api-1.0  
+c3p0-0.9.5-pre8.jar
+mchange-commons-java-0.2.7.jar
+org.springframework.security.ldap-3.1.0.RELEASE.jar
+
+copy 到 cas/WEB-INF/lib    
+    
+
+    
+创建mysql数据库
+
+GRANT ALL PRIVILEGES ON sso.* TO 'sso'@'%' IDENTIFIED BY 'sso';
+GRANT ALL PRIVILEGES ON sso.* TO 'sso'@'localhost' IDENTIFIED BY 'sso';
+
+配置service 
+URL必须这样 http://192.168.193.136:8000/**
+
+
+配置logout logout的时候，会自动调用所有已经访问过的应用的，客户端filter会自动invalidate session信息
+
+response.sendRedirect("https://192.168.193.136:8443/cas/logout");
+存取user information
+https://192.168.193.136:8443/cas/view/jsp/protocol/2.0/casServiceValidationSuccess.jsp
+自定义的属性必须要在 service 里面打开  或者选择( Ignore Attribute Management via this Tool )而且需要把 
+如下内容加到 casServiceValidationSuccess.jsp
+ <%-- Added attributes in response--%>
+ <c:if test="${fn:length(assertion.chainedAuthentications[fn:length(assertion.chainedAuthenticat
+ions)-1].principal.attributes) > 0}">
+            <cas:attributes>
+                <c:forEach var="attr" items="${assertion.chainedAuthentications[fn:length(assert
+ion.chainedAuthentications)-1].principal.attributes}">
+                    <cas:${fn:escapeXml(attr.key)}>${fn:escapeXml(attr.value)}</cas:${fn:escapeX
+ml(attr.key)}>
+                </c:forEach>
+            </cas:attributes>
+        </c:if>
+        
+
+<%String userLoginName = request.getRemoteUser();
+System.out.println("login user is "+userLoginName);
+
+out.println("login user is "+userLoginName);
+java.security.Principal p=request.getUserPrincipal();
+org.jasig.cas.client.authentication.AttributePrincipal   principal = (org.jasig.cas.client.authentication.AttributePrincipal)p;
+
+java.util.Map<String, Object> attributes = principal.getAttributes();
+java.util.Iterator attributeNames = attributes.keySet().iterator();
+
+out.println("<table>");
+
+for (; attributeNames.hasNext();) {
+out.println("<tr><th>");
+String attributeName = (String) attributeNames.next();
+      out.println(attributeName);
+      out.println("</th><td>");
+      Object attributeValue = attributes.get(attributeName);
+      out.println(attributeValue);
+      out.println("</td></tr>");
+}
+
+out.println("</table>");
+
+
+
+%>                  
+
+
+SAML（Security Assertion Markup Language）是一个XML框架，也就是一组协议和规范，可以用来传输企业用户身份证明， 主要是企业外的身份跨域传递。比如，公司（idp）的用户要访问SAAS 应用（sp），为了保证身份安全，我们可以采用除了加密签名等措施，还要采用SAML规范来传输，传输的数据以XML形式，内容符合SAML的推荐标准，这样我们就可以不要求idp和sp采用什么样的系统，只要求能理解SAML规范即可，显然比传统的方式更好。SAML 规范是一组Schema 定义。
+         
+         
+         
+         <decision-state id="warn">
+        <if test="flowScope.warnCookieValue" then="showWarningView" else="checkService" />
+</decision-state>
+
+ <action-state id="checkService">
+ <evaluate expression="wzy.check(flowRequestContext,flowScope.credentials,messageContext)" />
+        <transition on="pass"  to="redirect"/>
+        <transition on="fail"  to="myView"/>
+    </action-state>
+
+        <view-state id="myView" view="myView" >
+    <transition on="submit" to="redirect" />
+        </view-state>
+
+
+        
+        修改 ./WEB-INF/classes/default_views.properties 把 myView 加进去
+        
+        myView.(class)=org.springframework.web.servlet.view.JstlView
+        myView.url=/WEB-INF/view/jsp/default/ui/wzyView.jsp
+
+        cas.properties保存如下变量供 viewResolver使用 意味在 WEB-INFO/classess下面有个 default_views.properties 来配置 view的名字
+        
+        cas.viewResolver.basename=default_views
+        
+        <bean id="viewResolver" class="org.springframework.web.servlet.view.ResourceBundleViewResolver
+"
+        p:order="0">
+    <property name="basenames">
+      <list>
+        <value>${cas.viewResolver.basename}</value>
+        <value>protocol_views</value>
+      </list>
+    </property>
+  </bean>
+  
+  配置bean  cas-servlet.xml
+  
+    <bean id="wzy" class="org.jasig.cas.web.flow.WzyValidate"
+          p:centralAuthenticationService-ref="centralAuthenticationService"
+          p:ticketRegistry-ref="ticketRegistry"
+/>
+
+配置cas 集群
+修改cas.properties
+host.name=eiger
+配置tomcat复制，使用jpa或者jboss cache
+
+
+  
+  
+  
+  错误信息为：
+JspTagException: Theme 'theme': No message found under code 'standard.custom.css.file' for locale 'en_zh_CN'
+解决办法：
+将“cas-server-webapp\src\main\webapp\WEB-INF\classes”目录下的“cas-theme-default.properties”文件复制一份到当前目录并重命名为“theme.properties”即可（cas-theme-default.properties和theme.properties要在同一文件夹下） 
+
+
+
+自定义处理action 
+
+/*
+ * Licensed to Jasig under one or more contributor license
+ * agreements. See the NOTICE file distributed with this work
+ * for additional information regarding copyright ownership.
+ * Jasig licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file
+ * except in compliance with the License.  You may obtain a
+ * copy of the License at the following location:
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+package org.jasig.cas.web.flow;
+
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotNull;
+
+import org.jasig.cas.CentralAuthenticationService;
+import org.jasig.cas.authentication.Authentication;
+import org.jasig.cas.authentication.handler.AuthenticationException;
+import org.jasig.cas.authentication.principal.Credentials;
+import org.jasig.cas.authentication.principal.Principal;
+import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
+import org.jasig.cas.ticket.TicketException;
+import org.jasig.cas.ticket.TicketGrantingTicket;
+import org.jasig.cas.ticket.registry.TicketRegistry;
+import org.jasig.cas.web.bind.CredentialsBinder;
+import org.jasig.cas.web.support.WebUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.binding.message.MessageBuilder;
+import org.springframework.binding.message.MessageContext;
+import org.springframework.util.StringUtils;
+import org.springframework.web.util.CookieGenerator;
+import org.springframework.webflow.execution.RequestContext;
+
+/**
+ * Action to authenticate credentials and retrieve a TicketGrantingTicket for
+ * those credentials. If there is a request for renew, then it also generates
+ * the Service Ticket required.
+ * 
+ * @author Scott Battaglia
+ * @version $Revision$ $Date$
+ * @since 3.0.4
+ */
+public class WzyValidate {
+	
+
+	
+	  @NotNull
+	    private  TicketRegistry ticketRegistry;
+
+	
+	    public void setTicketRegistry(final TicketRegistry serviceTicketRegistry) {
+	        this.ticketRegistry = serviceTicketRegistry;
+	        logger.warn("serviceTicketRegistry "+serviceTicketRegistry);
+	    }
+	    public TicketRegistry getTicketRegistry(final TicketRegistry serviceTicketRegistry) {
+	       return ticketRegistry;
+	    }
+	
+	    /** Core we delegate to for handling all ticket related tasks. */
+	    @NotNull
+	    private CentralAuthenticationService centralAuthenticationService;
+
+	    
+	    
+	    public  void setCentralAuthenticationService(final CentralAuthenticationService centralAuthenticationService) {
+	        this.centralAuthenticationService = centralAuthenticationService;
+	        logger.warn("CentralAuthenticationService "+centralAuthenticationService);
+
+	    }
+	    
+	    public CentralAuthenticationService getCentralAuthenticationService(final TicketRegistry serviceTicketRegistry) {
+		       return centralAuthenticationService;
+		    }
+		
+    /**
+     * Binder that allows additional binding of form object beyond Spring
+     * defaults.
+     */
+    private CredentialsBinder credentialsBinder;
+
+
+
+
+    protected Logger logger = LoggerFactory.getLogger(getClass());
+
+   
+    
+    public final String check(final RequestContext context,final Credentials credentials, final MessageContext messageContext)  throws Exception {
+       final String ticketGrantingTicketId = WebUtils.getTicketGrantingTicketId(context);
+       final Service service = WebUtils.getService(context);
+        logger.warn("this is called from check v2");
+        logger.warn("ticketGrantingTicketId "+ticketGrantingTicketId);
+        logger.warn("service "+service);
+        final String serviceTicketId = this.centralAuthenticationService.grantServiceTicket(ticketGrantingTicketId, service, credentials);
+        if (credentials instanceof UsernamePasswordCredentials) {
+            final UsernamePasswordCredentials cre = (UsernamePasswordCredentials) credentials;
+
+            // 当前用户名
+            String username = cre.getUsername();
+            if (username == null) {
+            	final TicketGrantingTicket ticketGrantingTicket;
+                ticketGrantingTicket = (TicketGrantingTicket) this.ticketRegistry.getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
+                logger.warn("------tgt2:-----------" +ticketGrantingTicket);
+                if(ticketGrantingTicket==null){
+                	logger.warn("------to login:-----------");
+                    return "error";
+                }
+              
+                final List<Authentication> chainedAuthenticationsList = ticketGrantingTicket.getChainedAuthentications();
+                final Authentication authentication = chainedAuthenticationsList.get(chainedAuthenticationsList.size() - 1);
+                final Principal principal = authentication.getPrincipal();
+                
+                username = principal.getId();
+            }
+             
+            logger.warn("username "+username);
+        }
+        
+        return "fail";
+   }
+
+
+ public static void main(String args[])
+ {
+	// WzyValidate vr=new WzyValidate();
+	// System.out.print(vr.check());
+	 
+ }
+}
+
+
+        
+
+AD server
+?	ldap://ad1-london.cicc.group.:389,
+?	ldap://shbdc02.cicc.group.:389,
+?	ldap://sgpubad1.cicc.group.:389,
+?	ldap://cdbdc01.cicc.group.:389,
+?	ldap://fsbdc01.cicc.group.:389,
+?	ldap://bjdc02.cicc.group.:389,
+?	ldap://bjdc03.cicc.group.:389,
+?	ldap://qdbdc01.cicc.group.:389,
+?	ldap://gzbdc01.cicc.group.:389,
+?	ldap://hzbdc01.cicc.group.:389,
+?	ldap://njbdc01.cicc.group.:389,
+?	ldap://nydc02.cicc.group.:389,
+?	ldap://szbdc02.cicc.group.:389,
+?	ldap://hkbdc02.cicc.group.:389,
+?	ldap://nydc01.cicc.group.:389,
+?	ldap://hkbdc01.cicc.group.:389,
+?	ldap://shbdc01.cicc.group.:389,
+?	ldap://sgpubad2.cicc.group.:389,
+?	ldap://xmbdc01.cicc.group.:389,
+?	ldap://szbdc01.cicc.group.:389,
+?	ldap://ad2-london.cicc.group.:389,
+?	ldap://bjdc04.cicc.group.:389,
+?	ldap://bjdc01.cicc.group.:389,
+?	ldap://whbdc01.cicc.group.:389
+
+设置aduit信息输出到 database
+CREATE TABLE T_AUDIT_TRAIL
+  (
+   AUD_USER      VARCHAR(100) NOT NULL,
+   AUD_CLIENT_IP VARCHAR(15)   NOT NULL,
+   AUD_SERVER_IP VARCHAR(15)   NOT NULL,
+   AUD_RESOURCE  VARCHAR(100) NOT NULL,
+   AUD_ACTION    VARCHAR(100) NOT NULL,
+   APPLIC_CD     VARCHAR(5)   NOT NULL,
+   AUD_DATE      TIMESTAMP     NOT NULL
+  );
+  
+  
+  CREATE INDEX IDX_AUDIT_TRAIL_DATE ON T_AUDIT_TRAIL (AUD_DATE);
+  CREATE INDEX IDX_AUDIT_TRAIL_USER ON T_AUDIT_TRAIL (AUD_USER);
+
+  CREATE INDEX IDX_AUDIT_TRAIL_ACTION ON T_AUDIT_TRAIL (AUD_ACTION);
+
+<bean id="inspektrTransactionManager"
+class="org.springframework.jdbc.datasource.DataSourceTransactionManager"
+p:dataSource-ref="dataSource"/>
+
+<bean id="inspektrTransactionTemplate"
+class="org.springframework.transaction.support.TransactionTemplate"
+p:transactionManager-ref="inspektrTransactionManager"
+p:isolationLevelName="ISOLATION_READ_COMMITTED"
+p:propagationBehaviorName="PROPAGATION_REQUIRED"/>
+
+
+<bean id="auditTrailManager"
+class="com.github.inspektr.audit.support.JdbcAuditTrailManager">
+<constructor-arg index="0" ref="inspektrTransactionTemplate" />
+<property name="dataSource" ref="dataSource" />
+<property name="tableName" value="T_AUDIT_TRAIL" /> 
+</bean>
+<!--  <bean id="auditTrailManager" class="com.github.inspektr.audit.support.Slf4jLoggingAuditTr
+ailManager" />
+ -->        
+ 

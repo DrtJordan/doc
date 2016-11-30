@@ -1,0 +1,22 @@
+iOS Developer  $99/年  发布到 apple store
+iOS Developer Enterprise $299/年 能够内部发布
+高校ios开发者计划免费
+
+在这里主要介绍一下公司ios开发者计划，只有利用个人和公司ios开发者计划证书开发的应用，才能上app store。企业开发者计划主要是为本公司开发软件，并安装到本公司的硬件设备上，不能上app store。下面主要介绍一下公司ios开发者计划的申请.
+ 
+ 需要 D-U-N-S Number 
+ 
+ 
+ two  macbook pro 15
+ 
+ 20,000 HKD
+ 
+ 
+ IPHONE开发现在有两种
+官方SDK,非官方SDK
+
+非官方SDK可以在XP上开发, 没有模拟器, 需要连接真机调试, 但是不能上APP STORE.
+官方SDK只能使用MAC系统, 用PC机装MAC或许你MAC系统都是可以的, 但是不能保证一定成功.
+
+
+

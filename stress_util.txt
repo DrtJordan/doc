@@ -1,0 +1,151 @@
+
+bonnie++ -d /stresstest/ -s 512 -r 256 -x 3 -u  test        
+
+Bonniee++把结果copy到 bon_csv2txt  然后ctl+d
+glusterfs 性能
+kvm,512M,44779,66,33663,8,47378,12,71563,99,225511,9,2000.3,4,16,224,2,5548,4,584,2,209,2,1289,3,352,1
+Version  1.03e      ------Sequential Output------ --Sequential Input- --Random-
+                    -Per Chr- --Block-- -Rewrite- -Per Chr- --Block-- --Seeks--
+Machine        Size K/sec %CP K/sec %CP K/sec %CP K/sec %CP K/sec %CP  /sec %CP
+kvm            512M 44779  66 33663   8 47378  12 71563  99 225511   9 2000.3   4
+                    ------Sequential Create------ --------Random Create--------
+                    -Create-- --Read--- -Delete-- -Create-- --Read--- -Delete--
+files:max:min        /sec %CP  /sec %CP  /sec %CP  /sec %CP  /sec %CP  /sec %CP
+kvm              16   224   2  5548   4   584   2   209   2  1289   3   352   1
+
+
+local disk 
+Version  1.03e      ------Sequential Output------ --Sequential Input- --Random-
+                    -Per Chr- --Block-- -Rewrite- -Per Chr- --Block-- --Seeks--
+Machine        Size K/sec %CP K/sec %CP K/sec %CP K/sec %CP K/sec %CP  /sec %CP
+kvm            512M 76046  99 +++++ +++ +++++ +++ 72770  99 +++++ +++ +++++ +++
+                    ------Sequential Create------ --------Random Create--------
+                    -Create-- --Read--- -Delete-- -Create-- --Read--- -Delete--
+files:max:min        /sec %CP  /sec %CP  /sec %CP  /sec %CP  /sec %CP  /sec %CP
+kvm              16 11212  99 +++++ +++ +++++ +++ 10962  98 +++++ +++ +++++ +++
+
+
+KVM disk 
+                    -Per Chr- --Block-- -Rewrite- -Per Chr- --Block-- --Seeks--
+Machine        Size K/sec %CP K/sec %CP K/sec %CP K/sec %CP K/sec %CP  /sec %CP
+kvm3           512M 69642  95 231147  26 115100  11 68004  99 +++++ +++ +++++ +++
+                    ------Sequential Create------ --------Random Create--------
+                    -Create-- --Read--- -Delete-- -Create-- --Read--- -Delete--
+files:max:min        /sec %CP  /sec %CP  /sec %CP  /sec %CP  /sec %CP  /sec %CP
+kvm3             16  7414 100 +++++ +++ +++++ +++  7477  99 +++++ +++ +++++  ++
+
+
+IOzone 
+make linux-ia64  
+
+./iozone -Raz -b lab-2G.xls -g 2G |tee 2G.log
+-R 产生excel格式的输出（仅显示在屏幕上,不会产生excel文件）
+-b 产生excel格式的文件
+-g 最大测试文件大小 for auto mode
+-t 并发数
+-s 测试文件的大小,支持-k -m -g
+-q 块大小 for auto mode
+
+#以下测试都可以加-Rb产生xls文件
+./iozone -a
+全面的自动测试，这个测试时间比较长
+./iozone -a -i 1
+只对write, rewrite进行性能测试
+./iozone -a -i 1 -i 0
+对读写进行性能测试
+./iozone -a -g 4G -i 0 -i 1
+对读写进行性能测试,并且最大测试文件为4G
+
+附:
+-i 参数
+0=write/rewrite
+1=read/re-read
+2=random-read/write
+3=Read-backwards
+4=Re-write-record
+5=stride-read
+6=fwrite/re-fwrite
+7=fread/Re-fread,
+8=random mix
+9=pwrite/Re-pwrite
+10=pread/Re-pread
+11=pwritev/Re-pwritev,
+12=preadv/Re-preadv
+
+
+
+3.Iperf服务器端选项和启动
+ 由于Iperf工具是基于服务器和客户端的工作模式，所以在进行测试之前应先在目标计算机上启动服务器端程序，Iperf客户端和服务器端程序其实都是同一个程序，只是使用了不
+同的命令选项而已。
+
+-s 以server模式启动，eg：iperf –s 。Server端为数据的接收端。
+-D 以服务方式运行ipserf，eg：iperf -s -D
+-R 停止iperf服务，针对-D，eg：iperf -s -R
+-o <filename> 重定向输出到指定文件。
+-c,--client <hostname/IP> 如果Iperf运行为服务器模式，则可利用-c参数指定一个客户端，本机将接受指定客户端的连接，但不支持UDP协议。
+-P,--parallel #  设置Iperf服务模式下的最大连接数，默认值为0，表示不限制连接数量。
+
+
+3.Iperf客户端选项
+
+-b,--bandwidth 指定客户端通过UDP协议发送信息的带宽，默认值为1Mbit/s
+-c,--client <hostname/IP> 指定Iperf服务器的主机名和IP地址　　
+-d,--dualtest 同时进行双向传输测试
+-n,--num 指定传输的字节数，eg：iperf -c 222.35.11.23 -n 100000
+-r,--tradeoff 单独进行双向传输测试
+-t,--time 指定Iperf测试时间，默认10秒,eg：iperf -c 222.35.11.23 -t 5
+-L,--listenport 指定一个端口，服务器将利用这个端口与客户机连接
+-P, --parallel 设置Iperf客户端至Iperf服务器的连接数，默认值为1
+-S, --tos  设置发出包的类型，具体类型请参阅man文档
+-F 指定需要传输的文件
+-T 指定ttl值　　
+
+4.通用参数
+
+-f [kmKM] 分别表示以Kbits, Mbits, KBytes, MBytes显示报告，默认以Mbits为单位,eg：iperf -c 222.35.11.23 -f K
+-i sec 以秒为单位显示报告间隔，eg：iperf -c 222.35.11.23 -i 2
+-l 缓冲区大小，默认是8KB,eg：iperf -c 222.35.11.23 -l 16
+-m 显示tcp最大mtu
+-o 将报告和错误信息输出到文件eg：iperf -c 222.35.11.23 -o ciperflog.txt
+-p 指定服务器端使用的端口或客户端所连接的端口eg：iperf -s -p 9999;iperf -c 222.35.11.23 -p 9999
+-u 使用udp协议
+-w 指定TCP窗口大小，默认是8KB
+-B 绑定一个主机地址或接口(当主机有多个地址或接口时使用该参数)
+-C 兼容旧版本(当server端和client端版本不一样时使用)
+-M 设定TCP数据包的最大mtu值
+-N 设定TCP不延时
+-V 传输ipv6数据包
+
+
+5.应用实例
+
+1)使用 iperf -s 命令将 Iperf 启动为 server 模式:
+iperf –s
+————————————————————
+Server listening on TCP port 5001
+TCP window size: 8.00 KByte (default)
+————————————————————
+2)启动客户端，向IP为10.230.48.65的主机发出TCP测试，并每2秒返回一次测试结果：
+iperf -c 10.230.48.65 -i 2
+
+3）以Mbytes/sec为单位显示测试结果：
+iperf -c 10.230.48.65 -f M -i 2
+
+4)设置TCP传输窗口大小为300K
+iperf -s -w 300K
+————————————————————
+Server listening on TCP port 5001
+TCP window size: 300 KByte
+———————————————————
+
+5）测试传输约1MB数据
+iperf -c 59.125.103.56 -f K -i 2 -w 300K –n 1000000
+
+6）测试持续36秒
+iperf -c 59.125.103.56 -f K -i 2 -w 300K –t 36
+
+7）测试双向传输
+iperf -c 220.112.45.87 -f K -i 2 -w 300k -n 1000000 -d
+
+8）UDP测试
+iperf -c 59.125.103.56 -f K -i 2 -w 300K –u

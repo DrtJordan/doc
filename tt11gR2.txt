@@ -1,0 +1,1657 @@
+20100721
+AWT如果复制到oracle错误
+在TimesTenDatabaseFileName.awterrs 能找到信息
+
+
+TimesTen supports two aging types, least recently used (LRU) aging and time-based aging.
+
+创建一个自动刷新，自动删除旧记录的cache table 
+CREATE READONLY CACHE GROUP recent_shipped_orders
+AUTOREFRESH MODE INCREMENTAL INTERVAL 1440 MINUTES STATE ON
+FROM oratt.orders
+(ord_num NUMBER(10) NOT NULL,
+cust_num NUMBER(6) NOT NULL,
+when_placed DATE NOT NULL,
+when_shipped DATE NOT NULL,
+PRIMARY KEY(ord_num))
+AGING USE when_shipped LIFETIME 30 DAYS CYCLE 24 HOURS ON
+
+LOAD CACHE GROUP 只处理新insert的数据
+REFRESH CACHE GROUP 只处理已经在TT里面同时在Oracle里面被修改和被删除的数据(Dynamic cache group)，新增的数据会on demand的load到TT
+REFRESH CACHE GROUP 处理所有满足条件的记录(explicitlyloaded cache group)，先unload cache group，然后load cache group
+
+人工 Flush CACHE GROUP  只同步修改的和修改的到Oracle，因为delete的已经同步到oracle
+
+PassThrough=0 缺省，所有的都在TT执行
+PassThrough=1 先在TT里面找，如果没有到oracle
+PassThrough=2 先在TT里面找，如果没有到oracle
+PassThrough=3 所有操作都在oracle执行
+
+ttDaemonLog -show ora 可以检测autorefresh的错误
+ttTraceMon cachealone1 可以检测autorefresh的错误
+
+cachegroups 查看cachegroup状态
+
+不支持clob,blob,xml
+
+replication支持AWT不支持SWT
+
+如果出现两个active 的 replicaton，两个自动协商，最新设置为active的保持active
+
+
+
+
+可以并行的load data
+
+REFRESH CACHE GROUP western_customers COMMIT EVERY 256 ROWS PARALLEL 4
+
+Dynamic cache group on demand load 必须在sql里面用=做where条件
+
+
+Dynamic cache group会自动load不在cache里面的数据
+
+Only a dynamic AWT cache group can be defined as global cache group
+global cache group里面的数据不能同时被读取或者修改
+
+
+
+
+PROPAGATE specifies that committed updates on the TimesTen cache table 
+ are automatically and synchronously propagated to the cached Oracle table
+ 
+Global cache group只能是 Dynamic AWT的 不能是 Explicitly load
+安装自启动
+
+bjnpdt01:/ciccdev/tt/TimesTen/cicctt/bin # ./setuproot  -install 
+Would you like to install the TimesTen daemon startup scripts into /etc/init.d? [ yes ] yes
+Copying /ciccdev/tt/TimesTen/cicctt/startup/tt_cicctt to /etc/init.d
+
+Successfully installed the following scripts :
+/etc/init.d/tt_cicctt
+/etc/rc.d/rc0.d/K45tt_cicctt
+/etc/rc.d/rc1.d/K45tt_cicctt
+/etc/rc.d/rc2.d/S90tt_cicctt
+/etc/rc.d/rc3.d/S90tt_cicctt
+/etc/rc.d/rc5.d/S90tt_cicctt
+/etc/rc.d/rc6.d/K45tt_cicctt
+
+
+cd /ciccdev/tt/TimesTen/cicctt/bin
+
+timesten 
+支持grid cache,自动创建tempory table和index
+可以指定选项修改执行计划，执行统计信息更新
+
+支持hash index,bitmap index,range index,hash最快，但是不支持range scan
+
+物化视图可以用来加速查询，也能用来跟踪多表的udpate,optimizer 不能自动找到物化视图，需要sql指定
+
+The TimesTen JDBC driver uses native threads. Green threads are not supported.
+
+On UNIX systems, the default port on which the TimesTen main daemon listens is
+53384 for 32-bit installations and 53388 for 64-bit applications.
+On UNIX systems, the default port on which the TimesTen Server daemon listens is
+53385 for 32-bit installations and 53389 for 64-bit applications.
+TempSize.  空间包含 locks,cursors....
+
+总空间大小 PermSize + TempSize + LogBufMB + 12MB overhead
+
+The TimesTen daemon performs the following functions:
+■ Manages shared memory access
+■ Coordinates process recovery
+■ Keeps management statistics on what data stores exist, which are in use, and which application processes are connected to which data stores
+■ Manages RAM policy
+■ Starts replication processes, the TimesTen Server and the cache agent.
+TimesTen uses subdaemons to perform the following:
+■ Manage data stores.
+■ Flush the transaction log buffer to disk.
+■ Perform periodic checkpoints.
+■ Implement the aging policies of various tables.
+■ Find and break deadlocks.
+■ Rollback transactions for abnormally terminated direct-mode applications.
+■ Perform required background processing for the database.
+
+查看当前连接用户查看当前连接用户
+SELECT * FROM sys.user_users;
+select user from dual;
+授权给public的，大家都有权限
+
+varchar2类型定义的缺省是byte,而不是char
+create table test(name varchar2(2000 char));
+
+batch执行
+ ttisql -f w.sql  npdevtt
+查看内存状态
+dssize;
+
+
+TT支持临时表，不支持blob,clob，但是有binary类型，支持动态sql
+基本上pl/sql的功能都支持，可以通过ttversion来查看是否安装pl/sql
+
+
+
+Command> dssize
+
+  PERM_ALLOCATED_SIZE:      10485760
+  PERM_IN_USE_SIZE:         46003
+  PERM_IN_USE_HIGH_WATER:   46024
+  TEMP_ALLOCATED_SIZE:      10485760
+  TEMP_IN_USE_SIZE:         6339
+  TEMP_IN_USE_HIGH_WATER:   8681
+  
+  查看所有的表
+  alltables; tables;
+  allindexes; indexes;
+  allfunctions ;
+  allprocedures
+  allpackages
+  
+  
+查看历史执行命令
+h
+执行命令
+!2
+
+查看当前状态
+monitor
+
+执行 preparestatment
+prepare insert into t1 values (:f, :g);
+exec;
+Type '?' for help on entering parameter values.
+Type '*' to end prompting and abort the command.
+Type '-' to leave the parameter unbound.
+Type '/' to leave the remaining parameters unbound and execute the command.
+Enter Parameter 1 'F' (NUMBER) > 1;
+Enter Parameter 2 'G' (CHAR) > 'abc';
+1 row inserted.
+Execution time (SQLExecute) = 0.000454 seconds.
+free
+describe *
+
+传递ref cursor
+VARIABLE ref REFCURSOR;
+
+
+
+declare
+BEGIN
+IF (mod(dbms_random.random(), 2) = 0) THEN
+ open :ref for select object_name from SYS.ALL_OBJECTS order by 1 asc;
+ ELSE
+ open :ref for select object_name from SYS.ALL_OBJECTS order by 1 desc;
+ end if;
+ END;
+/
+print ref;
+
+By default, VARCHAR,
+NVARCHAR and VARBINARY columns whose declared column length is > 128
+bytes are stored out of line. Columns whose declared column length is <= 128
+bytes are stored inline.
+
+创建同步MV
+CREATE MATERIALIZED VIEW SampleMV AS
+SELECT customer.custId, custName, orderId, book
+FROM customer, bookOrder
+WHERE customer.custId=bookOrder.custId;
+创建异步MV
+CREATE MATERIALIZED VIEW LOG ON customer WITH PRIMARY KEY (custName);
+CREATE MATERIALIZED VIEW LOG ON bookOrder WITH (custId, book);
+
+CREATE MATERIALIZED VIEW SampleAMV
+REFRESH
+FAST
+NEXT SYSDATE + NUMTODSINTERVAL(1, ’HOUR’)
+AS SELECT customer.custId, custName, orderId, book
+FROM customer, bookOrder
+WHERE customer.custId=bookOrder.custId;
+
+REFRESH MATERIALIZED VIEW SampleAMV;
+DROP VIEW sampleMV;
+DROP MATERIALIZED VIEW LOG ON customer;
+DROP MATERIALIZED VIEW LOG ON bookOrder;
+数据类型
+■ One-byte, two-byte, four-byte and eight-byte integers.
+■ Four-byte and eight-byte floating-point numbers.
+■ Fixed-length and variable-length character strings, both ASCII and Unicode.
+■ Fixed-length and variable-length binary data.
+■ Fixed-length fixed-point numbers.
+■ Time represented as hh:mm:ss [AM|am|PM|pm].
+■ Date represented as yyyy-mm-dd.
+■ Timestamp represented as yyyy-mm-dd hh:
+在batch 事物的时候，如果autocommit on 如果出现一些记录错误，则错误之前的记录会被提交。。。。(JDBC,ODBC)
+DDL不会自动提交事物
+如果事物回归，则使用 Transaction log 去恢复，而不是undo segment
+ 
+temporary data stores 没有checkpoint但是有 Transaction log
+Redo buffer分成多个部分 通过 LogBufParallelism 设置
+
+DataStore=/ciccdev/tt/TimesTen/cicctt/data/npdevtt/ 需要加/
+LogDir 不需要
+
+TT可以设置sql和lock的超时时间。。。。
+subdaemon每两s检查一下是否有死锁
+
+
+TT checkpoint的时候，写另外一个 checkpoint file
+.resn是预先分配的transaction log，防止磁盘空间满了
+在unload的时候，会做一个consisten checkpoint
+
+ttCkptHistory 查看checkpoint 历史
+如果冲突少，采用table-lock性能更好
+hash index如果page size不够，会导致竞争，性能下降
+
+因为是 cpu intensive,所以一个cpu一个进程就合适了
+
+统计 信息
+
+call ttOptUpdateStats
+call ttOptEstimateStats
+
+
+打开trace
+ttTraceMon 
+
+level sql 4
+
+
+The ttXactAdmin utility displays ownership, status, log and lock information for
+each outstanding transaction.
+
+当使用alter table add column的时候，会添加一个新的partition，影响性能
+从 SELECT tblname, sys16 FROM SYS.TABLES; 查询
+
+使用 MemoryLock 需要root 启动
+
+On Linux systems, set the groupname in the memlock setting to be the same as the
+instance administrator in the /etc/security/limits.conf file. Set the value of
+memlock to be at least as large as the TimesTen data store shared memory segment.
+为KB
+tt           soft    memlock         1048576 
+
+
+
+install 
+1.安装sun 1.6 jdk 64bit
+2.修改 /etc/sysctl.conf
+kernel.sem = 250 32000 100 128
+kernel.shmmax=68719476736
+kernel.shmall=16777216
+kernel.sem = 250 32000 128 100
+net.ipv4.tcp_rmem=4096 4194304 4194304
+net.ipv4.tcp_wmem=98304 4194304 4194304
+net.core.rmem_default=262144
+net.core.wmem_default=262144
+net.core.rmem_max=4194304
+net.core.wmem_max=4194304
+net.ipv4.tcp_window_scaling=1
+net.ipv4.ip_local_port_range=1024 65000
+3.useradd 
+groupadd tt
+useradd -g tt tt
+
+mkdir /etc/TimesTen/ 
+chown tt:tt /etc/TimesTen/
+chmod 770 /etc/TimesTen/
+chmod 660 /etc/TimesTen/*
+
+4.install
+./setup.sh
+
+
+5.启动脚本
+/ciccdev/tt/TimesTen/cicctt/startup/tt_cicctt
+人工启动
+ttDaemonAdmin -stop
+ttDaemonAdmin -start
+
+6.设置环境变量
+
+LD_LIBRARY_PATH=/ciccdev/tt/TimesTen/cicctt/lib:$LD_LIBRARY_PATH
+PATH=/ciccdev/tt/TimesTen/cicctt/bin:$PATH
+
+
+7.设置database
+修改 sys.odbc.ini
+[npdevtt]
+Driver=/ciccdev/tt/TimesTen/cicctt/lib/libtten.so
+DataStore=/ciccdev/tt/TimesTen/cicctt/data/npdevtt/
+DatabaseCharacterSet=AL32UTF8
+ConnectionCharacterSet=AL32UTF8
+LogDir=/ciccdev/tt/TimesTen/cicctt/log/npdevtt/
+PermSize=10240
+TempSize=10240
+Logging=1
+DurableCommits=0
+CkptFrequency=0
+CkptLogVolume=0
+Temporary=1
+LogBufMB=256
+
+8.创建data store
+
+tt@bjnpdt01:/ciccdev/tt/TimesTen/cicctt/info> ttisql 
+
+Copyright (c) 1996-2009, Oracle.  All rights reserved.
+Type ? or "help" for help, type "exit" to quit ttIsql.
+
+
+Command> connect "dsn=npdevtt"
+       > ;
+Connection successful: DSN=npdevtt;UID=tt;DataStore=/ciccdev/tt/TimesTen/cicctt/data/npdevtt;DatabaseCharacterSet=AL32UTF8;ConnectionCharacterSet=US7ASCII;DRIVER=/ciccdev/tt/TimesTen/cicctt/lib/libtten.so;LogDir=/ciccdev/tt/TimesTen/cicctt/log/npdevtt;PermSize=400;TempSize=100;TypeMode=0;
+(Default setting AutoCommit=1)
+9.权限用户
+create user wzy identified by wzy;
+grant create table to wzy;
+GRANT CREATE SESSION TO wzy;
+
+ttIsqlCS -connStr "DSN=npdevttcs;UID=wzy;PWD=wzy" 
+ttIsqlCS -connStr "DSN=fott;UID=fo;PWD=fo" 
+ttIsqlCS -connStr "TTC_Server=192.168.193.142;TTC_Server_DSN=fott;TCP_Port=53389;UID=wzy;PWD=wzy"
+10.设置ram load策略
+ttAdmin -ramPolicy always npdevtt
+
+
+11.查看执行计划
+autocommit 0;
+showplan 1;
+explain select * from dual;
+或者直接执行该sql
+
+查看计划
+select * from plan;
+
+设置hint
+try {
+. . . . . . .
+// Prevent the optimizer from choosing Merge Join
+cStmt = con.prepareCall("{
+CALL ttOptSetFlag('MergeJoin', 0)}");
+cStmt.execute();
+// Next prepared query
+pStmt=con.prepareStatement(
+"SELECT * FROM Tbl1, Tbl2 WHERE Tbl1.ssn=Tbl2.ssn");
+. . . . . . .
+catch (SQLException ex) {
+ex.printStackTrace();
+}
+}
+
+
+12.
+设置DSN客户端连接
+通过 ODBCINI 或者 ~/.odbc.ini 或者 SYSODBCINI 确定
+13.配置直接连接
+修改 ttendaemon.options
+添加 
+-serverShmIpc
+-serverShmSize 512
+
+修改 sys.ttconnect.ini  添加
+
+[ttLocalHost_ciccttRAM]
+Description=TimesTen Server
+Network_Address=ttShmHost
+TCP_PORT=53389
+
+修改 sys.odbc.ini 添加
+[npdevttcsram]
+TTC_SERVER=ttLocalHost_ciccttRAM
+TTC_SERVER_DSN=npdevtt
+
+
+查看是否是direct 连接 ttstatus
+
+Data store /ciccdev/tt/TimesTen/cicctt/info/DemoDataStore/sampledb_1121
+There are 11 connections to the data store
+Shared Memory KEY 0x53091412 ID 5963780
+PL/SQL Memory KEY 0x54091412 ID 5996549 Address 0x7fa0000000
+Type            PID     Context             Connection Name              ConnID
+Server          18480   0x00000000005b1450  sampledbcs_1121                   1       
+    (Client Information: pid: 18475; IPC: shared memory;                              
+        Node: bjnpdt01 (127.0.0.1))          
+
+
+Data store /ciccdev/tt/TimesTen/cicctt/data/npdevtt
+There are 11 connections to the data store
+Shared Memory KEY 0x320901b4 ID 3145730
+PL/SQL Memory KEY 0x330901b4 ID 3178499 Address 0x7fa0000000
+Type            PID     Context             Connection Name              ConnID
+Server          18592   0x00000000005b1450  npdevttcs                         1
+    (Client Information: pid: 18587; IPC: UNIX domain socket;
+        Node: bjnpdt01 (LOCAL))
+        
+        
+14.优化
+ttendaemon.options
+-serverpool 64
+-serversPerDSN
+-maxConnsPerServer
+15.设置客户端
+安装客户端
+设置
+TTCONNECT.INI
+设置
+ODBC.INI
+配置failover
+[MYDSN FAILOVER]
+TTC_SERVER=localhost
+TTC_SERVER_DSN=MYDSN
+TTC_Timeout=60000
+ConnectionCharacterSet=AL32UTF8
+TTC_SERVER2=localhost
+TTC_SERVER_DSN2=MYDSNSTANDBY
+
+16.编译c++程序
+
+make basics
+g++ -O -Wuninitialized -I/ciccdev/tt/TimesTen/cicctt/include -I/ciccdev/tt/TimesTen/cicctt/include/ttclasses -Ilib -DTTEXCEPT -DGCC  -DTT_64BIT -D_THREAD_SAFE -D_REENTRANT -I/ciccdev/tt/TimesTen/cicctt/quickstart/sample_code/common -c testprog_utils.cpp -o obj/testprog_utils.o
+g++ -O -Wuninitialized -I/ciccdev/tt/TimesTen/cicctt/include -I/ciccdev/tt/TimesTen/cicctt/include/ttclasses -Ilib -DTTEXCEPT -DGCC  -DTT_64BIT -D_THREAD_SAFE -D_REENTRANT -I/ciccdev/tt/TimesTen/cicctt/quickstart/sample_code/common -c basics.cpp -o obj/basics.o
+g++ -o basics obj/basics.o obj/testprog_utils.o \
+ -lpthread -lnsl -L /ciccdev/tt/TimesTen/cicctt/lib -ltten -lttclasses
+
+C/S方式
+g++     -L$TT_HOME/lib -lttclient -lttclassesCS -lpthread -lnsl   -I$TT_HOME/include -I$TT_HOME/include/ttclasses -Ilib -DTTEXCEPT -DGCC  -DTT_64BIT -D_THREAD_SAFE -D_REENTRANT -I$TT_HOME/quickstart/sample_code/common   test.cpp  -o test.exe
+本机方式
+g++     -L$TT_HOME/lib -ltten -lttclasses -lpthread -lnsl   -I$TT_HOME/include -I$TT_HOME/include/ttclasses -Ilib -DTTEXCEPT -DGCC  -DTT_64BIT -D_THREAD_SAFE -D_REENTRANT -I$TT_HOME/quickstart/sample_code/common   basics.cpp  -o basics.exe
+
+
+create table emp(id number(10) NOT NULL PRIMARY KEY) unique hash on (id) pages=30;
+性能测试
+
+declare 
+ count_row number(10):=0;
+begin
+for i in 1..10000000 loop
+insert into emp values(i);
+count_row:=count_row+1;
+if count_row>1000000 then
+commit;
+count_row:=0;
+end if;
+end loop;
+commit;
+end;
+/
+
+
+create table emp2 (id number(10));
+
+declare 
+begin
+for i in 1..1000000 loop
+insert into emp2 values(i);
+end loop;
+commit;
+end;
+/
+
+declare 
+begin
+for c in 1..2 loop
+for i in 1..10000000 loop
+insert into emp values(i);
+end loop;
+commit;
+end loop;
+end;
+/
+
+
+
+PL/SQL procedure successfully completed.
+
+Execution time (SQLExecute) = 20.415087 seconds.
+
+declare 
+id number(10);
+begin
+for c in (select id from emp2 where rownum<10000 ) loop
+id:=c.id;
+end loop;
+commit;
+end;
+/
+
+Execution time (SQLExecute) = 0.569605 seconds.
+
+oracle insert 1m 记录   Elapsed: 00:00:30.38      insert 8m  00:04:03.45
+oracle select  1m 记录  Elapsed: 00:00:01.03
+oracle count(*) 1m 记录 Elapsed: 00:00:00.06
+tt     count(*) 1m 记录                 0.030817  insert 8m  156.277405 seconds
+没有index的情况下，select * from emp where id=3; (row=10m)
+tt            0.343054 seconds
+oracle 00:00:00.56
+
+create index idx_emp_id on emp(id); 
+oracle  19.03s
+tt      9.28257s
+
+select * from emp where id in(30,1100,89999,421031); 快400X
+tt            0.000044s  0.044ms 
+oracle 00:00:00.02  20ms   
+ 
+ 压力测试
+./tptbm -proc 8 -read 100  -xact 6000000  -ops 0 -seed 10
+ 
+ tt@bjnpdt01:/ciccdev/tt/TimesTen/cicctt/quickstart/sample_code/odbc>tptbm -proc 8 -read 100  -xact 1000000  -ops 0 -seed 10  
+
+Enter password for appuser : 
+
+
+Connecting to the database as DSN=sampledb_1121;UID=appuser
+Connected using DSN=sampledb_1121;UID=appuser
+
+Populating benchmark data store
+In ExecuteTptBm (Child process = 1), waiting to connect
+In ExecuteTptBm (Child process = 2), waiting to connect
+In ExecuteTptBm (Child process = 3), waiting to connect
+In ExecuteTptBm (Child process = 4), waiting to connect
+In ExecuteTptBm (Child process = 5), waiting to connect
+In ExecuteTptBm (Child process = 6), waiting to connect
+In ExecuteTptBm (Child process = 7), waiting to connect
+
+Waiting for 8 processes to initialize
+
+Beginning execution with 8 processes: 100% read, 0% update, 0% insert, 0% delete
+
+Elapsed time:           11.0 seconds 
+Operation rate:     729195.2 operations/second (657480)
+
+16个进程 Operation rate:     734163.9 operations/second
+12个进程 Operation rate:     747523.9 operations/second
+
+
+java 性能程序测试 
+1线程  141944 
+2线程  217013
+4线程  454132
+8线程  784698
+16线程 970285
+32线程 936439
+
+自己的Java程序测试 
+table emp(id number(10))
+total query per/second=6401700 (12线程，记录数1m)
+
+java -Xms10240m -Xmx10240m -Xss1024k ThreadTest 8 10 select  
+[npdevtt]
+Driver=/ciccdev/tt/TimesTen/cicctt/lib/libtten.so
+DataStore=/ciccdev/tt/TimesTen/cicctt/data/npdevtt
+DatabaseCharacterSet=AL32UTF8
+ConnectionCharacterSet=AL32UTF8
+LogDir=/ciccdev/tt/TimesTen/cicctt/log/npdevtt
+PermSize=10240
+TempSize=10240
+Logging=1
+DurableCommits=0
+CkptFrequency=0
+CkptLogVolume=0
+Temporary=1
+LogBufMB=256
+MemoryLock=1
+
+insert (每个线程insert 1m 记录)对一张表同时insert,每10万条batch提交一次,autocommit=off
+                       									   tt tcp						  tt direct     oracle     mysql5.1   mysql5.1     mysql5.1  mysql5.5          mysql5.5                                               
+                                                																							     (innodb) (myiasm)   (memory)       (myiasm)          (innodb)     
+1 线程  insert per/second=250000    500000      1000000     5291       5494     6024           5025(333333)      4672    200000(rewriteBatchedStatements=true)
+4 线程  insert per/second=433333    571428      4000000     17876      18604    19581         17388(1000000)     16804   242646 
+8 线程  insert per/second=413448    477938      4000000      28091                        2000000              197560
+12线程  insert per/second=368603    443424     3999996      32284                        2400000
+16线程  insert per/second=324131    409106      2250000       33120                        2309521
+
+db2(9.7)                                   sql server(2008)           dm6.0
+1 线程  insert per/second=166666            50000                      62500
+4 线程  insert per/second=166666            152535                     48396
+8 线程  insert per/second=                  170430                     37618
+12线程  insert per/second=                  192957                     
+16线程  insert per/second=                  157253
+    
+insert (每个线程insert 1m 记录)对一张表同时insert,每1000条提交一次,autocommit=off
+Oracle  insert tps= 1245 每1000条提交一次
+Oracle  insert tps= 153 commit every row
+TT      insert tps= 112 commit every row
+
+设置 COMMIT_WAIT='NOWAIT'  COMMIT_LOGGING='BATCH'
+Oracle  insert tps= 666 commit every row
+
+Jboss cache  insert per/second=15571(locale cache)
+infinispan   insert per/second=250000(locale cache) 
+coherence    insert per/second=15571(locale cache) 
+select (每个线程 select 1m 记录) 每条记录单独查询
+oracle select tps= 857
+jboss cache  select_rps=125628(locale cache) 
+infinispan   select_rps=666666(locale cache) 
+coherence    select_rps=125628(locale cache) 
+
+
+
+
+db2 8线程的时候出现不稳定
+ error com.ibm.db2.jcc.am.ko: [jcc][t4][102][10040][4.8.87] Batch failure.  The batch was submitted, but at least one exception occurred on an individual member of the batch.
+     Use getNextException() to retrieve the exceptions for specific batched elements. ERRORCODE=-4228, SQLSTATE=null
+
+
+
+
+
+mysql(myisam) procedure 插入 1m    66666/s
+mysql(myisam) procedure 插入 0.1m  62500/s
+mysql(innodb) procedure 插入 0.1m  76923/s
+mysql(innodb) procedure 插入 1m    80064/s
+
+
+调整LockLevel=1                        
+1 线程       total insert per/second=000000                1000000      
+
+
+select  (每个线程select 1m 记录)对一张表同时select,循环所有的记录,autocommit=off
+                          tt tcp  tt direct     oracle     mysql51 mysql51  mysql51     mysql55
+                                                          (innodb) (myiasm)   (memory)   (innodb)
+1 线程  select per/second= 370370  1111110     92590      1000000   1111110    1111110   1000000
+4 线程  select per/second=1059720  3636360    283180      1403920   4111110    4333330   1344810    
+8 线程  select per/second=2105200  6153840    529320      1193070   6538440    6153840    
+12线程  select per/second=3000620  6358030    765510      1340250   6461920    6582320              
+16线程  select per/second=3835980  6200000   1038500      1377550   5554990    5182780          
+32线程  select per/second=4517290  4945650   1265430       929370   1404940    1604710    918270
+64线程  select per/second=3723170                         error     error                 error
+
+oracle( fetch size 100000)    sql server    db2        tt
+1线程   1111110                5000000    2000000   
+4线程   4000000               13714280    5934040
+8线程   8888880               14790180   10666560
+16线程  9142720               16102380   10689540
+32线程  9311620               15013480   10768120
+
+db2(9.7)                                   sql server(2008)           dm6.0
+1 线程  select per/second= 2000000           4000000                 37870
+4 线程  select per/second= 5535710          12380920                 72590
+8 线程  select per/second= 9861110          14790180                 61390 
+12 线程 select per/second=9866560           15159500                 85680
+16线程  select per/second=10541860          15848080 
+32线程  select per/second=10607040          15786320 
+64线程  select per/second=10796060          17106800
+128     select per/second=                  14901740
+256     select per/second=10768840         
+db2 (只能用到8个cpu)?256线程并发的时候居然cpu也不高，才20% 出现问题需要重启
+每个进程只能使用到8个CPU?? 
+sql server 256线程的时候 com.microsoft.sqlserver.jdbc.SQLServerException: Connection reset
+
+-bash-3.2# java -Xms1024M -Xmx1024M -classpath .:ojdbc14.jar ThreadTest  1 10 select
+threadnumber=1
+loopcount=10
+query stress test
+threadnumber=0 start to query 1275407330169710000
+thread 0 end to run           1275408397930471000
+thread 0 complete
+total query per/second=9370
+
+RAC环境下 
+insert  insert_per_second=500000
+加上 maxmize protection (dg)
+total insert per/second=250000
+
+select 
+total query per/second=105260
+
+
+
+
+修改参数
+
+LogBufParallelism=8
+LogFlushMethod=1
+4 线程       total insert per/second=413448                500000      4000000
+8 线程       total insert per/second=413448                496812      4000000
+12线程       total insert per/second=368603                444862      3999996 
+16线程       total insert per/second=324131                425864      2250000
+
+java -Xms10240m -Xmx10240m -Xss1024k ThreadTest 8 10 insert  
+
+Command> select count(*) from emp;
+< 109000000 >
+create index idx_emp on emp(id);
+select * from emp where id=3000123;
+Execution time (SQLExecute + Fetch Loop) = 0.000062 seconds.
+Execution time (SQLExecute + Fetch Loop) = 0.000089 seconds.
+Execution time (SQLExecute + Fetch Loop) = 0.000040 seconds.
+
+tt705
+
+[npdevtt]
+Driver=/ciccdev/tt705/TimesTen/tt70/lib/libtten.so
+DataStore=/ciccdev/tt705/TimesTen/tt70/info/npdevtt/
+DatabaseCharacterSet=AL32UTF8
+ConnectionCharacterSet=AL32UTF8
+PermSize=10240
+TempSize=10240
+Logging=0
+DurableCommits=0
+CkptFrequency=0
+CkptLogVolume=0
+Temporary=1
+LogBuffSize=1024000
+MemoryLock=1
+LogFlushMethod=1
+LockLevel=1
+################
+
+insert (每个线程insert 1m 记录)对一张表同时insert,每10万条batch提交一次,autocommit=off
+                                     tcp             direct        
+1 线程       total insert per/second=                1000000      
+4 线程       total insert per/second=                        
+8 线程       total insert per/second=                      
+12线程       total insert per/second=                       
+16线程       total insert per/second=                      
+
+
+
+
+编译测试程序
+cd quickstart/sample_scripts/createdb
+
+tt@bjnpdt01:/ciccdev/tt/TimesTen/cicctt/quickstart/sample_scripts/createdb> ./build_sampledb.sh
+
+Setting up the quickstart environment
+
+
+LD_LIBRARY_PATH set to /ciccdev/tt/TimesTen/cicctt/lib:/ciccdev/tt/TimesTen/cicctt/ttoracle_home/instantclient_11_1
+
+ANT_HOME set to /ciccdev/tt/TimesTen/cicctt/3rdparty/ant
+
+PATH set to /ciccdev/tt/TimesTen/cicctt/bin:/ciccdev/tt/TimesTen/cicctt/quickstart/sample_code/oci:/ciccdev/tt/TimesTen/cicctt/quickstart/sample_code/odbc:/ciccdev/tt/TimesTen/cicctt/quickstart/sample_code/odbc/xla:/ciccdev/tt/TimesTen/cicctt/quickstart/sample_code/jdbc:/ciccdev/tt/TimesTen/cicctt/quickstart/sample_code/odbc_drivermgr:/ciccdev/tt/TimesTen/cicctt/quickstart/sample_code/proc:/ciccdev/tt/TimesTen/cicctt/quickstart/sample_code/ttclasses:/ciccdev/tt/TimesTen/cicctt/quickstart/sample_code/ttclasses/xla:/ciccdev/tt/TimesTen/cicctt/ttoracle_home/instantclient_11_1:/ciccdev/tt/TimesTen/cicctt/ttoracle_home/instantclient_11_1/sdk:/ciccdev/tt/TimesTen/cicctt/3rdparty/ant/bin:/home/tt/bin:/usr/local/bin:/usr/bin:/usr/X11R6/bin:/bin:/usr/games:/opt/gnome/bin:/opt/kde3/bin:/usr/lib/mit/bin:/usr/lib/mit/sbin
+
+CLASSPATH set to /ciccdev/tt/TimesTen/cicctt/lib/ttjdbc5.jar:/ciccdev/tt/TimesTen/cicctt/lib/orai18n.jar:/ciccdev/tt/TimesTen/cicctt/lib/timestenjmsxla.jar:/ciccdev/tt/TimesTen/cicctt/3rdparty/jms1.1/lib/jms.jar:/ciccdev/tt/TimesTen/cicctt/quickstart:/ciccdev/tt/TimesTen/cicctt/quickstart/sample_code/jdbc:.
+
+TNS_ADMIN set to /ciccdev/tt/TimesTen/cicctt/network/admin/samples
+
+
+NOTE: The demos use system DSNs defined in
+      /ciccdev/tt/TimesTen/cicctt/info/sys.odbc.ini
+      To use your own DSNs, they must be defined in ~/.odbc.ini, or
+      you may set the environment variable ODBCINI to point to
+      the correct file.
+
+
+Removing existing sample database
+
+Failed to destroy data store: TT0833: Data store /ciccdev/tt/TimesTen/cicctt/info/DemoDataStore/sampledb_1121 not found -- file "db.c", lineno 22059, procedure "sbDbDestroy"
+
+Building new sample database
+
+
+Copyright (c) 1996-2009, Oracle.  All rights reserved.
+Type ? or "help" for help, type "exit" to quit ttIsql.
+
+
+
+connect "dsn=sampledb_1121";
+Connection successful: DSN=sampledb_1121;UID=tt;DataStore=/ciccdev/tt/TimesTen/cicctt/info/DemoDataStore/sampledb_1121;DatabaseCharacterSet=US7ASCII;ConnectionCharacterSet=US7ASCII;DRIVER=/ciccdev/tt/TimesTen/cicctt/lib/libtten.so;PermSize=40;TempSize=32;TypeMode=0;
+(Default setting AutoCommit=1)
+
+run "build_db.sql";
+
+set echo off;
+
+Creating users in the sample database
+
+Please choose a password for the database administration user 'adm'
+Enter password: 
+
+User created.
+
+Please choose a password for the applicaton user 'appuser'
+Enter password: 
+
+User created.
+
+Please choose a password for the XLA subscriber user 'xlauser'
+Enter password: 
+
+User created.
+
+< SYS, 0, 2009-12-28 13:13:08 >
+< TTREP, 2, 2009-12-28 13:13:08 >
+< SYSTEM, 3, 2009-12-28 13:13:08 >
+< GRID, 4, 2009-12-28 13:13:08 >
+< TT, 10, 2009-12-28 13:13:08 >
+< ADM, 11, 2009-12-28 13:13:13 >
+< APPUSER, 12, 2009-12-28 13:13:17 >
+< XLAUSER, 13, 2009-12-28 13:13:19 >
+
+< SYS, ADMIN, NO >
+< SYSTEM, ADMIN, NO >
+< TT, ADMIN, NO >
+< ADM, ADMIN, NO >
+< APPUSER, CREATE SESSION, NO >
+< APPUSER, CREATE TABLE, NO >
+< APPUSER, CREATE SEQUENCE, NO >
+< APPUSER, CREATE PROCEDURE, NO >
+< XLAUSER, CREATE SESSION, NO >
+< XLAUSER, XLA, NO >
+
+Creating schema objects in the sample database
+
+  APPUSER.ABC
+  APPUSER.ACCOUNT
+  APPUSER.ACTION
+  APPUSER.BINS
+  APPUSER.CUSTOMER
+  APPUSER.DATA_TABLE
+  APPUSER.DEPT
+  APPUSER.EMP
+  APPUSER.EMP_UNIQUE_ID_
+  APPUSER.ICF
+  APPUSER.INVENTORY
+  APPUSER.INVENTORY2
+  APPUSER.JOURNAL
+  APPUSER.MYDATA
+  APPUSER.MYTABLE
+  APPUSER.NUM1_TAB
+  APPUSER.NUM2_TAB
+  APPUSER.ORDERS
+  APPUSER.ORDER_ITEM
+  APPUSER.PRODUCT
+  APPUSER.PURCHASE_RECORD
+  APPUSER.RATIO
+  APPUSER.RESULT_TABLE
+  APPUSER.SUM_TAB
+  APPUSER.TEMP
+  APPUSER.XLAPERSISTENT_TABLE
+
+
+Package created.
+
+
+Package body created.
+
+  APPUSER.PERSONNEL
+
+Function created.
+
+  APPUSER.SP
+
+Procedure created.
+
+
+Procedure created.
+
+  APPUSER.GETEMPNAME_UNIQUE_ID_
+  APPUSER.GETEMPNO_UNIQUE_ID_
+
+No errors.
+
+Sample database created
+
+
+exit;
+Disconnecting from sampledb_1121...
+Disconnecting from adm...
+Disconnecting from appuser...
+Done.
+
+
+tt@bjnpdt01:/ciccdev/tt/TimesTen/cicctt> . quickstart/ttquickstartenv.sh
+
+LD_LIBRARY_PATH set to /ciccdev/tt/TimesTen/cicctt/lib:/ciccdev/tt/TimesTen/cicctt/ttoracle_home/instantclient_11_1
+
+ANT_HOME set to /ciccdev/tt/TimesTen/cicctt/3rdparty/ant
+
+PATH set to /ciccdev/tt/TimesTen/cicctt/bin:/ciccdev/tt/TimesTen/cicctt/quickstart/sample_code/oci:/ciccdev/tt/TimesTen/cicctt/quickstart/sample_code/odbc:/ciccdev/tt/TimesTen/cicctt/quickstart/sample_code/odbc/xla:/ciccdev/tt/TimesTen/cicctt/quickstart/sample_code/jdbc:/ciccdev/tt/TimesTen/cicctt/quickstart/sample_code/odbc_drivermgr:/ciccdev/tt/TimesTen/cicctt/quickstart/sample_code/proc:/ciccdev/tt/TimesTen/cicctt/quickstart/sample_code/ttclasses:/ciccdev/tt/TimesTen/cicctt/quickstart/sample_code/ttclasses/xla:/ciccdev/tt/TimesTen/cicctt/ttoracle_home/instantclient_11_1:/ciccdev/tt/TimesTen/cicctt/ttoracle_home/instantclient_11_1/sdk:/ciccdev/tt/TimesTen/cicctt/3rdparty/ant/bin:/home/tt/bin:/usr/local/bin:/usr/bin:/usr/X11R6/bin:/bin:/usr/games:/opt/gnome/bin:/opt/kde3/bin:/usr/lib/mit/bin:/usr/lib/mit/sbin
+
+CLASSPATH set to /ciccdev/tt/TimesTen/cicctt/lib/ttjdbc5.jar:/ciccdev/tt/TimesTen/cicctt/lib/orai18n.jar:/ciccdev/tt/TimesTen/cicctt/lib/timestenjmsxla.jar:/ciccdev/tt/TimesTen/cicctt/3rdparty/jms1.1/lib/jms.jar:/ciccdev/tt/TimesTen/cicctt/quickstart:/ciccdev/tt/TimesTen/cicctt/quickstart/sample_code/jdbc:.
+
+TNS_ADMIN set to /ciccdev/tt/TimesTen/cicctt/network/admin/samples
+
+
+NOTE: The demos use system DSNs defined in
+      /ciccdev/tt/TimesTen/cicctt/info/sys.odbc.ini
+      To use your own DSNs, they must be defined in ~/.odbc.ini, or
+      you may set the environment variable ODBCINI to point to
+      the correct file.
+      
+tt@bjnpdt01:/ciccdev/tt/TimesTen/cicctt/quickstart/sample_code/odbc> make tptbm 
+gcc -Os -finline-functions  -I/ciccdev/tt/TimesTen/cicctt/include -I/ciccdev/tt/TimesTen/cicctt/quickstart/sample_code/common -I/ciccdev/tt/TimesTen/cicctt/include/ttclasses -o tptbm.o -c tptbm.c
+gcc -Os -finline-functions  -I/ciccdev/tt/TimesTen/cicctt/include -I/ciccdev/tt/TimesTen/cicctt/quickstart/sample_code/common -I/ciccdev/tt/TimesTen/cicctt/include/ttclasses -o utils.o -c /ciccdev/tt/TimesTen/cicctt/quickstart/sample_code/common/utils.c
+gcc -Os -finline-functions  -I/ciccdev/tt/TimesTen/cicctt/include -I/ciccdev/tt/TimesTen/cicctt/quickstart/sample_code/common -I/ciccdev/tt/TimesTen/cicctt/include/ttclasses -o ttgetopt.o -c /ciccdev/tt/TimesTen/cicctt/quickstart/sample_code/common/ttgetopt.c
+gcc -o tptbm  tptbm.o utils.o ttgetopt.o -L/ciccdev/tt/TimesTen/cicctt/lib -Wl,-rpath,/ciccdev/tt/TimesTen/cicctt/lib -ltten  -lm
+
+
+优化建议
+Milliseconds count - use direct-linked connections for best response time
+Prepare queries and bind columns and parameters in advance
+Tune your application connections and use connection pooling
+Close cursor promptly(query need to close too)
+Turn OFF AutoCommit and Commit Regularly
+Create appropriate indexes
+Update statistics
+Review query plans and act accordingly
+Separate transaction logs and checkpoint files on separate disk drives
+Disk speed matters - use faster disks for write intensive applications
+Faster processor improves transaction response time and throughput
+High network bandwidth and low network latency for consistent replication performance
+Use Memory Locking and large pages
+Configure large OS TCP buffer windows
+Configure sufficient number of OS semaphores
+随时更新statistics
+
+
+
+
+状态
+tt@bjnpdt01:/ciccdev/tt/TimesTen/cicctt/info> ttstatus  npdevtt
+TimesTen status report as of Fri Dec 25 17:16:06 2009
+
+Daemon pid 24917 port 53388 instance cicctt
+TimesTen server pid 24925 started on port 53389
+------------------------------------------------------------------------
+Data store /ciccdev/tt/TimesTen/cicctt/data/npdevtt
+There are 10 connections to the data store
+Shared Memory KEY 0x0e0901b4 ID 360450
+PL/SQL Memory KEY 0x0f0901b4 ID 393219 Address 0x7fa0000000
+Type            PID     Context             Connection Name              ConnID
+Subdaemon       24920   0x000000000055d700  Manager                        2032
+Subdaemon       24920   0x00000000005bb880  Rollback                       2033
+Subdaemon       24920   0x000000000069e460  Flusher                        2034
+Subdaemon       24920   0x00000000006ba7d0  Aging                          2035
+Subdaemon       24920   0x00000000006d66a0  Log Marker                     2036
+Subdaemon       24920   0x00000000006f2570  Monitor                        2037
+Subdaemon       24920   0x000000000070e440  Deadlock Detector              2041
+Subdaemon       24920   0x00002aaacf2009f0  Checkpoint                     2038
+Subdaemon       24920   0x00002aaacf21c8c0  AsyncMV                        2039
+Subdaemon       24920   0x00002aaacf3008f0  HistGC                         2040
+RAM residence policy: Manual
+Data store is manually loaded into RAM
+Replication policy  : Manual
+Cache Agent policy  : Manual
+PL/SQL enabled.
+------------------------------------------------------------------------
+Accessible by group users
+End of report
+
+
+
+tt@bjnpdt01:/tmp/linux8664> ./setup.sh 
+
+NOTE: Each TimesTen installation is identified by a unique instance name.
+      The instance name must be a non-null alphanumeric string, not longer
+      than 255 characters.
+
+Please choose an instance name for this installation? [ tt1121 ] cicctt
+Instance name will be 'cicctt'.
+Is this correct? [ yes ] 
+
+Of the three components:
+
+  [1] Client/Server and Data Manager
+  [2] Data Manager Only
+  [3] Client Only
+
+Which would you like to install? [ 1 ] 1
+
+Of the following options :
+
+  [1] /home/tt
+  [2] /tmp/linux8664
+  [3] Specify a location
+  [q] Quit the installation
+
+Where would you like to install the cicctt instance of TimesTen? [ 1 ] 3
+Please specify a directory to install TimesTen? [ /home/tt ] /ciccdev/tt     
+Where would you like to create the daemon home directory? [ /ciccdev/tt/TimesTen/cicctt/info ] 
+
+The daemon logs will be located in /ciccdev/tt/TimesTen/cicctt/info
+Would you like to specify a different location for the daemon logs? [ no ] 
+Installing into /ciccdev/tt/TimesTen/cicctt ...
+Uncompressing ...
+
+NOTE: If you are configuring TimesTen for use with Oracle Clusterware, the
+      daemon port number must be the same across all TimesTen installations
+      managed within the same Oracle Clusterware cluster.
+
+NOTE: All installations that replicate to each other must use the same daemon
+      port number that is set at installation time. The daemon port number can
+      be verified by running 'ttVersion'.
+
+The default port number is 53388.
+
+Do you want to use the default port number for the TimesTen daemon? [ yes ] 
+The daemon will run on the default port number (53388).
+
+NOTE: For security, we recommend that you restrict access to the
+      TimesTen installation to members of a single OS group. Only members of
+      that OS group will be allowed to perform direct mode connections to
+      TimesTen, and only members of that OS group will be allowed to perform
+      operations that access TimesTen data stores, TimesTen files and shared
+      memory. The OS group defaults to the primary group of the instance
+      administrator. You can default to this group, choose another OS group
+      or you can make this instance world-accessible. If you choose to make
+      this instance world-accessible, all database files and shared memory
+      are readable and writable by all users.
+
+Restrict access to the the TimesTen installation to the group 'users'? [ yes ] 
+
+NOTE: Enabling PL/SQL will increase the size of some TimesTen libraries.
+
+Would you like to enable PL/SQL for this instance? [ yes ] 
+
+In order to use the 'In-Memory Database Cache' feature in any databases
+created within this installation, you must set a value for the TNS_ADMIN
+environment variable. It can be left blank, and a value can be supplied later
+using <install_dir>/bin/ttModInstall.
+
+Please enter a value for TNS_ADMIN (s=skip)? [  ] s
+
+
+NOTE: It appears that you are running version 4.1 of the g++
+      compiler. TimesTen ships with multiple sets of client libraries and server
+      binaries : one built for compatibility with g++ 3.4.6 and one with
+      g++ 4.1.0. The installer has created links to the 4.1.0 library in the
+      <install_dir>/lib directory and to the 4.1.0 server binary in the
+      <install_dir>/bin directory. If you want to use a different compiler,
+      please modify the links to point to the desired library and server binary.
+
+Installing server components ...
+What is the TCP/IP port number that you want the TimesTen Server to listen on? [ 53389 ] 
+Do you want to install QuickStart and the TimesTen Documentation? [ no ] yes
+Where would you like to install the quickstart and doc directories (s=skip)? [ /ciccdev/tt/TimesTen/cicctt ] 
+
+The TimesTen Quickstart applications can take up to 64 Mbytes of disk space.
+Depending on how your system is configured, you may not want to create the
+QuickStart DemoDataStore directory in the default location,
+/ciccdev/tt/TimesTen/cicctt/info/DemoDataStore
+
+Where would you like to create the DemoDataStore directory? [ /ciccdev/tt/TimesTen/cicctt/info ] 
+Creating /ciccdev/tt/TimesTen/cicctt/info/DemoDataStore ...
+
+Installing client components ...
+
+Would you like to use TimesTen Replication with Oracle Clusterware? [ no ] 
+
+NOTE: The TimesTen daemon startup/shutdown scripts have not been installed.
+
+Run the 'setuproot' script :
+        cd /ciccdev/tt/TimesTen/cicctt/bin
+        ./setuproot -install
+This will move the TimesTen startup script into its appropriate location.
+
+The startup script is currently located here :
+  '/ciccdev/tt/TimesTen/cicctt/startup/tt_cicctt'.
+
+The Quickstart home page can be accessed here :
+  '/ciccdev/tt/TimesTen/cicctt/quickstart/index.html'
+
+The 11.2.1.4 Release Notes are located here :
+  '/ciccdev/tt/TimesTen/cicctt/README.html'
+
+Starting the daemon ...
+TimesTen Daemon startup OK.
+End of TimesTen installation.
+
+1.配置cache group
+先安装 oracle client端
+然后在oracle上面初始化TT cache 要用的用户和对象
+cd TimesTen_install_dir/oraclescripts/
+
+
+kdb@bjnptes1:/nptest/timesten/TimesTen/tt1121/oraclescripts> sqlplus system/sys_ftp123@npdev01
+
+SQL*Plus: Release 10.2.0.1.0 - Production on Mon Jun 28 17:13:04 2010
+
+Copyright (c) 1982, 2005, Oracle.  All rights reserved.
+
+
+Connected to:
+Oracle Database 10g Enterprise Edition Release 10.2.0.4.0 - 64bit Production
+With the Partitioning, OLAP, Data Mining and Real Application Testing options
+
+SQL> @initCacheGlobalSchema.sql
+
+Please enter the tablespace where TIMESTEN user is to be created
+timesten
+The value chosen for tablespace is timesten
+
+******* Creation of TIMESTEN schema and TT_CACHE_ADMIN_ROLE starts *******
+1. Creating TIMESTEN schema
+2. Creating TIMESTEN.TT_GRIDID table
+3. Creating TIMESTEN.TT_GRIDINFO table
+4. Creating TT_CACHE_ADMIN_ROLE role
+5. Granting privileges to TT_CACHE_ADMIN_ROLE
+** Creation of TIMESTEN schema and TT_CACHE_ADMIN_ROLE done successfully **
+2.在oracle上创建cache user 
+CREATE USER cacheuser IDENTIFIED BY oracle DEFAULT TABLESPACE timesten; 
+
+SQL> @grantCacheAdminPrivileges "cacheuser"
+
+Please enter the administrator user id
+The value chosen for administrator user id is cacheuser
+
+***************** Initialization for cache admin begins ******************
+0. Granting the CREATE SESSION privilege to CACHEUSER
+1. Granting the TT_CACHE_ADMIN_ROLE to CACHEUSER
+2. Granting the DBMS_LOCK package privilege to CACHEUSER
+ORA-01031: insufficient privileges
+3. Granting the RESOURCE  privilege to CACHEUSER
+4. Granting the CREATE ANY PROCEDURE  privilege to CACHEUSER
+5. Granting the CREATE ANY TRIGGER  privilege to CACHEUSER
+6. Checking if the cache administrator user has permissions on the default
+tablespace
+     No existing permission.
+7. Altering the cache administrator to grant unlimited tablespace on TIMESTEN
+7. Granting the CREATE ANY TYPE privilege to CACHEUSER
+** Initialization for cache admin user could not be successfully done  **
+SQL> conn sys/sys_ftp123@npdev01 as sysdba;
+Connected.
+SQL> grant execute on DBMS_LOCK to cacheuser;          
+3.配置tnsname
+
+修改sys.odbc.ini 
+添加
+OracleNetServiceName=npdev01
+到
+[npdevtt]
+Driver=/nptest/timesten/TimesTen/tt1121/lib/libtten.so
+DataStore=/nptest/timesten/TimesTen/tt1121/info/npdevtt
+DatabaseCharacterSet=AL32UTF8
+ConnectionCharacterSet=AL32UTF8
+LogDir=/nptest/timesten/TimesTen/tt1121/log/npdevtt/
+PermSize=10240
+TempSize=10240
+Logging=1
+DurableCommits=0
+CkptFrequency=0
+CkptLogVolume=0
+#Temporary=1
+LogBufMB=256
+OracleNetServiceName=npdev01
+4.在tt上创建cache group用户
+ttIsql npdevtt
+CREATE USER cacheuser IDENTIFIED BY timesten;
+GRANT CREATE SESSION, CACHE_MANAGER, CREATE ANY TABLE TO cacheuser;
+5.创建需要cache data的用户，需要和oracle上一样的用户
+CREATE USER yunlu IDENTIFIED BY yun_lu;
+6.配置tt上的oracle cacheuser 密码
+ttIsql "DSN=npdevtt;UID=cacheuser;PWD=timesten;OraclePWD=oracle"
+配置 oracle cache group administrator 密码
+call ttCacheUidPwdSet('cacheuser','oracle');
+7.配置cache grid 
+call ttGridCreate('myGrid');
+call ttGridNameSet('myGrid');
+PL/SQL procedure successfully completed.
+
+8.给cache user 需要cache表的权限
+grant all on YUNLU.T_SHEX_TIK_20100104_2 to cacheuser;
+grant all on YUNLU.T_SHEX_BS_20100104_2 to cacheuser;
+9.
+设置tns_admin
+ttModInstall -tns_admin  这个要设置到network/admin
+
+tt@bjnpdt01:/ciccdev/tt/TimesTen/cicctt/bin> ttModInstall -tns_admin 
+TNS_ADMIN for the instance 'tt1121' is currently not set.
+Would you like to change TNS_ADMIN for this instance? [ no ] yes
+Please enter a value for TNS_ADMIN (q=quit)? [  ] /ciccdev/oracle/app/product/10.2.0/db_1/network/admin
+
+Do you want to restart the daemon using the new configuration? [ yes ] 
+Restarting the daemon ...
+TimesTen Daemon stopped.
+TimesTen Daemon startup OK.
+Instance tt1121 is now configured with TNS_ADMIN=/ciccdev/oracle/app/product/10.2.0/db_1/network/admin
+
+
+
+10.启动cache agent(从oracle load 数据需要)
+ttIsql "DSN=npdevtt;UID=cacheuser;PWD=timesten;OraclePWD=oracle"
+call ttCacheStart;
+
+ttAdmin -repPolicy always npdevtt
+
+11.启动replicaton agent(AWT需要写到oracle需要)
+ttIsql "DSN=npdevtt;UID=cacheuser;PWD=timesten;OraclePWD=oracle"
+call ttRepStart
+
+ttAdmin  -cachePolicy  always npdevtt
+
+
+ttIsql "DSN=npdevtt;UID=yunlu;PWD=yun_lu"
+
+
+12.创建cache group
+
+ttIsql "DSN=npdevtt;UID=cacheuser;PWD=timesten;OraclePWD=oracle"
+TT上的owner,表，必须和oracle上的owner,表一一对应
+The owner, table name and cached column names of a TimesTen cache table must match the owner, 
+table name and column names of the corresponding cached Oracle table.
+
+Each Oracle table to be cached in TimesTen must have a primary key or a unique index
+defined on non-nullable columns.
+
+创建cache group
+CREATE READONLY CACHE GROUP shex_tik_cache manual refresh  FROM YUNLU.T_SHEX_TIK_20100104_2
+(
+  INSERT_TIME TIMESTAMP(6),
+  TRANS_DATE  TIMESTAMP(6),
+  SYMBOL      VARCHAR2(20) ,
+  LASTPRICE   NUMBER(10,3),
+  HIGHPRICE   NUMBER(10,3),
+  LOWPRICE    NUMBER(10,3),
+  VOLUME      NUMBER(20),
+  TURNOVER    NUMBER(20),
+  BIDPRICE    NUMBER(10,3),
+  BIDVOLUME   NUMBER(20),
+  ASKPRICE    NUMBER(10,3),
+  ASKVOLUME   NUMBER(20),
+  TIK_ID      NUMBER(12) not null primary key
+);
+
+
+create index idx_tik_ticker_date on yunlu.T_SHEX_TIK_20100104(SYMBOL,TRANS_DATE);
+
+LOAD CACHE GROUP shex_tik_cache COMMIT EVERY 10000 ROWS;
+
+13.清除cache group
+
+
+DROP CACHE GROUP shex_tik_cache;
+call ttGridDestroy('myGrid');
+call ttCacheStop;
+
+一个TT里面，同样的oracle table不能再不同的cache group
+不同的TT里面，同样的oracle table不能能在不同的cache group
+
+A cache grid can be associated with only one Oracle database. A TimesTen database
+can be a member of only one cache grid. An Oracle database can be associated with
+more than one cache grid and each grid can be administered by a different cache
+administration user. A cache grid has no association with other cache grids.
+
+By default, you must associate a TimesTen database with a cache grid before you can
+create cache groups in that database. For backward compatibility, you can set the
+CacheGridEnable DSN attribute to 0 so that you do not have to create a cache grid
+and associate the TimesTen database with the grid before cache groups can be created
+within that database.
+
+
+create READONLY CACHE GROUP shex_bs_cache AUTOREFRESH INTERVAL 5 SECONDS FROM   YUNLU.T_SHEX_BS_20100104_2
+(
+  INSERT_TIME   TIMESTAMP(6),
+  TRANS_DATE    TIMESTAMP(6),
+  SYMBOL        VARCHAR2(20),
+  LASTPRICE     NUMBER(10,3),
+  HIGHPRICE     NUMBER(10,3),
+  LOWPRICE      NUMBER(10,3),
+  TOTALVOLUME   NUMBER(20),
+  TOTALTURNOVER NUMBER(20),
+  BIDPRICE01    NUMBER(10,3),
+  BIDVOLUME01   NUMBER(20),
+  BIDPRICE02    NUMBER(10,3),
+  BIDVOLUME02   NUMBER(20),
+  BIDPRICE03    NUMBER(10,3),
+  BIDVOLUME03   NUMBER(20),
+  BIDPRICE04    NUMBER(10,3),
+  BIDVOLUME04   NUMBER(20),
+  BIDPRICE05    NUMBER(10,3),
+  BIDVOLUME05   NUMBER(20),
+  BIDPRICE06    NUMBER(10,3),
+  BIDVOLUME06   NUMBER(20),
+  BIDPRICE07    NUMBER(10,3),
+  BIDVOLUME07   NUMBER(20),
+  BIDPRICE08    NUMBER(10,3),
+  BIDVOLUME08   NUMBER(20),
+  BIDPRICE09    NUMBER(10,3),
+  BIDVOLUME09   NUMBER(20),
+  BIDPRICE10    NUMBER(10,3),
+  BIDVOLUME10   NUMBER(20),
+  ASKPRICE01    NUMBER(10,3),
+  ASKVOLUME01   NUMBER(20),
+  ASKPRICE02    NUMBER(10,3),
+  ASKVOLUME02   NUMBER(20),
+  ASKPRICE03    NUMBER(10,3),
+  ASKVOLUME03   NUMBER(20),
+  ASKPRICE04    NUMBER(10,3),
+  ASKVOLUME04   NUMBER(20),
+  ASKPRICE05    NUMBER(10,3),
+  ASKVOLUME05   NUMBER(20),
+  ASKPRICE06    NUMBER(10,3),
+  ASKVOLUME06   NUMBER(20),
+  ASKPRICE07    NUMBER(10,3),
+  ASKVOLUME07   NUMBER(20),
+  ASKPRICE08    NUMBER(10,3),
+  ASKVOLUME08   NUMBER(20),
+  ASKPRICE09    NUMBER(10,3),
+  ASKVOLUME09   NUMBER(20),
+  ASKPRICE10    NUMBER(10,3),
+  ASKVOLUME10   NUMBER(20),
+  TOTALTRADES   NUMBER(20),
+  BS_ID         NUMBER(12) not null primary key
+);
+create index idx_bs_ticker_date on yunlu.T_SHEX_BS_20100104(SYMBOL,TRANS_DATE);
+grant admin to cacheuser;
+drop cache group SHEX_TIK_CACHE
+drop cache group shex_bs_cache
+load data
+LOAD CACHE GROUP SHEX_TIK_CACHE COMMIT EVERY 10000 ROWS;
+LOAD CACHE GROUP shex_bs_cache COMMIT EVERY 10000 ROWS;  
+
+Command> LOAD CACHE GROUP shex_bs_cache COMMIT EVERY 10000 ROWS;
+3310599 cache instances affected.
+Execution time (SQLExecute) = 118.312622 seconds.
+
+drop cache group SHEX_TIK_CACHE
+
+
+创建表，直接从文本导入数据
+create table YUNLU.T_SHEX_BS_20100104
+(
+  TRANS_DATE    TIMESTAMP(6),
+  SYMBOL        VARCHAR2(20),
+  MARKET        VARCHAR2(20) ,
+  LASTPRICE     NUMBER(10,3),
+  HIGHPRICE     NUMBER(10,3),
+  LOWPRICE      NUMBER(10,3),
+  TOTALVOLUME   NUMBER(20),
+  TOTALTURNOVER NUMBER(20,3),
+  BIDPRICE01    NUMBER(10,3),
+  BIDVOLUME01   NUMBER(20),
+  BIDPRICE02    NUMBER(10,3),
+  BIDVOLUME02   NUMBER(20),
+  BIDPRICE03    NUMBER(10,3),
+  BIDVOLUME03   NUMBER(20),
+  BIDPRICE04    NUMBER(10,3),
+  BIDVOLUME04   NUMBER(20),
+  BIDPRICE05    NUMBER(10,3),
+  BIDVOLUME05   NUMBER(20),
+  BIDPRICE06    NUMBER(10,3),
+  BIDVOLUME06   NUMBER(20),
+  BIDPRICE07    NUMBER(10,3),
+  BIDVOLUME07   NUMBER(20),
+  BIDPRICE08    NUMBER(10,3),
+  BIDVOLUME08   NUMBER(20),
+  BIDPRICE09    NUMBER(10,3),
+  BIDVOLUME09   NUMBER(20),
+  BIDPRICE10    NUMBER(10,3),
+  BIDVOLUME10   NUMBER(20),
+  ASKPRICE01    NUMBER(10,3),
+  ASKVOLUME01   NUMBER(20),
+  ASKPRICE02    NUMBER(10,3),
+  ASKVOLUME02   NUMBER(20),
+  ASKPRICE03    NUMBER(10,3),
+  ASKVOLUME03   NUMBER(20),
+  ASKPRICE04    NUMBER(10,3),
+  ASKVOLUME04   NUMBER(20),
+  ASKPRICE05    NUMBER(10,3),
+  ASKVOLUME05   NUMBER(20),
+  ASKPRICE06    NUMBER(10,3),
+  ASKVOLUME06   NUMBER(20),
+  ASKPRICE07    NUMBER(10,3),
+  ASKVOLUME07   NUMBER(20),
+  ASKPRICE08    NUMBER(10,3),
+  ASKVOLUME08   NUMBER(20),
+  ASKPRICE09    NUMBER(10,3),
+  ASKVOLUME09   NUMBER(20),
+  ASKPRICE10    NUMBER(10,3),
+  ASKVOLUME10   NUMBER(20),
+  TOTALTRADES   NUMBER(20));
+  
+  create table YUNLU.T_SHEX_TIK_20100104  
+(
+  TRANS_DATE TIMESTAMP(6),
+  SYMBOL     VARCHAR2(20),
+  MARKET     VARCHAR2(20),
+  LASTPRICE  NUMBER(10,3),
+  VOLUME     NUMBER(20)
+ );
+  
+  
+ 
+ttBulkCp 可以批量导入数据
+ttBulkCp -i -e mytbl.err -xp 100000 -m 0 -Q 0 DSN=npdevtt yunlu.T_SHEX_BS_20100104  sh20100104.bs
+花了 28s 导入了 7317716 条上交所 tik 数据
+1m6.647s 导入了 3310599 条上交所 bs 数据
+查看容量大小
+ttSize -tbl yunlu.T_SHEX_BS_20100104 npdevtt
+
+Migrate a data store between releases of TimesTen. Use the ttMigrate
+
+
+
+测试java程序
+
+package wzy;
+import java.sql.*;
+import java.io.*;
+import java.text.*;
+import java.lang.*;
+import java.util.*; 
+import com.timesten.jdbc.TimesTenConnection;
+import com.timesten.jdbc.*;
+class ThreadTest extends Thread
+{static String  url = "jdbc:timesten:client:DSN=npdevttcs";
+ //static String  url = "jdbc:oracle:thin:@192.168.193.132:1521:npdev01";
+ //static String  url = "jdbc:timesten:direct:DSN=npdevtt";
+ java.sql.Connection con;
+ java.sql.PreparedStatement st;
+ java.sql.PreparedStatement st2;
+
+ java.sql.ResultSet rs;
+ int rowid;
+ long starttime;
+ long endtime;
+ long qeuryPS;
+ int loopcount;
+ static int second=1000000000;
+ static int rownumber=1000000;
+ long totalqueryps;
+ int threadnumber;
+ boolean finished;
+ boolean selectorudpate;
+public void run()
+ { finished=false;
+	if(con!=null&&st!=null)
+	{starttime=System.nanoTime();
+	//System.out.println("thread "+threadnumber+" start to run");
+	if(this.selectorudpate) //select
+	{ System.out.println("threadnumber="+threadnumber + " start to query");
+	
+	for (int loop=1;loop<=loopcount;loop++)
+	{try {
+		
+	
+	rs=st.executeQuery();
+	
+	while(rs.next())
+	{
+	rowid=rs.getInt("id");	
+	}
+	endtime=System.nanoTime();
+	qeuryPS=loopcount*(rownumber/((endtime-starttime)/second));
+
+	}
+	catch(java.lang.Exception e )
+	{
+		e.printStackTrace();
+	}
+	}
+	}
+	else
+	{System.out.println("threadnumber="+threadnumber + " start to insert 1 million rows ");
+		try {
+		for (int k=1;k<=10;k++)
+	   {  st2.clearBatch();
+			for(int i=1;i<=100000;i++)
+		{   
+			st2.setInt(1, i+(this.threadnumber*1000000+k*100000));
+			st2.addBatch();
+		}
+		st2.executeBatch();
+		con.commit();
+		}
+		endtime=System.nanoTime();
+		qeuryPS=rownumber/((endtime-starttime)/second);
+
+	}
+	catch(java.lang.Exception e )
+	{
+		e.printStackTrace();
+	}
+	
+	}
+	System.out.println("thread "+threadnumber+" complete");
+	finished=true;
+	}
+	else
+	{
+	System.out.println("connection is null,return!");
+	}
+ }
+public long getQPS()
+{
+	return qeuryPS;
+}
+public boolean  isComplete()
+{
+	return finished;
+}
+public  ThreadTest(int threadnumber,int loopcount,boolean p_selectorupdate)
+ { this.threadnumber=threadnumber;
+   this.loopcount=loopcount;
+   this.selectorudpate=p_selectorupdate;
+	try {
+ con=java.sql.DriverManager.getConnection(url,"wzy","wzy");
+ con.setAutoCommit(false);
+ st=con.prepareStatement("select * from emp"); 
+ st2=con.prepareStatement("insert into  emp(id) values(?)");
+	}
+	catch(java.lang.Exception e )
+	{
+		e.printStackTrace();
+	}
+}
+ public static void main(String args[]) throws java.lang.Exception 
+ {int threadnumber=1;
+  int loopcount=10;
+ long totalQPS=0;
+ boolean allfinished=true;
+ boolean finished=false;
+ boolean selectorudpate=false;//select 
+ Class.forName("com.timesten.jdbc.TimesTenDriver");
+ //Class.forName("oracle.jdbc.driver.OracleDriver");
+	 if (args!=null)
+      { for (int k=0;k<args.length;k++)
+      { if (k==0) 
+         threadnumber=Integer.parseInt(args[k]);
+		 if (k==1)
+         loopcount=Integer.parseInt(args[k]);
+    
+      
+      if (k==2&&args[k].equals("insert"))
+      selectorudpate=false; //insert 
+      else if (k==2&&args[k].equals("select"))
+      selectorudpate=true;	  //select 
+      }
+      }
+      
+	 System.out.println("threadnumber="+threadnumber);
+     System.out.println("loopcount="+loopcount);
+     
+     if(selectorudpate==true)
+    	 System.out.println("query stress test");
+   	 else
+         System.out.println("insert stress test");
+     
+	 ThreadTest[] tsgroup=new ThreadTest[threadnumber];
+	 for(int i=0;i<threadnumber;i++)
+	 {
+		 tsgroup[i]=new ThreadTest(i,loopcount,selectorudpate);
+		
+	 } 
+
+	 for(int i=0;i<threadnumber;i++)
+	 {
+		 tsgroup[i].start();
+	 }
+	 while(allfinished)
+	 {
+	 for(int i=0;i<threadnumber;i++)
+	 {
+		 finished=tsgroup[i].isComplete();
+		 if(!finished)
+			 allfinished=false;
+	 }
+	  if(!allfinished)
+		  allfinished=true;
+	  else
+		  allfinished=false;
+	 java.lang.Thread.sleep(1000);
+	 }
+    
+	 for(int i=0;i<threadnumber;i++)
+	 {
+		 totalQPS=totalQPS+tsgroup[i].getQPS();
+	 }
+	 if(selectorudpate==true)
+	 System.out.println("total query per/second="+totalQPS);
+	 else
+	 System.out.println("total insert per/second="+totalQPS);
+ }
+}
+
+
+C++测试程序
+
+#include <iostream>  
+#include <ttclasses/TTInclude.h>  
+
+using namespace std;  
+
+int main()  
+{  
+   TTConnection conn;  
+   TTStatus status;  
+   TTCmd cmd;  
+   
+   try {  
+     conn.Connect("DSN=fott;UID=fo;PWD=fo", status);  
+       cout <<" start to create table"<<endl;
+      try {
+      cmd.ExecuteImmediate(&conn, "create table t_test(id number(10),name varchar2(200))");
+     }
+    catch (TTStatus st) {
+      // Ignore errors .. table might legitimately not exist.
+        cout << "create table error " << st<< endl;
+    }
+     
+     cout <<" start to insert data"<<endl;
+     cmd.Prepare(&conn, " insert into t_test values(?,?)", status);  
+     cmd.setParam(1, 2);  
+     cmd.setParam(2, "wzy");  
+     cmd.setQueryTimeout(3, status);  
+     cmd.Execute(status);  
+     if (cmd.getRowCount() == 0) {  
+       cout << "No rows updated" << endl;  
+     } else {  
+         conn. Commit(status);  
+       cout << "Update Successful" << endl;  
+     }  
+     cmd.Close(status);
+     
+     cout <<" start to query data"<<endl;
+     cmd.Prepare(&conn, "select *From t_test ", status);  
+     cmd.Execute(status);
+     int id;
+     char name[100];
+     cout <<"total rows="<<cmd.getRowCount()<<endl;
+   while ( !cmd.FetchNext() ) {
+   cmd.getColumn(1, (SQLTINYINT*)&id);
+   cmd.getColumn(2, (char*)&name);
+   cout <<"id="<< id<<" name="<<name<<endl;
+    }
+    
+     cmd.Close(status);  
+     cmd.Drop(status);  
+     conn.Disconnect(status);  
+   } catch (TTStatus st) {  
+     cout << st.err_msg << endl;  
+   }  
+   return 0;  
+}  
+

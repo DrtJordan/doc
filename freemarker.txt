@@ -1,0 +1,238 @@
+Velocity 通过模板生成文件
+/初始化模板引擎
+Velocity.init("src/velocity.properties");
+//获取VelocityContext
+VelocityContext context = new VelocityContext();
+//为Context设置变量
+context.put("content", "HelloWorld");
+context.put("who", "arthinking");
+//获取模板文件
+Template template = Velocity.getTemplate("helloworld.vm");
+//创建输出文件
+File output = new File("D:/Velocity/1.html");
+if(!output.getParentFile().exists())
+	output.getParentFile().mkdir();
+//创建输出流
+FileOutputStream outputStream = new FileOutputStream(output);
+OutputStreamWriter writer = new OutputStreamWriter(outputStream);
+BufferedWriter bufferedWriter = new BufferedWriter(writer);
+template.merge(context, bufferedWriter);
+
+bufferedWriter.flush();
+outputStream.close();
+bufferedWriter.close();
+
+模板文件
+hellowrld.vm
+
+${who}
+${content}
+
+freemarker 
+优点： 
+1、不能编写java代码，可以实现严格的mvc分离 
+2、性能非常不错 
+3、对jsp标签支持良好 
+4、内置大量常用功能，使用非常方便 
+5、宏定义（类似jsp标签）非常方便 
+6、使用表达式语言 
+缺点： 
+1、不是官方标准 
+2、用户群体和第三方标签库没有jsp多 
+
+性能：velocity应该是最好的，其次是jsp，普通的页面freemarker性能最差，
+但是在复杂页面上（包含大量判断、日期金额格式化）的页面上，freemarker的性能比使用tag和el的jsp好。
+
+在这两个模板中，当你要引用user和latestProduct时，它会首先试图去查找一个名字已经在模板中创建的变量
+（比如prod；如果你使用JSP：这是一个page范围内的属性）。如果那样做不行，它会尝试在对HttpServletRequest象中查找那个名字的属性，如果没有找到就在HttpSession中找，如果还没有找到那就在ServletContext中找。FTL按这种情况工作是因为FreemarkerServlet创建数据模型由上面提到的3个对象中的属性而来。那也就是说，这种情况下根哈希表不是java.util.Map（正如本手册中的一些例子那样），而是ServletContext+HttpSession+HttpServletRequest；FreeMarker在处理数据模型类型的时候非常灵活。所以如果你想将变量” name”放到数据模型中，那么你可以调用servletRequest.setAttribute("name", "Fred")；这是模型2的逻辑，而FreeMarker将会适应它。
+FreemarkerServlet也会在数据模型中放置3个哈希表，这样你就可以直接访问3个对象中的属性了。这些哈希表变量是：Request，Session，Application（和ServletContext对应）。它还会暴露另外一个名为RequestParameters的哈希表，这个哈希表提供访问HTTP请求中的参数。
+
+
+通过子类别， FreemarkerServlet 易于定制特殊需要。那就是说，你需要对所有模板添加一个额外的可用变量，
+使用servlet的子类，覆盖preTemplateProcess()方法，在模板被执行前，将你需要的额外数据放到模型中。或者在servlet的子类中，在Configuration中设置这些全局的变量作为共享变量。
+
+
+<@include_page path="path/to/some.jsp"/>
+<@include_page ...>不能和<#include ...>搞混，后者是为了包含FreeMarker模板而不会牵涉到Servlet容器。使用<#include ...>包含的模板和包
+含它的模板共享模板处理状态，比如数据模型和模板语言变量，而<@include_page ...>开始一个独立的HTTP请求处理。
+
+<@include_page path="path/to/some.jsp" inherit_params=true params={"foo": "99", "bar": ["a", "b"]}/>
+
+如何使用taglib
+
+<%@taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
+<%@taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
+<html>
+<body>
+<h1><bean:message key="welcome.title"/></h1>
+<html:errors/>
+<html:form action="/query">
+Keyword: <html:text property="keyword"/><br>
+Exclude: <html:text property="exclude"/><br>
+<html:submit value="Send"/>
+</html:form>
+</body>
+</html>
+
+这是一个（近似）等价的FTL：
+
+<#assign html=JspTaglibs["/WEB-INF/struts-html.tld"]>
+<#assign bean=JspTaglibs["/WEB-INF/struts-bean.tld"]>
+<html>
+<body>
+<h1><@bean.message key="welcome.title"/></h1>
+<@html.errors/>
+<@html.form action="/query">
+Keyword: <@html.text property="keyword"/><br>
+Exclude: <@html.text property="exclude"/><br>
+<@html.submit value="Send"/>
+</@html.form>
+</body>
+</html>
+
+默认情况下，FreeMarker将试图访问一个不存在的变量或null值（这两点是一样的，参看FAQ-17）视为一个错误，这会中断模板的执行。
+
+jsp中也可以嵌入 FTL
+
+尽管FreeMarker最初被设计用作Web页面的模板引擎，对于2.3版本来说，它的另外一个应用领域目标是：转换XML到任意的文本输出（比如HTML）。因此，在很多情况下，FreeMarker也是一个可选的XSLT
+
+FreeMarker的优点：
+? FreeMarker不依赖于Servlet，网络或Web环境；它仅仅是通过合并模板和Java对象（数据模型）来生成文本输出的类库。你可以在任意地方任意时间来执行模板；不需要HTTP的请求转发或类似的手段，也不需要Servlet环境。出于这些特点你可以轻松的将它整合到任何系统中去。
+? 在模板中没有servlet特定的范围和其它高级技术。FreeMarker一开始就是为MVC设计的，它仅仅专注于展示。
+? 你可以从任意位置加载模板；从类路径下，从数据库中等。
+? 默认情况下，数字和日期格式是本地化敏感的。因为我们对用户输出，你所做的仅仅是书写${x}，而不是<fmt:formatNumber value="${x}" />。你也可以很容易就改变这个行为，默认输出没有本地化的数字。
+? 易于定义特设的宏和函数。
+? 隐藏错误并假装它不存在。丢失的变量默认会引起错误，也不会默认给任意值。而且null-s也不会默认视为0/false/空字符串。参见FAQ第三点来获取更多信息。
+? “对象包装”允许你在模板中以自定义，面向表现的方式来展示对象。（比如：参见XML处理指南/必要的XML处理/通过例子来学习部分，来看看使用这种技术时W3C的DOM节点是如何通过模板展现出来的。）
+? 宏和函数仅仅是变量（和JSP的自定义标记工作方式来比较），就像其它任意值一样，所以它们可以很容易的作为参数值来传递，放置到数据模型中等。
+? 当第一次访问一个页面时几乎察觉不到的延迟（或在它改变之后），因为没有更高级的编译发生。
+
+1.使用FreeMarker的优点之一，可以彻底的分离表现层和业务逻辑。
+使用JSP 开发过程中在页面中大量的存在业务逻辑的代码，使得页面内容凌乱，在后期大量的修改维护过程中就变得非常困难。
+FreeMarker根本不支持Java脚本代码。
+FreeMarker的原理就是：模板+数据模型=输出 ，模板只负责数据在页面中的表现，不涉及任何的逻辑代码，而所有的逻辑都是由数据模型来处理的。用户最终看到的输出是模板和数据模型合并后创建的。
+      
+使用FreeMarker的优点之三，使得开发过程中的人员分工更加明确。
+以往用JSP展现数据时，作为程序员的我们，并不熟悉界面设计技术，反之界面开发人员，也并不熟悉程序语言。对两者而言，交替性的工作本身就有难度。有时候稍有不慎，可能会将某个页面元素删除或去掉了某个程序符号，使得页面走样或程序错误，这样就需要双方相互沟通协作，解决出现的问题。有时候因为项目中的时间，任务量等因素的存在，可能这个工作就由一个人来完成，这样就可能加大某一方开发人员的工作量。
+使用FreeMarker后，作为界面开发人员，只专心创建HTML文件、图像以及Web页面的其他可视化方面，不用理会数据；而程序开发人员则专注于系统实现，负责为页面准备要显示的数据。
+
+
+
+
+选择freemarker的原因：
+1、性能。velocity应该是最好的，其次是jsp，普通的页面freemarker性能最差（虽然只是几毫秒到十几毫秒的差距）。但是在复杂页面上（包含大量判断、日期金额格式化）的页面上，freemarker的性能比使用tag和el的jsp好。
+2、宏定义比jsp tag方便
+3、内置大量常用功能。比如html过滤，日期金额格式化等等，使用非常方便
+4、支持jsp标签
+5、可以实现严格的mvc分离 
+
+
+velocity是较早出现的用于代替jsp的模板语言 
+优点： 
+1、不能编写java代码，可以实现严格的mvc分离 
+2、性能良好，据说比jsp性能还要好些 
+3、使用表达式语言，据说jsp的表达式语言就是学velocity的 
+缺点： 
+1、不是官方标准 
+2、用户群体和第三方标签库没有jsp多。 
+3、对jsp标签支持不够好 
+
+freemarker  Struts2默认采用
+优点： 
+1、不能编写java代码，可以实现严格的mvc分离 
+2、性能非常不错 
+3、对jsp标签支持良好 
+4、内置大量常用功能，使用非常方便 
+5、宏定义（类似jsp标签）非常方便 
+6、使用表达式语言 
+缺点： 
+1、不是官方标准 
+2、用户群体和第三方标签库没有jsp多 
+
+
+freemarker支持在页面里面直接操作Session，request等，例如${Session[...]}，但不能对其序列化  ，所以不能集群
+
+jsp没有明显缺点，非要挑点骨头那就是，由于可以编写java代码，如使用不当容易破坏mvc结构。 
+
+      
+      
+FreeMarker的缺点：
+? 不是一个标准。很少的工具和IDE来集成它，少数的开发者知道它，很少的工业化的支持。（然而，如果没有使用.tag文件，JSP标签库在FreeMarker模板中工作不需要改变）
+? 因为宏和函数仅仅是变量，不正确的指令，参数名和丢失的必须变量仅仅在运行时会被检测到。
+? 除了一些视觉上的相似性，它的语法不同于HTML/XML语法规则，这会使得新用户感到混乱。（这就是简洁的价值所在）
+? 不能和JSF一起使用。（这在技术上可行，但是没有人来实现它）
+
+FreeMarker已经相当快了，在你的应用程序中，它不会称为瓶颈的。想法，其他诸如数据库操作的速度或网络带宽等因素可能会占据制约应用速度的主导地位。FreeMarker性能的影响仅仅对于真正繁忙的站点（也就说，每台服务器承受每秒30次以上的访问）来说才是要注意的，这种情况下，几乎所有的数据库数据要被缓存。如果你发现FreeMarker很慢，要保证被解析的模板缓存运转地很好（Configuration.getTemplate是默认使用缓存的）。解析一个模板文件相对来说是开销很大的步骤，在很多长时间运行的服务器端应用程序中，你会只想解析一次模板而多次使用
+
+
+FreeMarker的模板文件并不比HTML页面复杂多少,FreeMarker模板文件主要由如下4个部分组成:
+1,文本:直接输出的部分
+2,注释:<#-- ... -->格式部分,不会输出
+3,插值:即${...}或#{...}格式的部分,将使用数据模型中的部分替代输出
+4,FTL指令:FreeMarker指定,和HTML标记类似,名字前加#予以区分,不会输出
+
+下面是一个FreeMarker模板的例子,包含了以上所说的4个部分
+<html><br>
+<head><br>
+<title>Welcome!</title><br>
+</head><br>
+<body><br>
+<#-- 注释部分 --><br>
+<#-- 下面使用插值 -->
+<h1>Welcome ${user} !</h1><br>
+<p>We have these animals:<br>
+<u1><br>
+<#-- 使用FTL指令 -->
+<#list animals as being><br>
+   <li>${being.name} for ${being.price} Euros<br>
+<#list><br>
+<u1><br>
+</body><br>
+</html>
+
+
+空值判断。默认值
+
+${trade2.client!''}  !表示如果变量没有值则用缺省值''
+
+
+实际上,使用标签时前面的符号#也可能变成@,如果该指令是一个用户指令而不是系统内建指令时,应将#符号改成@符号. 
+FreeMarker的插值有如下两种类型:1,通用插值${expr};2,数字格式化插值:#{expr}或#{expr;format} 
+比如 ${answer?string.percent} 
+${lastUpdated?string("yyyy-MM-dd HH:mm:ss zzzz")} 
+<#assign foo=true/>
+${foo?string("yes", "no")} 
+
+<#switch value>
+<#case refValue>...<#break>
+<#case refValue>...<#break>
+<#default>...
+</#switch>
+
+该指令用于导入FreeMarker模板中的所有变量,并将该变量放置在指定的Map对象中,import指令的语法格式如下:
+<#import "/lib/common.ftl" as com> 
+
+
+assign指令在前面已经使用了多次,它用于为该模板页面创建或替换一个顶层变量,assign指令的用法有多种,包含创建或替换一个顶层变量, 或者创建或替换多个变量等,它的最简单的语法如下:<#assign name=value [in namespacehash]>,这个用法用于指定一个名为name的变量,该变量的值为value,此外 ,FreeMarker 允许在使用 assign指令里增加in子句,in子句用于将创建的name变量放入namespacehash命名空间中. 
+
+macro可以用于实现自定义指令,通过使用自定义指令,可以将一段模板片段定义成一个用户指令,使用macro指令的语法格式如下:
+<#macro name param1 param2 ... paramN>
+...
+<#nested loopvar1, loopvar2, ..., loopvarN>
+...
+<#return>
+...
+</#macro>
+在上面的格式片段中,包含了如下几个部分:
+name:name属性指定的是该自定义指令的名字,使用自定义指令时可以传入多个参数
+paramX:该属性就是指定使用自定义指令时报参数,使用该自定义指令时,必须为这些参数传入值
+nested指令:nested标签输出使用自定义指令时的中间部分
+nested指令中的循环变量:这此循环变量将由macro定义部分指定,传给使用标签的模板
+return指令:该指令可用于随时结束该自定义指令.
+
+看如下的例子:
+<#macro book>   //定义一个自定义指令
+j2ee
+</#macro>
+<@book />    //使用刚才定义的指令
+上面的代码输出结果为:j2ee 

@@ -1,0 +1,1024 @@
+
+20141114
+ldap search 会有size 限制，缺省是最多显示500个记录，如果需要加入查询条件
+修改限制
+先设置global size limit
+sizelimit  100000
+然后单独设置某个人的
+limits dn.exact="cn=admin,dc=cicc,dc=com" size=unlimited
+但是root dn不受限制 limits限制，但是受 global的sizelimit限制
+
+
+modifyTimestamp 20141204022027Z
+
+AND Operation:
+(& (...K1...) (...K2...))   or with more than two criteria:   (& (...K1...) (...K2...) (...K3...) (...K4...))
+OR Operation:
+(| (...K1...) (...K2...))   or with more than two criteria:     (| (...K1...) (...K2...) (...K3...) (...K4...)) 
+Nested Operation:
+Every AND/OR operation can also be understood as a single criterion:
+(|(& (...K1...) (...K2...))(& (...K3...) (...K4...)))        means:        (K1 AND K2) OR (K3 AND K4)
+
+The search criteria consist of a requirement for an LDAP attribute, e.g. (givenName=Sandra). Following rules should be considered:
+Equality: 	(attribute=abc)     , e.g. (&(objectclass=user)(displayName=Foeckeler))
+Negation: 	(!(attribute=abc))     , e.g. (!objectClass=group)
+Presence: 	(attribute=*)        , e.g. (mailNickName=*)
+Absence: 	(!(attribute=*))        , e.g. (!proxyAddresses=*)
+Greater than: 	(attribute>=abc)    , e.g. (mdbStorageQuota>=100000)
+Less than: 	(attribute<=abc)    , e.g. (mdbStorageQuota<=100000)
+Proximity: 	(attribute~=abc)    , e.g. (displayName~=Foeckeler) Caution: ~= is treated as = in ADS environments !!
+Wildcards: 	e.g. (sn=F*) or (mail=*@cerrotorre.de) or (givenName=*Paul*)
+
+"(objectClass=*)"  All objects.
+"(&(objectCategory=person)(objectClass=user)(!cn=andy))"	All user objects but "andy".
+"(&(objectCategory=person)(objectClass=contact)(|(sn=Smith)(sn=Johnson)))" All contacts with a surname equal to "Smith" or "Johnson".
+(&(!(objectClass=person))(cn~=printer3b))   The following filter returns all entries that do not represent a person and whose common name is similar to printer3b: 
+
+(&(mail=*)(cn=*r)(sn=s*)) # has mail attr AND cn ends with R      AND sn starts with s
+(|(sn=a*)(sn=b*)(sn=c*)) # sn starts with a OR b OR c
+(!(sn=a*)) # entries with sn NOT starting with a
+(&(!(sn=a*))(!(sn=b*))) # entries with sn NOT starting with a  AND NOT starting with b
+(|(sn=*a)(!(sn=s*))) # entries with sn ending with a AND NOT starting with s 
+# classic simple mistake - watch this one
+(&(sn=a*)(sn=b*)(sb=c*)) # impossible always returns nothing
+
+" "(|(sn=*a)(!(sn=s*))) "  -w ldap 
+--带不等的查询
+ldapsearch -x -b ou=users,dc=cicc,dc=com  -D "uid=admin,dc=cicc,dc=com" '(&(branch=bj)(!(mail=wanzy@cicc.com.cn)))'
+ldapsearch -x -b ou=users,dc=cicc,dc=com  -D "uid=admin,dc=cicc,dc=com" '(modifyTimestamp>=20141202061500Z)'    
+
+比较符号
+
+Equality 	= 	Returns entries containing attribute values that exactly match the specified value. For example, cn=Bob Johnson
+Substring 	=string* string 	Returns entries containing attributes containing the specified substring. For example, cn=Bob* cn=*Johnson cn=*John* cn=B*John. The asterisk (*) indicates zero (0) or more characters.
+Greater than or equal to 	>= 	Returns entries containing attributes that are greater than or equal to the specified value. For example, buildingname >= alpha.
+Less than or equal to 	<= 	Returns entries containing attributes that are less than or equal to the specified value. For example, buildingname <= alpha.
+Presence 	=* 	Returns entries containing one or more values for the specified attribute. For example, cn=* telephonenumber=* manager=*.
+Approximate 	~=  	Returns entries containing the specified attribute with a value that is approximately equal to the value specified in the search filter. For example, cn~=suret l~=san fransico could return cn=sarette l=san francisco. 
+
+
+ldapsearch -x -b ou=users,dc=cicc,dc=com  -D "uid=admin,dc=cicc,dc=com" "(&(branch=bj)(mail=wanzy@cicc.com.cn))"  -w ldap 
+operational attributes 不能再search的时候读取，只能一个个单独的读
+ldap 支持分页查询 pagedResultsControl 
+ldap 排序 
+
+
+/sso/ldap/bin/ldapsearch -h 192.168.10.192  -x -b ou=users,dc=cicc,dc=com -E sss=branch   "(objectclass=*)" -D "uid=admin,dc=cicc,dc=com"  -w ldap  
+逆序排
+
+/sso/ldap/bin/ldapsearch -h 192.168.10.192  -x -b ou=users,dc=cicc,dc=com -E sss=-branch   "(objectclass=*)" -D "uid=admin,dc=cicc,dc=com"  -w ldap  
+分页  ldapsearch  -x -b ou=users,dc=cicc,dc=com -E  "sss=branch" -E "vlv=0/1/2/0"   before start pos/after start pos(从零开始算,也就是说 0/1/2/0表示排序后从第二个开始取两个0,1)/start pos/count
+uid因为是内置的，不能设置为排序
+
+20140516
+jldap 
+http://www.novell.com/documentation/developer/samplecode/jldap_sample/
+https://www.novell.com/documentation/developer/jldap/jldapenu/api/
+
+
+ldapadd -h 192.168.193.136 -p 1080 -x -D "uid=admin,dc=cicc,dc=com" -W -f wanzy.ldif
+ldapsearch -h 192.168.193.136 -p 1080 -x -b dc=cicc,dc=com  "(objectclass=*)" -D "uid=admin,dc=cicc,dc=com"  -w ldap
+ldapsearch -h kvm -p 1800 -x -b "uid=test2,ou=users,dc=cicc,dc=com"      -D "uid=admin,dc=cicc,dc=com"  -w ldap  +
+ldapwhoami -h 192.168.193.136 -p 1080  -x   -D "uid=wanzy,ou=users,dc=cicc,dc=com"  -W
+ldapbind  -h 192.168.193.136  -p 1080  -D "uid=wanzy,ou=users,dc=cicc,dc=com"  -w wzy
+ldapmodify  -h 192.168.193.136  -p 1080 -x -D "cn=admin,dc=cicc,dc=com"  -w ldap -f changepas.ldif
+ldapdelete -x -D "cn=admin,dc=wzy,dc=com" -W cn=user22,dc=wzy,dc=com
+修改密码
+
+#如果加上 -e ppolicy   会显示更多的信息
+ldappasswd -h 192.168.193.136 -p 1080  -x -D "cn=admin,dc=cicc,dc=com" -W "uid=wanzy,ou=it,dc=cicc,dc=com" -s 123 -e ppolicy   
+ppolicy: error=6 (Password is too short for policy)
+
+ldappasswd -h 192.168.193.136 -p 1080-x -D "uid=wanzy,ou=users,dc=cicc,dc=com" -w 123  "uid=wanzy,ou=users,dc=cicc,dc=com" -s 123
+ldapwhoami  -x   -D "uid=wanzy,ou=users,dc=cicc,dc=com"  -w 123 
+
+#加上 -e pplolciy 能够显示更多的信息，比如 ldap_bind: Invalid credentials (49); Account locked
+ldapwhoami  -x   -D "uid=wanzy,ou=users,dc=cicc,dc=com"  -w 123 -e ppolicy 
+ldap_bind: Invalid credentials (49); Account locked
+ldapsearch   -x -b dc=cicc,dc=com  "(uid=wanzy)" -D "uid=admin,dc=cicc,dc=com"  -w ldap +
+后面带上+就能显示操作属性
+
+dn: dc=wzy,dc=com
+objectclass: dcObject
+objectclass: organization
+objectclass: inetOrgPerson
+objectclass: organizationalPerson  
+o: Example Company
+dc: wzy
+
+dn: uid=user1,dc=wzy,dc=com
+objectclass: organizationalRole
+cn: user1
+
+-- 
+目录信息树（DIT） 一般组织方式为  AD用cn=users的方式  中国移动ldap规范 http://www.doc88.com/p-54158360409.html  http://www.ldapman.org/articles/
+ou=users,dc=hq,dc=cicc,dc=com
+ou=users,ou=groups,ou=orgs,ou=devices
+ou=it,ou=orgs,dc=hq,dc=cicc,dc=com
+cn=group1,ou=groups,dc=hq,dc=cicc,dc=com
+把员工属于哪个部门，分公司之类的信息放到员工entry里面，这样就能减少entry移动操作
+
+
+安装 2.4.39,redhat 6.5
+直接安装rpm包
+启动的时候会出现 ln: accessing `/var/run/openldap/slapd.pid': No such file or directory
+修改 /etc/init.d/slapd
+
+ # Start daemons.
+        echo -n $"Starting $prog: "
+        daemon --pidfile=$pidfile --check=$prog $ulimit ${slapd} -h "\"$harg\"" -u ${user} $OPTIONS $SLAPD_OPTIONS
+        #new
+        pidof ${slapd} > $pidfile
+        RETVAL=$?
+        if [ $RETVAL -eq 0 ]; then
+                touch $lockfile
+                #ln $slapd_pidfile $pidfile
+                #new
+                ln $pidfile $slapd_pidfile
+        fi
+
+
+
+安装2.3 在 suse 10.2  下载链接 ftp://ftp.openldap.org/pub/OpenLDAP/openldap-release/openldap-2.4.23.tgz
+安装ldap
+./configure --prefix=/ciccdev/mysql/openldap  --with-tls=openssl  --enable-overlays=yes --enable-dynamic=yes --enable-modules=yes --enable-ppolicy=yes --enable-auditlog=yes  --enable-accesslog=yes
+ make depend 
+ make
+ make install
+ 把 openldap-data/DB_CONFIG.example cp to  openldap-data/DB_CONFIG
+启动  
+libexec/slapd -h ldap://:1080
+或者 
+slapd -h “ldaps:// ldap://127.0.0.1:666”
+关闭 kill -SIGHUP pid
+如果启动的时候没有任何输出，直接报错
+用这个命令可以输出日志 slapd -d 16383
+
+配置ldap  Slapd.conf中不能出现空格，使用 tab  隔开
+/etc/openldap/slapd.conf 
+
+include         /etc/openldap/schema/core.schema
+include         /etc/openldap/schema/cosine.schema
+include         /etc/openldap/schema/inetorgperson.schema
+include         /etc/openldap/schema/java.schema
+include         /etc/openldap/schema/ppolicy.schema
+include         /etc/openldap/schema/CICCStaff.schema
+
+serverID 1
+# Define global ACLs to disable default read access.
+
+# Do not enable referrals until AFTER you have a working directory
+# service AND an understanding of referrals.
+#referral       ldap://root.openldap.org
+
+pidfile         /mysql/openldap/var/run/slapd.pid
+argsfile        /mysql/openldap/var/run/slapd.args
+
+TLSCACertificateFile /ciccdev/mysql/openldap/cert/cacert.pem
+TLSCertificateFile  /ciccdev/mysql/openldap/cert/ldapcert.crt
+TLSCertificateKeyFile /ciccdev/mysql/openldap/cert/ldapprivate.key 
+
+
+modulepath  /usr/lib64/openldap/
+moduleload  ppolicy.la
+moduleload  syncprov.la
+logfile  /mysql/openldap/var/ldap.log
+loglevel  1
+threads 16
+
+database        bdb
+cachesize 100000
+idlcachesize 500000
+
+suffix          "dc=cicc,dc=com"
+rootdn          "uid=admin,dc=cicc,dc=com"
+# Cleartext passwords, especially for the rootdn, should
+# be avoid.  See slappasswd(8) and slapd.conf(5) for details.
+# Use of strong authentication encouraged.
+rootpw  ldap
+# The database directory MUST exist prior to running slapd AND 
+# should only be accessible by the slapd and slap tools.
+# Mode 700 recommended.
+directory /mysql/openldap/var/data
+# Indices to maintain
+index objectclass,entryCSN,entryUUID eq
+index uid,mail,departmentNumber,employeeNumber,displayName,branch eq,sub
+access to attrs=userPassword                                     
+            by self write                                        
+            by anonymous auth                                    
+            by dn="cn=admin,dc=cicc,dc=com" write                
+            by * none                                            
+                                                              
+
+access to *                                                      
+      by self write                                              
+      by dn="cn=admin,dc=cicc,dc=com" write                      
+      by users read                                              
+      by anonymous auth                                          
+overlay ppolicy                                                  
+ppolicy_default "cn=defaultpwpolicy,ou=policies,dc=cicc,dc=com"  
+ppolicy_use_lockout                                              
+ppolicy_hash_cleartext      
+
+
+overlay unique
+unique_uri ldap:///?mail?sub?
+       
+overlay syncprov
+syncprov-checkpoint 100 10
+syncprov-sessionlog 1000
+
+
+syncrepl rid=123
+      provider=ldap://kvm6:389
+      type=refreshAndPersist
+      searchbase="dc=cicc,dc=com"
+      schemachecking=off
+      bindmethod=simple
+      binddn="uid=admin,dc=cicc,dc=com"
+      credentials=ldap
+      retry="60 +"
+
+mirrormode on
+
+配置 audit log  (record all changes)
+overlay  auditlog
+auditlog   /tmp/auditlog.ldif
+
+配置access log  (record change or read)
+被audit的db
+database        bdb
+....
+overlay accesslog
+logdb cn=accesslog
+logops writes
+logsuccess TRUE
+
+database hdb
+suffix cn=accesslog
+directory /usr/local/var/openldap-accesslog
+rootdn cn=accesslog
+index default eq
+index entryCSN,objectClass,reqEnd,reqResult,reqStart
+access to *
+     by dn="uid=admin,dc=cicc,dc=com"  read
+     by * none
+             
+ 
+ 配置  DB_CONFIG  在data目录下
+set_cachesize 1 0 1   <gigabytes> <bytes> <segments> 
+#for lock 
+set_lk_max_locks 3000
+set_lk_max_objects 1500
+set_lk_max_lockers 1500
+#for log
+set_lg_regionmax 262144  Sets the size of the underlying logging area.
+set_lg_bsize 2097152    Sets the size of the in-memory log buffer.
+set_lg_max              Sets the maximum size of a single file in the log.
+      
+LDAP设计尽量扁平化，避免人员组织调整带来的大量数据移动
+
+ou=users,dc=cicc,dc=com
+cn=orgs,dc=cicc,dc=com
+cn=groups,dc=cicc,dc=com
+
+
+DirectoryString (OID=1.3.6.1.4.1.1466.115.121.1.15) 
+inetOrgPerson->organizationalPerson->person->
+
+
+    1.3.6.1.4.1.1466.115.121.1 - LDAPv3 Syntaxes
+    1.3.6.1.4.1.1466.115.121 - LDAPv3 Syntaxes
+    1.3.6.1.4.1.1466.115 - LDAPv3 Schema Framework (Syntaxes)
+    1.3.6.1.4.1.1466 - Mark Wahl (Critical Angle)
+    1.3.6.1.4.1 - IANA-registered Private Enterprises
+    1.3.6.1.4 - Internet Private
+    1.3.6.1 - OID assignments from 1.3.6.1 - Internet
+    1.3.6 - US Department of Defense
+    1.3 - ISO Identified Organization
+    1 - ISO assigned OIDs
+    Top of OID tree 
+    
+
+导入初始化 entries 前后都不能有空格
+acess设置的不对就会导致  ldap_bind: Invalid credentials (49)
+
+dn: dc=cicc,dc=com
+objectclass: dcObject
+objectclass: organization
+o: IT
+dc: CICC
+
+dn: cn=admin,dc=cicc,dc=com
+objectclass: organizationalRole
+cn: admin
+    
+
+导入
+ldapadd -p 1080 -h 192.168.193.136 -x -D "cn=admin,dc=cicc,dc=com" -W -f init.ldif
+     
+排序支持
+overlay sssvlv
+
+
+修改 /etc/nsswitch.conf 可以把ldap login验证去掉
+不用ldap 
+passwd: compat
+group:  compat
+
+hosts:  files dns
+networks:       files dns
+
+services:       files 
+protocols:      files
+rpc:    files
+ethers: files
+netmasks:       files
+netgroup:       files 
+publickey:      files
+
+bootparams:     files
+automount:      files nis 
+aliases:        files 
+passwd_compat:  files
+group_compat:   files
+
+用ldap
+
+passwd: compat
+group:  compat
+
+hosts:  files dns
+networks:       files dns
+
+services:       files ldap
+protocols:      files
+rpc:    files
+ethers: files
+netmasks:       files
+netgroup:       files ldap
+publickey:      files
+
+bootparams:     files
+automount:      files nis ldap
+aliases:        files ldap
+passwd_compat:  ldap
+group_compat:   ldap
+
+ldap 的账号可以和操作系统的共存。
+
+/etc/ldap.conf可以配置多个ldap server,空格分开
+
+host    192.168.160.72:389 192.168.160.71:399
+
+少量数据用ldapadd，大量数据可以使用slapadd/ldapadd 导入ldif
+加密的密码使用   slappasswd -h {SHA} -s 123  来生成
+ldap是一个轻量级的x.500实现，不支持DAP之类的，能通过tcp/ip通讯，写速度慢，而且没有事物的概念，
+主要优化用来快速大规模的读取
+ldap存储的数据是以entry为基础的，每个entry是一堆用dn唯一标示的属性集合
+
+
+备份恢复 
+导出所有数据 这两个命令可以停机的情况下工作
+slapcat   -l w.ldif  这个需要用   slapadd -l w.ldif  导入(必须关闭slapd)
+
+
+ldapsearch  -x -b "dc=cicc,dc=com"  +  加上+就能导出 operational attriubte 但是这种方式还是只能用  slapadd 方式导入
+清空数据库
+ldapdelete -x -W  -r  -D "cn=admin,dc=wzy,dc=com"  "dc=wzy,dc=com"
+导入数据
+ldapadd -x  -W  -D "cn=admin,dc=wzy,dc=com"  -f backup.ldif
+
+设置log 
+loglevel  256
+ldapsearch -x -b "dc=wzy,dc=com" "(cn=user22)"
+修改密码
+ldappasswd -x -D "cn=admin,dc=wzy,dc=com" -W "cn=user22,dc=wzy,dc=com" -S 
+ 日志记录
+修改 /etc/syslog.conf 
+ 
+ local4.debug /var/log/slapd.log 
+ 打开ldap 监控
+ 首先在slap.conf配置
+ database monitor
+ 
+ 使用 slapindex 重建index
+
+然后
+ldapsearch -x -b "cn=Monitor" -s base "(objectclass=*)" 
+>ldapsearch -x -b "cn=Monitor" -s base "(objectclass=*)"  "*" "+"
+
+ldapsearch -x -b "cn=Total,cn=Connections,cn=Monitor" -s base "(objectclass=*)"  "+" "*"
+
+ldapsearch -x -b "cn=Listener 0,cn=Listeners,cn=Monitor" -s base "(objectclass=*)"  "+" "*"
+查询 config
+ldapsearch -x -H ldap://localhost -b "" -s base config "*" "+"
+
+
+
+
+
+
+
+
+错误，无响应
+restart_syscall(<... resuming interrupted call ...>
+
+出现这种情况，可以考虑增加索引
+
+Dec  4 09:20:02 bjnppb02 slapd[28541]: <= bdb_equality_candidates: (memberUid) index_param failed (18)
+ 
+ 
+  syncrepl rid=<replica id=""></replica>     长度不能超过3位
+    provider=ldap[s]://<hostname></hostname>[:port]  表明其主数据库地址
+    [type=refreshOnly|refreshAndPersist]
+    [interval=dd:hh:mm:ss]
+    [retry=[<retry interval=""></retry> <# of retries>]+]
+    [searchbase= <base dn="">]
+    [filter=<filter str=""></filter>]
+    [scope=sub|one|base]
+    [attrs=<attr list=""></attr>]
+    [attrsonly]
+    [sizelimit= <limit></limit> ]
+    [timelimit= <limit></limit> ]
+    [schemachecking=on|off]
+    [bindmethod=simple|sasl]
+    [binddn=<dn></dn>]
+    [saslmech=<mech></mech>]
+    [authcid=<identity></identity>]
+    [authzid=<identity></identity>]
+    [credentials= <passwd></passwd> ]
+    [realm=<realm></realm>]
+    [secprops= <properties></properties> ]</base> 
+    
+    
+2.4推荐使用 Syncrepl replication  来替换 slurpd 更加健壮，可以多master相互复制，同时支持push和poll
+syncrepl同时支持refresh only和refreshandpersist 是一个有状态的复制，能够保证信息一致，不会出现不同步的情况
+slapd会自动启动synrel线程做复制，通过 contextCSN 来记录同步的信息
+ldap标准的同步协议是基于object同步，所以不管属性改没改，都会同步,openldap支持 delta只同步变化的属性(用transaction log的方式)
+源->provider 目的->consumer 
+mirrormode就是双主的方式，任意时点只有一个对外提供写服务
+支持 proxy模式，从provider启动一个程序，从provider接收变化，主动push到consumer上，避免防火墙的问题
+
+复制的时候,operational attribute也会被同步过去
+
+配置  Syncrepl 镜像模式
+节点1：
+
+serverID 1
+moduleload  syncprov.la
+
+database bdb
+
+index objectclass,entryCSN,entryUUID eq
+
+overlay syncprov
+syncprov-checkpoint 100 10
+syncprov-sessionlog 1000
+
+syncrepl rid=123
+      provider=ldap://kvm6:389
+      type=refreshAndPersist
+      searchbase="dc=cicc,dc=com"
+      schemachecking=off
+      bindmethod=simple
+      binddn="uid=admin,dc=cicc,dc=com"
+      credentials=ldap
+      retry="60 +"
+
+mirrormode on
+
+节点2:
+serverID 2
+moduleload  syncprov.la
+
+database bdb
+index objectclass,entryCSN,entryUUID eq
+overlay syncprov
+syncprov-checkpoint 100 10
+syncprov-sessionlog 1000
+
+syncrepl rid=123
+      provider=ldap://kvm4:389
+      type=refreshAndPersist
+      searchbase="dc=cicc,dc=com"
+      schemachecking=off
+      bindmethod=simple
+      binddn="uid=admin,dc=cicc,dc=com"
+      credentials=ldap
+      retry="60 +"
+mirrormode on
+
+
+      
+
+ 
+
+使用slurpd的时候，不能再slave上加上 replica指令，否则会导致loop
+使用slurpd的时候可以在slave上配置updaterefer来引导到master上做修改
+LDIF=LDAP  data interchnage Format
+
+打开password policy 修改slapd.conf
+include         /ciccdev/mysql/openldap/etc/openldap/schema/ppolicy.schema
+modulepath      /usr/lib64/openldap
+moduleload      ppolicy.la
+modulepath      /openldap/lib
+
+如下内容加到 database后面
+overlay ppolicy
+ppolicy_default "cn=defaultpwpolicy,ou=policies,dc=cicc,dc=com"
+ppolicy_use_lockout
+ppolicy_hash_cleartext
+
+
+
+添加password策略
+user defined attribute > pwdPolicySubentry > default policy
+cn=mypolicy,ou=policies,dc=cicc,dc=com
+导入defalut policy
+dn: ou=policies,dc=cicc,dc=com
+objectClass: dcObject
+objectClass: organizationalUnit
+objectClass: top
+dc: CICC
+ou: policies
+
+dn: cn=defaultpwpolicy,ou=policies,dc=cicc,dc=com
+objectClass: dcObject
+objectClass: pwdPolicy
+objectClass: person
+objectClass: top
+objectClass: pwdPolicyChecker
+cn: defaultpwpolicy
+dc: CICC
+pwdAttribute: userPassword
+sn: wwww
+pwdAllowUserChange: TRUE
+pwdCheckModule: check_password.so
+pwdCheckQuality: 2
+#7 days
+pwdExpireWarning: 604800
+pwdGraceAuthNLimit: 5
+pwdInHistory: 12
+pwdLockout: TRUE
+#30 days
+pwdMaxAge: 5184000
+pwdMaxFailure: 3
+pwdMinLength: 8
+pwdSafeModify: FALSE
+pwdMustChange: TRUE
+
+如何解锁 apache directory browser需要打开operational attribute，然后删除 pwdAccountLockedTime
+
+
+typedef struct berval{
+unsinged long bv_len;
+char *bv_val;};
+
+编译 pwdchecker 需要安装 cracklib-devel-2.8.6-14.10.x86_64.rpm  
+ 	
+增加/ciccdev/mysql/openldap/etc/openldap/check_password.conf
+
+minPoints 4
+useCracklib 0
+minUpper 1
+minLower 1
+minDigit 1
+minPunct 1
+
+在redhat 6.4上面 需要安装 cracklib-devel-2.8.16-4.el6.x86_64
+同时需要 2.4.39的 source code，下载的openldap-2.4.23.tgz里面没有包含 portable.h
+ make CONFIG="/etc/openldap/check_password.conf"  LDAP_INC="-I/openldap/openldap-2.4.39/servers/slapd/ -I/openldap/openldap-2.4.39/include"
+
+锁住账户 
+ldapmodify  -x -D "uid=admin,dc=cicc,dc=com"  -w ldap -f lockac.ldif
+dn: uid=wanzy,ou=users,dc=cicc,dc=com
+changetype: modify
+replace: pwdAccountLockedTime
+pwdAccountLockedTime: 20140514155119Z
+
+解锁账户
+ldapmodify  -x -D "uid=admin,dc=cicc,dc=com"  -w ldap -f unlockac.ldif
+dn: uid=wanzy,ou=users,dc=cicc,dc=com
+changetype: modify
+delete: pwdAccountLockedTime
+
+modify文件格式
+dn: uid=wanzy,ou=users,dc=cicc,dc=com
+changetype: modify
+add: description
+description: test
+-
+replace: mail
+mail: test2@cicc.com.cn
+-
+delete: carLicense
+
+
+admin重置 password之后,graceful login record记录自动删除
+
+如果过期，会出现这个错误，但是还是运行自己修改密码，如果彻底过期，就不能修改密码
+ldap_bind: Success (0) (Password expired, 3 grace logins remain)
+如果过了expire warning ，会出现
+ldap_bind: Success (0) (Password expires in 46 seconds)
+彻底过期后，会出现
+ldap_bind: Invalid credentials (49); Password expired
+如果是锁住账户，会出现 
+ldap_bind: Invalid credentials (49); Account locked
+如果pwdMustChange=true，并且用户被设置了 pwdReset，那么会出现
+ldap_bind: Success (0); Password must be changed
+
+
+给用户指定一个 pwdPolicySubentry，这个指向一个新的 policy entry就能实现用户级别的重新定义
+
+spring的ldap用
+ctx = contextSource.getContext("uid=wanzy,ou=users,dc=cicc,dc=com","456");
+	    PasswordPolicyResponseControl ppolicy = PasswordPolicyControlExtractor.extractControl(ctx);
+配置
+<bean id="contextSource" class="org.springframework.security.ldap.ppolicy.PasswordPolicyAwareContextSource">
+		<constructor-arg value="ldap://192.168.193.136:1080" />
+		<property name="url" value="ldap://192.168.193.136:1080" />
+		<property name="userDn" value="uid=admin,dc=cicc,dc=com" />
+		<property name="password" value="ldap" />
+	</bean>
+	
+
+错误
+Warning - No DB_CONFIG file found in directory
+cp DB_CONFIG.example to DB_CONFIG
+
+自定义 schema
+
+
+attributetype ( 2.16.840.1.113730.3.4.1
+        NAME 'branch'
+        DESC 'Branch'
+        EQUALITY caseIgnoreMatch
+        SUBSTR caseIgnoreSubstringsMatch
+        SYNTAX 1.3.6.1.4.1.1466.115.121.1.15
+        SINGLE-VALUE )
+
+attributetype ( 2.16.840.1.113730.3.4.2
+        NAME 'company'
+        DESC 'Company Name'
+        EQUALITY caseIgnoreMatch
+        SUBSTR caseIgnoreSubstringsMatch
+        SYNTAX 1.3.6.1.4.1.1466.115.121.1.15
+        SINGLE-VALUE )
+attributetype ( 2.16.840.1.113730.3.4.3
+        NAME 'remark'
+        DESC 'Remark Information'
+        EQUALITY caseIgnoreMatch
+        SUBSTR caseIgnoreSubstringsMatch
+        SYNTAX 1.3.6.1.4.1.1466.115.121.1.15
+        SINGLE-VALUE )
+attributetype ( 2.16.840.1.113730.3.4.4
+        NAME 'remark'
+        DESC 'Remark Information'
+        EQUALITY caseIgnoreMatch
+        SUBSTR caseIgnoreSubstringsMatch
+        SYNTAX 1.3.6.1.4.1.1466.115.121.1.15
+        SINGLE-VALUE )
+objectclass     ( 2.16.840.1.113730.3.5.1
+    NAME 'CICCStaff'
+        DESC 'CICC Staff'
+    SUP InetOrgPerson
+    STRUCTURAL
+   MUST ( branch $company )
+        MAY (
+        remark
+           )
+      )
+           
+           
+dn: uid=test,ou=users,dc=cicc,dc=com
+objectClass: dcObject
+objectClass: CICCStaff
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+branch:: 5YyX5Lqs
+cn: www
+company: CICC Mainland
+dc: CICC
+sn: www
+departmentNumber: IT
+displayName: test User
+employeeNumber: 12345
+facsimileTelephoneNumber: +86102345678
+mail: test@cicc.com.cn
+remark:: 6L+Z5Liq5piv5YyX5Lqs5rWL6K+V55So5oi3
+telephoneNumber: +8613581825661
+uid: test
+
+配置TLS
+生成CA private key 
+openssl genrsa -out ca-key.pem 2048
+生成CA 自签名证书
+openssl req -new -x509 -key ca-key.pem -out cacert.pem -days 36500
+
+
+生成证书
+创建私钥 OpenLDAP only works with unencrypted private key
+openssl genrsa -out ldapprivate.key 2048
+创建 request
+openssl req -new -key ldapprivate.key -out ldapcert.csr
+用CA证书签名
+openssl x509 -req -in ldapcert.csr -out ldapcert.crt -CA cacert.pem -CAkey  ca-key.pem -days 36500 -CAcreateserial
+chmod 600 ldapprivate.key
+
+服务器加上  
+#允许自签名证书
+ TLSCACertificateFile /ciccdev/mysql/openldap/cert/cacert.pem
+TLSCertificateFile  /ciccdev/mysql/openldap/cert/ldapcert.crt
+TLSCertificateKeyFile /ciccdev/mysql/openldap/cert/ldapprivate.key
+
+客户端需要在ldap.conf里面配置
+TLS_CACERT /ciccdev/mysql/openldap/cert/cacert.pem
+TLS_REQCERT allow 
+ 
+启动
+nohup libexec/slapd -d 16383 -h "ldap://:1080 ldaps://:1090" -n slapd1080 &
+启动脚本
+
+#!/bin/bash
+#chkconfig: 2345 10 90
+#description:ldap
+BASE_DIR=/sso/ldap
+cd $BASE_DIR
+
+start()
+{
+echo "START OpenLDAP SERVERS"
+nohup $BASE_DIR/libexec/slapd -d 1 -h "ldap:// ldaps://" -n slapd &
+}
+
+stop()
+{
+echo "STOP OpenLDAP SERVERS"
+ps -fe |grep $BASE_DIR/libexec/slapd  |grep -v grep  |awk '{print $2}' |xargs kill -SIGHUP
+}
+
+case $1 in
+start)
+start
+ERROR=$?
+;;
+stop)
+stop
+ERROR=$?
+;;
+restart)
+stop
+start
+ERROR=$?
+;;
+*)
+
+echo "ldap [start|restart|stop]"
+esac
+exit  0
+
+ 
+测试SSL
+ldapwhoami -H ldaps://192.168.193.136:1090  -v -x -Z             
+ldap_initialize( ldaps://192.168.193.136:1090 )
+ldap_start_tls: Operations error (1)
+        additional info: TLS already started
+anonymous
+
+ldapwhoami -D "uid=wanzy,ou=users,dc=cicc,dc=com"  -W -H ldaps://192.168.193.136:1090  -v -x -Z 
+Enter LDAP Password: 
+ldap_initialize( ldaps://192.168.193.136:1090 )
+ldap_start_tls: Operations error (1)
+        additional info: TLS already started
+dn:uid=wanzy,ou=users,dc=cicc,dc=com
+Result: Success (0)
+
+导入证书到客户端
+keytool -import -file ldapcert.crt -keystore D:\Java\jre\lib\security\cacerts
+
+
+
+spring处理特别的attribute
+import org.springframework.ldap.core.LdapTemplate;
+  import org.springframework.ldap.core.ContextExecutor;
+  import javax.naming.directory.DirContext;
+  import javax.naming.directory.Attribute;
+  import javax.naming.directory.BasicAttribute;
+  import javax.naming.directory.Attributes;
+  import javax.annotation.Resource;
+  ..
+  @Resource
+  private LdapTemplate template;
+  ..
+  ContextExecutor executor = new ContextExecutor() {
+    
+    @Override
+    public Object executeWithContext(DirContext ctx) {
+      ..
+      String uid = "uid=lucky.boy";
+      String ppolicyEntry = "pwdPolicySubentry";
+      String ppolicyValue = "cn=relaxed,ou=people,dc=example,dc=com";
+      
+      // Let's assume that nothing is found, Attributes are empty
+      Attributes attributes = 
+      ctx.getAttributes(uid, ppolicyEntry);
+
+      // All right, let's add a new attribute
+      Attribute attribute = 
+      new BasicAttribute(ppolicyEntry, ppolicyValue);
+      attributes.put(attribute);
+      ..      
+    };
+    // Use the template to save the changes
+    template.executeReadWrite(executor);
+    ..
+  }
+  
+  生成CA request
+  You are about to be asked to enter information that will be incorporated
+into your certificate request.
+What you are about to enter is what is called a Distinguished Name or a DN.
+There are quite a few fields but you can leave some blank
+For some fields there will be a default value,
+If you enter '.', the field will be left blank.
+-----
+Country Name (2 letter code) [AU]:CN
+State or Province Name (full name) [Some-State]:BJ
+Locality Name (eg, city) []:BJ
+Organization Name (eg, company) [Internet Widgits Pty Ltd]:CICC
+Organizational Unit Name (eg, section) []:IT
+Common Name (eg, YOUR name) []:LDAP
+Email Address []:ldap@cicc.com   
+
+Please enter the following 'extra' attributes
+to be sent with your certificate request
+A challenge password []:12345
+An optional company name []:bjnpdt01
+
+生成 ldap 密码 
+
+import org.apache.log4j.PropertyConfigurator;
+import org.apache.log4j.Logger;
+import org.apache.log4j.Priority;
+
+import com.cicc.os.sso.ldap.*;
+import com.cicc.os.sso.domain.Person;
+import com.novell.ldap.*;
+import com.novell.ldap.*;
+import com.novell.ldap.client.Debug;
+
+
+
+
+
+import java.util.Arrays;
+import java.util.Random;
+ 
+
+
+
+
+
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.security.Security;
+import java.text.ParseException;
+
+
+import java.io.UnsupportedEncodingException;
+import java.util.List;
+
+import sun.misc.BASE64Encoder;
+
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.codec.digest.DigestUtils;
+public class TestLdap {
+	/**
+	 * @param args
+	 */
+	static Logger log = Logger.getLogger(TestLdap.class.getName());
+	 private static final int DEFAULT_SALT_SIZE = 8;
+	 private static final Random RANDOM = new SecureRandom();
+	public static void main(String[] args) throws java.lang.Exception{
+		// TODO Auto-generated method stub
+		
+		   System.out.println(new java.util.Date().getTime());
+		  
+		        int ldapPort = 389;
+		        int ldapVersion = LDAPConnection.LDAP_V3;        
+		        String ldapHost = "192.168.10.192";
+		        String rootDN = "uid=admin,dc=cicc,dc=com";
+		        String rootPwd="ldap";
+		        String loginDN = "uid=wanzy,ou=users,dc=cicc,dc=com";
+		       // String loginDN = "uid=admin,dc=cicc,dc=com";
+		        String password = "Abcd_1230";
+		        String ModifyDN =  "uid=wanzy,ou=users,dc=cicc,dc=com";
+		        String plainPass ="Abcd_1220";
+		        LDAPConnection lc = new LDAPConnection();
+		        
+		        String encryptPass=TestLdap.getSaltedPassword(plainPass);
+		     
+		        LDAPResponseQueue queue = null;
+		        try {
+
+		            lc.connect( ldapHost, ldapPort );
+		           // authenticate to the server
+		            queue=lc.bind( ldapVersion, loginDN, password.getBytes("UTF8"), (LDAPResponseQueue)null );
+		            LDAPResponse rsp = (LDAPResponse)queue.getResponse();
+		       //first change by user and check the password policy     
+             LDAPAttribute attributePassword = new LDAPAttribute( "userPassword",
+            		 plainPass);
+ 	            lc.modify( ModifyDN, new LDAPModification(
+ 		                                LDAPModification.REPLACE, attributePassword) );
+		           int rc = rsp.getResultCode();
+
+		           
+		           //if password then changed by admin use encrypted password 
+		            queue=lc.bind( ldapVersion, rootDN, rootPwd.getBytes("UTF8"), (LDAPResponseQueue)null );
+		              rsp = (LDAPResponse)queue.getResponse();
+		            
+                   attributePassword = new LDAPAttribute( "userPassword",
+            		 encryptPass);
+ 	            lc.modify( ModifyDN, new LDAPModification(
+ 		                                LDAPModification.REPLACE, attributePassword) );
+		             rc = rsp.getResultCode();
+
+		           
+		            String msg = rsp.getErrorMessage();
+		            System.out.println( "Successfully set the user's password" );
+		            lc.disconnect();
+		        }
+
+		        catch( LDAPException e ) {
+		            if ( e.getResultCode() == LDAPException.NO_SUCH_OBJECT ) {
+		            	TestLdap.log.error( "Error: No such entry" );
+		            } else if ( e.getResultCode() ==
+	                                LDAPException.INSUFFICIENT_ACCESS_RIGHTS ) {
+		            	 e.printStackTrace() ;
+		            } else {
+	                  e.printStackTrace() ;
+		            }        
+		        }
+		        catch( UnsupportedEncodingException e ) {
+		        	 e.printStackTrace() ;
+		        }
+		        System.out.println(new java.util.Date().getTime());
+		    }
+	 protected  static  String getSaltedPassword(  String password  ) throws Exception
+	 {
+		 byte[] salt = new byte[DEFAULT_SALT_SIZE];
+		 RANDOM.nextBytes( salt );
+		 System.out.println("salt="+salt);
+	 MessageDigest digest = MessageDigest.getInstance( "SHA" );
+	 digest.update( password.getBytes("UTF-8" ));
+	 	 
+	 byte[] hash = digest.digest( salt);
+	//  Create an array with the hash plus the salt
+	 byte[] all = new byte[hash.length + salt.length];
+	 for( int i = 0; i < hash.length; i++ )
+	 {
+	 all[i] = hash[i];
+	 }
+	 for( int i = 0; i < salt.length; i++ )
+	 {
+	 all[hash.length + i] = salt[i];
+	 }
+	 byte[] base64 = Base64.encodeBase64( all );
+	 String saltedString = null;
+	 try
+	 {
+	 saltedString = "{SSHA}" + new String( base64, "UTF8" );
+	 }
+	 catch( UnsupportedEncodingException e )
+	 {
+	 log.fatal( "You do not have UTF-8!?!" );
+	 }
+	 System.out.println(saltedString);
+	 return saltedString;
+	 }
+	 protected  static  String getPassword( String password  )  
+	 {String   encryptPassword =null;
+		 try {
+	 MessageDigest digest = MessageDigest.getInstance( "SHA" );
+	 digest.update( password.getBytes("UTF-8") );
+	     encryptPassword = "{SHA}" + (new BASE64Encoder()).encode(digest.digest());
+	 System.out.println(encryptPassword);
+	
+		 }
+		 catch (Exception e) {
+			 encryptPassword = null;
+			 log.error(e.getMessage(),e);
+         }
+		 return encryptPassword;
+	 }
+}
+
+
+
+用户应用如果login之后，重启tomcat,然后在访问应用，任然有效,如果Logout，则cas会报下面的错误，不会向用户应用回调logout
+
+2014-12-01 18:08:02,831 DEBUG [org.jasig.cas.web.support.CasArgumentExtractor] - <Extractor did not generate service.>

@@ -1,0 +1,249 @@
+test by Roger
+
+
+insert 10000条记录，1s做多少条： oracle 10.2 107.21 
+commit every record :单线程200 两个线程为200 4个线程为400 8线程 720 16线程 944 32线程 1650
+
+insert 10000条记录，1s做多少条： oracle 10.2 193.136
+commit every record : 单线程 82 两个线程为82  4个线程为 160  8线程 240 16线程 384
+
+insert 10000条记录，1s做多少条： postgresql 9.4  193.132
+commit every record : 单线程 149 两个线程为 160 4个线程为 312 8线程 576 16 线程 1088 32线程 1504
+
+
+insert 10000条记录，1s做多少条： oracle 10.2 193.136 (t_order_fidessa)该表上有11个index,trigger会触发写另外两张表，另外两张表共有2个index
+commit every record : 单线程 82 两个线程为 82  4个线程为 128  8线程 176 16线程 320
+
+insert 10000条记录，1s做多少条： oracle 10.2 193.136 (t_order_fidessa)该表上有11个index,trigger会触发写另外两张表，另外两张表共有2个index
+1000 条commit  : 单线程 974   两个线程为 1700  
+
+insert 10000 条记录，1s做多少条： oracle 10.2 193.136 (t_order_fidessa)该表上有11个index,trigger会触发写另外两张表，另外两张表共有2个index
+10000 用add batch  单线程 2770 
+
+insert 1000条记录，1s做多少条： oracle 10.2 193.136 (t_order_fidessa)该表上有11个index,trigger会触发写另外两张表，另外两张表共有2个index
+10条 commit 347  50条 commit 576 / 100 条commit  740    / 200条commit 760 / 400 rows 981 /500 rows 900 / 1000 rows 1012
+2000条 commit 1035
+
+insert 10000条记录，1s做多少条： oracle 10.2 193.136 (t_order_fidessa)该表上有11个index,trigger会触发写另外两张表，另外两张表共有2个index
+commit every 1000 record : 单线程 1012 两个线程为 2200  4个线程为 4126   8线程 1870   16 线程 4879
+
+insert 10000 条记录，1s做多少条： oracle 10.2 193.136 (t_order_fidessa)该表上有11个index,trigger会触发写另外两张表，另外两张表共有2个index
+10000 	用add batch  1000条一个batch  单线程 4074  4线程 6400   8线程 5280
+100000 	用add batch 10000条一个batch  单线程 2435
+
+insert 100000 条记录，1s做多少条： oracle 10.2 193.136 (t_order_fidessa)
+100000 	用add batch 10000条一个batch  单线程 20000
+
+insert 10000条记录，1s做多少条： mysql 5.5 (t_order_fidessa) 192.168.193.146  8个15k raid5
+
+innodb_flush_log_at_trx_commit=1 commit every record :      单线程  163 两个线程为  164   4个线程为  320   8线程  640    16 线程 1280
+innodb_flush_log_at_trx_commit=2 commit every record :      单线程 1950 两个线程为 4000   4个线程为 7200   8线程 13472   16 线程 17600
+innodb_flush_log_at_trx_commit=1 commit every 1000 record : 单线程 2988 两个线程为 4000   4个线程为 7200   8线程 13472   16 线程 17600
+
+insert 10000条记录，1s做多少条： mysql 5.5 (t_order_fidessa) RMBP SSD
+
+innodb_flush_log_at_trx_commit=1 commit every record :         单线程  1926 两个线程为  3800   4个线程为  6400   
+innodb_flush_log_at_trx_commit=2 commit every record :         单线程 2690 两个线程为 4000   4个线程为 6400
+innodb_flush_log_at_trx_commit=1 commit every 1000 record : 单线程 3317 两个线程为 5600   4个线程为 8000 
+
+insert 10000条记录，1s做多少条： postgre 9.4.1 (t_order_fidessa) 192.168.193.146  8个15k raid5
+synchronous_commit=on commit every record :                 单线程  158 两个线程为  154   4个线程为   320  8线程  640    16 线程 1280
+synchronous_commit=on commit every 1000 record :            单线程 3091 两个线程为 6900   4个线程为 14000  8线程 24000   16 线程 39456
+synchronous_commit=off commit every record :                单线程 2072 两个线程为 4500   4个线程为  9200  8线程 16800   16 线程 28000
+synchronous_commit=on commit_delay=1000 commit_siblings=1 : 单线程  152 两个线程为  160   4个线程为   640  8线程  1280   16 线程 2400
+
+
+
+h2 测试 insert 1m record in memory ,no index 
+tps=84104 query account=account1 250 ms count(*)
+h2 测试 insert 1m record in memory , index on account
+tps=54653 query account=account1 63 ms count(*)
+loop 满足条件的所有记录 210 ms 10万条
+
+
+sqlite java 测试 insert 1m record in memory ,no index 
+tps=61835 query account=account1 547 ms count(*)
+sqlite java 测试 insert 1m record in memory , index on account
+tps=66680 query account=account1 22 ms count(*)
+loop 满足条件的所有记录 447 ms 10万条
+ 
+java hashmap测试 insert 1m record in memory ,no index 
+tps=597728 query account=account1 191 ms  loop 满足条件的所有记录 10万条
+java hashmap测试 insert 1m record in memory ,index on account
+tps=419815 query account=account1 18 ms  loop 满足条件的所有记录10万条
+
+           insert no index tps   insert with index     query with index   query without index
+h2        437062                   174185                201                344
+sqlite     73374                    70581                447                550        
+hashmap   597728                   419815                 18                191
+h2 file                             44000                343                
+sqlite file                         44000                343    
+
+
+70个字段写的时候    
+          insert no index tps   insert with index     query with index   query without index
+h2                                     71352   
+          
+
+h2的混合模式不支持memory的方式，而且不支持tcp远程，只适合同一个机器多个进程间共享
+hashmap 取一条记录通过key 12.8 nano second 
+
+mysql  测试 insert 1m record in memory ,no index 
+ query account=account1 410 ms
+sqlite java 测试 insert 1m record in memory , index on account
+ query account=account1  78 ms 
+
+activemq 5.11 192.168.193.146
+message 长度 1200  KahaDB - queue persistent/sync 65   persistent/async 65  nopersistent/sync 1200
+                   LevelDB -queue persistent/sync 63   persistent/async 65  nopersistent/sync 1200
+
+message 长度 1200  LevelDB - topic NON_PERSISTENT with  3 durable consumers  async 24108 sync 2139
+                             topic NON_PERSISTENT without durable consumer   async 57570 sync 2345
+                             durable topic的情况下，如果mq重启，则topic消息丢失
+
+redis 2.8.19  192.168.193.146 jdeis 2.6.2 8个15k raid5
+message 长度 1200         sync 1 thread set  append always  	     70 2 thread    66  4 thread     96
+													sync 1 thread set  append everysecond  5000 2 thread 10000  4 thread  20000  8 thread 35000
+客户端也在同一台服务器		sync 1 thread set  append everysecond 13266 2 thread 27000  4 thread  30000  8 thread 35000
+单个redis的极限在30000?
+         sync 1 thread set  append everysecond(先后写两个redis)  2128 2 thread  4000  4 thread   8000  8 thread 35000
+
+													get                          1 thread  5600 2 thread 12000  4 thread  28000
+			  sync with 1 slave 1 thread set  append everysecond       5483 2 thread 11800  4 thread  20000
+
+
+                             
+
+activemq 5.11 RMBP SSD
+message 长度 1200  LevelDB - 1 producer with 0 consumer queue persistent/sync 3188   persistent/async 3122   nopersistent/sync 9700
+																											 1 producer with 1 consumer queue persistent/sync 2900   persistent/async 2860   nopersistent/sync 9700
+																											 1 producer with 3 consumer queue persistent/sync 2900   persistent/async 2860   nopersistent/sync 5200
+																											  2 producer with 3 consumer queue persistent/sync 3600   
+																											  4 producer with 3 consumer queue persistent/sync 6000   
+
+message 长度 1200  1 producer LevelDB - topic NON_PERSISTENT with  3 durable consumers  async 12000 sync 5880  persisten/sync 2200
+                                    1 producer LevelDB - topic NON_PERSISTENT with  0               consumers  async 38900 sync 14000
+                                    2 producer LevelDB - topic NON_PERSISTENT with  0               consumers  async 60000 sync 24000
+          
+                                      durable topic的情况下，如果mq重启，则topic消息丢失
+                                    2 producer LevelDB - topic NON_PERSISTENT with  3 durable consumers  async 16000 sync 7700  persisten/sync 3000
+                                     
+ rabbitmq 3.4.4 RMBP SSD fanout
+message 长度 1200   durable exchange/durable queue/persist message 
+																		 1 producer with 3 consumer  persistent/sync 2675   persistent/async 5000   nopersistent/async 7468 nonper/sync 2200
+																																																																																		
+																		1  producer with 0 consumer  persistent/sync 6500   persistent/async 43000   nopersistent/async 47000 nonper/sync 6333
+																		2	 producer with 0 consumer  persistent/sync 10000   persistent/async 53000   nopersistent/async 66000 nonper/sync 12000
+																																																															
+	同一交换机												durable exchange/durable queue					 2 producer with 3 consumer queue  persistent/sync 4100  persistent/async 4600  nopersistent/async 14600
+																		durable exchange/durable queue					 4 producer with 3 consumer queue  persistent/sync 4400  persistent/async 4000  non-persistent/async 14000 
+																	  durable exchange/durable queue					 1 producer with 6 consumer queue  persistent/sync 3700  persistent/async 3700	non-persistent/async 4096 
+																		durable exchange/durable queue					 2 producer with 6 consumer queue  persistent/sync 2600  persistent/async 2800	non-persistent/async 4100  
+
+                                         non-durable exchagen/non-durable queue   2 producer with 3 consumer queue non-persistent/async 5400   persistent/async 5300    
+                                         non-durable exchagen/non-durable queue   4 producer with 3 consumer queue non-persistent/async 5700   persistent/async 5600    
+                                       non-durable exchagen/non-durable queue   4 producer with 0 consumer queue non-persistent/async 5200   persistent/async 5600    
+ 不同交换机
+      non-durable exchagen/non-durable queue   2 producer with 0 consumer queue  non-persistent/async 32000    
+    non-durable exchagen/non-durable queue   3 producer with 0 consumer queue  non-persistent/async 52000    
+
+     non-durable exchagen/non-durable queue   4 producer with 0 consumer queue    non-persistent/async 45000    
+
+redis 2.8.19  RMBP SSD  jdeis  2.6.2
+message 长度 1200         sync 1 thread set  append always  	   6500 2 thread 8700  4 thread 13500
+													sync 1 thread set  append everysecond 16800 2 thread 25000  4 thread 37000
+													get  1 thread 23600 2 thread 32000 4 thread  41000
+												  sync with 1 slave 1 thread set  append everysecond  12900 2 thread 21000  4 thread 25000
+												  
+												  
+
+quick fix 1.5.3 发送在不同服务器千兆环境 FileStoreSync=N 发送 5549/s 接受 约 6451/s 左右    FileStoreSync=Y 接受约 36/s 发送 30/s
+
+
+fio测试IO  135 上 centos 7 ,8块15k磁盘raid5
+fio -ioengine=sync -bs=4k  -direct=1 -thread -rw=write  -size=2G -filename=/tmp/test6.img -name="EBS 4K randwrite test" -iodepth=64 -runtime=60 -numjobs=1 -group_reporting  
+ 
+fio   sync 4k 	顺序写 iops=163	 		95%完成时间 			 6112 usec  2线程写 iops 177  12096 usec  4线程写 iops 333  17280 usec  8线程 512 37000 16线程 705 72000
+fio  async 4k   顺序写 iops=1655 		95%完成时间 			81000 usec
+fio   sync 4k 	随机写 iops=89 			95%完成时间 			13120 usec
+fio  async 4k   随机写 iops=1193 		95%完成时间 			13700 usec
+
+fio   sync 4k 	 顺序读 iops=17423		95%完成时间 			       58 usec     	70000KB/s
+fio  async 4k   顺序读 iops=111228 	95%完成时间 			   660 usec   	444124KB/s
+fio   sync 4k 	 随机读 iops=258			95%完成时间 			    6624 usec       		1042KB/s
+fio  async 4k   随机读 iops=4553 		95%完成时间 		 42752 usec      18316KB/s
+
+
+fio测试IO  worksttion单硬盘 7200转 ???
+
+fio   sync 4k 	顺序写 iops=11423	 		95%完成时间 			   89 usec  45695KB
+fio  async 4k   顺序写 iops=8374 		  95%完成时间 			33024 usec  33499KB
+fio   sync 4k 	随机写 iops=163 			95%完成时间 			24448 usec     67KB    
+fio  async 4k   随机写 iops=1193 	  	95%完成时间 			13700 usec
+
+fio   sync 4k 	 顺序读 iops=13244		95%完成时间 			   77 usec  52978KB/s
+fio  async 4k   顺序读  iops=29928  	95%完成时间 			 3376 usec 119714KB/s
+fio   sync 4k 	 随机读 iops=149			95%完成时间 			10560 usec     60KB/s
+fio  async 4k   随机读  iops=368  		95%完成时间 		  442752 usec  1474KB/s
+
+
+
+fio测试IO  136 上 suse 10   ,8块15k磁盘raid5
+fio   sync 4k 	顺序写 iops=154	 	95%完成时间 			 7000 usec                650KB/s
+fio  async 4k   顺序写 iops=1377 	95%完成时间 			85000 usec          7300KB/s
+fio测试IO  rmbp 上 mac os ,ssd block size=4k
+fio   sync 4k 	顺序写 iops=83488	  	95%完成时间 			 4 usec      333955KB/s
+fio   sync 4k 	随机写 iops=42380 			95%完成时间 		44  usec      169522KB/s
+fio   sync 4k 	顺序读 iops=17333	  	95%完成时间 	 112  usec        69332KB/s
+fio   sync 4k 	随机读 iops=6656 			95%完成时间 		209 usec        26627KB/s
+
+fio测试IO  rmbp 上 mac os ,ssd block size=1k
+fio   sync 1k 	顺序写 iops=350708	  	95%完成时间 			 2 usec      350709KB/s
+fio   sync 1k 	随机写 iops=4223 			 95%完成时间 		   342  usec      4032KB/s
+fio   sync 1k 	顺序度 iops=753761	  	95%完成时间 	     2  usec     753761KB/s
+fio   sync 1k 	随机读 iops=6680 		  	95%完成时间 		209 usec        6680KB/s
+
+
+
+
+fio测试IO  136 上 suse 10 ,8块磁盘raid5  硬件和135一样
+fio -ioengine=sync -bs=4k  -direct=1 -thread -rw=write  -size=2G -filename=/mnt/test6.img -name="EBS 4K randwrite test" -iodepth=64 -runtime=60 -numjobs=1 -group_reporting  
+  write: io=21432KB, bw=365760B/s, iops=89, runt= 60002msec
+  complete latency 95.00th=[ 7000] usec
+fio -ioengine=libaio -bs=4k  -direct=1 -thread -rw=write  -size=2G -filename=/mnt/test6.img -name="EBS 4K randwrite test" -iodepth=64 -runtime=60 -numjobs=1 -group_reporting
+  write: io=330872KB, bw=5510.6KB/s, iops=1377, runt= 60044msec
+  complete latency  95.00th=[   85000] usec
+
+
+千M同交换机情况下 情况下 	ping 0.18 ms
+													2k tcp   98 	us udp 	83 us
+													4k tcp  126  	us udp 133 us
+												 	8k tcp  172  	us udp 165 us
+												 16k tcp  284 	us udp 244 us
+												 32k tcp  418 	us udp 412 us
+												 64k tcp  667 	us udp 704 us
+												128k tcp 1200 	us udp 		 us
+												256k tcp 2300	  us udp     us
+												512k tcp 4400   us udp     us
+同一服务器情况下  	ping 0.04 ms
+													2k tcp   17   us udp 	17 us
+													4k tcp   17  	us udp 	17 us
+												512k tcp   147  us udp 		 us
+跨交换机 ping 0.33 ms
+
+													2k tcp  496 	us udp 	 486 us
+													4k tcp  653  	us udp	 662 us
+												 	8k tcp  980  	us udp 	 978 us
+												 	
+												 	
+nginx  性能测试    1658.22 request/s nginx/1.6.2 静态简单html   2线程 3288 4线程  4742
+apache 性能测试    1723.13 request/s Apache/2.4.6 静态简单html 
+tomcat 性能测试    2532.27  request/s tomcat 7.0.50 简单jsp 
+tomcat 性能测试    2532.85 request/s tomcat 7.0.50 简单css
+tomcat GAF性能测试 617.85 request/s tomcat 7.0.50 gaf简单 service，不涉及数据库
+tomcat GAF         691.77  request/s gaf spring mvc转发
+
+haproxy+1 tomcat  单线程       1845.19 简单jsp     
+haproxy+2 tomcat  单线程       1785 简单jsp         2线程  3159 4 线程  4938
+haproxy 单个进程极限是4000?  8个进程 6000 tps
+如果测试客户端也在haproxy机器上，单线程能到 2400 ，2线程  6617 4线程 7307  

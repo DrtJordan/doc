@@ -1,0 +1,188 @@
+用 hierarchyviewer  来看 view 布局
+
+ 缺省就是单进程单线程的 可以自己现实线程或者用  AsyncTask  来做一些消耗资源的操作避免影响UI
+ 
+ startActivity() 启动一个activity 
+ startActivityForResult().  启动一个activity  可以获得结果
+  startService().  启动后台服务
+  
+  serrvice缺省实在主线程里面启动，如果消耗资源多，需要在新的线程里面
+  bindService在bind程序消失后，service也消失
+  而startService不会  从 IntentService 继承的 service 自动启用一个 workthread，不支持多线程
+  
+  
+    Handler在android里负责发送和处理消息。它的主要用途有：
+　　1）按计划发送消息或执行某个Runnanble(使用POST方法)；
+　　2）从其他线程中发送来的消息放入消息队列中，避免线程冲突（常见于更新UI线程）
+
+
+一般用 wrap_content  和  match_parent 来做相对大小定位
+view 支持 padding 但不支持 margin,view group 支持margin
+android:layout_weight  表示该view占用剩下空间的比例
+android:layout_height of each view to "0dp" (for a vertical layout) or the android:layout_width of each view to "0dp" (for a horizontal layout).
+使用 RelativeLayout. 性能比 其他的layout好
+
+android 开发
+创建AVD的时候，从eclipse会失败，到SDK下面的tools，只用用 android avd创建
+出现错误 Device not ready. Waiting 3 seconds before next attempt
+关闭虚拟机，kill adb程序，然后重新run
+直接下载配置好的 eclipse  http://developer.android.com/sdk/index.html
+
+用 SQlite
+
+如果出现一直在  Waiting for HOME ('android.process.acore') to be launched  ，启动的时候选择wipe data
+
+硬件加速也不好使 可以用 android的x86虚拟机 来大幅提高性能 也不太靠谱
+
+最好还是用真机开发
+
+资源文件自动生成 R.java
+
+android:id="@+id/edit_message" 这种方式会生成一个id，方便后面调用
+        android:layout_weight="1" 会让该view占用剩下的所有空间
+        
+一个 activity 代表一个新的view出现，代表相应用户Ui操作
+
+ 旧版的用 
+ Theme.AppCompat family of styles (rather than the Theme.Holo family, available in API level 11
+ 
+ 使用内置theme的方法
+        android:theme="@android:style/Theme.Holo.Light">
+
+Once the onCreate() finishes execution, the system calls the onStart() and onResume() methods in quick 
+
+当应用被挡住的时候onPause调用 ，里面尽可能的少做事情，以加快速度
+ the system always calls onPause() before calling onStop().   
+  use onStop() to perform larger, more CPU intensive shut-down operations, such as writing information to a database.
+  
+  Stop的时候，各种view的状态会保留 当由于系统原因导致 activity 被kill他的状态也会被保留
+  当屏幕旋转的时候，activity 就会被销毁然后重新创建，所以状态还在
+  当销毁activity的时候，onSaveInstanceState() 会被调用 如果创建 onRestoreInstanceState() 调用
+  
+  onCreate(Bundle savedInstanceState) 如果是新创建 Bundle为null
+ 
+ 通过logcat来看 android.util.Log 的输出
+ 
+ 教程 http://android.yaohuiji.com/about#java_basic
+ 
+ Intent是对执行某个操作的一个抽象描述，Intent 负责提供组件之间相互调用的相关信息传递，实现调用者和被调用者之间的解耦。
+ 
+ 在layout里面定义 事件 处理函数  <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/button_send" 
+        android:onClick="sendMessage" />
+        
+         public void sendMessage(View view) {
+    	Intent intent = new Intent(this, DisplayMessageActivity.class);
+    	EditText editText = (EditText) findViewById(R.id.edit_message);
+    	String message = editText.getText().toString();
+    	intent.putExtra(EXTRA_MESSAGE, message);
+    	 startActivity(intent);
+
+    }
+    
+    或者在程序里面直接设置
+            Button button = (Button) findViewById(R.id.Button01);
+	 
+	        // 为拨号按钮设置一个点击事件观察者
+	        button.setOnClickListener(new Button.OnClickListener() {
+	            //实现监听器接口的匿名内部类,其中监听器本身是View类的内部接口
+	 
+	            //实现接口必须实现的onClick方法
+	            @Override
+	            public void onClick(View v) {
+	                // 获得可编辑文本框中的值，也就是电话号码
+	                String phoneNumber = PhoneNumberEditText.getText().toString();
+	                // new Intent(行为，数据)，其中action_dial是拨号行为，数据是电话号码
+	                Intent intent = new Intent(Intent.ACTION_DIAL, Uri
+	                        .parse("tel://" + phoneNumber));
+	                // 去调用那些可以处理拨号行为的Activity
+	                startActivity(intent);
+	            }
+	        });
+	 
+
+    
+     使用蓝牙
+ 
+ <uses-permission android:name="android.permission.BLUETOOTH" />
+ 
+    
+    尺寸单位
+    
+    px (pixels), dp (density-independent pixels), 
+    sp (scaled pixels based on preferred font size), 
+    in (inches), mm (millimeters). 
+    
+    用了很多 nested interface 和 nested class
+    
+   Toast.makeText(MainTinyDial.this, ((TextView)v).getText(),Toast.LENGTH_LONG).show();
+   显示提示
+   
+Service是Android程序中四大基础组件之一，它和Activity一样都是Context的子类，只不过它没有UI界面，是在后台运行的组件。
+
+新的不用 tabactivity用 Fragments 
+
+我们说Android应用程序的四个核心组件是：Activity、Service、Broadcast Receiver 和 Content Provider。在Android中，应用程序彼此之间相互独立的，它们都运行在自己独立的虚拟机中。Content Provider 提供了程序之间共享数据的方法，一个程序可以使用Content Provider 定义一个URI，提供统一的操作接口，其他程序可以通过此URI访问指定的数据，进行数据的增、删、改、查
+
+那么Broadcast Receiver组件就提供了一种把Intent作为一个消息广播出去，由所有对其感兴趣的程序对其作出反应的机制。
+ //广播出去
+                sendBroadcast(intent);
+
+
+<uses-permission android:name="android.permission.INTERNET" />
+
+是打开URL在当前webview 		mWebView.setWebViewClient(new WebViewClient());
+
+如何使用 localStorage
+	mWebView = (WebView) findViewById(R.id.webview);
+		WebSettings webSettings = mWebView.getSettings();  
+		webSettings.setJavaScriptEnabled(true);  
+		webSettings.setDomStorageEnabled(true);
+		webSettings.setDatabaseEnabled(true);
+  	webSettings.setDatabasePath("/data/data/" + mWebView.getContext().getPackageName() + "/databases/");
+
+启用 webview console
+mWebView.setWebChromeClient(new WebChromeClient() { 
+			public boolean onConsoleMessage(ConsoleMessage cm) { 
+			Log.d("MyApplication", cm.message() + " -- From line " 
+			+ cm.lineNumber() + " of " 
+			+ cm.sourceId() ); 
+			return true; 
+			} 
+			}); 
+			
+
+js访问android 代码
+ @JavascriptInterface
+    public void showToast(String toast) {
+        Toast.makeText(mContext, toast, Toast.LENGTH_SHORT).show();
+    }
+
+WebView webView = (WebView) findViewById(R.id.webview);
+webView.addJavascriptInterface(new WebAppInterface(this), "Android");
+
+
+<script type="text/javascript">
+    function showAndroidToast(toast) {
+        Android.showToast(toast);
+    }
+
+java访问js代码
+
+ mWebView.loadUrl("javascript:test('" + aa+ "')"); //aa是js的函数test()的参数  
+
+
+
+the Menu button is deprecated from 3.0 (API level 11) 现在都用actionbar
+
+蓝牙需要权限
+ <uses-permission android:name="android.permission.BLUETOOTH" />
+
+js和android交互
+webView.addJavascriptInterface(new WebAppInterface(this), "Android");
+js 
+ Android.showToast(toast);
+
+

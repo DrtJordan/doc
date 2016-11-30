@@ -1,0 +1,26 @@
+symmetricds
+mysql 上面用户需要超级权限
+
+update user set Super_priv='Y' where host='192.168.193.136' and user='symmertric';
+FLUSH PRIVILEGES;
+或者
+grant trigger on *.* to symmetric;
+grant create routine on *.* to symmetric;
+
+registration  node通常是 root node (registration.url is either (a) blank, or (b) identical to its sync.url )
+
+还支持同步文件和目录
+
+sync triggers job 会每天在midnight自动检测是否需要重新构建trigger
+ router job 来分发需要同步的数据
+ batch job会组织在一起发送，要么失败，要么都成功，所以一个事物的修改在同一个batch
+ 通过http传输修改 
+ push 模式下data is extracted to a memory buffer in CSV format until a configurable threshold is reached. If the threshold is reached, the data is flushed to a file and the extraction of data continues to that file. After the batch has been extracted, it is transported using an HTTP PUT to the target node.
+ Pull requests are initiated by the pull job from at the target node. A pull request uses an HTTP GET. The same extraction process that happens for a "push" also happens during a "pull."
+ After data has been extracted and transported, the data is loaded at the target node. Similar to the extract process, while data is being received the data loader will cache the CSV in a memory buffer until a threshold is reached. If the threshold is reached the data is flushed to a file and the receiving of data continues. After all of the data in a batch is available locally, a database connection is retrieved from the connection pool and the events that had occurred at the source database are played back against the target database.
+ If an insert statement is run and there is already a row that exists, SymmetricDS will fall back and try to update the existing row. Likewise, if an update that was successful on a source node is run and no rows are found to update on the destination, then SymmetricDS will fall back to an insert on the destination. If a delete is run and no rows were deleted, the condition is simply logged. 
+ A channel is a user defined grouping of tables that are dependent on each other. Data that is captured for tables belonging to a channel is always synchronized together. Each trigger must be assigned a channel id as part of the trigger definition process. 
+ 数据采集后，可以自定义route规则/transform规则以及在apply的时候定义filter规则
+ 
+ 
+ trigger.update.capture.changed.data.only.enabled  定义只有真正变化的数据才capture (only supported in the MySQL, DB2, SQL Server and Oracle dialects)

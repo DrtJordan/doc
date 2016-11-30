@@ -1,0 +1,1352 @@
+<!DOCTYPE html>
+<!-- saved from url=(0105)http://www.mindtheproduct.com/2016/02/what-the-hell-are-ci-cd-and-devops-a-cheatsheet-for-the-rest-of-us/ -->
+<html lang="en-US" prefix="og: http://ogp.me/ns#" class="js csstransforms3d csstransitions sumome-vex-open"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><script src="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/cb=gapi.loaded_1" async=""></script><script src="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/cb=gapi.loaded_0" async=""></script><script type="text/javascript" async="" src="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/plusone.js.下载" gapi_processed="true"></script>
+
+
+
+<link rel="pingback" href="http://www.mindtheproduct.com/xmlrpc.php">
+
+<!--  Mobile viewport scale -->
+<meta content="initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" name="viewport">
+
+<!-- This site is optimized with the Yoast SEO plugin v3.8 - https://yoast.com/wordpress/plugins/seo/ -->
+<title>The Product Managers' Guide to Continuous Delivery and DevOps - MindTheProduct</title>
+<link rel="canonical" href="http://www.mindtheproduct.com/2016/02/what-the-hell-are-ci-cd-and-devops-a-cheatsheet-for-the-rest-of-us/">
+<meta property="og:locale" content="en_US">
+<meta property="og:type" content="article">
+<meta property="og:title" content="The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct">
+<meta property="og:description" content="This guide is for you if …. You’re in tech, you’re a product manager or an MBA. Your team A/B tests, feature toggles, and you have a dog in the office! Of course you understand what feature branches are, what CD is and what a DevOps culture looks like. Right? Uh … sure. You’ve gone …">
+<meta property="og:url" content="http://www.mindtheproduct.com/2016/02/what-the-hell-are-ci-cd-and-devops-a-cheatsheet-for-the-rest-of-us/">
+<meta property="og:site_name" content="MindTheProduct">
+<meta property="article:publisher" content="https://www.facebook.com/MindTheProduct">
+<meta property="article:tag" content="Continuous Delivery">
+<meta property="article:tag" content="continuous integration">
+<meta property="article:tag" content="Development">
+<meta property="article:tag" content="feedback loops">
+<meta property="article:tag" content="technical product manager">
+<meta property="article:section" content="Guest Post">
+<meta property="article:published_time" content="2016-02-11T09:57:01+00:00">
+<meta property="article:modified_time" content="2016-02-05T16:39:43+00:00">
+<meta property="og:updated_time" content="2016-02-05T16:39:43+00:00">
+<meta property="og:image" content="http://www.mindtheproduct.com/wp-content/uploads/2015/12/409-images-for-snap-blog-post_image1.png">
+<meta property="og:image:width" content="1600">
+<meta property="og:image:height" content="704">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:description" content="This guide is for you if …. You’re in tech, you’re a product manager or an MBA. Your team A/B tests, feature toggles, and you have a dog in the office! Of course you understand what feature branches are, what CD is and what a DevOps culture looks like. Right? Uh … sure. You’ve gone […]">
+<meta name="twitter:title" content="The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct">
+<meta name="twitter:site" content="@mindtheproduct">
+<meta name="twitter:image" content="http://www.mindtheproduct.com/wp-content/uploads/2015/12/409-images-for-snap-blog-post_image1.png">
+<meta name="twitter:creator" content="@pm_suzie">
+<!-- / Yoast SEO plugin. -->
+
+<link rel="dns-prefetch" href="http://s.w.org/">
+<link rel="alternate" type="application/rss+xml" title="MindTheProduct » Feed" href="http://www.mindtheproduct.com/feed/">
+<link rel="alternate" type="application/rss+xml" title="MindTheProduct » Comments Feed" href="http://www.mindtheproduct.com/comments/feed/">
+<link rel="alternate" type="application/rss+xml" title="MindTheProduct » The Product Managers’ Guide to Continuous Delivery and DevOps Comments Feed" href="http://www.mindtheproduct.com/2016/02/what-the-hell-are-ci-cd-and-devops-a-cheatsheet-for-the-rest-of-us/feed/">
+		<script type="text/javascript" async="" src="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/dc.js.下载"></script><script id="twitter-wjs" src="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/widgets.js.下载"></script><script id="facebook-jssdk" src="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/all.js.下载"></script><script type="text/javascript">
+			window._wpemojiSettings = {"baseUrl":"https:\/\/s.w.org\/images\/core\/emoji\/2\/72x72\/","ext":".png","svgUrl":"https:\/\/s.w.org\/images\/core\/emoji\/2\/svg\/","svgExt":".svg","source":{"concatemoji":"http:\/\/www.mindtheproduct.com\/wp-includes\/js\/wp-emoji-release.min.js?ver=4.6.1"}};
+			!function(a,b,c){function d(a){var c,d,e,f,g,h=b.createElement("canvas"),i=h.getContext&&h.getContext("2d"),j=String.fromCharCode;if(!i||!i.fillText)return!1;switch(i.textBaseline="top",i.font="600 32px Arial",a){case"flag":return i.fillText(j(55356,56806,55356,56826),0,0),!(h.toDataURL().length<3e3)&&(i.clearRect(0,0,h.width,h.height),i.fillText(j(55356,57331,65039,8205,55356,57096),0,0),c=h.toDataURL(),i.clearRect(0,0,h.width,h.height),i.fillText(j(55356,57331,55356,57096),0,0),d=h.toDataURL(),c!==d);case"diversity":return i.fillText(j(55356,57221),0,0),e=i.getImageData(16,16,1,1).data,f=e[0]+","+e[1]+","+e[2]+","+e[3],i.fillText(j(55356,57221,55356,57343),0,0),e=i.getImageData(16,16,1,1).data,g=e[0]+","+e[1]+","+e[2]+","+e[3],f!==g;case"simple":return i.fillText(j(55357,56835),0,0),0!==i.getImageData(16,16,1,1).data[0];case"unicode8":return i.fillText(j(55356,57135),0,0),0!==i.getImageData(16,16,1,1).data[0];case"unicode9":return i.fillText(j(55358,56631),0,0),0!==i.getImageData(16,16,1,1).data[0]}return!1}function e(a){var c=b.createElement("script");c.src=a,c.type="text/javascript",b.getElementsByTagName("head")[0].appendChild(c)}var f,g,h,i;for(i=Array("simple","flag","unicode8","diversity","unicode9"),c.supports={everything:!0,everythingExceptFlag:!0},h=0;h<i.length;h++)c.supports[i[h]]=d(i[h]),c.supports.everything=c.supports.everything&&c.supports[i[h]],"flag"!==i[h]&&(c.supports.everythingExceptFlag=c.supports.everythingExceptFlag&&c.supports[i[h]]);c.supports.everythingExceptFlag=c.supports.everythingExceptFlag&&!c.supports.flag,c.DOMReady=!1,c.readyCallback=function(){c.DOMReady=!0},c.supports.everything||(g=function(){c.readyCallback()},b.addEventListener?(b.addEventListener("DOMContentLoaded",g,!1),a.addEventListener("load",g,!1)):(a.attachEvent("onload",g),b.attachEvent("onreadystatechange",function(){"complete"===b.readyState&&c.readyCallback()})),f=c.source||{},f.concatemoji?e(f.concatemoji):f.wpemoji&&f.twemoji&&(e(f.twemoji),e(f.wpemoji)))}(window,document,window._wpemojiSettings);
+		</script><script src="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/wp-emoji-release.min.js.下载" type="text/javascript"></script>
+		<style type="text/css">
+img.wp-smiley,
+img.emoji {
+	display: inline !important;
+	border: none !important;
+	box-shadow: none !important;
+	height: 1em !important;
+	width: 1em !important;
+	margin: 0 .07em !important;
+	vertical-align: -0.1em !important;
+	background: none !important;
+	padding: 0 !important;
+}
+</style>
+<link rel="stylesheet" id="flick-css" href="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/flick.css" type="text/css" media="all">
+<link rel="stylesheet" id="mailchimpSF_main_css-css" href="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/saved_resource" type="text/css" media="all">
+<!--[if IE]>
+<link rel='stylesheet' id='mailchimpSF_ie_css-css'  href='http://cdn02.mindtheproduct.com/wp-content/plugins/mailchimp/css/ie.css?ver=4.6.1' type='text/css' media='all' />
+<![endif]-->
+<link rel="stylesheet" id="tubepress-css" href="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/tubepress.css" type="text/css" media="all">
+<link rel="stylesheet" id="bbp-default-css" href="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/bbpress.css" type="text/css" media="screen">
+<link rel="stylesheet" id="tm_clicktotweet-css" href="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/styles.css" type="text/css" media="all">
+<link rel="stylesheet" id="theme-stylesheet-css" href="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/style.css" type="text/css" media="all">
+<link rel="stylesheet" id="prettify-css" href="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/default.css" type="text/css" media="all">
+<link rel="stylesheet" id="flare-css" href="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/flare.css" type="text/css" media="all">
+<link rel="stylesheet" id="flare-oswald-font-css" href="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/css" type="text/css" media="all">
+<link rel="stylesheet" id="lightboxStyle-css" href="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/colorbox.min.css" type="text/css" media="screen">
+<!--[if lt IE 9]>
+<link href="http://cdn02.mindtheproduct.com/wp-content/themes/canvas/css/non-responsive.css" rel="stylesheet" type="text/css" />
+<style type="text/css">.col-full, #wrapper { width: 1020px; max-width: 1020px; } #inner-wrapper { padding: 0; } body.full-width #header, #nav-container, body.full-width #content, body.full-width #footer-widgets, body.full-width #footer { padding-left: 0; padding-right: 0; } body.fixed-mobile #top, body.fixed-mobile #header-container, body.fixed-mobile #footer-container, body.fixed-mobile #nav-container, body.fixed-mobile #footer-widgets-container { min-width: 1020px; padding: 0 1em; } body.full-width #content { width: auto; padding: 0 1em;}</style>
+<![endif]-->
+<script type="text/javascript" src="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/jquery.js.下载"></script>
+<script type="text/javascript" src="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/jquery-migrate.min.js.下载"></script>
+<script type="text/javascript" src="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/scrollTo.js.下载"></script>
+<script type="text/javascript" src="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/jquery.form.min.js.下载"></script>
+<script type="text/javascript">
+/* <![CDATA[ */
+var mailchimpSF = {"ajax_url":"http:\/\/www.mindtheproduct.com\/"};
+/* ]]> */
+</script>
+<script type="text/javascript" src="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/mailchimp.js.下载"></script>
+<script type="text/javascript" src="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/core.min.js.下载"></script>
+<script type="text/javascript" src="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/datepicker.js.下载"></script>
+<script type="text/javascript" src="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/tubepress.js.下载"></script>
+<script type="text/javascript" src="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/third-party.min.js.下载"></script>
+<script type="text/javascript" src="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/modernizr.min.js.下载"></script>
+<script type="text/javascript" src="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/general.min.js.下载"></script>
+
+<!-- Adjust the website width -->
+<style type="text/css">
+	.col-full, #wrapper { max-width: 1020px !important; }
+</style>
+
+<link rel="https://api.w.org/" href="http://www.mindtheproduct.com/wp-json/">
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://www.mindtheproduct.com/xmlrpc.php?rsd">
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://www.mindtheproduct.com/wp-includes/wlwmanifest.xml"> 
+<link rel="shortlink" href="http://www.mindtheproduct.com/?p=7496">
+<link rel="alternate" type="application/json+oembed" href="http://www.mindtheproduct.com/wp-json/oembed/1.0/embed?url=http%3A%2F%2Fwww.mindtheproduct.com%2F2016%2F02%2Fwhat-the-hell-are-ci-cd-and-devops-a-cheatsheet-for-the-rest-of-us%2F">
+<link rel="alternate" type="text/xml+oembed" href="http://www.mindtheproduct.com/wp-json/oembed/1.0/embed?url=http%3A%2F%2Fwww.mindtheproduct.com%2F2016%2F02%2Fwhat-the-hell-are-ci-cd-and-devops-a-cheatsheet-for-the-rest-of-us%2F&amp;format=xml">
+
+<!-- This site is using AdRotate v4.1.5 Professional to display their advertisements - https://ajdg.solutions/products/adrotate-for-wordpress/ -->
+<!-- AdRotate CSS -->
+<style type="text/css" media="screen">
+	.g { margin:0px; padding:0px; overflow:hidden; line-height:1; zoom:1; }
+	.g img { height:auto; }
+	.g-col { position:relative; float:left; }
+	.g-col:first-child { margin-left: 0; }
+	.g-col:last-child { margin-right: 0; }
+	@media only screen and (max-width: 480px) {
+		.g-col, .g-dyn, .g-single { width:100%; margin-left:0; margin-right:0; }
+	}
+</style>
+<!-- /AdRotate CSS -->
+
+<script type="text/javascript">
+        jQuery(function($) {
+            $('.date-pick').each(function() {
+                var format = $(this).data('format') || 'mm/dd/yyyy';
+                format = format.replace(/yyyy/i, 'yy');
+                $(this).datepicker({
+                    autoFocusNextInput: true,
+                    constrainInput: false,
+                    changeMonth: true,
+                    changeYear: true,
+                    beforeShow: function(input, inst) { $('#ui-datepicker-div').addClass('show'); },
+                    dateFormat: format.toLowerCase(),
+                });
+            });
+            d = new Date();
+            $('.birthdate-pick').each(function() {
+                var format = $(this).data('format') || 'mm/dd';
+                format = format.replace(/yyyy/i, 'yy');
+                $(this).datepicker({
+                    autoFocusNextInput: true,
+                    constrainInput: false,
+                    changeMonth: true,
+                    changeYear: false,
+                    minDate: new Date(d.getFullYear(), 1-1, 1),
+                    maxDate: new Date(d.getFullYear(), 12-1, 31),
+                    beforeShow: function(input, inst) { $('#ui-datepicker-div').removeClass('show'); },
+                    dateFormat: format.toLowerCase(),
+                });
+
+            });
+
+        });
+    </script>
+<script data-cfasync="false" src="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/saved_resource(1)" data-sumo-platform="wordpress" data-sumo-site-id="8b00fbe27c306888a5cc1771baa74183919d0c20e7714cec56791445ad6ed864" async=""></script>
+<script type="text/javascript">var TubePressJsConfig = {"urls":{"base":"http:\/\/www.mindtheproduct.com\/wp-content\/plugins\/tubepress","usr":"http:\/\/www.mindtheproduct.com\/wp-content\/tubepress-content"}};</script>
+
+<!-- Custom CSS Styling -->
+<style type="text/css">
+#logo .site-title, #logo .site-description { display:none; }
+body {background-color:#ffffff;background-image:url(http://cdn02.mindtheproduct.com/wp-content/uploads/2013/01/noisy_grid.png);background-repeat:repeat;background-position:top left;background-attachment:scroll;border-top:4px solid #000000;}
+#header {background-repeat:no-repeat;background-position:left top;margin-top:0px;margin-bottom:0px;padding-top:10px;padding-bottom:20px;border:0px solid ;}
+#logo .site-title a {font:normal 48px/1em 'Open Sans', arial, sans-serif;color:#222222;}
+#logo .site-description {font:italic 12px/1em 'Open Sans', arial, sans-serif;color:#999999;}
+#inner-wrapper {padding-left:30px; padding-right:30px;background-color:#ffffff;border-left:4px solid #dbdbdb;border-right:4px solid #dbdbdb;border-radius:1px;box-shadow: 0px 1px 5px rgba(0,0,0,.1);} .col-full { width: auto; } @media only screen and (max-width:767px) { #inner-wrapper { margin:0; border-radius:none; padding-left:1em; padding-right: 1em; border: none; } } 
+body, p { font:normal 16px/1.5em 'Open Sans', arial, sans-serif;color:#555555; }
+h1 { font:300 28px/1.2em 'Open Sans', arial, sans-serif;color:#222222; }h2 { font:normal 24px/1.2em 'Open Sans', arial, sans-serif;color:#222222; }h3 { font:normal 22px/1.2em 'Open Sans', arial, sans-serif;color:#222222; }h4 { font:bold 18px/1.2em 'Open Sans', arial, sans-serif;color:#222222; }h5 { font:300 18px/1.2em 'Open Sans', arial, sans-serif;color:#222222; }h6 { font:normal 12px/1.2em 'Open Sans', arial, sans-serif;color:#222222; }
+.page-title, .post .title, .page .title {font:normal 36px/1.1em 'Open Sans', arial, sans-serif;color:#222222;}
+.post .title a:link, .post .title a:visited, .page .title a:link, .page .title a:visited {color:#222222}
+.post-meta { font:normal 11px/1.5em 'Open Sans', arial, sans-serif;color:#868686; }
+.entry, .entry p{ font:normal 18px/1.5em 'Open Sans', arial, sans-serif;color:#444444; }
+.post-more {font:normal 12px/1.5em Open Sans;color:#868686;border-top:0px solid #e6e6e6;border-bottom:1px solid #e6e6e6;}
+#post-author, #connect {border-top:1px solid #e6e6e6;border-bottom:1px solid #e6e6e6;border-left:0px solid #e6e6e6;border-right:0px solid #e6e6e6;border-radius:1px;-moz-border-radius:1px;-webkit-border-radius:1px;background-color:#fafafa}
+.nav-entries, .woo-pagination {border-top:1px solid #e6e6e6;border-bottom:4px solid #e6e6e6; padding: 12px 0px; }
+.nav-entries a, .woo-pagination { font:italic 12px/1em 'Open Sans', arial, sans-serif;color:#777777; }
+.woo-pagination a, .woo-pagination a:hover {color:#777777!important}
+.widget h3 {font:normal 18px/1.2em Open Sans;color:#222222;border-bottom:0px solid #e6e6e6;margin-bottom:0;}
+.widget_recent_comments li, #twitter li { border-color: #e6e6e6;}
+.widget p, .widget .textwidget { font:normal 14px/1.5em 'Open Sans', arial, sans-serif;color:#444444; }
+.widget {font:normal 14px/1.5em Open Sans;color:#444444;border-radius:1px;-moz-border-radius:1px;-webkit-border-radius:1px;}
+#tabs .inside li a, .widget_woodojo_tabs .tabbable .tab-pane li a { font:bold 18px/1.5em 'Open Sans', arial, sans-serif;color:#222222; }
+#tabs .inside li span.meta, .widget_woodojo_tabs .tabbable .tab-pane li span.meta { font:normal 11px/1.5em 'Open Sans', arial, sans-serif;color:#777777; }
+#tabs ul.wooTabs li a, .widget_woodojo_tabs .tabbable .nav-tabs li a { font:normal 11px/2em 'Open Sans', arial, sans-serif;color:#777777; }
+@media only screen and (min-width:768px) {
+ul.nav li a, #navigation ul.rss a, #navigation ul.cart a.cart-contents, #navigation .cart-contents #navigation ul.rss, #navigation ul.nav-search, #navigation ul.nav-search a { font:bold 14px/1.2em 'Open Sans', arial, sans-serif;color:#444444; } #navigation ul.rss li a:before, #navigation ul.nav-search a.search-contents:before { color:#444444;}
+#navigation ul.nav li ul, #navigation ul.cart > li > ul > div  { border: 1px solid #dbdbdb; }
+#navigation ul.nav > li  { border-right: 1px solid #dbdbdb; }#navigation ul li:first-child, #navigation ul li:first-child a { border-radius:1px 0 0 1px; -moz-border-radius:1px 0 0 1px; -webkit-border-radius:1px 0 0 1px; }
+#navigation {border-top:1px solid #dbdbdb;border-bottom:1px solid #dbdbdb;border-left:0px solid #dbdbdb;border-right:0px solid #dbdbdb;border-radius:1px; -moz-border-radius:1px; -webkit-border-radius:1px;}
+#top ul.nav li a { font:normal 14px/1.6em 'Droid Sans', arial, sans-serif;color:#ddd; }
+}
+#footer, #footer p { font:italic 11px/1.4em 'Open Sans', arial, sans-serif;color:#777777; }
+#footer {border-top:4px solid #dbdbdb;border-bottom:0px solid ;border-left:0px solid ;border-right:0px solid ;border-radius:1px; -moz-border-radius:1px; -webkit-border-radius:1px;}
+.magazine #loopedSlider .content h2.title a { font:300 32px/1em 'Open Sans', arial, sans-serif;color:#ffffff; }
+.wooslider-theme-magazine .slide-title a { font:300 32px/1em 'Open Sans', arial, sans-serif;color:#ffffff; }
+.magazine #loopedSlider .content .excerpt p { font:normal 12px/1.5em 'Droid Sans', arial, sans-serif;color:#cccccc; }
+.wooslider-theme-magazine .slide-content p, .wooslider-theme-magazine .slide-excerpt p { font:normal 12px/1.5em 'Droid Sans', arial, sans-serif;color:#cccccc; }
+.magazine .block .post .title a {font:300 32px/1.2em 'Droid Sans', arial, sans-serif;color:#222222; }
+#loopedSlider.business-slider .content h2 { font:bold 24px/1em Arial, sans-serif;color:#ffffff; }
+#loopedSlider.business-slider .content h2.title a { font:bold 24px/1em Arial, sans-serif;color:#ffffff; }
+.wooslider-theme-business .has-featured-image .slide-title { font:bold 24px/1em Arial, sans-serif;color:#ffffff; }
+.wooslider-theme-business .has-featured-image .slide-title a { font:bold 24px/1em Arial, sans-serif;color:#ffffff; }
+#wrapper #loopedSlider.business-slider .content p { font:normal 12px/1.5em Arial, sans-serif;color:#cccccc; }
+.wooslider-theme-business .has-featured-image .slide-content p { font:normal 12px/1.5em Arial, sans-serif;color:#cccccc; }
+.wooslider-theme-business .has-featured-image .slide-excerpt p { font:normal 12px/1.5em Arial, sans-serif;color:#cccccc; }
+.archive_header { font:300 24px/1em 'Open Sans', arial, sans-serif;color:#222222; }
+.archive_header {border-bottom:5px solid #e6e6e6;}
+</style>
+
+<!-- Custom Favicon -->
+<link rel="shortcut icon" href="http://cdn02.mindtheproduct.com/wp-content/uploads/2011/02/square_logo_512x512.png">
+<!-- Options Panel Custom CSS -->
+<style type="text/css">
+/* post h2 margin */
+.entry h2 {margin:0;}
+
+/* post title underline fix */
+h1 a:hover, h2 a:hover, h3 a:hover, h4 a:hover, h5 a:hover, h6 a:hover {
+    text-decoration: none;
+    border-bottom: 1px dotted #555; !important;
+}
+
+/* remove border-bottom in slider */
+.slide h2 a:hover {
+    border:0;
+    text-decoration:none;
+}
+
+#loopedSlider .content h2 a:hover {
+    text-decoration: none;
+}
+
+/* move slider text to bottom of slider */
+#loopedSlider .content {
+    bottom: 10px;
+    top: auto;
+    left: 0;
+    position: absolute;
+}
+
+/* change tabs font */
+#tabs .inside li a {
+color: #222222;
+font: normal 14px/1.5em 'Droid Sans',arial,serif;
+}
+
+/* change tabs background */
+#tabs {
+    border-radius: none;
+    background: none;
+    padding: 0px;
+}
+
+blockquote.case-study { 
+float: right;
+width: 250px;
+background: #f2f2f2;
+border: 2px solid #e6e6e6;
+padding: 14px 12px;
+margin-left: 10px;
+}
+blockquote.case-study p {
+font-size: 13px;
+font-style: normal;
+text-align: justify; 
+}
+.entry blockquote.longform p {
+font-style:normal;
+}
+.woo-slideshow {
+border: 1px solid #222222;
+}
+.thumbnail {
+margin: 0px 0 15px 15px;
+}
+.mc_var_label {
+width: 80px;
+display: inline-block;
+}
+
+.magazine .block { float: none; display: block; width: 100%; }
+
+.tweetable img.twitter-bird { display: none; border: none; }
+.tweetable:hover img.twitter-bird { display: inline; opacity: .8; }
+.tweetable img.twitter-bird:hover { opacity: 1; }
+
+.entry ol li {
+list-style-type: decimal;
+margin-bottom: 1em;
+}
+
+#tabs ul.wooTabs li a, .widget_woodojo_tabs .tabbable .nav-tabs li a {
+font: normal 18px/2em 'Open Sans', arial, sans-serif;
+color: #222222 !important;
+text-transform: capitalize;
+}
+
+.widget_recent_comments li, #twitter li {
+list-style-type: none;
+}
+
+.widget {
+margin: 0 0 50px 0;
+}
+
+.widget ul {
+list-style-type: none;
+}
+
+.searchform input.s, #searchform input#s {
+font: normal 14px/1.2em Open Sans;
+}
+
+
+
+#logo {
+margin-left:-40px;
+ }
+
+
+#header {
+padding-bottom:40px;
+}
+
+ul.dwls_search_results {
+border: 1px solid #e6e6e6;
+}
+
+ul.nav li ul li a {
+font-size:1em;
+}
+
+.page-id-3456 h1 {
+position: relative;
+z-index: 100;
+}
+.page-id-2 h1 {
+position: relative;
+z-index: 100;
+}
+.page-id-3424 h1 {
+position: relative;
+z-index: 100;
+}
+
+.entry blockquote.aside { width: 32%; }
+
+@media only screen and (min-width: 768px) {
+/* Desktop styles go below this line */
+ 
+	#header { 
+		float: left !important; 
+		max-width: 20%; 
+		position: absolute !important; 
+	}
+ 
+	#navigation {
+		max-width: 70% !important;
+		float: right !important;
+		top: 2.5em;
+		margin-bottom: 5em !important;
+	}
+ 
+	.breadcrumbs { 
+		clear: both; 
+	}
+ 
+}
+
+/* Tabs design fixes */
+
+.shortcode-tabs.boxed ul.tab_titles {
+border: none !important;
+}
+
+.shortcode-tabs.boxed {
+border: none !important;
+}
+.ui-widget {
+    font-family: 'Open Sans', arial, sans-serif;
+    font-size: 1em;
+}
+</style>
+
+
+<!-- Woo Shortcodes CSS -->
+<link href="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/shortcodes.css" rel="stylesheet" type="text/css">
+
+<!-- Custom Stylesheet -->
+<link href="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/custom.css" rel="stylesheet" type="text/css">
+
+<!-- Theme version -->
+<meta name="generator" content="Canvas 5.9.8">
+<meta name="generator" content="WooFramework 6.2.0">
+
+<!-- Google Webfonts -->
+<link href="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/css(1)" rel="stylesheet" type="text/css">
+<!-- AddEvent -->
+<script type="text/javascript" src="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/atc.min.js.下载"></script>		<style type="text/css">.recentcomments a{display:inline !important;padding:0 !important;margin:0 !important;}</style>
+		<link rel="stylesheet" id="daves-wordpress-live-search-css" href="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/daves-wordpress-live-search_custom.css" type="text/css" media="all">
+<style type="text/css">            ul.dwls_search_results {
+              width: 300px;
+            }
+            ul.dwls_search_results li {
+              color: ;
+              background-color: #ffffff;
+            }
+            .search_footer {
+              background-color: ;
+            }
+            .search_footer a,
+            .search_footer a:visited {
+              color: ;
+            }
+            ul.dwls_search_results li a, ul.dwls_search_results li a:visited {
+              color: ;
+            }
+            ul.dwls_search_results li:hover
+            {
+              background-color: #e6e6e6;
+            }
+            ul.dwls_search_results li {
+              border-bottom: 1px solid #e6e6e6;
+            }</style><script async="" type="text/javascript" src="http://d8rk54i4mohrb.cloudfront.net/js/slide.js"></script><script type="text/javascript" async="" src="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/embed.js.下载"></script><style type="text/css" id="ate_css">.addeventatc {display:inline-block;*display:inline;zoom:1;position:relative;z-index:1;font-family:Roboto,"Helvetica Neue",Helvetica,Optima,Segoe,"Segoe UI",Candara,Calibri,Arial,sans-serif;color:#000!important;font-weight:300;line-height:100%!important;background-color:#fff;border:1px solid;border-color:#e5e6e9 #dfe0e4 #d0d1d5;font-size:15px;text-decoration:none;padding:13px 12px 12px 43px;-webkit-border-radius:3px;border-radius:3px;cursor:pointer;-webkit-font-smoothing:antialiased!important;text-shadow:1px 1px 1px rgba(0,0,0,0.004);-webkit-touch-callout:none;-webkit-user-select:none;-khtml-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;-webkit-tap-highlight-color:rgba(0,0,0,0);background-image:url(https://addevent.com/gfx/icon-calendar-t5.png), url(https://addevent.com/gfx/icon-calendar-t1.svg), url(https://addevent.com/gfx/dropdown-apple-t1.png), url(https://addevent.com/gfx/dropdown-facebook-t1.png), url(https://addevent.com/gfx/dropdown-google-t1.png), url(https://addevent.com/gfx/dropdown-outlook-t1.png), url(https://addevent.com/gfx/dropdown-yahoo-t1.png);background-position:-9999px -9999px;background-repeat:no-repeat;}.addeventatc:hover {border:1px solid #aab9d4;color:#000;font-size:15px;text-decoration:none;}.addeventatc:focus {outline:none;border:1px solid #aab9d4;}.addeventatc:active {top:1px;}.addeventatc-selected {background-color:#f9f9f9;}.addeventatc .addeventatc_icon {width:18px;height:18px;position:absolute;z-index:1;left:12px;top:10px;background:url(https://addevent.com/gfx/icon-calendar-t1.svg) no-repeat;background-size:18px 18px;}.addeventatc .start, .addeventatc .end, .addeventatc .timezone, .addeventatc .title, .addeventatc .description, .addeventatc .location, .addeventatc .organizer, .addeventatc .organizer_email, .addeventatc .facebook_event, .addeventatc .all_day_event, .addeventatc .date_format, .addeventatc .alarm_reminder, .addeventatc .recurring, .addeventatc .attendees, .addeventatc .client, .addeventatc .calname, .addeventatc .uid, .addeventatc .status, .addeventatc .method {display:none!important;}.addeventatc .data {display:none!important;}.addeventatc_dropdown {width:200px;position:absolute;z-index:99999;padding:6px 0px 0px 0px;background:#fff;text-align:left;display:none;margin-top:-2px;margin-left:-1px;border-top:1px solid #c8c8c8;border-right:1px solid #bebebe;border-bottom:1px solid #a8a8a8;border-left:1px solid #bebebe;-moz-border-radius:2px;-webkit-border-radius:2px;-webkit-box-shadow:1px 3px 6px rgba(0,0,0,0.15);-moz-box-shadow:1px 3px 6px rgba(0,0,0,0.15);box-shadow:1px 3px 6px rgba(0,0,0,0.15);}.addeventatc_dropdown span {display:block;line-height:100%;background:#fff;text-decoration:none;font-size:14px;color:#333;padding:9px 10px 9px 40px;}.addeventatc_dropdown span:hover {background-color:#f4f4f4;color:#000;text-decoration:none;font-size:14px;}.addeventatc_dropdown .drop_markup {background-color:#f4f4f4;color:#000;text-decoration:none;font-size:14px;}.addeventatc_dropdown .copyx {height:21px;display:block;position:relative;cursor:default;}.addeventatc_dropdown .brx {height:1px;overflow:hidden;background:#e0e0e0;position:absolute;z-index:100;left:10px;right:10px;top:9px;}.addeventatc_dropdown .frs {position:absolute;top:5px;cursor:pointer;right:10px;font-style:normal!important;font-weight:normal!important;text-align:right;z-index:101;line-height:9px!important;background:#fff;text-decoration:none;font-size:9px!important;color:#cacaca!important;}.addeventatc_dropdown .frs a {margin:0!important;padding:0!important;font-style:normal!important;font-weight:normal!important;line-height:9px!important;background-color:#fff!important;text-decoration:none;font-size:9px!important;color:#cacaca!important;padding-left:10px!important;display:inline-block;}.addeventatc_dropdown .frs a:hover {color:#999!important;}.addeventatc_dropdown .ateappleical {background-image:url(https://addevent.com/gfx/dropdown-apple-t1.png);background-repeat:no-repeat;background-position:13px 50%;}.addeventatc_dropdown .ateoutlook {background-image:url(https://addevent.com/gfx/dropdown-outlook-t1.png);background-repeat:no-repeat;background-position:13px 50%;}.addeventatc_dropdown .ateoutlookcom {background-image:url(https://addevent.com/gfx/dropdown-outlook-t1.png);background-repeat:no-repeat;background-position:13px 50%;}.addeventatc_dropdown .ategoogle {background-image:url(https://addevent.com/gfx/dropdown-google-t1.png);background-repeat:no-repeat;background-position:13px 50%;}.addeventatc_dropdown .ateyahoo {background-image:url(https://addevent.com/gfx/dropdown-yahoo-t1.png);background-repeat:no-repeat;background-position:13px 50%;}.addeventatc_dropdown .atefacebook {background-image:url(https://addevent.com/gfx/dropdown-facebook-t1.png);background-repeat:no-repeat;background-position:13px 50%;}.addeventatc_dropdown em {font-size:12px!important;color:#999!important;}</style><script async="" type="text/javascript" src="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/count.js.下载"></script><style id="fit-vids-style">.fluid-width-video-wrapper{width:100%;position:relative;padding:0;}.fluid-width-video-wrapper iframe,.fluid-width-video-wrapper object,.fluid-width-video-wrapper embed {position:absolute;top:0;left:0;width:100%;height:100%;}</style><script type="text/javascript" charset="utf-8" async="" src="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/button.5546439b5d743401ca910708312f6e81.js.下载"></script><script type="text/javascript" charset="utf-8" async="" src="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/timeline.f8bf188a26c0fb191f8cdd1eb88ad3c7.js.下载"></script><script src="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/secureAnonymousFramework"></script><style type="text/css">* html #li_ui_li_gen_1480405293741_0 a#li_ui_li_gen_1480405293741_0-link{height:1% !important;}#li_ui_li_gen_1480405293741_0{position:relative !important;overflow:visible !important;display:block !important;}#li_ui_li_gen_1480405293741_0 span{-webkit-box-sizing:content-box !important;-moz-box-sizing:content-box !important;box-sizing:content-box !important;}#li_ui_li_gen_1480405293741_0 a#li_ui_li_gen_1480405293741_0-link{border:0 !important;height:20px !important;text-decoration:none !important;padding:0 !important;margin:0 !important;display:inline-block !important;}#li_ui_li_gen_1480405293741_0 a#li_ui_li_gen_1480405293741_0-link:link, #li_ui_li_gen_1480405293741_0 a#li_ui_li_gen_1480405293741_0-link:visited, #li_ui_li_gen_1480405293741_0 a#li_ui_li_gen_1480405293741_0-link:hover, #li_ui_li_gen_1480405293741_0 a#li_ui_li_gen_1480405293741_0-link:active{border:0 !important;text-decoration:none !important;}#li_ui_li_gen_1480405293741_0 a#li_ui_li_gen_1480405293741_0-link:after{content:"." !important;display:block !important;clear:both !important;visibility:hidden !important;line-height:0 !important;height:0 !important;}#li_ui_li_gen_1480405293741_0 #li_ui_li_gen_1480405293741_0-logo{background-image:url(https://static.licdn.com/scds/common/u/images/apps/connect/sprites/sprite_connect_v14.png) !important;background-position:-56px -423px !important;background-repeat:no-repeat !important;background-color:#0077b5 !important;background-size:135px auto !important;cursor:pointer !important;border:0 !important;border-right:1px solid #066094 !important;text-indent:-9999em !important;overflow:hidden !important;padding:0 !important;margin:0 !important;position:absolute !important;left:0px !important;top:0px !important;display:block !important;width:20px !important;height:20px !important;float:right !important;border-radius:2px !important;-webkit-border-radius:2px !important;border-top-right-radius:2px !important;border-bottom-right-radius:2px !important;-webkit-border-top-right-radius:2px !important;-webkit-border-bottom-right-radius:2px !important;}#li_ui_li_gen_1480405293741_0 #li_ui_li_gen_1480405293741_0-title{color:#fff !important;cursor:pointer !important;display:block !important;white-space:nowrap !important;float:left !important;margin-left:1px !important;vertical-align:top !important;overflow:hidden !important;text-align:center !important;height:18px !important;padding:0 4px 0 23px !important;border:1px solid #000 !important;border-top-color:#0077b5 !important;border-right-color:#0077b5 !important;border-bottom-color:#0077b5 !important;border-left-color:#0077b5 !important;text-shadow:0 -1px #005887 !important;line-height:20px !important;border-radius:2px !important;-webkit-border-radius:2px !important;border-top-right-radius:2px !important;border-bottom-right-radius:2px !important;-webkit-border-top-right-radius:2px !important;-webkit-border-bottom-right-radius:2px !important;background-color:#0077b5 !important;background-image:-webkit-gradient(linear, left top, left bottom, color-stop(0%,#0077b5), color-stop(100%,#0077b5)) !important; background-image: -webkit-linear-gradient(top, #0077b5 0%, #0077b5 100%) !important;}#li_ui_li_gen_1480405293741_0.hovered #li_ui_li_gen_1480405293741_0-title{border:1px solid #000 !important;border-top-color:#0369a0 !important;border-right-color:#0369a0 !important;border-bottom-color:#0369a0 !important;border-left-color:#0369a0 !important;background-color:#0369a0 !important;background-image:-webkit-gradient(linear, left top, left bottom, color-stop(0%,#0369a0), color-stop(100%,#0369a0)) !important; background-image: -webkit-linear-gradient(top, #0369a0 0%, #0369a0 100%) !important;}#li_ui_li_gen_1480405293741_0.clicked #li_ui_li_gen_1480405293741_0-title, #li_ui_li_gen_1480405293741_0.down #li_ui_li_gen_1480405293741_0-title{color:#fff !important;border:1px solid #000 !important;border-top-color:#066094 !important;border-right-color:#066094 !important;border-bottom-color:#066094 !important;border-left-color:#066094 !important;background-color:#066094 !important;background-image:-webkit-gradient(linear, left top, left bottom, color-stop(0%,#066094), color-stop(100%,#066094)) !important; background-image: -webkit-linear-gradient(top, #066094 0%, #066094 100%) !important;}.IN-shadowed #li_ui_li_gen_1480405293741_0 #li_ui_li_gen_1480405293741_0-title{}.IN-shadowed #li_ui_li_gen_1480405293741_0.hovered #li_ui_li_gen_1480405293741_0-title{}.IN-shadowed #li_ui_li_gen_1480405293741_0.clicked #li_ui_li_gen_1480405293741_0-title, .IN-shadowed #li_ui_li_gen_1480405293741_0.down #li_ui_li_gen_1480405293741_0-title{}#li_ui_li_gen_1480405293741_0 #li_ui_li_gen_1480405293741_0-title-text, #li_ui_li_gen_1480405293741_0 #li_ui_li_gen_1480405293741_0-title-text *{color:#fff !important;font-size:11px !important;font-family:Arial, sans-serif !important;font-weight:bold !important;font-style:normal !important;-webkit-font-smoothing:antialiased !important;display:inline-block !important;background:transparent none !important;vertical-align:top !important;height:18px !important;line-height:20px !important;float:none !important;}#li_ui_li_gen_1480405293741_0 #li_ui_li_gen_1480405293741_0-title-text strong{font-weight:bold !important;}#li_ui_li_gen_1480405293741_0 #li_ui_li_gen_1480405293741_0-title-text em{font-style:italic !important;}#li_ui_li_gen_1480405293741_0.hovered #li_ui_li_gen_1480405293741_0-title-text, #li_ui_li_gen_1480405293741_0.hovered #li_ui_li_gen_1480405293741_0-title-text *{color:#fff !important;}#li_ui_li_gen_1480405293741_0.clicked #li_ui_li_gen_1480405293741_0-title-text, #li_ui_li_gen_1480405293741_0.down #li_ui_li_gen_1480405293741_0-title-text, #li_ui_li_gen_1480405293741_0.clicked #li_ui_li_gen_1480405293741_0-title-text *, #li_ui_li_gen_1480405293741_0.down #li_ui_li_gen_1480405293741_0-title-text *{color:#fff !important;}#li_ui_li_gen_1480405293741_0 #li_ui_li_gen_1480405293741_0-title #li_ui_li_gen_1480405293741_0-mark{display:inline-block !important;width:0px !important;overflow:hidden !important;}.success #li_ui_li_gen_1480405293741_0 #li_ui_li_gen_1480405293741_0-title{color:#fff !important;border-top-color:#0077b5 !important;border-right-color:#0077b5 !important;border-bottom-color:#0077b5 !important;border-left-color:#0077b5 !important;background-color:#0077b5 !important;background-image:-webkit-gradient(linear, left top, left bottom, color-stop(0%,#0077b5), color-stop(100%,#0077b5)) !important; background-image: -webkit-linear-gradient(top, #0077b5 0%, #0077b5 100%) !important;}.success #li_ui_li_gen_1480405293741_0 #li_ui_li_gen_1480405293741_0-title-text, .success #li_ui_li_gen_1480405293741_0 #li_ui_li_gen_1480405293741_0-title-text *{color:#fff !important;}.IN-shadowed .success #li_ui_li_gen_1480405293741_0 #li_ui_li_gen_1480405293741_0-title{}.success #li_ui_li_gen_1480405293741_0.hovered #li_ui_li_gen_1480405293741_0-title{color:#fff !important;border-top-color:#0369a0 !important;border-right-color:#0369a0 !important;border-bottom-color:#0369a0 !important;border-left-color:#0369a0 !important;background-color:#0369a0 !important;background-image:-webkit-gradient(linear, left top, left bottom, color-stop(0%,#0369a0), color-stop(100%,#0369a0)) !important; background-image: -webkit-linear-gradient(top, #0369a0 0%, #0369a0 100%) !important;}.success #li_ui_li_gen_1480405293741_0.hovered #li_ui_li_gen_1480405293741_0-title-text, .success #li_ui_li_gen_1480405293741_0.hovered #li_ui_li_gen_1480405293741_0-title-text *{color:#fff !important;}.success #li_ui_li_gen_1480405293741_0.clicked #li_ui_li_gen_1480405293741_0-title, .success #li_ui_li_gen_1480405293741_0.down #li_ui_li_gen_1480405293741_0-title{color:#fff !important;border-top-color:#066094 !important;border-right-color:#066094 !important;border-bottom-color:#066094 !important;border-left-color:#066094 !important;background-color:#066094 !important;background-image:-webkit-gradient(linear, left top, left bottom, color-stop(0%,#066094), color-stop(100%,#066094)) !important; background-image: -webkit-linear-gradient(top, #066094 0%, #066094 100%) !important;}.success #li_ui_li_gen_1480405293741_0.clicked #li_ui_li_gen_1480405293741_0-title-text, .success #li_ui_li_gen_1480405293741_0.down #li_ui_li_gen_1480405293741_0-title-text, .success #li_ui_li_gen_1480405293741_0.clicked #li_ui_li_gen_1480405293741_0-title-text *, .success #li_ui_li_gen_1480405293741_0.down #li_ui_li_gen_1480405293741_0-title-text *{color:#fff !important;}.IN-shadowed .success #li_ui_li_gen_1480405293741_0.clicked #li_ui_li_gen_1480405293741_0-title, .IN-shadowed .success #li_ui_li_gen_1480405293741_0.down #li_ui_li_gen_1480405293741_0-title{}#li_ui_li_gen_1480405293754_1-container.IN-top {display:inline-block !important;overflow:visible !important;position:relative !important;height:42px !important;line-height:1px !important;cursor:pointer !important;}#li_ui_li_gen_1480405293754_1.IN-top {display:inline-block !important;height:42px !important;width:60px !important;text-align:center !important;background-image:url(https://static.licdn.com/scds/common/u/images/apps/connect/sprites/sprite_connect_v14.png) !important;background-color:transparent !important;background-repeat:no-repeat !important;background-position:-207px -470px !important;}#li_ui_li_gen_1480405293754_1-content.IN-top {display:inline !important;font-size:16px !important;color:#4e4e4e !important;font-weight:bold !important;font-family:Arial, sans-serif !important;line-height:38px !important;}#li_ui_li_gen_1480405293754_1-container.IN-empty #li_ui_li_gen_1480405293754_1-inner.IN-top {background-image:url(https://static.licdn.com/scds/common/u/images/apps/connect/sprites/sprite_connect_v14.png) !important;background-color:transparent !important;background-repeat:no-repeat !important;background-position:0px -393px !important;background-size:135px auto !important;overflow:hidden !important;margin:4px auto 0 auto !important;width:27px !important;height:28px !important;display:block !important;}#li_ui_li_gen_1480405293754_1-container.IN-empty #li_ui_li_gen_1480405293754_1-content.IN-top {text-indent:-999px !important;display:inline-block !important;}#li_ui_li_gen_1480405293754_1-container.IN-hidden #li_ui_li_gen_1480405293754_1 {display:none !important;}</style><script type="text/javascript" charset="utf-8" async="" data-requirecontext="_" data-requiremodule="8dc42610-ae42-4164-90b1-573478b46574/service" src="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/service.js.下载"></script><script type="text/javascript" charset="utf-8" async="" data-requirecontext="_" data-requiremodule="331c6750-848e-4469-b1bb-bfbb4fa4cd99/service" src="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/service.js(1).下载"></script><link type="text/css" rel="stylesheet" href="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/highlighter-popup.css"><link type="text/css" rel="stylesheet" href="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/sme-popup.css"><style type="text/css">.fb_hidden{position:absolute;top:-10000px;z-index:10001}.fb_reposition{overflow:hidden;position:relative}.fb_invisible{display:none}.fb_reset{background:none;border:0;border-spacing:0;color:#000;cursor:auto;direction:ltr;font-family:"lucida grande", tahoma, verdana, arial, sans-serif;font-size:11px;font-style:normal;font-variant:normal;font-weight:normal;letter-spacing:normal;line-height:1;margin:0;overflow:visible;padding:0;text-align:left;text-decoration:none;text-indent:0;text-shadow:none;text-transform:none;visibility:visible;white-space:normal;word-spacing:normal}.fb_reset>div{overflow:hidden}.fb_link img{border:none}@keyframes fb_transform{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}.fb_animate{animation:fb_transform .3s forwards}
+.fb_dialog{background:rgba(82, 82, 82, .7);position:absolute;top:-10000px;z-index:10001}.fb_reset .fb_dialog_legacy{overflow:visible}.fb_dialog_advanced{padding:10px;-moz-border-radius:8px;-webkit-border-radius:8px;border-radius:8px}.fb_dialog_content{background:#fff;color:#333}.fb_dialog_close_icon{background:url(https://static.xx.fbcdn.net/rsrc.php/v3/yq/r/IE9JII6Z1Ys.png) no-repeat scroll 0 0 transparent;_background-image:url(https://static.xx.fbcdn.net/rsrc.php/v3/yL/r/s816eWC-2sl.gif);cursor:pointer;display:block;height:15px;position:absolute;right:18px;top:17px;width:15px}.fb_dialog_mobile .fb_dialog_close_icon{top:5px;left:5px;right:auto}.fb_dialog_padding{background-color:transparent;position:absolute;width:1px;z-index:-1}.fb_dialog_close_icon:hover{background:url(https://static.xx.fbcdn.net/rsrc.php/v3/yq/r/IE9JII6Z1Ys.png) no-repeat scroll 0 -15px transparent;_background-image:url(https://static.xx.fbcdn.net/rsrc.php/v3/yL/r/s816eWC-2sl.gif)}.fb_dialog_close_icon:active{background:url(https://static.xx.fbcdn.net/rsrc.php/v3/yq/r/IE9JII6Z1Ys.png) no-repeat scroll 0 -30px transparent;_background-image:url(https://static.xx.fbcdn.net/rsrc.php/v3/yL/r/s816eWC-2sl.gif)}.fb_dialog_loader{background-color:#f6f7f9;border:1px solid #606060;font-size:24px;padding:20px}.fb_dialog_top_left,.fb_dialog_top_right,.fb_dialog_bottom_left,.fb_dialog_bottom_right{height:10px;width:10px;overflow:hidden;position:absolute}.fb_dialog_top_left{background:url(https://static.xx.fbcdn.net/rsrc.php/v3/ye/r/8YeTNIlTZjm.png) no-repeat 0 0;left:-10px;top:-10px}.fb_dialog_top_right{background:url(https://static.xx.fbcdn.net/rsrc.php/v3/ye/r/8YeTNIlTZjm.png) no-repeat 0 -10px;right:-10px;top:-10px}.fb_dialog_bottom_left{background:url(https://static.xx.fbcdn.net/rsrc.php/v3/ye/r/8YeTNIlTZjm.png) no-repeat 0 -20px;bottom:-10px;left:-10px}.fb_dialog_bottom_right{background:url(https://static.xx.fbcdn.net/rsrc.php/v3/ye/r/8YeTNIlTZjm.png) no-repeat 0 -30px;right:-10px;bottom:-10px}.fb_dialog_vert_left,.fb_dialog_vert_right,.fb_dialog_horiz_top,.fb_dialog_horiz_bottom{position:absolute;background:#525252;filter:alpha(opacity=70);opacity:.7}.fb_dialog_vert_left,.fb_dialog_vert_right{width:10px;height:100%}.fb_dialog_vert_left{margin-left:-10px}.fb_dialog_vert_right{right:0;margin-right:-10px}.fb_dialog_horiz_top,.fb_dialog_horiz_bottom{width:100%;height:10px}.fb_dialog_horiz_top{margin-top:-10px}.fb_dialog_horiz_bottom{bottom:0;margin-bottom:-10px}.fb_dialog_iframe{line-height:0}.fb_dialog_content .dialog_title{background:#6d84b4;border:1px solid #365899;color:#fff;font-size:14px;font-weight:bold;margin:0}.fb_dialog_content .dialog_title>span{background:url(https://static.xx.fbcdn.net/rsrc.php/v3/yd/r/Cou7n-nqK52.gif) no-repeat 5px 50%;float:left;padding:5px 0 7px 26px}body.fb_hidden{-webkit-transform:none;height:100%;margin:0;overflow:visible;position:absolute;top:-10000px;left:0;width:100%}.fb_dialog.fb_dialog_mobile.loading{background:url(https://static.xx.fbcdn.net/rsrc.php/v3/ya/r/3rhSv5V8j3o.gif) white no-repeat 50% 50%;min-height:100%;min-width:100%;overflow:hidden;position:absolute;top:0;z-index:10001}.fb_dialog.fb_dialog_mobile.loading.centered{width:auto;height:auto;min-height:initial;min-width:initial;background:none}.fb_dialog.fb_dialog_mobile.loading.centered #fb_dialog_loader_spinner{width:100%}.fb_dialog.fb_dialog_mobile.loading.centered .fb_dialog_content{background:none}.loading.centered #fb_dialog_loader_close{color:#fff;display:block;padding-top:20px;clear:both;font-size:18px}#fb-root #fb_dialog_ipad_overlay{background:rgba(0, 0, 0, .45);position:absolute;bottom:0;left:0;right:0;top:0;width:100%;min-height:100%;z-index:10000}#fb-root #fb_dialog_ipad_overlay.hidden{display:none}.fb_dialog.fb_dialog_mobile.loading iframe{visibility:hidden}.fb_dialog_content .dialog_header{-webkit-box-shadow:white 0 1px 1px -1px inset;background:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#738ABA), to(#2C4987));border-bottom:1px solid;border-color:#1d4088;color:#fff;font:14px Helvetica, sans-serif;font-weight:bold;text-overflow:ellipsis;text-shadow:rgba(0, 30, 84, .296875) 0 -1px 0;vertical-align:middle;white-space:nowrap}.fb_dialog_content .dialog_header table{-webkit-font-smoothing:subpixel-antialiased;height:43px;width:100%}.fb_dialog_content .dialog_header td.header_left{font-size:12px;padding-left:5px;vertical-align:middle;width:60px}.fb_dialog_content .dialog_header td.header_right{font-size:12px;padding-right:5px;vertical-align:middle;width:60px}.fb_dialog_content .touchable_button{background:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#4966A6), color-stop(.5, #355492), to(#2A4887));border:1px solid #29487d;-webkit-background-clip:padding-box;-webkit-border-radius:3px;-webkit-box-shadow:rgba(0, 0, 0, .117188) 0 1px 1px inset, rgba(255, 255, 255, .167969) 0 1px 0;display:inline-block;margin-top:3px;max-width:85px;line-height:18px;padding:4px 12px;position:relative}.fb_dialog_content .dialog_header .touchable_button input{border:none;background:none;color:#fff;font:12px Helvetica, sans-serif;font-weight:bold;margin:2px -12px;padding:2px 6px 3px 6px;text-shadow:rgba(0, 30, 84, .296875) 0 -1px 0}.fb_dialog_content .dialog_header .header_center{color:#fff;font-size:16px;font-weight:bold;line-height:18px;text-align:center;vertical-align:middle}.fb_dialog_content .dialog_content{background:url(https://static.xx.fbcdn.net/rsrc.php/v3/y9/r/jKEcVPZFk-2.gif) no-repeat 50% 50%;border:1px solid #555;border-bottom:0;border-top:0;height:150px}.fb_dialog_content .dialog_footer{background:#f6f7f9;border:1px solid #555;border-top-color:#ccc;height:40px}#fb_dialog_loader_close{float:left}.fb_dialog.fb_dialog_mobile .fb_dialog_close_button{text-shadow:rgba(0, 30, 84, .296875) 0 -1px 0}.fb_dialog.fb_dialog_mobile .fb_dialog_close_icon{visibility:hidden}#fb_dialog_loader_spinner{animation:rotateSpinner 1.2s linear infinite;background-color:transparent;background-image:url(https://static.xx.fbcdn.net/rsrc.php/v3/yD/r/t-wz8gw1xG1.png);background-repeat:no-repeat;background-position:50% 50%;height:24px;width:24px}@keyframes rotateSpinner{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+.fb_iframe_widget{display:inline-block;position:relative}.fb_iframe_widget span{display:inline-block;position:relative;text-align:justify}.fb_iframe_widget iframe{position:absolute}.fb_iframe_widget_fluid_desktop,.fb_iframe_widget_fluid_desktop span,.fb_iframe_widget_fluid_desktop iframe{max-width:100%}.fb_iframe_widget_fluid_desktop iframe{min-width:220px;position:relative}.fb_iframe_widget_lift{z-index:1}.fb_hide_iframes iframe{position:relative;left:-10000px}.fb_iframe_widget_loader{position:relative;display:inline-block}.fb_iframe_widget_fluid{display:inline}.fb_iframe_widget_fluid span{width:100%}.fb_iframe_widget_loader iframe{min-height:32px;z-index:2;zoom:1}.fb_iframe_widget_loader .FB_Loader{background:url(https://static.xx.fbcdn.net/rsrc.php/v3/y9/r/jKEcVPZFk-2.gif) no-repeat;height:32px;width:32px;margin-left:-16px;position:absolute;left:50%;z-index:4}</style></head>
+<body class="single single-post postid-7496 single-format-standard chrome alt-style-default boxed-layout two-col-left width-1020 two-col-left-1020" style="">
+<div id="fb-root" class=" fb_reset"><div style="position: absolute; top: -10000px; height: 0px; width: 0px;"><div><iframe name="fb_xdm_frame_http" frameborder="0" allowtransparency="true" allowfullscreen="true" scrolling="no" id="fb_xdm_frame_http" aria-hidden="true" title="Facebook Cross Domain Communication Frame" tabindex="-1" src="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/fTmIQU3LxvB.html" style="border: none;"></iframe><iframe name="fb_xdm_frame_https" frameborder="0" allowtransparency="true" allowfullscreen="true" scrolling="no" id="fb_xdm_frame_https" aria-hidden="true" title="Facebook Cross Domain Communication Frame" tabindex="-1" src="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/fTmIQU3LxvB(1).html" style="border: none;"></iframe></div></div><div style="position: absolute; top: -10000px; height: 0px; width: 0px;"><div><iframe name="f214102b5fc86c4" frameborder="0" allowtransparency="true" allowfullscreen="true" scrolling="no" src="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/ping.html" style="display: none;"></iframe></div></div></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_GB/all.js#xfbml=1&appId=240866859264841";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script><div id="wrapper">
+
+	<div id="inner-wrapper">
+
+	<h3 class="nav-toggle icon"><a href="http://www.mindtheproduct.com/2016/02/what-the-hell-are-ci-cd-and-devops-a-cheatsheet-for-the-rest-of-us/#navigation">Navigation</a></h3>
+
+	<header id="header" class="col-full">
+
+		<div id="logo">
+<a href="http://www.mindtheproduct.com/" title="Product Management - the intersection of Business, Technology and the User"><img src="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/mindtheproduct_header_logo.gif" alt="MindTheProduct"></a>
+<span class="site-title"><a href="http://www.mindtheproduct.com/">MindTheProduct</a></span>
+<span class="site-description">Product Management - the intersection of Business, Technology and the User</span>
+</div>
+<!-- NetCommunities Ads: 
+<span style="float:right; display:block; text-align:center;">
+<a href="http://conference.mindtheproduct.com" title="Mind the Product - Product Management Conference" alt="Mind the Product - Product Management Conference"><img src="http://cdn02.mindtheproduct.com/wp-content/uploads/2013/04/mindtheproduct2013-quotes-728x90.gif" style="border:none;"></a>
+</span>
+-->
+	</header>
+	<nav id="navigation" class="col-full" role="navigation">
+
+	
+	<section class="menus nav-icons nav-icons-1">
+
+		<a href="http://www.mindtheproduct.com/" class="nav-home"><span>Home</span></a>
+
+	<h3>Menu</h3><ul id="main-nav" class="nav fl"><li id="menu-item-506" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-506"><a title="Mind the Product" href="http://www.mindtheproduct.com/">Blog</a></li>
+<li id="menu-item-2909" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-2909"><a title="Product Management Videos" href="http://www.mindtheproduct.com/category/product-management-videos/">Videos</a></li>
+<li id="menu-item-19" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-19"><a title="Product Management Meetups" href="http://www.mindtheproduct.com/meetups/">Meetups</a></li>
+<li id="menu-item-1758" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-1758"><a title="Product Management Conference" href="http://mtpcon.com/">Conference</a></li>
+<li id="menu-item-8042" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8042"><a title="Product Management Training" href="http://www.mindtheproduct.com/product-management-training/">Training</a></li>
+<li id="menu-item-3115" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-3115"><a title="Product Manager Jobs" href="http://jobs.mindtheproduct.com/">Jobs</a></li>
+<li id="menu-item-13" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children menu-item-13 parent"><a href="http://www.mindtheproduct.com/about/">About Us</a>
+<ul class="sub-menu">
+	<li id="menu-item-3563" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-3563"><a title="About Mind the Product" href="http://www.mindtheproduct.com/about/">About us</a></li>
+	<li id="menu-item-3562" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-3562"><a title="The Mind the Product Team" href="http://www.mindtheproduct.com/about/the-team/">The Team</a></li>
+	<li id="menu-item-3561" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-3561"><a title="The Mind the Product Manifesto" href="http://www.mindtheproduct.com/about/the-mind-the-product-manifesto/">Our manifesto</a></li>
+	<li id="menu-item-9008" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-9008"><a title="Product Management Slack" href="http://www.mindtheproduct.com/product-management-slack-community/">Join us on Slack</a></li>
+	<li id="menu-item-9009" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-9009"><a title="Product Management Newsletter" href="http://www.mindtheproduct.com/product-management-newsletter/">Subscribe to our Newsletter</a></li>
+	<li id="menu-item-2522" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-2522"><a href="http://mindtheproduct.com/2012/06/guest-post-guidelines/">Write for us</a></li>
+	<li id="menu-item-3560" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-3560"><a title="Sponsor Mind the Product" href="http://www.mindtheproduct.com/sponsor-a-product-managers-event/">Sponsor us</a></li>
+</ul>
+</li>
+</ul>	<div class="side-nav">
+	<ul class="rss fr">
+						<li class="sub-rss"><a href="http://www.mindtheproduct.com/feed/"></a></li>
+			</ul>
+			</div><!-- /#side-nav -->
+
+	</section><!-- /.menus -->
+
+	<a href="http://www.mindtheproduct.com/2016/02/what-the-hell-are-ci-cd-and-devops-a-cheatsheet-for-the-rest-of-us/#top" class="nav-close"><span>Return to Content</span></a>
+
+</nav>
+       
+    <!-- #content Starts -->
+	    <div id="content" class="col-full">
+    
+    	<div id="main-sidebar-container">    
+
+            <!-- #main Starts -->
+                        <section id="main">                       
+<article class="post-7496 post type-post status-publish format-standard has-post-thumbnail hentry category-guest-post category-product-design tag-continuous-delivery tag-continuous-integration tag-development tag-feedback-loops tag-technical-product-manager">
+	<header>
+	<h1 class="title entry-title"><span class="sumo_twilighter_highlighted twilighter-6f4c44bc" style="background-color: rgba(34, 34, 34, 0.14902);">The Product Managers’ Guide to Continuous Delivery and DevOps<span class="sumo_twilighter_shares" style="visibility: visible;">6</span></span></h1>	</header>
+<div class="post-meta"><span class="small">By</span> <span class="author vcard"><span class="fn"><a href="http://www.mindtheproduct.com/author/suzie-prince/" title="Posts by Suzie Prince" rel="author">Suzie Prince</a></span></span> <span class="small">on</span> <abbr class="date time published updated" title="2016-02-11T09:57:01+0000">February 11, 2016</abbr>   </div>
+	<section class="entry">
+<div class="flare-horizontal flare-backgroundcolor-light enablecounters enabletotal enablehumbleflare flare-hidden countloadfinished" data-humbleflarecount="5">
+    <span class="loading"><span></span></span>
+    <span class="flare-total first"><strong>874</strong> Flares</span>
+    
+        
+        
+    <span class="flare-total last"><strong>874</strong> Flares</span>
+
+    <span class="close">
+        <a href="http://www.mindtheproduct.com/2016/02/what-the-hell-are-ci-cd-and-devops-a-cheatsheet-for-the-rest-of-us/#close">×</a>
+    </span>
+</div><!-- SimpleReach Slide Plugin Version: 0.7.6 -->
+<script type="text/javascript" id="simplereach-slide-tag">
+    __reach_config = {
+      pid: '4ed51362396cef4a5b00003b',
+      title: 'The Product Managers\' Guide to Continuous Delivery and DevOps',
+      tags: ["continuous-delivery","continuous-integration","development","feedback-loops","technical-product-manager"],
+      authors: ["Suzie Prince"],
+      channels: ["guest-post","product-design"],
+      slide_logo: false,
+      slide_active: true,
+      date: '2016-02-11 09:57:01',
+      url: 'http://www.mindtheproduct.com/2016/02/what-the-hell-are-ci-cd-and-devops-a-cheatsheet-for-the-rest-of-us/',
+      header: 'RECOMMENDED FOR YOU'
+    };
+    var content = document.getElementById('simplereach-slide-tag').parentNode, loc;
+    if (content.className){ loc = '.' + content.className; }
+    if (content.id){ loc = '#' + content.id; }
+    __reach_config.loc = loc || content;
+    (function(){
+    var s = document.createElement('script');
+      s.async = true;
+      s.type = 'text/javascript';
+      s.src = document.location.protocol + '//d8rk54i4mohrb.cloudfront.net/js/slide.js';
+      __reach_config.css = '';
+      var tg = document.getElementsByTagName('head')[0];
+      if (!tg) {tg = document.getElementsByTagName('body')[0];}
+      if (tg) {tg.appendChild(s);}
+    })();
+</script>
+<p><i><span style="font-weight: 400;">This guide is for you if ….</span></i></p>
+<ul>
+<li style="font-weight: 400;"><i><span style="font-weight: 400;">You’re in tech, you’re a product manager or an MBA. Your team A/B tests, feature toggles, and you have a dog in <span class="sumo_twilighter_highlighted twilighter-1c71946c" style="background-color: rgba(68, 68, 68, 0.14902); cursor: inherit;">the office! Of course you understand what feature branches are, what CD is and what a DevOps culture looks like. Right? Uh … sure.</span></span><span class="sumo_twilighter_highlighted twilighter-1c71946c" style="background-color: rgba(68, 68, 68, 0.14902); cursor: inherit;"></span></i><span class="sumo_twilighter_highlighted twilighter-1c71946c" style="background-color: rgba(68, 68, 68, 0.14902); cursor: inherit;"></span></li><span class="sumo_twilighter_highlighted twilighter-1c71946c" style="background-color: rgba(68, 68, 68, 0.14902); cursor: inherit;">
+</span></ul><span class="sumo_twilighter_highlighted twilighter-1c71946c" style="background-color: rgba(68, 68, 68, 0.14902); cursor: inherit;">
+</span><ul><span class="sumo_twilighter_highlighted twilighter-1c71946c" style="background-color: rgba(68, 68, 68, 0.14902); cursor: inherit;">
+</span><li style="font-weight: 400;"><span class="sumo_twilighter_highlighted twilighter-1c71946c" style="background-color: rgba(68, 68, 68, 0.14902); cursor: inherit;"></span><i><span class="sumo_twilighter_highlighted twilighter-1c71946c" style="background-color: rgba(68, 68, 68, 0.14902); cursor: inherit;"></span><span style="font-weight: 400;"><span class="sumo_twilighter_highlighted twilighter-1c71946c" style="background-color: rgba(68, 68, 68, 0.14902); cursor: inherit;">You’ve gone Agile. Engineering teams now meet with your product people every week to discuss stories and iteration<span class="sumo_twilighter_shares" style="visibility: visible;">2</span></span>s. They collaborate well and what they’re building feels better than ever. But your customers still don’t get those features any faster. You still have to wait for the release train to leave the station. You’ve heard about companies like Etsy, Flickr and Google who deliver a 100 times a day. How do they do it?</span></i></li>
+</ul>
+<ul>
+<li style="font-weight: 400;"><i><span style="font-weight: 400;">Your development team wants to “do CD”. You’ve heard some good things but you’re also concerned about changes going to production without them being properly tested or not being able to market the changes properly. What is this CD thing?</span></i></li>
+</ul>
+<p><span style="font-weight: 400;">I am here to demystify these practices, tell you just how important they are to you “on the business side” and help you get involved. It’s not that complicated, we have pictures and everything.</span></p>
+<p>Let’s start with some definitions and examples</p>
+<h2><b>Continuous Integration (CI)</b></h2>
+<p><span style="font-weight: 400;">In traditional software development the process of </span><i><span style="font-weight: 400;">integration</span></i><span style="font-weight: 400;"> generally took place at the end of a project after each person had completed their work. Integration generally took weeks or months and could be very painful. Continuous integration is a practice that puts the integration phase earlier in the development cycle so that building, testing and integrating code happens on a more regular basis.</span></p>
+<p><span style="font-weight: 400;">CI means that one developer (hi Steve!) who writes code on his laptop at home, and another dev (hey Annie!) who codes on her desktop in the office can both write software for the same product separately, integrate their changes together in a place called </span><i><span style="font-weight: 400;">the source repository</span></i><span style="font-weight: 400;">. They can then build the combined software from the bits they each wrote and test that it works the way they expect. </span></p>
+<p><span style="font-weight: 400;">Developers generally use a tool called the </span><i><span style="font-weight: 400;">CI Server </span></i><span style="font-weight: 400;">to do the building and the integration for them. CI requires that Steve and Annie have self-testing code. This is code that tests itself to ensure that it is working as expected, and these tests are often called </span><i><span style="font-weight: 400;">unit tests. </span></i><span style="font-weight: 400;">When all the unit tests pass after the code is integrated Steve and Annie will get a </span><i><span style="font-weight: 400;">green build</span></i><span style="font-weight: 400;">. This indicates that they have verified that their changes are successfully integrated together, and the code is working as expected by the tests.</span> <span style="font-weight: 400;">However, while the integrated code is successfully working together, it not yet ready for production because it has not been tested and verified as working in <em>production-like environments</em>. You can read more about what happens after CI in the <strong>Continuous Delivery</strong> section below.</span><br>
+<a href="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/409-images-for-snap-blog-postedit_image1.png" rel="lightbox[7496]" title="The Product Managers&#39; Guide to Continuous Delivery and DevOps" class="cboxElement"><img class="alignnone wp-image-7574 size-full" src="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/409-images-for-snap-blog-postedit_image1.png" alt="" width="1000" height="440" srcset="http://www.mindtheproduct.com/wp-content/uploads/2015/12/409-images-for-snap-blog-postedit_image1.png 1000w, http://www.mindtheproduct.com/wp-content/uploads/2015/12/409-images-for-snap-blog-postedit_image1-300x132.png 300w" sizes="(max-width: 1000px) 100vw, 1000px"></a></p>
+<p><span style="font-weight: 400;">To be considered to be&nbsp;practicing CI, Steve and Annie must </span><i><span style="font-weight: 400;">check-in</span></i><span style="font-weight: 400;"> to the main source repository, integrate and test their code frequently and often. Usually many times an hour, but at a minimum once a day. </span></p>
+<p>The benefit of CI is that integration becomes a non-event. Software is written and integrated all the time. Before CI, integration happened at the end of the creation process, all at once, and took an unknown amount of time; now with CI, it happens everyday, takes minutes and is just “the way we work”.</p>
+<p>It’s most likely the your team is doing CI (or at least they believe they are). You can confirm by asking them whether they integrated code once a day <img draggable="false" class="emoji" alt="🙂" src="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/1f642.svg"> CI is the first practice that is required to do Continuous Delivery. In fact, if you’ve ever checked in help text, documentation or images, then you may have been continuously integrating!</p>
+<h2><b><span class="sumo_twilighter_highlighted twilighter-6ead7ad4" style="background-color: rgba(34, 34, 34, 0.14902);">Continuous Delivery (CD)<span class="sumo_twilighter_shares" style="visibility: visible;">1</span></span></b></h2>
+<p><span style="font-weight: 400;">Let’s go back to our two developers, Steve and Annie. Continuous Delivery means that each time Steve or Annie makes changes to the code, integrates and builds the code, that they <em>also</em> automatically test this code on environments that are very similar to&nbsp;production. We call this progression of deploying to – and testing on – different environments a </span><i><span style="font-weight: 400;">deployment pipeline</span></i><span style="font-weight: 400;">. Often the deployment pipeline has a development environment, a test environment, and a staging environment, but these stages vary by the team, product and organisation. For example, </span><a href="https://www.thoughtworks.com/mingle/"><span style="font-weight: 400;">our Mingle team</span></a><span style="font-weight: 400;"> has a stage called “Cupcake” which is a staging environment, and </span><a href="https://codeascraft.com/2010/05/20/quantum-of-deployment/"><span style="font-weight: 400;">Etsy’s staging environment is called “Princess”</span></a><span style="font-weight: 400;">.</span><br>
+<a href="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/409-images-for-snap-blog-postedit_image4-manual.png" rel="lightbox[7496]" title="The Product Managers&#39; Guide to Continuous Delivery and DevOps" class="cboxElement"><img class="alignnone wp-image-7573 size-full" src="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/409-images-for-snap-blog-postedit_image4-manual.png" alt="" width="1000" height="740" srcset="http://www.mindtheproduct.com/wp-content/uploads/2015/12/409-images-for-snap-blog-postedit_image4-manual.png 1000w, http://www.mindtheproduct.com/wp-content/uploads/2015/12/409-images-for-snap-blog-postedit_image4-manual-300x222.png 300w" sizes="(max-width: 1000px) 100vw, 1000px"></a></p>
+<p><span style="font-weight: 400;">In each different environment, the code that Annie or Steve wrote is tested differently. This gives more and more confidence to them, and to you, that the code will work on the production environment when the code is deployed there. Crucially, the code is only promoted to (tested on) the next environment in the deployment&nbsp;</span><span style="font-weight: 400;">pipeline</span><span style="font-weight: 400;"><em> if</em>&nbsp;it&nbsp;passes the tests of the previous environment. This way Annie and Steve get new feedback from the tests in each environment and, if there is a failure, they can understand more easily where the issue&nbsp;might be and get it fixed before the code gets to the production environment.</span></p>
+<h3>Continuously Learning</h3>
+<p><span style="font-weight: 400;">This process is very empowering for those of us in the business. It means that if Annie’s tests pass on all the environments, you know that her code&nbsp;is likely to be work as intended&nbsp;when it gets to production. Once the tests pass in all environments, you get to decide whether your end users get it or not, right away. Do we want this green build in production now? Yes! And with that, new, fully tested, working software is readily available for customers as soon as your developers finished building it. Woot!</span></p>
+<h2><b>Continuous Deployment</b></h2>
+<p><span style="font-weight: 400;">This is a practice where every change that Steve or Annie makes, and which&nbsp;passes all the&nbsp;test stages,&nbsp;</span><i><span style="font-weight: 400;">automatically</span></i><span style="font-weight: 400;"> goes to production. </span><a href="http://www.paulhammond.org/2010/06/trunk/alwaysshiptrunk.pdf"><span style="font-weight: 400;">Tim Fitz has a great explanation of it as it was first coined</span></a><span style="font-weight: 400;">. Some companies do this and others do not. To achieve continuous deployment you first need to get to continuous delivery, so it’s not a priority to decide which is better for you until you’ve starting practicing CD. Either way, I’m of the opinion that continuous delivery is about empowering <em>the business as a whole</em>, and so at the very least you should be involved in deciding if you should use continuous deployment or not. After all, if you’re reading this then you’re probably on the “business side”.</span></p>
+<p>&nbsp;</p>
+<p><a href="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/409-images-for-snap-blog-postedit_image3-auto.png" rel="lightbox[7496]" title="The Product Managers&#39; Guide to Continuous Delivery and DevOps" class="cboxElement"><img class="alignnone wp-image-7572 size-full" src="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/409-images-for-snap-blog-postedit_image3-auto.png" alt="" width="1000" height="740" srcset="http://www.mindtheproduct.com/wp-content/uploads/2015/12/409-images-for-snap-blog-postedit_image3-auto.png 1000w, http://www.mindtheproduct.com/wp-content/uploads/2015/12/409-images-for-snap-blog-postedit_image3-auto-300x222.png 300w" sizes="(max-width: 1000px) 100vw, 1000px"></a></p>
+<h2><b>DevOps</b></h2>
+<p><span style="font-weight: 400;">The word ‘DevOps’ comes from the combination of the words ‘development’ and ‘operations’. DevOps is a culture that promotes collaboration between developers (hey Steve and Annie, you’re back) and other technology professionals, often called operations or just ops (high-five ops star Joey!). Specifically, communication and collaboration during the software delivery and deployment process, with the goal of releasing better quality software more quickly and more reliably. </span></p>
+<p><span style="font-weight: 400;">Common traits of organisations who have a so-called DevOps culture are: autonomous poly-skilled teams (Steve, Annie and Joey are all on the same team), high levels of test and release automation (a la continuous delivery) and common goals between the poly-skilled members. </span></p>
+<p><a href="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/457-image-for-devops-part-of-blog_old-way_1200x400.png" rel="lightbox[7496]" title="The Product Managers&#39; Guide to Continuous Delivery and DevOps" class="cboxElement"><img class="alignnone wp-image-7707 size-full" src="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/457-image-for-devops-part-of-blog_old-way_1200x400.png" alt="Dev and Ops before DevOPs" width="1200" height="400" srcset="http://www.mindtheproduct.com/wp-content/uploads/2016/01/457-image-for-devops-part-of-blog_old-way_1200x400.png 1200w, http://www.mindtheproduct.com/wp-content/uploads/2016/01/457-image-for-devops-part-of-blog_old-way_1200x400-300x100.png 300w, http://www.mindtheproduct.com/wp-content/uploads/2016/01/457-image-for-devops-part-of-blog_old-way_1200x400-1024x341.png 1024w" sizes="(max-width: 1200px) 100vw, 1200px"></a></p>
+<p><span style="font-weight: 400;">One way you may see this working in your organisations is that our developer friends Steve and Annie will work <em>with</em> ops people like Joey to deliver software into production, rather than just “hand off” their code to Joey for release when they’re done with it. Likewise Steve, Annie and Joey will all act as part of a<em> common product or service team</em> who will all be responsible for the support and maintenance of the product, rather than support being a solely ops-team responsibility. </span></p>
+<p>You will also see automation of activities becoming increasingly important to an organisation doing CD and DevOps. This is because, in order to achieve the repeatable, regular and successful process of releasing software that we expect from CD and DevOps, organizations <em>must</em> move to an automated process. Manual processes are simply too error prone and inefficient.</p>
+<p><a href="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/457-image-for-devops-part-of-blog_new-way_560x560.png" rel="lightbox[7496]" title="The Product Managers&#39; Guide to Continuous Delivery and DevOps" class="cboxElement"><img class="alignnone wp-image-7708 size-full" src="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/457-image-for-devops-part-of-blog_new-way_560x560.png" alt="Devops is the new way" width="560" height="560" srcset="http://www.mindtheproduct.com/wp-content/uploads/2016/01/457-image-for-devops-part-of-blog_new-way_560x560.png 560w, http://www.mindtheproduct.com/wp-content/uploads/2016/01/457-image-for-devops-part-of-blog_new-way_560x560-150x150.png 150w, http://www.mindtheproduct.com/wp-content/uploads/2016/01/457-image-for-devops-part-of-blog_new-way_560x560-300x300.png 300w" sizes="(max-width: 560px) 100vw, 560px"></a></p>
+<p><span style="font-weight: 400;">DevOps culture is commonly associated with Continuous Delivery because they both aim to increase collaboration between developers and operations teams, and both use automatic processes to build, test and release software more quickly, frequently and reliably. All things that people like us want. </span></p>
+<h2>What’s Next?</h2>
+<p><span style="font-weight: 400;">While development teams often see the most immediate benefits of process improvements, there are lots of benefits of CI, CD and DevOps to the rest of us. Put simply, I believe that organisations practicing CD and embracing a DevOps culture will deliver more valuable, reliable software to their customers, more often. That’s got to be good, right? Especially if you’re on “the business side.”</span></p>
+<p><span style="font-weight: 400;">Next time I will talk more about </span><i><span style="font-weight: 400;">why</span></i><span style="font-weight: 400;"> you should care about these concepts. I’ll address the impact it can have on your business and how to get involved. If you have any questions, talk to me in the comments. The whole point of these posts is to empower you and inform you about technical practices that are meant to be business-relevant. Questions are great!</span></p>
+<hr>
+<p>&nbsp;</p>
+<h3><b><i>Useful Terminology</i></b></h3>
+<h4><b>Checking in</b></h4>
+<p><span style="font-weight: 400;">The process of pushing local development code changes to the common source repository.</span></p>
+<h4><b>CI server</b></h4>
+<p><span style="font-weight: 400;">A tool used to build and test source code. The CI server will tell a developer if their latest code builds were successful and if they continue to pass tests.</span></p>
+<h4><b>Development environment</b></h4>
+<p><span style="font-weight: 400;">Where developers create, integrate, build and test code.</span></p>
+<h4><b>Deployment pipeline / pipeline</b></h4>
+<p><span style="font-weight: 400;">This is a set of stages that Steve and Annie’s code changes go through before they are done and ready to be delivered to production. Commonly these will be “build”, “unit test”, “functional tests”, “performance test” and “deploy”. Different automated tests will be run at different stages. Only once the code goes through the entire deployment pipeline can the software be delivered to production.</span></p>
+<h4><b>Green build</b></h4>
+<p><span style="font-weight: 400;">Green is an indication of success. A green version or build is one where it has passed the tests for that particular stage of the development and delivery process. Generally a build or version of the software will not be promoted to the next stage of the deployment pipeline unless it is “green”. The opposite of a green build is a red build (see below).</span></p>
+<h4><b>Incremental development</b></h4>
+<p><span style="font-weight: 400;">Not to be confused with </span><i><span style="font-weight: 400;">iterative development</span></i><span style="font-weight: 400;"> (see below). Incremental development is where a little bit of the product gets built at a time until it is all complete. Pieces are added on in each increment, and those&nbsp;increments may be small or large. You can use CI with incremental development but it can be harder to achieve Continuous Delivery or Continuous Deployment with incremental development, as you must wait until all increments are completed to deliver value. A great illustration of the difference between Incremental and Iterative development is </span><a href="http://www.agileproductdesign.com/blog/dont_know_what_i_want.html"><span style="font-weight: 400;">Jeff Paton’s Mona Lisa.</span></a></p>
+<h4><b>Integration</b></h4>
+<p><span style="font-weight: 400;">All code that is written by individuals or teams needs to be combined. We call this integration. In continuous integration, we generally mean software from individuals needs to be consolidated on a regular basis. In continuous delivery, we often mean software from different teams is integrated together to create the whole product.</span></p>
+<h4><b>Iterative development</b></h4>
+<p><span style="font-weight: 400;">Not to be confused with </span><i><span style="font-weight: 400;">incremental development</span></i><span style="font-weight: 400;"> (see above). Iterative development is where a little bit of the product gets built at a time and is refined until it is complete. The product is built iteratively where the same pieces are reworked each iteration. Change is expected and planned between features in different iterations. You can use CI, Continuous Delivery or Continuous Deployment with iterative development. A great illustration of the difference between incremental and iterative development is </span><a href="http://www.agileproductdesign.com/blog/dont_know_what_i_want.html"><span style="font-weight: 400;">Jeff Paton’s Mona Lisa.</span></a></p>
+<h4><b>Master/trunk/mainline</b></h4>
+<p><span style="font-weight: 400;">The “master”, “trunk” or “mainline” branch is the main branch of the source repository. Most people do </span><i><span style="font-weight: 400;">trunk-based development</span></i><span style="font-weight: 400;">,</span><i><span style="font-weight: 400;">&nbsp;</span></i><span style="font-weight: 400;">meaning that they will always integrate their changes to main line. Others do </span><i><span style="font-weight: 400;">branch-based </span></i><span style="font-weight: 400;">development when individually developers will have their own branches, or teams will have branches for different features.</span></p>
+<h4><b>Production environment</b></h4>
+<p><span style="font-weight: 400;">This is the place where software gets deployed or released. Customers using your product or website are most likely using this environment. Also referred to as “in production”, “in prod” or “live”.</span></p>
+<h4><b>Red build</b></h4>
+<p><span style="font-weight: 400;">Red is an indication of failure. A red version or build is one where it has not passed the tests for that particular stage of the development and delivery process. Generally a build or version of the software will not be promoted to the next stage of the deployment pipeline if it is “red”. The opposite of a red build is a green build (see above).</span></p>
+<h4><b>Source repository</b></h4>
+<p><span style="font-weight: 400;">This is where the source code lives. Steve and Annie have their own local version of the code that they are working on (meaning on their own machines), but the source repository will contain <em>all</em> the code after developers check in their changes to it.</span></p>
+<h4><b>Test automation</b></h4>
+<p><span style="font-weight: 400;">High quality test automation is needed to do continuous integration and continuous delivery. Tests are ways to check that the software will work as expected. Automated tests are tests that are coded and automatically run once code is checked into the common source repositories.</span></p>
+<p><span style="font-weight: 400;">In the CI world, the unit tests are run each time the software gets integrated and built. If the tests don’t pass, that version of your software is determined as “not working”, “red” or “broken”. In some workplaces “red lights” or sad sounds occur when this happens.</span></p>
+<p><span style="font-weight: 400;">In the case of a broken build, Steve or Annie (whoever committed the malfunctioning code) need to “fix it”, “make it green” or “get it working”. They can either do this by making a change to the code to fix it, or removing the prior change that broke it.</span></p>
+<h4><b>Unit tests</b></h4>
+<p><span style="font-weight: 400;">Unit tests are automated tests in code that test low-level, single pieces of code to ensure that they are usable and working as expected. Unit tests are considered a prerequisite for practicing CI and CD. </span></p>
+<h3><b>Further reading</b></h3>
+<p><span style="font-weight: 400;">Continuous Delivery: Reliable Software Releases through Build, Test, and Deployment Automation –</span><a href="http://martinfowler.com/books/continuousDelivery.html"><span style="font-weight: 400;">http://martinfowler.com/books/continuousDelivery.html</span></a></p>
+<p><span style="font-weight: 400;">Martin Fowler’s easy to read guide on CI –&nbsp;</span><a href="http://www.martinfowler.com/articles/continuousIntegration.html"><span style="font-weight: 400;">http://www.martinfowler.com/articles/continuousIntegration.html</span></a></p>
+<p><span style="font-weight: 400;">The Phoenix Project: A Novel about IT, DevOps, and helping your business win –&nbsp;</span><a href="http://itrevolution.com/books/phoenix-project-devops-book/"><span style="font-weight: 400;">http://itrevolution.com/books/phoenix-project-devops-book/</span></a></p>
+<p>&nbsp;</p>
+	</section><!-- /.entry -->
+	<div class="fix"></div>
+<aside id="post-author">
+	<div class="profile-image"><img src="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/8c0ebccab29f2dc0da48799e4742cbdd" width="80" height="80" alt="" class="avatar avatar-80 wp-user-avatar wp-user-avatar-80 photo avatar-default"></div>
+	<div class="profile-content">
+		<h4>About Suzie Prince</h4>
+		<a href="https://www.linkedin.com/in/suziejprince">Suzie Prince</a> is Head of Product for <a href="http://www.thoughtworks.com/products">ThoughtWorks Studios</a> building pioneering tools for software development teams. She has over ten years experience as a business analyst and product manager designing and delivering software that is valuable, usable, feasible, and desirable. On weekends, you'll find her either eating in San Francisco's Mission district or hiking in California's National Parks.				<div class="profile-link">
+			<a href="http://www.mindtheproduct.com/author/suzie-prince/">
+				View all posts by Suzie Prince <span class="meta-nav">→</span>			</a>
+		</div><!--#profile-link-->
+			</div>
+	<div class="fix"></div>
+</aside>
+<div class="post-utility"><p class="tags"><i class="fa fa-tag"></i> <a href="http://www.mindtheproduct.com/tag/continuous-delivery/" rel="tag">Continuous Delivery</a>, <a href="http://www.mindtheproduct.com/tag/continuous-integration/" rel="tag">continuous integration</a>, <a href="http://www.mindtheproduct.com/tag/development/" rel="tag">Development</a>, <a href="http://www.mindtheproduct.com/tag/feedback-loops/" rel="tag">feedback loops</a>, <a href="http://www.mindtheproduct.com/tag/technical-product-manager/" rel="tag">technical product manager</a></p> </div>
+</article><!-- /.post -->
+	        <div class="post-entries">
+	            <div class="nav-prev fl"><a href="http://www.mindtheproduct.com/2016/02/designing-emotion/" rel="prev"><i class="fa fa-angle-left"></i> Designing Emotion</a></div>
+	            <div class="nav-next fr"><a href="http://www.mindtheproduct.com/2016/02/analytics-is-not-just-for-christmas/" rel="next">Analytics is not just for Christmas <i class="fa fa-angle-right"></i></a></div>
+	            <div class="fix"></div>
+	        </div>
+
+		
+<div id="disqus_thread"><iframe id="dsq-app1" name="dsq-app1" allowtransparency="true" frameborder="0" scrolling="no" tabindex="0" title="Disqus" width="100%" src="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/saved_resource.html" style="width: 1px !important; min-width: 100% !important; border: none !important; overflow: hidden !important; height: 0px !important;" horizontalscrolling="no" verticalscrolling="no"></iframe></div>
+
+<script type="text/javascript">
+var disqus_url = 'http://www.mindtheproduct.com/2016/02/what-the-hell-are-ci-cd-and-devops-a-cheatsheet-for-the-rest-of-us/';
+var disqus_identifier = '7496 http://www.mindtheproduct.com/?p=7496';
+var disqus_container_id = 'disqus_thread';
+var disqus_shortname = 'mindtheproduct';
+var disqus_title = "The Product Managers&#8217; Guide to Continuous Delivery and DevOps";
+var disqus_config_custom = window.disqus_config;
+var disqus_config = function () {
+    /*
+    All currently supported events:
+    onReady: fires when everything is ready,
+    onNewComment: fires when a new comment is posted,
+    onIdentify: fires when user is authenticated
+    */
+    
+    
+    this.language = '';
+        this.callbacks.onReady.push(function () {
+
+        // sync comments in the background so we don't block the page
+        var script = document.createElement('script');
+        script.async = true;
+        script.src = '?cf_action=sync_comments&post_id=7496';
+
+        var firstScript = document.getElementsByTagName('script')[0];
+        firstScript.parentNode.insertBefore(script, firstScript);
+    });
+    
+    if (disqus_config_custom) {
+        disqus_config_custom.call(this);
+    }
+};
+
+(function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+</script>
+
+     
+            </section><!-- /#main -->
+                
+            <aside id="sidebar">
+<div id="search-7" class="widget widget_search"><div class="search_main">
+    <form method="get" class="searchform" action="http://www.mindtheproduct.com/" autocomplete="off">
+        <input type="text" class="field s" name="s" value="Search..." onfocus="if (this.value == &#39;Search...&#39;) {this.value = &#39;&#39;;}" onblur="if (this.value == &#39;&#39;) {this.value = &#39;Search...&#39;;}" autocomplete="off">
+        <button type="submit" class="fa fa-search submit" name="submit" value="Search"></button>
+    </form>
+    <div class="fix"></div>
+</div></div><div id="adrotate_widgets-3" class="widget adrotate_widgets"><!-- Either there are no banners, they are disabled or none qualified for this location! --></div><div id="text-4" class="widget widget_text"><h3>Upcoming Events</h3>			<div class="textwidget"><p>November 28 -<a href="http://www.meetup.com/ProductTank-Tel-Aviv/events/235409816/" target="_blank&quot;">ProductTank Tel Aviv</a></p>
+<p>November 30 -<a href="https://www.meetup.com/ProductTank-Lviv/events/235649322/" target="_blank&quot;">ProductTank Lviv</a></p>
+<p>November 30 -<a href="https://www.meetup.com/ProductTank-Belfast/events/229987975/" target="_blank">ProductTank Belfast</a> </p>
+<p>December 1 -<a href="https://www.meetup.com/ProductTank-Washington-DC/events/235606408/" target="_blank&quot;">ProductTank Washington</a></p>
+<p>December 1 -<a href="https://www.xing.com/events/product-tank-hamburg-december-2016-1745221/" target="_blank&quot;">ProductTank Hamburg</a></p>
+<p>December 6 -<a href="http://www.meetup.com/ProductTank-Cincinnati/events/234500221/" target="_blank&quot;">ProductTank Cincinnati</a></p>
+<p>December 6 -<a href="https://www.meetup.com/ProductTank-Atlanta/events/234809809/" target="_blank&quot;">ProductTank Atalanta</a></p>
+<p>December 6 -<a href="https://www.meetup.com/Vancouver-Product-Managers-Group/events/235468276/" target="_blank&quot;">ProductTank Vancouver</a></p>
+<p>December 7 -<a href="http://www.meetup.com/ProductTank-Kansas-City/events/234759882/" target="_blank&quot;">ProductTank Kansas City</a></p>
+<p>December 8 -<a href="http://www.meetup.com/ProductTank-AMS/events/235195554/" target="_blank&quot;">ProductTank Amsterdam</a></p>
+<p>December 8 -<a href="https://www.meetup.com/ProductTank-Berlin/events/235689145/" target="_blank&quot;">ProductTank Berlin</a></p>
+<p>December 8 -<a href="https://www.meetup.com/ProductTank-Oslo/events/235555295/" target="_blank&quot;">ProductTank Oslo</a></p>
+<p>December 13 -<a href="http://www.meetup.com/ProductTank-Denver/events/235357819/" target="_blank&quot;">ProductTank Denver</a></p>
+<p>December 14 -<a href="http://www.meetup.com/ProductTank-Vienna/events/234238916/" target="_blank&quot;">ProductTank Vienna</a></p>
+<p>December 14 -<a href="https://www.meetup.com/ProductTank-Buenos-Aires/events/235819884/" target="_blank&quot;">ProductTank Buenos Aires</a></p>
+<p>December 14 -<a href="https://www.meetup.com/producttank-warsaw/events/235596663/" target="_blank&quot;">ProductTank Warsaw</a></p>
+<p>December 15 -<a href="https://www.meetup.com/ProductTank-Melbourne/events/235483092/" target="_blank&quot;">ProductTank Melbourne</a></p>
+<p>December 17 -<a href="http://www.meetup.com/ProductTank-Bangalore/events/234923674/" target="_blank&quot;">ProductTank Bangalore</a></p>
+<p>December 29 -<a href="http://www.meetup.com/ProductTank-Barcelona/events/235410182/" target="_blank&quot;">ProductTank Barcelona</a></p>
+<p>February 1 -<a href="http://www.meetup.com/ProductTank-Twin-Cities/events/235403163/" target="_blank&quot;">ProductTank Twin Cities</a></p>
+<p>February 2 -<a href="http://www.meetup.com/ProductTank-Copenhagen/events/234600023/" target="_blank&quot;">ProductTank Copenhagen</a></p>
+<p>March 22 -<a href="http://www.meetup.com/producttanknyc/events/235318148/" target="_blank&quot;">ProductTank NYC</a></p>
+<p>April 20 -<a href="http://www.meetup.com/ProductTank-Copenhagen/events/235218135/" target="_blank&quot;">ProductTank Copenhagen</a></p>
+</div>
+		</div><div id="text-13" class="widget widget_text"><h3>Keep up to date</h3>			<div class="textwidget"><!-- Begin MailChimp Signup Form -->
+<style type="text/css">
+form#mc-embedded-subscribe-form input[type=email] { margin: 0 0 10px 0; padding: .75em; width: 218px; font-style:italic;}
+form#mc-embedded-subscribe-form input[type=submit] { padding: .75em 1em;
+margin: 0;
+vertical-align: top; }
+</style>
+<div id="mc_embed_signup">
+<form action="http://mindtheproduct.us5.list-manage1.com/subscribe/post?u=9f9609492007e56236a074b27&amp;id=babd9cfe61" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate="">
+	<input type="email" value="" name="EMAIL" class="email" id="mce-EMAIL" placeholder="Enter your email" required="">
+	<input type="submit" value="Subscribe to our newsletter" name="subscribe" id="mc-embedded-subscribe" class="button">
+</form>
+</div>
+
+<!--End mc_embed_signup-->
+
+<br>
+
+<iframe id="twitter-widget-0" scrolling="no" frameborder="0" allowtransparency="true" class="twitter-follow-button twitter-follow-button-rendered" title="Twitter Follow Button" src="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/follow_button.f7908d4abf5ce27173c69bdbb93aedb6.en.html" style="position: static; visibility: visible; width: 241px; height: 20px;" data-screen-name="mindtheproduct"></iframe>
+<script src="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/widgets.js.下载" type="text/javascript"></script></div>
+		</div><div id="mtpjobs_widget-2" class="widget widget_mtpjobs_widget"><h3><a href="http://jobs.mindtheproduct.com/" title="Product Management Jobs">Product Management Jobs</a></h3><ul>
+<li><a href="http://jobs.mindtheproduct.com/jobs/product-manager-job-zapier-2879/" title="Product Management Jobs -   To apply please complete the application at https://goo.gl/KpPXi6 Hi there! We’re looking for a Product Manager to join the product team at Zapier. Interested in helping design and build a product that helps the world automate their work so they can get back to living? Then read on… About You You are a maker at […]">Product Manager</a><p>Zapier</p></li><li><a href="http://jobs.mindtheproduct.com/jobs/director%2C-new-product-development-job-act%2C-inc.-2858/" title="Product Management Jobs - Position objective: The Director is responsible for innovative, entrepreneurial, and experienced product management leadership and is responsible for sourcing, building, and launching new products.   Typical work-related activities include: Analysis of desirability, viability, and feasibility for new product concepts Collaborate with Corporate Market Research team on qualitative and quantitative market research Rapid prototyping and usability […]">Director, New Product Development</a><p>ACT, inc. | Iowa City</p></li><li><a href="http://jobs.mindtheproduct.com/jobs/agile-project-manager-job-red-badger-2863/" title="Product Management Jobs - Inspiring Agile Project Manager wanted to work on enterprise scale web products. A tenacious and personable character a must. We’re looking for a talented project manager to come and join the ranks of our lean, fast growing, tech-loving, passionate and dynamic team. We have a wide diversity of clients with some very innovative and challenging […]">Agile Project Manager</a><p>Red Badger | London</p></li><li><a href="http://jobs.mindtheproduct.com/jobs/sr.-product-owner-job-booking.com-2867/" title="Product Management Jobs - Who are we? Do you want to redefine the way travellers explore the world? Join us in beautiful Amsterdam as a senior product owner! Booking.com is the world’s leading accommodation site, but boasts a small, start-up feel. Our vision is to provide the best accommodations at the best prices for all our travellers, no matter […]">Sr. Product Owner</a><p>Booking.com | Amsterdam</p></li><li><a href="http://jobs.mindtheproduct.com/jobs/senior-product-manager-job-we-are-hive-2443/" title="Product Management Jobs - We are looking for a freelance  Senior Product Manager  to work with a small agile team designing and developing a greenfield big data product.  The product’s purpose is  to visualise data in real time of one of the largest proprietary data sets in existence. This is an incredible opportunity to take a very complex, very […]">Senior Product Manager</a><p>We Are Hive | London</p></li></ul>
+</div><div id="text-14" class="widget widget_text">			<div class="textwidget"><!-- Either there are no banners, they are disabled or none qualified for this location! --></div>
+		</div>
+		<div id="woo_tabs-4" class="widget widget_woo_tabs"> 		<div id="tabs">
+
+            <ul class="wooTabs">
+                                <li class="popular"><a href="http://www.mindtheproduct.com/2016/02/what-the-hell-are-ci-cd-and-devops-a-cheatsheet-for-the-rest-of-us/#tab-pop" class="selected">Popular</a></li>                <li class="latest"><a href="http://www.mindtheproduct.com/2016/02/what-the-hell-are-ci-cd-and-devops-a-cheatsheet-for-the-rest-of-us/#tab-latest">Latest</a></li>                                <li class="tags"><a href="http://www.mindtheproduct.com/2016/02/what-the-hell-are-ci-cd-and-devops-a-cheatsheet-for-the-rest-of-us/#tab-tags">Tags</a></li>            </ul>
+
+            <div class="clear"></div>
+
+            <div class="boxes box inside">
+
+	            
+                                <ul id="tab-pop" class="list" style="display: block;">
+                    	<li>
+		<a href="http://www.mindtheproduct.com/2016/10/learned-mind-product-2016/" title="What we Learned at Mind the Product 2016"><img src="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/mind-the-product-2016-45x45.jpg" alt="Mind the Product 2016" width="45" height="45" title="What we Learned at Mind the Product 2016" class="woo-image thumbnail"></a>		<a title="What we Learned at Mind the Product 2016" href="http://www.mindtheproduct.com/2016/10/learned-mind-product-2016/">What we Learned at Mind the Product 2016</a>
+		<span class="meta">October 2, 2016</span>
+		<div class="fix"></div>
+	</li>
+		<li>
+		<a href="http://www.mindtheproduct.com/2016/08/tools-use-product-manager/" title="The Day-To-Day Product Management Toolkit"><img src="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/Janna-Bastow-45x45.jpg" alt="Janna Bastow shares her product management toolkit at ProductTank Oslo" width="45" height="45" title="The Day-To-Day Product Management Toolkit" class="woo-image thumbnail"></a>		<a title="The Day-To-Day Product Management Toolkit" href="http://www.mindtheproduct.com/2016/08/tools-use-product-manager/">The Day-To-Day Product Management Toolkit</a>
+		<span class="meta">August 5, 2016</span>
+		<div class="fix"></div>
+	</li>
+		<li>
+		<a href="http://www.mindtheproduct.com/2016/09/managing-agile-teams-remotely-pitfalls-and/" title="Managing agile teams remotely, pitfalls and remedies"><img src="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/people-working-together-45x45.jpg" alt="people-working-together" width="45" height="45" title="Managing agile teams remotely, pitfalls and remedies" class="woo-image thumbnail"></a>		<a title="Managing agile teams remotely, pitfalls and remedies" href="http://www.mindtheproduct.com/2016/09/managing-agile-teams-remotely-pitfalls-and/">Managing agile teams remotely, pitfalls and remedies</a>
+		<span class="meta">September 19, 2016</span>
+		<div class="fix"></div>
+	</li>
+		<li>
+		<a href="http://www.mindtheproduct.com/2016/10/product-lifecycle-management-beyond-early-adopter/" title="Product Lifecycle Management – Beyond the Early Adopter"><img src="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/Craig-Strong-45x45.jpg" alt="Craig Strong discusses Pearson&#39;s Product Lifecycle Management at ProductTank London" width="45" height="45" title="Product Lifecycle Management – Beyond the Early Adopter" class="woo-image thumbnail"></a>		<a title="Product Lifecycle Management – Beyond the Early Adopter" href="http://www.mindtheproduct.com/2016/10/product-lifecycle-management-beyond-early-adopter/">Product Lifecycle Management – Beyond the Early Adopter</a>
+		<span class="meta">October 26, 2016</span>
+		<div class="fix"></div>
+	</li>
+		<li style="border-bottom: 0px;">
+		<a href="http://www.mindtheproduct.com/2016/09/whats-the-toughest-part-of-your-job/" title="What’s the toughest part of your job?"><img src="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/frustration-1-45x45.jpg" alt="frustration-1" width="45" height="45" title="What’s the toughest part of your job?" class="woo-image thumbnail"></a>		<a title="What’s the toughest part of your job?" href="http://www.mindtheproduct.com/2016/09/whats-the-toughest-part-of-your-job/">What’s the toughest part of your job?</a>
+		<span class="meta">September 23, 2016</span>
+		<div class="fix"></div>
+	</li>
+	                </ul>
+                                                <ul id="tab-latest" class="list" style="display: none;">
+                    	<li>
+		<a href="http://www.mindtheproduct.com/2016/11/taking-your-product-cross-culture/" title="Taking Your Product Across Cultures by Lisa Long"><img src="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/lisa-long-at-mind-the-product-45x45.jpg" alt="Lisa Long at Mind the Product" width="45" height="45" title="Taking Your Product Across Cultures by Lisa Long" class="woo-image thumbnail"></a>		<a title="Taking Your Product Across Cultures by Lisa Long" href="http://www.mindtheproduct.com/2016/11/taking-your-product-cross-culture/">Taking Your Product Across Cultures by Lisa Long</a>
+		<span class="meta">November 25, 2016</span>
+		<div class="fix"></div>
+	</li>
+		<li>
+		<a href="http://www.mindtheproduct.com/2016/11/making-my-underwear-an-accessible-product/" title="Making My Underwear an accessible product"><img src="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/my-underwear-home-@arosic-45x45.jpg" alt="my-underwear-home-arosic" width="45" height="45" title="Making My Underwear an accessible product" class="woo-image thumbnail"></a>		<a title="Making My Underwear an accessible product" href="http://www.mindtheproduct.com/2016/11/making-my-underwear-an-accessible-product/">Making My Underwear an accessible product</a>
+		<span class="meta">November 24, 2016</span>
+		<div class="fix"></div>
+	</li>
+		<li>
+		<a href="http://www.mindtheproduct.com/2016/11/building-high-growth-products-using-jobs-done/" title="Building High-Growth Products Using Jobs-To-Be-Done"><img src="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/Jay-Haynes-45x45.jpg" alt="Jay Haynes discusses using jobs-to-be-done at ProductTank San Francisco" width="45" height="45" title="Building High-Growth Products Using Jobs-To-Be-Done" class="woo-image thumbnail"></a>		<a title="Building High-Growth Products Using Jobs-To-Be-Done" href="http://www.mindtheproduct.com/2016/11/building-high-growth-products-using-jobs-done/">Building High-Growth Products Using Jobs-To-Be-Done</a>
+		<span class="meta">November 23, 2016</span>
+		<div class="fix"></div>
+	</li>
+		<li>
+		<a href="http://www.mindtheproduct.com/2016/11/how-to-turn-a-story-point-factory-into-a-customer-centric-team/" title="How to turn a story point factory into a customer-centric team?"><img src="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/david-pasztor-image-45x45.jpg" alt="david-pasztor-image" width="45" height="45" title="How to turn a story point factory into a customer-centric team?" class="woo-image thumbnail"></a>		<a title="How to turn a story point factory into a customer-centric team?" href="http://www.mindtheproduct.com/2016/11/how-to-turn-a-story-point-factory-into-a-customer-centric-team/">How to turn a story point factory into a customer-centric team?</a>
+		<span class="meta">November 22, 2016</span>
+		<div class="fix"></div>
+	</li>
+		<li style="border-bottom: 0px;">
+		<a href="http://www.mindtheproduct.com/2016/11/how-to-learn-from-structure-in-your-product-data/" title="How To Learn From Structure In Your Product Data"><img src="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/Shaona-Ghosh-45x45.jpg" alt="Shaona Ghosh explains how to learn from the structure in your product data at ProductTank London" width="45" height="45" title="How To Learn From Structure In Your Product Data" class="woo-image thumbnail"></a>		<a title="How To Learn From Structure In Your Product Data" href="http://www.mindtheproduct.com/2016/11/how-to-learn-from-structure-in-your-product-data/">How To Learn From Structure In Your Product Data</a>
+		<span class="meta">November 21, 2016</span>
+		<div class="fix"></div>
+	</li>
+	                </ul>
+                                                                <div id="tab-tags" class="list" style="display: none;">
+                    <a href="http://www.mindtheproduct.com/tag/ab-testing/" class="tag-link-45 tag-link-position-1" title="9 topics" style="font-size: 12.7079646018pt;">A/B testing</a>
+<a href="http://www.mindtheproduct.com/tag/agile/" class="tag-link-739 tag-link-position-2" title="29 topics" style="font-size: 16.1061946903pt;">Agile</a>
+<a href="http://www.mindtheproduct.com/tag/analytics/" class="tag-link-117 tag-link-position-3" title="21 topics" style="font-size: 15.1150442478pt;">analytics</a>
+<a href="http://www.mindtheproduct.com/tag/bbc/" class="tag-link-6 tag-link-position-4" title="7 topics" style="font-size: 12pt;">BBC</a>
+<a href="http://www.mindtheproduct.com/tag/conference/" class="tag-link-206 tag-link-position-5" title="8 topics" style="font-size: 12.3539823009pt;">Conference</a>
+<a href="http://www.mindtheproduct.com/tag/connected-devices/" class="tag-link-197 tag-link-position-6" title="9 topics" style="font-size: 12.7079646018pt;">Connected Devices</a>
+<a href="http://www.mindtheproduct.com/tag/data/" class="tag-link-46 tag-link-position-7" title="11 topics" style="font-size: 13.2743362832pt;">Data</a>
+<a href="http://www.mindtheproduct.com/tag/data-driven-product-management-2/" class="tag-link-136 tag-link-position-8" title="10 topics" style="font-size: 12.9911504425pt;">data-driven product management</a>
+<a href="http://www.mindtheproduct.com/tag/data-analysis/" class="tag-link-493 tag-link-position-9" title="11 topics" style="font-size: 13.2743362832pt;">Data analysis</a>
+<a href="http://www.mindtheproduct.com/tag/design/" class="tag-link-43 tag-link-position-10" title="20 topics" style="font-size: 14.9734513274pt;">Design</a>
+<a href="http://www.mindtheproduct.com/tag/google/" class="tag-link-98 tag-link-position-11" title="7 topics" style="font-size: 12pt;">Google+</a>
+<a href="http://www.mindtheproduct.com/tag/google-analytics/" class="tag-link-120 tag-link-position-12" title="7 topics" style="font-size: 12pt;">google analytics</a>
+<a href="http://www.mindtheproduct.com/tag/internet-of-things/" class="tag-link-291 tag-link-position-13" title="10 topics" style="font-size: 12.9911504425pt;">internet of things</a>
+<a href="http://www.mindtheproduct.com/tag/jock-busuttil/" class="tag-link-740 tag-link-position-14" title="8 topics" style="font-size: 12.3539823009pt;">Jock Busuttil</a>
+<a href="http://www.mindtheproduct.com/tag/lean/" class="tag-link-745 tag-link-position-15" title="16 topics" style="font-size: 14.3362831858pt;">Lean</a>
+<a href="http://www.mindtheproduct.com/tag/lean-startup/" class="tag-link-192 tag-link-position-16" title="15 topics" style="font-size: 14.1238938053pt;">Lean Startup</a>
+<a href="http://www.mindtheproduct.com/tag/london/" class="tag-link-742 tag-link-position-17" title="9 topics" style="font-size: 12.7079646018pt;">London</a>
+<a href="http://www.mindtheproduct.com/tag/mind-the-product-2012/" class="tag-link-222 tag-link-position-18" title="8 topics" style="font-size: 12.3539823009pt;">Mind the Product 2012</a>
+<a href="http://www.mindtheproduct.com/tag/mind-the-product-2013/" class="tag-link-329 tag-link-position-19" title="13 topics" style="font-size: 13.7699115044pt;">Mind the Product 2013</a>
+<a href="http://www.mindtheproduct.com/tag/mind-the-product-2014/" class="tag-link-458 tag-link-position-20" title="15 topics" style="font-size: 14.1238938053pt;">Mind the Product 2014</a>
+<a href="http://www.mindtheproduct.com/tag/mind-the-product-2015/" class="tag-link-547 tag-link-position-21" title="12 topics" style="font-size: 13.4867256637pt;">Mind the Product 2015</a>
+<a href="http://www.mindtheproduct.com/tag/mind-the-product-san-francisco/" class="tag-link-572 tag-link-position-22" title="10 topics" style="font-size: 12.9911504425pt;">Mind the Product San Francisco</a>
+<a href="http://www.mindtheproduct.com/tag/mobile/" class="tag-link-204 tag-link-position-23" title="11 topics" style="font-size: 13.2743362832pt;">Mobile</a>
+<a href="http://www.mindtheproduct.com/tag/mtpcon/" class="tag-link-459 tag-link-position-24" title="44 topics" style="font-size: 17.3097345133pt;">MTPcon</a>
+<a href="http://www.mindtheproduct.com/tag/prioritisation/" class="tag-link-223 tag-link-position-25" title="11 topics" style="font-size: 13.2743362832pt;">Prioritisation</a>
+<a href="http://www.mindtheproduct.com/tag/product-culture/" class="tag-link-107 tag-link-position-26" title="27 topics" style="font-size: 15.8938053097pt;">product culture</a>
+<a href="http://www.mindtheproduct.com/tag/product-design/" class="tag-link-744 tag-link-position-27" title="38 topics" style="font-size: 16.8849557522pt;">Product Design</a>
+<a href="http://www.mindtheproduct.com/tag/product-development/" class="tag-link-208 tag-link-position-28" title="22 topics" style="font-size: 15.2566371681pt;">Product Development</a>
+<a href="http://www.mindtheproduct.com/tag/product-focus/" class="tag-link-35 tag-link-position-29" title="12 topics" style="font-size: 13.4867256637pt;">Product Focus</a>
+<a href="http://www.mindtheproduct.com/tag/product-management/" class="tag-link-735 tag-link-position-30" title="88 topics" style="font-size: 19.4336283186pt;">Product Management</a>
+<a href="http://www.mindtheproduct.com/tag/product-management-role/" class="tag-link-407 tag-link-position-31" title="16 topics" style="font-size: 14.3362831858pt;">product management role</a>
+<a href="http://www.mindtheproduct.com/tag/product-manager/" class="tag-link-57 tag-link-position-32" title="17 topics" style="font-size: 14.5486725664pt;">Product Manager</a>
+<a href="http://www.mindtheproduct.com/tag/product-planning/" class="tag-link-157 tag-link-position-33" title="22 topics" style="font-size: 15.2566371681pt;">product planning</a>
+<a href="http://www.mindtheproduct.com/tag/producttank/" class="tag-link-734 tag-link-position-34" title="58 topics" style="font-size: 18.1592920354pt;">ProductTank</a>
+<a href="http://www.mindtheproduct.com/tag/roadmap/" class="tag-link-23 tag-link-position-35" title="11 topics" style="font-size: 13.2743362832pt;">Roadmap</a>
+<a href="http://www.mindtheproduct.com/tag/skills/" class="tag-link-42 tag-link-position-36" title="14 topics" style="font-size: 13.982300885pt;">Skills</a>
+<a href="http://www.mindtheproduct.com/tag/slider/" class="tag-link-76 tag-link-position-37" title="105 topics" style="font-size: 20pt;">Slider</a>
+<a href="http://www.mindtheproduct.com/tag/strategy/" class="tag-link-185 tag-link-position-38" title="10 topics" style="font-size: 12.9911504425pt;">strategy</a>
+<a href="http://www.mindtheproduct.com/tag/team/" class="tag-link-284 tag-link-position-39" title="11 topics" style="font-size: 13.2743362832pt;">Team</a>
+<a href="http://www.mindtheproduct.com/tag/team-leadership/" class="tag-link-343 tag-link-position-40" title="8 topics" style="font-size: 12.3539823009pt;">team leadership</a>
+<a href="http://www.mindtheproduct.com/tag/usability-testing/" class="tag-link-56 tag-link-position-41" title="7 topics" style="font-size: 12pt;">usability testing</a>
+<a href="http://www.mindtheproduct.com/tag/user-experience/" class="tag-link-438 tag-link-position-42" title="10 topics" style="font-size: 12.9911504425pt;">user experience</a>
+<a href="http://www.mindtheproduct.com/tag/user-research/" class="tag-link-248 tag-link-position-43" title="12 topics" style="font-size: 13.4867256637pt;">user research</a>
+<a href="http://www.mindtheproduct.com/tag/ux/" class="tag-link-737 tag-link-position-44" title="27 topics" style="font-size: 15.8938053097pt;">UX</a>
+<a href="http://www.mindtheproduct.com/tag/video/" class="tag-link-9 tag-link-position-45" title="100 topics" style="font-size: 19.7876106195pt;">Video</a>                </div>
+                
+            </div><!-- /.boxes -->
+
+        </div><!-- /wooTabs -->
+
+        </div>         <div id="text-11" class="widget widget_text"><h3>Tweets</h3>			<div class="textwidget"><a class="twitter-timeline twitter-timeline-error" href="https://twitter.com/search?q=%40mindtheproduct" data-widget-id="349508509462822912" data-chrome="noheader" data-twitter-extracted-i148040528729359546="true">Tweets about "@mindtheproduct"</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+</div>
+		</div><div id="text-10" class="widget widget_text">			<div class="textwidget"><!--
+<a href="http://conference.mindtheproduct.com" title="Mind the Product - Product Management Conference" alt="Mind the Product - Product Management Conference"><img src="http://cdn02.mindtheproduct.com/wp-content/uploads/2013/04/mindtheproduct2013-quotes-300x250.gif" style="border:none;"></a>
+--></div>
+		</div><div id="recent-comments-4" class="widget widget_recent_comments"><h3>Recent Comments</h3><ul id="recentcomments"><li class="recentcomments"><span class="comment-author-link">VRS</span> on <a href="http://www.mindtheproduct.com/2016/10/mind-the-product-conferences-2017/#comment-48152">Mind the Product Conferences 2017</a></li><li class="recentcomments"><span class="comment-author-link">Graham Horton</span> on <a href="http://www.mindtheproduct.com/2016/11/experimenting-with-lean-tristan-kromer-on-better-product-process/#comment-48151">Lean experiments: Tristan Kromer on better product process</a></li><li class="recentcomments"><span class="comment-author-link">BVSG</span> on <a href="http://www.mindtheproduct.com/2013/04/fear-or-the-fallacy-of-intuitive-ux/#comment-48149">Fear or the fallacy of intuitive UX</a></li><li class="recentcomments"><span class="comment-author-link">Simon Thomas</span> on <a href="http://www.mindtheproduct.com/2014/10/analytics-and-decision-making-producttank-recap/#comment-48147">Analytics and Decision-Making – Recap of August’s ProductTank London</a></li><li class="recentcomments"><span class="comment-author-link">Christian Bonilla</span> on <a href="http://www.mindtheproduct.com/2016/10/the-biggest-challenge-for-product-managers/#comment-48145">The biggest challenge for product managers?</a></li></ul></div><div id="text-6" class="widget widget_text">			<div class="textwidget"><iframe src="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/likebox.html" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:300px; height:290px;" allowtransparency="true"></iframe></div>
+		</div></aside><!-- /#sidebar -->
+
+		</div><!-- /#main-sidebar-container -->         
+
+		
+    </div><!-- /#content -->
+	
+<section id="footer-widgets" class="col-full col-3">
+				<div class="block footer-widget-1">
+    	<div id="text-15" class="widget widget_text"><h3>More content</h3>			<div class="textwidget"><p><a href="http://www.mindtheproduct.com/product-management-books/">Product Management Books</a></p>
+<p><a href="http://www.mindtheproduct.com/product-management-newsletter/">Product Management Newsletter</a></p>
+</div>
+		</div><div id="tag_cloud-3" class="widget widget_tag_cloud"><h3>Tags</h3><div class="tagcloud"><a href="http://www.mindtheproduct.com/tag/ab-testing/" class="tag-link-45 tag-link-position-1" title="9 topics" style="font-size: 9.2389380531pt;">A/B testing</a>
+<a href="http://www.mindtheproduct.com/tag/agile/" class="tag-link-739 tag-link-position-2" title="29 topics" style="font-size: 15.185840708pt;">Agile</a>
+<a href="http://www.mindtheproduct.com/tag/analytics/" class="tag-link-117 tag-link-position-3" title="21 topics" style="font-size: 13.4513274336pt;">analytics</a>
+<a href="http://www.mindtheproduct.com/tag/bbc/" class="tag-link-6 tag-link-position-4" title="7 topics" style="font-size: 8pt;">BBC</a>
+<a href="http://www.mindtheproduct.com/tag/conference/" class="tag-link-206 tag-link-position-5" title="8 topics" style="font-size: 8.61946902655pt;">Conference</a>
+<a href="http://www.mindtheproduct.com/tag/connected-devices/" class="tag-link-197 tag-link-position-6" title="9 topics" style="font-size: 9.2389380531pt;">Connected Devices</a>
+<a href="http://www.mindtheproduct.com/tag/data/" class="tag-link-46 tag-link-position-7" title="11 topics" style="font-size: 10.2300884956pt;">Data</a>
+<a href="http://www.mindtheproduct.com/tag/data-driven-product-management-2/" class="tag-link-136 tag-link-position-8" title="10 topics" style="font-size: 9.73451327434pt;">data-driven product management</a>
+<a href="http://www.mindtheproduct.com/tag/data-analysis/" class="tag-link-493 tag-link-position-9" title="11 topics" style="font-size: 10.2300884956pt;">Data analysis</a>
+<a href="http://www.mindtheproduct.com/tag/design/" class="tag-link-43 tag-link-position-10" title="20 topics" style="font-size: 13.203539823pt;">Design</a>
+<a href="http://www.mindtheproduct.com/tag/google/" class="tag-link-98 tag-link-position-11" title="7 topics" style="font-size: 8pt;">Google+</a>
+<a href="http://www.mindtheproduct.com/tag/google-analytics/" class="tag-link-120 tag-link-position-12" title="7 topics" style="font-size: 8pt;">google analytics</a>
+<a href="http://www.mindtheproduct.com/tag/internet-of-things/" class="tag-link-291 tag-link-position-13" title="10 topics" style="font-size: 9.73451327434pt;">internet of things</a>
+<a href="http://www.mindtheproduct.com/tag/jock-busuttil/" class="tag-link-740 tag-link-position-14" title="8 topics" style="font-size: 8.61946902655pt;">Jock Busuttil</a>
+<a href="http://www.mindtheproduct.com/tag/lean/" class="tag-link-745 tag-link-position-15" title="16 topics" style="font-size: 12.0884955752pt;">Lean</a>
+<a href="http://www.mindtheproduct.com/tag/lean-startup/" class="tag-link-192 tag-link-position-16" title="15 topics" style="font-size: 11.7168141593pt;">Lean Startup</a>
+<a href="http://www.mindtheproduct.com/tag/london/" class="tag-link-742 tag-link-position-17" title="9 topics" style="font-size: 9.2389380531pt;">London</a>
+<a href="http://www.mindtheproduct.com/tag/mind-the-product-2012/" class="tag-link-222 tag-link-position-18" title="8 topics" style="font-size: 8.61946902655pt;">Mind the Product 2012</a>
+<a href="http://www.mindtheproduct.com/tag/mind-the-product-2013/" class="tag-link-329 tag-link-position-19" title="13 topics" style="font-size: 11.0973451327pt;">Mind the Product 2013</a>
+<a href="http://www.mindtheproduct.com/tag/mind-the-product-2014/" class="tag-link-458 tag-link-position-20" title="15 topics" style="font-size: 11.7168141593pt;">Mind the Product 2014</a>
+<a href="http://www.mindtheproduct.com/tag/mind-the-product-2015/" class="tag-link-547 tag-link-position-21" title="12 topics" style="font-size: 10.6017699115pt;">Mind the Product 2015</a>
+<a href="http://www.mindtheproduct.com/tag/mind-the-product-san-francisco/" class="tag-link-572 tag-link-position-22" title="10 topics" style="font-size: 9.73451327434pt;">Mind the Product San Francisco</a>
+<a href="http://www.mindtheproduct.com/tag/mobile/" class="tag-link-204 tag-link-position-23" title="11 topics" style="font-size: 10.2300884956pt;">Mobile</a>
+<a href="http://www.mindtheproduct.com/tag/mtpcon/" class="tag-link-459 tag-link-position-24" title="44 topics" style="font-size: 17.2920353982pt;">MTPcon</a>
+<a href="http://www.mindtheproduct.com/tag/prioritisation/" class="tag-link-223 tag-link-position-25" title="11 topics" style="font-size: 10.2300884956pt;">Prioritisation</a>
+<a href="http://www.mindtheproduct.com/tag/product-culture/" class="tag-link-107 tag-link-position-26" title="27 topics" style="font-size: 14.814159292pt;">product culture</a>
+<a href="http://www.mindtheproduct.com/tag/product-design/" class="tag-link-744 tag-link-position-27" title="38 topics" style="font-size: 16.5486725664pt;">Product Design</a>
+<a href="http://www.mindtheproduct.com/tag/product-development/" class="tag-link-208 tag-link-position-28" title="22 topics" style="font-size: 13.6991150442pt;">Product Development</a>
+<a href="http://www.mindtheproduct.com/tag/product-focus/" class="tag-link-35 tag-link-position-29" title="12 topics" style="font-size: 10.6017699115pt;">Product Focus</a>
+<a href="http://www.mindtheproduct.com/tag/product-management/" class="tag-link-735 tag-link-position-30" title="88 topics" style="font-size: 21.0088495575pt;">Product Management</a>
+<a href="http://www.mindtheproduct.com/tag/product-management-role/" class="tag-link-407 tag-link-position-31" title="16 topics" style="font-size: 12.0884955752pt;">product management role</a>
+<a href="http://www.mindtheproduct.com/tag/product-manager/" class="tag-link-57 tag-link-position-32" title="17 topics" style="font-size: 12.4601769912pt;">Product Manager</a>
+<a href="http://www.mindtheproduct.com/tag/product-planning/" class="tag-link-157 tag-link-position-33" title="22 topics" style="font-size: 13.6991150442pt;">product planning</a>
+<a href="http://www.mindtheproduct.com/tag/producttank/" class="tag-link-734 tag-link-position-34" title="58 topics" style="font-size: 18.7787610619pt;">ProductTank</a>
+<a href="http://www.mindtheproduct.com/tag/roadmap/" class="tag-link-23 tag-link-position-35" title="11 topics" style="font-size: 10.2300884956pt;">Roadmap</a>
+<a href="http://www.mindtheproduct.com/tag/skills/" class="tag-link-42 tag-link-position-36" title="14 topics" style="font-size: 11.4690265487pt;">Skills</a>
+<a href="http://www.mindtheproduct.com/tag/slider/" class="tag-link-76 tag-link-position-37" title="105 topics" style="font-size: 22pt;">Slider</a>
+<a href="http://www.mindtheproduct.com/tag/strategy/" class="tag-link-185 tag-link-position-38" title="10 topics" style="font-size: 9.73451327434pt;">strategy</a>
+<a href="http://www.mindtheproduct.com/tag/team/" class="tag-link-284 tag-link-position-39" title="11 topics" style="font-size: 10.2300884956pt;">Team</a>
+<a href="http://www.mindtheproduct.com/tag/team-leadership/" class="tag-link-343 tag-link-position-40" title="8 topics" style="font-size: 8.61946902655pt;">team leadership</a>
+<a href="http://www.mindtheproduct.com/tag/usability-testing/" class="tag-link-56 tag-link-position-41" title="7 topics" style="font-size: 8pt;">usability testing</a>
+<a href="http://www.mindtheproduct.com/tag/user-experience/" class="tag-link-438 tag-link-position-42" title="10 topics" style="font-size: 9.73451327434pt;">user experience</a>
+<a href="http://www.mindtheproduct.com/tag/user-research/" class="tag-link-248 tag-link-position-43" title="12 topics" style="font-size: 10.6017699115pt;">user research</a>
+<a href="http://www.mindtheproduct.com/tag/ux/" class="tag-link-737 tag-link-position-44" title="27 topics" style="font-size: 14.814159292pt;">UX</a>
+<a href="http://www.mindtheproduct.com/tag/video/" class="tag-link-9 tag-link-position-45" title="100 topics" style="font-size: 21.6283185841pt;">Video</a></div>
+</div>	</div>
+        				<div class="block footer-widget-2">
+    	<div id="categories-3" class="widget widget_categories"><h3>Categories</h3>		<ul>
+	<li class="cat-item cat-item-125 parent"><a href="http://www.mindtheproduct.com/category/data-driven-product-management/">Data Driven Product Management</a>
+<ul class="children">
+	<li class="cat-item cat-item-133"><a href="http://www.mindtheproduct.com/category/data-driven-product-management/google-analytics-tips/">Google Analytics Tips</a>
+</li>
+</ul>
+</li>
+	<li class="cat-item cat-item-4 parent"><a href="http://www.mindtheproduct.com/category/events/">Events</a>
+<ul class="children">
+	<li class="cat-item cat-item-21"><a href="http://www.mindtheproduct.com/category/events/productcamp-london/">ProductCamp London</a>
+</li>
+	<li class="cat-item cat-item-5"><a href="http://www.mindtheproduct.com/category/events/producttank/">ProductTank</a>
+</li>
+	<li class="cat-item cat-item-533"><a href="http://www.mindtheproduct.com/category/events/workshops/">Workshops</a>
+</li>
+</ul>
+</li>
+	<li class="cat-item cat-item-145"><a href="http://www.mindtheproduct.com/category/guest-post/">Guest Post</a>
+</li>
+	<li class="cat-item cat-item-59"><a href="http://www.mindtheproduct.com/category/london/">London</a>
+</li>
+	<li class="cat-item cat-item-37"><a href="http://www.mindtheproduct.com/category/mindtheproduct/">MindtheProduct</a>
+</li>
+	<li class="cat-item cat-item-99"><a href="http://www.mindtheproduct.com/category/organisation/">Organisation</a>
+</li>
+	<li class="cat-item cat-item-506"><a href="http://www.mindtheproduct.com/category/pricing-2/">Pricing</a>
+</li>
+	<li class="cat-item cat-item-207"><a href="http://www.mindtheproduct.com/category/product-design/">Product Design</a>
+</li>
+	<li class="cat-item cat-item-600"><a href="http://www.mindtheproduct.com/category/product-launch/">Product Launch</a>
+</li>
+	<li class="cat-item cat-item-10"><a href="http://www.mindtheproduct.com/category/product-management/" title="What is product management and what does it take to be a product manager?">Product Management</a>
+</li>
+	<li class="cat-item cat-item-36"><a href="http://www.mindtheproduct.com/category/product-management-basics/">Product Management Basics</a>
+</li>
+	<li class="cat-item cat-item-126"><a href="http://www.mindtheproduct.com/category/product-management-case-studies/">Product Management Case Studies</a>
+</li>
+	<li class="cat-item cat-item-71"><a href="http://www.mindtheproduct.com/category/product-management-characteristics/">Product Management Characteristics</a>
+</li>
+	<li class="cat-item cat-item-188"><a href="http://www.mindtheproduct.com/category/product-management-community/">Product Management Community</a>
+</li>
+	<li class="cat-item cat-item-301"><a href="http://www.mindtheproduct.com/category/product-management-conference/">Product Management Conference</a>
+</li>
+	<li class="cat-item cat-item-210 parent"><a href="http://www.mindtheproduct.com/category/product-management-process/">Product Management Process</a>
+<ul class="children">
+	<li class="cat-item cat-item-24"><a href="http://www.mindtheproduct.com/category/product-management-process/agile/">Agile</a>
+</li>
+	<li class="cat-item cat-item-209"><a href="http://www.mindtheproduct.com/category/product-management-process/lean/">Lean</a>
+</li>
+</ul>
+</li>
+	<li class="cat-item cat-item-323"><a href="http://www.mindtheproduct.com/category/product-management-questions/">Product Management Questions</a>
+</li>
+	<li class="cat-item cat-item-40"><a href="http://www.mindtheproduct.com/category/product-management-skills/">Product Management Skills</a>
+</li>
+	<li class="cat-item cat-item-124"><a href="http://www.mindtheproduct.com/category/product-management-software/">Product Management Software</a>
+</li>
+	<li class="cat-item cat-item-690"><a href="http://www.mindtheproduct.com/category/product-management-training/">Product Management Training</a>
+</li>
+	<li class="cat-item cat-item-401"><a href="http://www.mindtheproduct.com/category/product-marketing/">Product Marketing</a>
+</li>
+	<li class="cat-item cat-item-260"><a href="http://www.mindtheproduct.com/category/role/">Role</a>
+</li>
+	<li class="cat-item cat-item-528"><a href="http://www.mindtheproduct.com/category/san-francisco/">San Francisco</a>
+</li>
+	<li class="cat-item cat-item-100"><a href="http://www.mindtheproduct.com/category/startups/">Startups</a>
+</li>
+	<li class="cat-item cat-item-1"><a href="http://www.mindtheproduct.com/category/uncategorized/">Uncategorized</a>
+</li>
+	<li class="cat-item cat-item-15"><a href="http://www.mindtheproduct.com/category/ux/">UX</a>
+</li>
+	<li class="cat-item cat-item-289"><a href="http://www.mindtheproduct.com/category/product-management-videos/">Video</a>
+</li>
+	<li class="cat-item cat-item-907"><a href="http://www.mindtheproduct.com/category/virtual-reality/">Virtual reality</a>
+</li>
+		</ul>
+</div>	</div>
+        				<div class="block footer-widget-3">
+    	<div id="mtpjobs_widget-3" class="widget widget_mtpjobs_widget"><h3><a href="http://jobs.mindtheproduct.com/" title="Product Management Jobs">Product Management Jobs</a></h3><ul>
+<li><a href="http://jobs.mindtheproduct.com/jobs/product-manager-job-zapier-2879/" title="Product Management Jobs -   To apply please complete the application at https://goo.gl/KpPXi6 Hi there! We’re looking for a Product Manager to join the product team at Zapier. Interested in helping design and build a product that helps the world automate their work so they can get back to living? Then read on… About You You are a maker at […]">Product Manager</a><p>Zapier</p></li><li><a href="http://jobs.mindtheproduct.com/jobs/director%2C-new-product-development-job-act%2C-inc.-2858/" title="Product Management Jobs - Position objective: The Director is responsible for innovative, entrepreneurial, and experienced product management leadership and is responsible for sourcing, building, and launching new products.   Typical work-related activities include: Analysis of desirability, viability, and feasibility for new product concepts Collaborate with Corporate Market Research team on qualitative and quantitative market research Rapid prototyping and usability […]">Director, New Product Development</a><p>ACT, inc. | Iowa City</p></li><li><a href="http://jobs.mindtheproduct.com/jobs/agile-project-manager-job-red-badger-2863/" title="Product Management Jobs - Inspiring Agile Project Manager wanted to work on enterprise scale web products. A tenacious and personable character a must. We’re looking for a talented project manager to come and join the ranks of our lean, fast growing, tech-loving, passionate and dynamic team. We have a wide diversity of clients with some very innovative and challenging […]">Agile Project Manager</a><p>Red Badger | London</p></li><li><a href="http://jobs.mindtheproduct.com/jobs/sr.-product-owner-job-booking.com-2867/" title="Product Management Jobs - Who are we? Do you want to redefine the way travellers explore the world? Join us in beautiful Amsterdam as a senior product owner! Booking.com is the world’s leading accommodation site, but boasts a small, start-up feel. Our vision is to provide the best accommodations at the best prices for all our travellers, no matter […]">Sr. Product Owner</a><p>Booking.com | Amsterdam</p></li><li><a href="http://jobs.mindtheproduct.com/jobs/senior-product-manager-job-we-are-hive-2443/" title="Product Management Jobs - We are looking for a freelance  Senior Product Manager  to work with a small agile team designing and developing a greenfield big data product.  The product’s purpose is  to visualise data in real time of one of the largest proprietary data sets in existence. This is an incredible opportunity to take a very complex, very […]">Senior Product Manager</a><p>We Are Hive | London</p></li></ul>
+</div><div id="text-12" class="widget widget_text">			<div class="textwidget"><li class="job-pricing">
+				<a href="http://jobs.mindtheproduct.com/submit/" class="button"><span>Submit a Job</span></a>
+				<p class="pricing"><em>First job FREE</em><br><br> then  <em>$300</em> for <em>30 days</em></p>
+	</li>
+
+<style>
+.job-pricing {
+width: 260px;
+list-style:none;
+text-align: center;
+margin: 0 0 20px !important;
+padding: 3px !important;
+background: #ebebeb;
+border-radius: 6px;
+
+-moz-border-radius: 6px;
+-webkit-border-radius: 6px;
+}
+.job-pricing a.button {
+background: #5ec4f3;
+border-bottom: 2px solid #139deb;
+border-right: 2px solid #139deb;
+border-left: 2px solid rgb(70, 178, 240);
+border-top: 2px solid rgb(70, 178, 240);
+text-shadow: 1px 1px 1px rgb(64, 115, 197);
+margin: 8px 10px;
+border-radius: 3px;
+-webkit-border-radius: 3px;
+-moz-border-radius: 3px;
+display: block;
+text-align: center;
+font-weight: bold;
+color: #fff;
+text-decoration: none;
+padding: 2px;
+line-height: 36px;
+font-size: 16px; 
+}
+.job-pricing p.pricing {
+font-style: italic;
+color: #999;
+line-height: 1em;
+}
+.job-pricing p.pricing em {
+font-family: Georgia, Palatino, Palatino Linotype, Times, Times New Roman, serif;
+font-size: 1.4em;
+color: #555;
+font-style: normal;
+}
+</style>
+</div>
+		</div>	</div>
+        		<div class="fix"></div>
+</section><!--/#footer-widgets-->
+	<footer id="footer" class="col-full">
+
+		
+		<div id="copyright" class="col-left">
+			<p></p><p>© 2014 Mind the Product Ltd. Mind the Product, ProductTank and the Venn Diagram Logomark are all registered trademarks.</p><p></p>		</div>
+
+		<div id="credit" class="col-right">
+			<p></p><p></p><p></p>		</div>
+
+	</footer>
+
+	
+	</div><!-- /#inner-wrapper -->
+
+</div><!-- /#wrapper -->
+
+<div class="fix"></div><!--/.fix-->
+
+        <script type="text/javascript">
+        // <![CDATA[
+        var disqus_shortname = 'mindtheproduct';
+        (function () {
+            var nodes = document.getElementsByTagName('span');
+            for (var i = 0, url; i < nodes.length; i++) {
+                if (nodes[i].className.indexOf('dsq-postid') != -1 && nodes[i].parentNode.tagName == 'A') {
+                    nodes[i].parentNode.setAttribute('data-disqus-identifier', nodes[i].getAttribute('data-dsqidentifier'));
+                    url = nodes[i].parentNode.href.split('#', 1);
+                    if (url.length == 1) { url = url[0]; }
+                    else { url = url[1]; }
+                    nodes[i].parentNode.href = url + '#disqus_thread';
+                }
+            }
+            var s = document.createElement('script');
+            s.async = true;
+            s.type = 'text/javascript';
+            s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+            (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+        }());
+        // ]]>
+        </script>
+        <!--[if IE]><style type="text/css">.flare-flyout{visibility:visible;}</style><![endif]--><!--[if lte IE 8]><link rel="stylesheet" type="text/css" href="http://cdn02.mindtheproduct.com/wp-content/plugins/flare/css/flare.ie.css" /><![endif]--><div class="flare-vertical flare-backgroundcolor-light flare-left enablecounters enabletotal enablehumbleflare closablevertical countloadfinished" data-humbleflarecount="5" style="left: 50%; margin-left: -616.5px; opacity: 1; top: 40px;">
+    <span class="loading"><span></span></span>
+    <span class="flare-total first"><strong>874</strong> Flares</span>
+    
+                    <span data-type="twitter" class="flare-button button-type-twitter flare-iconstyle-round-bevel first" style="background-color:#00aced;z-index:4">
+            <span class="flare-button-wrap">
+                <span class="flare-button-icon">Twitter</span>
+            </span>
+        </span>
+        <span class="flare-button-count">0</span>
+            
+        <span class="flare-flyout flare-flyout-twitter first">
+            <span class="flare-flyout-inner">
+                <span class="flare-arrow"></span>
+            </span>
+            <span class="flare-iframe-wrapper" data-code-snippet="&lt;a href=&quot;http://twitter.com/share&quot; class=&quot;twitter-share-button&quot; data-count=&quot;vertical&quot;  data-via=&quot;mindtheproduct&quot; &gt;Tweet&lt;/a&gt;
+&lt;script&gt;!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=&quot;//platform.twitter.com/widgets.js&quot;;fjs.parentNode.insertBefore(js,fjs);}}(document,&quot;script&quot;,&quot;twitter-wjs&quot;);&lt;/script&gt;"><iframe id="twitter-widget-1" scrolling="no" frameborder="0" allowtransparency="true" class="twitter-share-button twitter-share-button-rendered twitter-tweet-button" title="Twitter Tweet Button" src="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/tweet_button.f7908d4abf5ce27173c69bdbb93aedb6.en.html" style="position: static; visibility: visible; width: 61px; height: 20px;"></iframe>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script></span>
+        </span>
+        
+                    <span data-type="facebook" class="flare-button button-type-facebook flare-iconstyle-round-bevel" style="background-color:#0b59aa;z-index:3">
+            <span class="flare-button-wrap">
+                <span class="flare-button-icon">Facebook</span>
+            </span>
+        </span>
+        <span class="flare-button-count">0</span>
+            
+        <span class="flare-flyout flare-flyout-facebook">
+            <span class="flare-flyout-inner">
+                <span class="flare-arrow"></span>
+            </span>
+            <span class="flare-iframe-wrapper" data-code-snippet="&lt;iframe src=&quot;//www.facebook.com/plugins/like.php?href=http%3A%2F%2Fwww.mindtheproduct.com%2F2016%2F02%2Fwhat-the-hell-are-ci-cd-and-devops-a-cheatsheet-for-the-rest-of-us%2F&amp;send=false&amp;layout=box_count&amp;width=50&amp;show_faces=false&amp;action=like&amp;colorscheme=light&amp;font&amp;height=65&quot; scrolling=&quot;no&quot; frameborder=&quot;0&quot; style=&quot;border:none; overflow:hidden; width:50px; height:65px;&quot; allowTransparency=&quot;true&quot;&gt;&lt;/iframe&gt;"><iframe src="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/like.html" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:50px; height:65px;" allowtransparency="true"></iframe></span>
+        </span>
+        
+                    <span data-type="linkedin" class="flare-button button-type-linkedin flare-iconstyle-round-bevel" style="background-color:#0375b3;z-index:2">
+            <span class="flare-button-wrap">
+                <span class="flare-button-icon">LinkedIn</span>
+            </span>
+        </span>
+        <span class="flare-button-count">844</span>
+            
+        <span class="flare-flyout flare-flyout-linkedin">
+            <span class="flare-flyout-inner">
+                <span class="flare-arrow"></span>
+            </span>
+            <span class="flare-iframe-wrapper" data-code-snippet="&lt;script src=&quot;//platform.linkedin.com/in.js&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;&lt;script type=&quot;IN/Share&quot; data-counter=&quot;top&quot;&gt;&lt;/script&gt;"><script src="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/in.js.下载" type="text/javascript"></script><span class="IN-widget" style="line-height: 1; vertical-align: baseline; display: inline-block; text-align: center;"><span style="padding: 0px !important; margin: 0px !important; text-indent: 0px !important; display: inline-block !important; vertical-align: baseline !important; font-size: 1px !important;"><span id="li_ui_li_gen_1480405293754_1-container" class="IN-top"><span id="li_ui_li_gen_1480405293754_1" class="IN-top"><span id="li_ui_li_gen_1480405293754_1-inner" class="IN-top"><span id="li_ui_li_gen_1480405293754_1-content" class="IN-top">844</span></span></span></span></span><br><span style="padding: 0px !important; margin: 0px !important; text-indent: 0px !important; display: inline-block !important; vertical-align: baseline !important; font-size: 1px !important;"><span id="li_ui_li_gen_1480405293741_0"><a id="li_ui_li_gen_1480405293741_0-link" href="javascript:void(0);"><span id="li_ui_li_gen_1480405293741_0-logo">in</span><span id="li_ui_li_gen_1480405293741_0-title"><span id="li_ui_li_gen_1480405293741_0-mark"></span><span id="li_ui_li_gen_1480405293741_0-title-text">Share</span></span></a></span></span></span><script type="IN/Share+init" data-counter="top"></script></span>
+        </span>
+        
+                    <span data-type="googleplus" class="flare-button button-type-googleplus flare-iconstyle-round-bevel last" style="background-color:#d84d2f;z-index:1">
+            <span class="flare-button-wrap">
+                <span class="flare-button-icon">Google+</span>
+            </span>
+        </span>
+        <span class="flare-button-count">30</span>
+            
+        <span class="flare-flyout flare-flyout-googleplus" style="top: 160px;">
+            <span class="flare-flyout-inner">
+                <span class="flare-arrow"></span>
+            </span>
+            <span class="flare-iframe-wrapper" data-code-snippet="&lt;g:plusone size=&quot;tall&quot;&gt;&lt;/g:plusone&gt;
+&lt;script type=&quot;text/javascript&quot;&gt;
+  (function() {
+    var po = document.createElement(&quot;script&quot;); po.type = &quot;text/javascript&quot;; po.async = true;
+    po.src = &quot;https://apis.google.com/js/plusone.js&quot;;
+    var s = document.getElementsByTagName(&quot;script&quot;)[0]; s.parentNode.insertBefore(po, s);
+  })();
+&lt;/script&gt;"><div id="___plusone_0" style="position: absolute; width: 450px; left: -10000px;"><iframe frameborder="0" hspace="0" marginheight="0" marginwidth="0" scrolling="no" style="position:absolute;top:-10000px;width:450px;margin:0px;border-style:none" tabindex="0" vspace="0" width="100%" id="I0_1480405293039" name="I0_1480405293039" src="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/fastbutton.html"></iframe></div><g:plusone size="tall" data-gapiscan="true" data-onload="true" data-gapistub="true"></g:plusone>
+<script type="text/javascript">
+  (function() {
+    var po = document.createElement("script"); po.type = "text/javascript"; po.async = true;
+    po.src = "https://apis.google.com/js/plusone.js";
+    var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(po, s);
+  })();
+</script></span>
+        </span>
+        
+        
+        
+    <span class="flare-total last"><strong>874</strong> Flares</span>
+
+    <span class="close">
+        <a href="http://www.mindtheproduct.com/2016/02/what-the-hell-are-ci-cd-and-devops-a-cheatsheet-for-the-rest-of-us/#close">×</a>
+    </span>
+</div><script type="text/javascript">
+  var __flare_count_url = "http://www.mindtheproduct.com/wp-admin/admin-ajax.php?action=flare_get_counts&url=http%3A%2F%2Fwww.mindtheproduct.com%2F2016%2F02%2Fwhat-the-hell-are-ci-cd-and-devops-a-cheatsheet-for-the-rest-of-us%2F&post_id=7496&_wpnonce=77c6fc2130";
+</script>
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-21862375-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'stats.g.doubleclick.net/dc.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<!-- Woo Tabs Widget -->
+<script type="text/javascript">
+jQuery(document).ready(function(){
+	// UL = .wooTabs
+	// Tab contents = .inside
+
+	var tag_cloud_class = '#tagcloud';
+
+	//Fix for tag clouds - unexpected height before .hide()
+	var tag_cloud_height = jQuery( '#tagcloud').height();
+
+	jQuery( '.inside ul li:last-child').css( 'border-bottom','0px' ); // remove last border-bottom from list in tab content
+	jQuery( '.wooTabs').each(function(){
+		jQuery(this).children( 'li').children( 'a:first').addClass( 'selected' ); // Add .selected class to first tab on load
+	});
+	jQuery( '.inside > *').hide();
+	jQuery( '.inside > *:first-child').show();
+
+	jQuery( '.wooTabs li a').click(function(evt){ // Init Click funtion on Tabs
+
+		var clicked_tab_ref = jQuery(this).attr( 'href' ); // Strore Href value
+
+		jQuery(this).parent().parent().children( 'li').children( 'a').removeClass( 'selected' ); //Remove selected from all tabs
+		jQuery(this).addClass( 'selected' );
+		jQuery(this).parent().parent().parent().children( '.inside').children( '*').hide();
+
+		jQuery( '.inside ' + clicked_tab_ref).fadeIn(500);
+
+		 evt.preventDefault();
+
+	})
+})
+</script>
+<!-- Lightbox Plus Colorbox v2.7.2/1.5.9 - 2013.01.24 - Message: 0-->
+<script type="text/javascript">
+jQuery(document).ready(function($){
+  $("a[rel*=lightbox]").colorbox({speed:350,initialWidth:"300",initialHeight:"100",opacity:0.8,loop:false,scrolling:false,escKey:false,arrowKey:false,top:false,right:false,bottom:false,left:false});
+});
+</script>
+<script type="text/javascript" src="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/underscore.min.js.下载"></script>
+<script type="text/javascript">
+/* <![CDATA[ */
+var DavesWordPressLiveSearchConfig = {"resultsDirection":"down","showThumbs":"true","showExcerpt":"false","showMoreResultsLink":"true","minCharsToSearch":"2","xOffset":"0","yOffset":"0","blogURL":"http:\/\/www.mindtheproduct.com","ajaxURL":"http:\/\/www.mindtheproduct.com\/wp-admin\/admin-ajax.php","viewMoreText":"View more results","outdatedJQuery":"Dave's WordPress Live Search requires jQuery 1.2.6 or higher. WordPress ships with current jQuery versions. But if you are seeing this message, it's likely that another plugin is including an earlier version.","resultTemplate":"<ul id=\"dwls_search_results\" class=\"search_results dwls_search_results\">\n<input type=\"hidden\" name=\"query\" value=\"<%- resultsSearchTerm %>\" \/>\n<% _.each(searchResults, function(searchResult, index, list) { %>\n        <%\n        \/\/ Thumbnails\n        if(DavesWordPressLiveSearchConfig.showThumbs == \"true\" && searchResult.attachment_thumbnail) {\n                liClass = \"post_with_thumb\";\n        }\n        else {\n                liClass = \"\";\n        }\n        %>\n        <li class=\"daves-wordpress-live-search_result <%- liClass %> '\">\n        <% if(DavesWordPressLiveSearchConfig.showThumbs == \"true\" && searchResult.attachment_thumbnail) { %>\n                <img src=\"<%= searchResult.attachment_thumbnail %>\" class=\"post_thumb\" \/>\n        <% } %>\n\n        <a href=\"<%= searchResult.permalink %>\" class=\"daves-wordpress-live-search_title\"><%= searchResult.post_title %><\/a>\n\n        <% if(searchResult.post_price !== undefined) { %>\n                <p class=\"price\"><%- searchResult.post_price %><\/p>\n        <% } %>\n\n        <% if(DavesWordPressLiveSearchConfig.showExcerpt == \"true\" && searchResult.post_excerpt) { %>\n                <p class=\"excerpt clearfix\"><%= searchResult.post_excerpt %><\/p>\n        <% } %>\n\n        <% if(e.displayPostMeta) { %>\n                <p class=\"meta clearfix daves-wordpress-live-search_author\" id=\"daves-wordpress-live-search_author\">Posted by <%- searchResult.post_author_nicename %><\/p><p id=\"daves-wordpress-live-search_date\" class=\"meta clearfix daves-wordpress-live-search_date\"><%- searchResult.post_date %><\/p>\n        <% } %>\n        <div class=\"clearfix\"><\/div><\/li>\n<% }); %>\n\n<% if(searchResults[0].show_more !== undefined && searchResults[0].show_more && DavesWordPressLiveSearchConfig.showMoreResultsLink == \"true\") { %>\n        <div class=\"clearfix search_footer\"><a href=\"<%= DavesWordPressLiveSearchConfig.blogURL %>\/?s=<%-  resultsSearchTerm %>\"><%- DavesWordPressLiveSearchConfig.viewMoreText %><\/a><\/div>\n<% } %>\n\n<\/ul>"};
+/* ]]> */
+</script>
+<script type="text/javascript" src="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/daves-wordpress-live-search.min.js.下载"></script>
+<script type="text/javascript" src="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/excanvas.compiled.js.下载"></script>
+<script type="text/javascript" src="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/spinners.min.js.下载"></script>
+<script type="text/javascript" src="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/comment-reply.min.js.下载"></script>
+<script type="text/javascript">
+/* <![CDATA[ */
+var click_object = {"ajax_url":"http:\/\/www.mindtheproduct.com\/wp-admin\/admin-ajax.php"};
+/* ]]> */
+</script>
+<script type="text/javascript" src="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/jquery.adrotate.clicktracker.js.下载"></script>
+<script type="text/javascript" src="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/editor.js.下载"></script>
+<script type="text/javascript" src="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/prettify.js.下载"></script>
+<script type="text/javascript" src="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/load.js.下载"></script>
+<script type="text/javascript">
+/* <![CDATA[ */
+var qpprFrontData = {"linkData":[],"siteURL":"http:\/\/www.mindtheproduct.com","siteURLq":"http:\/\/www.mindtheproduct.com"};
+/* ]]> */
+</script>
+<script type="text/javascript" src="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/qppr_frontend_script.min.js.下载"></script>
+<script type="text/javascript" src="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/jquery.colorbox.1.5.9-min.js.下载"></script>
+<script type="text/javascript" src="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/flare.dev.js.下载"></script>
+<script type="text/javascript" src="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/wp-embed.min.js.下载"></script>
+<!-- AdRotate JS -->
+<script type="text/javascript">
+jQuery(document).ready(function(){
+if(jQuery.fn.gslider) {
+}
+});
+</script>
+<!-- /AdRotate JS -->
+
+
+<div id="cboxOverlay" style="display: none;"></div><div id="colorbox" class="" role="dialog" tabindex="-1" style="display: none;"><div id="cboxWrapper"><div><div id="cboxTopLeft" style="float: left;"></div><div id="cboxTopCenter" style="float: left;"></div><div id="cboxTopRight" style="float: left;"></div></div><div style="clear: left;"><div id="cboxMiddleLeft" style="float: left;"></div><div id="cboxContent" style="float: left;"><div id="cboxTitle" style="float: left;"></div><div id="cboxCurrent" style="float: left;"></div><button type="button" id="cboxPrevious"></button><button type="button" id="cboxNext"></button><button id="cboxSlideshow"></button><div id="cboxLoadingOverlay" style="float: left;"></div><div id="cboxLoadingGraphic" style="float: left;"></div></div><div id="cboxMiddleRight" style="float: left;"></div></div><div style="clear: left;"><div id="cboxBottomLeft" style="float: left;"></div><div id="cboxBottomCenter" style="float: left;"></div><div id="cboxBottomRight" style="float: left;"></div></div></div><div style="position: absolute; width: 9999px; visibility: hidden; display: none; max-width: none;"></div></div><iframe id="rufous-sandbox" scrolling="no" frameborder="0" allowtransparency="true" allowfullscreen="true" style="position: absolute; visibility: hidden; display: none; width: 0px; height: 0px; padding: 0px; border: none;" title="Twitter analytics iframe" src="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/saved_resource(4).html"></iframe><iframe style="display: none;" src="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/saved_resource(5).html"></iframe><iframe id="sumome-jquery-iframe" style="display: none;" src="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/saved_resource(6).html"></iframe><a href="javascript:void(0);" title="SumoMe" style="background-color: rgb(0, 115, 183); border-radius: 3px 0px 0px 3px; box-shadow: rgba(0, 0, 0, 0.2) 0px 4px 10px; position: fixed; z-index: 2147483647; padding: 0px; width: 44px; height: 40px; text-indent: -10000px; opacity: 1; display: block !important; top: 40px; right: -40px;"><span style="position: absolute; left: -10000px; top: auto; width: 1px; height: 1px; overflow: hidden; margin-left: 4px; margin-right: 0px; border-radius: 3px 0px 0px 3px;">SumoMe</span><span style="display: block; width: 40px; height: 40px; background: url(&quot;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAPBJREFUeNpi/P//PwMtAeOoBSPAAobi7fVAuomh15OwTcXbO4AkMxCXEam+mAlIaQLxNCCHkQjDy4G4hAT1liALDgBxBhDPAwoy41BcDzUcBjLwWoJwzAGYBSCQAMSLMCwp3l4BJBuwGIPdEoThIHCAESr4DEhKQgWXAXEiMIx/AcXLgOxOAiE9A4izwHGCavgbIBaDWbAESEYjadoMxHuAeCKRiQVkyUe0YFwLtDSEBeYVNAt8oZhYkIFFDBz0TMgcKgMkC3o97wDJp1Q0HBT+V5F9wAANc2qBg7CMyITuJWoGD10sGC2uRy2gHAAEGACB725KrIq6EgAAAABJRU5ErkJggg==&quot;) 8px 8px no-repeat white; margin-left: 4px; border-radius: 3px 0px 0px 3px; margin-right: 0px;"></span></a><iframe style="display: none;" src="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/saved_resource(7).html"></iframe><div id="sumo_twilighter_div" class="sumo_highlighter_desktop" style="background-color: rgb(240, 240, 240); top: 4650px; left: 613px; display: none;">
+  <textarea id="sumo_twilighter_input" class="sumo_twilighter_textarea"></textarea>
+  <div class="sumo_twilighter_admin_highlight" style="display:none;">
+    <a href="javascript:void(0);" style="color: rgb(125, 125, 125);">Save Highlight</a>
+  </div>
+  <div class="sumo_twilighter_admin" style="display:none;">
+    <a href="javascript:void(0);" style="color: rgb(125, 125, 125);">Delete Highlight</a>
+  </div>
+  <br>
+  <div class="sumo_twilighter_tweet">
+    <a id="sumo_twilighter_btn" href="javascript:void(0);" alt="Tweet this" style="background-color: rgb(52, 132, 191);">
+      <img class="btn-icon" src="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/twitter-white-60.png">
+      <span class="btn-text" style="color: white;">Tweet</span>
+    </a>
+  </div>
+  <div class="sumo_twilighter_fb">
+    <a id="sumo_twilighter_btn_fb" href="javascript:void(0);" alt="Facebook Share This" style="background-color: rgb(76, 102, 164);">
+      <img class="btn-icon" src="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/facebook-white-60.png">
+      <span class="btn-text" style="color: white;">Share</span>
+    </a>
+  </div>
+  <a target="_blank" class="sumo_twilighter_logo" href="https://sumome.com/?src=sm-hl-8b00fbe27c306888a5cc1771baa74183919d0c20e7714cec56791445ad6ed864" style="color: rgb(125, 125, 125);">Powered by SumoMe</a><div class="sumo_twilighter_remaining" style="color: rgb(125, 125, 125);">1</div>
+</div>
+<div style="position:fixed;top:0;left:0;overflow:hidden;"><label for="focus_retriever" style="position:absolute;left:-1000px;">Focus Retriever</label><input style="position:absolute;left:-1000px;" type="text" name="focus_retriever" value="" id="focus_retriever" readonly="true"></div><img src="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/saved_resource(2)" alt="" style="display: none;"><img src="./The Product Managers&#39; Guide to Continuous Delivery and DevOps - MindTheProduct_files/saved_resource(3)" alt="" style="display: none;"><div class="sumome-vex sumome-popup sumome-popup-mode-subscribe"><div class="sumome-vex-overlay sumome-popup-overlay"></div><div class="sumome-vex-content sumome-popup-content sumome-popup-res-medium sumome-popup-template-default sumome-popup-content-default sumome-popup-has-optout sumome-animated sumome-animated-default" style="background-color: transparent !important;"><div class="sumome-popup-scale" style="transform: translate(-50%, -50%) scale(0.948148) translateZ(0px); zoom: 1;"><style>@-webkit-keyframes sumome-default {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes sumome-default {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+
+.sumome-vex.sumome-popup .sumome-popup-content.sumome-animated-default,
+.sumome-modal .sumome-popup-preview .sumome-popup-content.sumome-animated-default {
+  -webkit-animation: sumome-default 500ms linear both !important;
+  animation: sumome-default 500ms linear both !important;
+}</style><style>
+.sumome-vex .sumome-vex-close:before { visibility: visible !important; }
+.sumome-popup-template-default select.sumome-popup-select-placeholder { color: #999; }
+.sumome-popup-template-default label.sumome-popup-checkbox, .sumome-popup-template-default label.sumome-popup-radio, .sumome-popup-template-default label.sumome-popup-radio-header, .sumome-popup-template-default label.sumome-popup-checkbox-header { color:#495259 !important;  }
+.sumome-popup-template-default .sumome-popup-form { padding: 1.5em !important; }
+.sumome-popup-template-default .sumome-popup-form button { font-weight: 600 !important; text-transform: none !important; }
+.sumome-popup-template-default .sumome-popup-form button:hover { opacity: .8 !important; }
+.sumome-popup-template-default .sumome-vex-close.sumome-popup-close { opacity: .5 !important; }
+.sumome-popup-template-default .sumome-vex-close.sumome-popup-close:hover { opacity: .75 !important; }
+.sumome-popup-template-default .sumome-vex-close.sumome-popup-close:before { font-size: 32px !important; right: 8px !important; top: 8px !important; }
+.sumome-popup-template-default .sumome-popup-form input, .sumome-popup-template-default .sumome-popup-form select { box-shadow: none !important; }
+.sumome-popup-template-default .sumome-popup-form input[type="text"], .sumome-popup-template-default .sumome-popup-form select { height: 42px !important; margin: 0 0 12px 0;}
+
+.sumome-popup-template-default .sumome-popup-powered-variant { margin-top: 35px !important; }
+
+.sumome-popup-template-default .sumome-popup-modal-bg { border-radius:5px; -webkit-border-radius:5px; }
+</style>
+
+<div class="sumome-popup-theme sumome-popup-modal-bg" style="background-color:#f0f3f5 !important;"></div>
+<div class="sumome-popup-form">
+  <h2 class="sumome-popup-heading" style="color:#495259 !important;">Get the best product content from across the web</h2>
+  <div class="sumome-popup-text" style="color:#495259 !important;">Sign up for our free weekly newsletter with a lovingly curated selection of the best product content from all over the web.</div>
+  <div class="sumome-popup-error" style="display: none;"></div>
+  <form autocomplete="on"><div class="sumome-eac-input-wrap sumome-popup-input sumome-popup-last sumome-eac-input-wrap-focus" style="display: block; position: relative; font-size: 16px; font-style: normal; float: none; width: 100%; max-width: 100%; min-width: 0px; margin: 0px 0px 16px; background: none 0% 0% / auto repeat scroll padding-box border-box rgb(255, 255, 255); border-radius: 0px; text-align: start; border-color: transparent;"><span class="sumome-eac-cval" style="visibility: hidden; position: absolute; top: 0px; left: 0px; display: inline-block; font-family: &quot;Helvetica Neue&quot;, sans-serif; font-weight: 400; font-size: 16px; font-style: normal; letter-spacing: 0px; height: 100%; z-index: -1;"></span><input class="sumome-eac-sugg" disabled="" style="display: inline-block; box-sizing: border-box; font-family: &quot;Helvetica Neue&quot;, sans-serif; font-weight: 400; font-size: 16px; font-style: normal; letter-spacing: 0px; position: absolute; left: 0px; height: 100%; width: 100%; padding: 8px; border: 0.8px solid transparent; border-radius: 0px; background: transparent; color: rgba(0, 0, 0, 0.247059); opacity: 1; line-height: initial;"><span class="sumome-eac-sugg-spell-error" style="font-family: &quot;Helvetica Neue&quot;, sans-serif; font-weight: 400; font-size: 16px; font-style: normal; letter-spacing: 0px; background: transparent; transform: translateY(-50%); display: inline-block; position: absolute; top: 50%;"><span class="sumome-eac-sugg-spell-error-usernm" style="margin-left: 8px;"></span><span class="sumome-eac-sugg-spell-error-domain"></span></span><input class="sumome-popup-input sumome-popup-last" type="email" value="" autofocus="" style="position: relative; top: 0px; left: 0px; width: 100%; min-width: 100%; margin: 0px; background-position: initial; background-size: initial; background-repeat: initial; background-attachment: initial; background-origin: initial; background-clip: initial; background-color: transparent; line-height: initial;" id="null" placeholder="Enter your Email" name="email" required="" autocomplete="email" x-autocompletetype="email" spellcheck="false" autocapitalize="off" autocorrect="off"><span class="sumome-eac-suggs" style="visibility: hidden;"></span><span class="sumome-eac-overlay-hitbox" style="display: inline-block; box-sizing: border-box; font-family: &quot;Helvetica Neue&quot;, sans-serif; font-weight: 400; font-size: 16px; font-style: normal; letter-spacing: 0px; transform: translateY(-50%); position: absolute; top: 50%; opacity: 0; left: 0px; cursor: pointer;"></span></div></form>
+  
+  <button class="sumome-popup-button sumome-popup-button-text sumome-popup-last-input" type="submit" style="background:#00aee7 !important;color:#ffffff !important;">Subscribe Now</button>
+  <button class="sumome-popup-continue sumome-popup-continue-text" type="submit" style="display:none;background:#00aee7 !important;color:#ffffff !important;">Continue</button>
+<div class="sumome-popup-powered-variant"><a class="sumome-popup-link" href="javascript:void(0);">Powered by SumoMe</a></div></div>
+<div class="sumome-vex-close sumome-popup-close" style="color: rgb(73, 82, 89) !important;"></div></div></div></div><img src="http://sumome.com/api/event/?site_id=8b00fbe27c306888a5cc1771baa74183919d0c20e7714cec56791445ad6ed864&amp;app_id=8dc42610-ae42-4164-90b1-573478b46574&amp;event=popup&amp;href=http%3A%2F%2Fwww.mindtheproduct.com%2F2016%2F02%2Fwhat-the-hell-are-ci-cd-and-devops-a-cheatsheet-for-the-rest-of-us%2F&amp;ref=&amp;cache=0.09357034852501722" alt="" style="display: none;"><img src="http://sumome.com/api/event/?site_id=8b00fbe27c306888a5cc1771baa74183919d0c20e7714cec56791445ad6ed864&amp;app_id=8dc42610-ae42-4164-90b1-573478b46574.064ef261ca2262ceb7e2af38cb9e15b4cb8a6dc561260e5a0ac800d6c0e3e3f9&amp;event=popup&amp;href=http%3A%2F%2Fwww.mindtheproduct.com%2F2016%2F02%2Fwhat-the-hell-are-ci-cd-and-devops-a-cheatsheet-for-the-rest-of-us%2F&amp;ref=&amp;cache=0.058729515371690244" alt="" style="display: none;"><img src="http://sumome.com/api/event/?site_id=8b00fbe27c306888a5cc1771baa74183919d0c20e7714cec56791445ad6ed864&amp;app_id=8dc42610-ae42-4164-90b1-573478b46574.4e05519959ed485a02f3df0c9c2564bcffb0ead4e7b165ad0f25dc1d46cc1974&amp;event=popup&amp;href=http%3A%2F%2Fwww.mindtheproduct.com%2F2016%2F02%2Fwhat-the-hell-are-ci-cd-and-devops-a-cheatsheet-for-the-rest-of-us%2F&amp;ref=&amp;cache=0.3102418971937393" alt="" style="display: none;"><img src="http://sumome.com/api/event/?site_id=8b00fbe27c306888a5cc1771baa74183919d0c20e7714cec56791445ad6ed864&amp;app_id=8dc42610-ae42-4164-90b1-573478b46574.064ef261ca2262ceb7e2af38cb9e15b4cb8a6dc561260e5a0ac800d6c0e3e3f9.4e05519959ed485a02f3df0c9c2564bcffb0ead4e7b165ad0f25dc1d46cc1974&amp;event=popup&amp;href=http%3A%2F%2Fwww.mindtheproduct.com%2F2016%2F02%2Fwhat-the-hell-are-ci-cd-and-devops-a-cheatsheet-for-the-rest-of-us%2F&amp;ref=&amp;cache=0.2606945156350555" alt="" style="display: none;"></body></html>
