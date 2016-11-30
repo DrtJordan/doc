@@ -1,3 +1,9 @@
+20161129
+这样能直接从shell里面退出，不用敲回车键
+nohup ./bin/startup.sh >some.log 2>&1 </dev/null &
+或者
+at now -f my_script.sh
+
 20161018 性能监控命令
 sar tcpdump iostat mpstat(process statistics) vmstat pmap(process memory map) netstat (network statistics)iptraf (ip network monitor) strace  ntop(network top)
 vnstat (dispaly and log network traffic of interface)  htop(more powerful top) ss (socket statistics) 
