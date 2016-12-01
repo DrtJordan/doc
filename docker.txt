@@ -1,3 +1,14 @@
+Namespace  隔离内容
+UTS 主机名与域名
+IPC   	信号量、消息队列和共享内存
+PID  进程编号
+Network  网络设备、网络栈、端口等等
+Mount  挂载点（文件系统）
+User  用户和用户组
+cgroups。他不仅可以限制被namespace隔离起来的资源，还可以为资源设置权重、计算使用量、操控进程启停等等 
+ Control Groups，并被整合进Linux内核。顾名思义就是把进程放到一个组里面统一加以控制
+通俗的来说，cgroups可以限制、记录、隔离进程组所使用的物理资源（包括：CPU、memory、IO等），为容器实现虚拟化提供了基本保证，是构建Docker等一系列虚拟化管理工具的基石。
+
 20161023
 Register 
 docker run -d -p 5000:5000 --restart=always --name registry   -v 、/app/docker/data:/var/lib/registry   registry:2

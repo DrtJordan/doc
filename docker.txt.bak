@@ -1,3 +1,13 @@
+Namespace  隔离内容
+UTS 主机名与域名
+IPC   	信号量、消息队列和共享内存
+PID  进程编号
+Network  网络设备、网络栈、端口等等
+Mount  挂载点（文件系统）
+User  用户和用户组
+cgroups。他不仅可以限制被namespace隔离起来的资源，还可以为资源设置权重、计算使用量、操控进程启停等等 
+ Control Groups，并被整合进Linux内核。顾名思义就是把进程放到一个组里面统一加以控制
+
 20161023
 Register 
 docker run -d -p 5000:5000 --restart=always --name registry   -v 、/app/docker/data:/var/lib/registry   registry:2
@@ -363,6 +373,7 @@ This sharing of image layers is what makes Docker images and containers so space
 docker能共享iamge,不用每个都加载一次
 OverlayFS supports page cache sharing. This means multiple containers accessing the same file can share a single page cache entry
 Btrfs does not support page cache sharing. This means that n containers accessing the same file require n copies to be cached
+AUFS efficiently shares images between multiple running containers, enabling fast container start times and minimal use of disk space
 
 到现在仍然仅仅支持满是问题的AuFS（AnotherUnionFS）。
 支持下面的存储方式(支持层级的文件系统 union在一起）
