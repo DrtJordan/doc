@@ -2,7 +2,7 @@
 CI/CD
 备份gitlab  GitLab 7.14.3 
 
-Jira做agile  
+Jira做agile 
 
 gitlab-rake gitlab:backup:create  缺省备份到   /var/opt/gitlab/backups
 还原命令

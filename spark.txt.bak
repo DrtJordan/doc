@@ -1,4 +1,25 @@
+
+´ÓÊý¾ÝÉÏ¿´£¬KylinÄÜ¹»ÔÚ±ÈHive/SparkSQLÔÚ¸üÈõµÄÓ²¼þÅäÖÃÏÂ»ñµÃ¸üºÃµÄ²éÑ¯ÐÔÄÜ¡£  Ä¿Ç°£¬ÓÐÔ½À´Ô½¶àµÄ¹úÄÚÍâ¹«Ë¾½«Kylin×÷Îª´óÊý¾ÝÉú²ú»·¾³ÖÐµÄÖØÒª×é¼þ£¬Èçebay¡¢ÒøÁª¡¢°Ù¶È¡¢ÖÐ¹úÒÆ¶¯µÈ
+Apache KylinÊÇÒ»¸ö¿ªÔ´µÄ·Ö²¼Ê½·ÖÎöÒýÇæ£¬Ìá¹©HadoopÖ®ÉÏµÄSQL²éÑ¯½Ó¿Ú¼°¶àÎ¬·ÖÎö£¨OLAP£©ÄÜÁ¦ÒÔÖ§³Ö³¬´ó¹æÄ£Êý¾Ý£¬×î³õÓÉeBay Inc. ¿ª·¢²¢¹±Ï×ÖÁ¿ªÔ´ÉçÇø£¬²¢ÓÚ2015Äê11ÔÂÕýÊ½±ÏÒµ³ÉÎªApache¶¥¼¶ÏîÄ¿¡£
+ÎÒÃÇÔÚApache Kylin¼¯ÈºÉÏÅÜÁË¶à¸öCube²âÊÔ£¬½á¹û±íÃ÷ËüÄÜ¹»ÓÐÐ§½â¾ö´óÊý¾Ý¼ÆËã·ÖÎöµÄ3´óÍ´µãÎÊÌâ¡£
+Í´µãÒ»£º°ÙÒÚ¼¶º£Á¿Êý¾Ý¶àÎ¬Ö¸±ê¶¯Ì¬¼ÆËãºÄÊ±ÎÊÌâ£¬Apache KylinÍ¨¹ýÔ¤¼ÆËãÉú³ÉCube½á¹ûÊý¾Ý¼¯²¢´æ´¢µ½HBaseµÄ·½Ê½½â¾ö¡£
+Í´µã¶þ£º¸´ÔÓÌõ¼þÉ¸Ñ¡ÎÊÌâ£¬ÓÃ»§²éÑ¯Ê±£¬Apache KylinÀûÓÃrouter²éÕÒËã·¨¼°ÓÅ»¯µÄHBase Coprocessor½â¾ö£»
+Í´µãÈý£º¿çÔÂ¡¢¼¾¶È¡¢ÄêµÈ´óÊ±¼äÇø¼ä²éÑ¯ÎÊÌâ£¬¶ÔÓÚÔ¤¼ÆËã½á¹ûµÄ´æ´¢£¬Apache KylinÀûÓÃCubeµÄData Segment·ÖÇø´æ´¢¹ÜÀí½â¾ö¡£
+
+´ÓµÚÈý²¿·ÖµÄ¸÷¸ö³¡¾°¶Ô±ÈÖÐ¿ÉÒÔ¿´³ö£¬SequoiaDBÊý¾Ý¿âÔÚÊý¾Ý²åÈë³¡¾°ÖÐ±íÏÖ×îÎªÍ»³ö£¬ÉõÖÁ³¬¹ý±¾ÉíÒÔ²åÈëÐÔÄÜÖø³ÆµÄCassandra£¬»ìºÏ¶ÁÐ´³¡¾°ÏÂÐÔÄÜÒ²¿ÉÈ¦¿Éµã¡£
+¶øÒµ½çÆÕ¼°ÂÊ×î¸ßµÄMongoDBÔòÔÚµ¥´¿¶ÁÈ¡ÐÔÄÜÉÏ×îÎªÇÀÑÛ£¬Ô¶³¬ÆäËû¡£
+HBaseÓëCassandraËäÈ»ÔÚÐ´ÈëÐÔÄÜÉÏÔ¶¸ßÓÚMongoDB£¬µ«ÊÇºÍSequoiaDBÏà±ÈÈÔÈ»Ñ·É«Ò»³ï£»¶øÔÚÖ÷¼üËæ»ú¶Á²Ù×÷·½Ãæ£¬
+CassandraµÄÐÂ°æ±¾ºÍÖ®Ç°µÄ°æ±¾±ÈÆðÀ´ÐÔÄÜ´ó·ù¶ÈÉÏÉý£¬»ù±¾×öµ½ºÍMongoDB´¦ÓÚÍ¬Ò»Ë®Æ½Ïß£¬¶øHBaseÔòÔ¶²»ÄÜºÍÆäËû²úÆ·Ïà±È¡£
+
+²»ÑÏ½÷µØ½²£¬Redis¶¨Î»ÔÚ"¿ì"£¬HBase¶¨Î»ÓÚ"´ó",mongodb¶¨Î»ÔÚ"Áé»î"¡£
+MongoDBÊÇÎÄµµÐÍÊý¾Ý¿â£¬Ê¹ÓÃbson½á¹¹£¬¿ÉÒÔ¸ü¼ÓÁé»îµÄ´¦ÀíÇ¶Ì×½á¹¹µÄÊý¾Ý¡£ÊÇÕâÈý¸öÀï×î½Ó½ü¹ØÏµÐÍÊý¾Ý¿âµÄ¡£
+RedisÊÇk-vÐÍÊý¾Ý¿â£¬Ä¿±êÊÇ×ö¸ßÐ§µÄ·Ö²¼Ê½»º´æ¡£Êý¾ÝÒ»°ã²»ÊµÊ±ÂäµØ¡£Ò²²»ÊÊºÏ×ö´æ´¢ºÍ·ÖÎö¡£
+HBaseÊÇÁÐÊ½Êý¾Ý¿â£¬BigTableµÄÒ»ÖÖÊµÏÖ£¬Ä¿±êÊÇ¸ßÐ§´æ´¢´óÁ¿Êý¾Ý£¬Ö§³ÖÁÐÑ¹Ëõ£¬ÐÐÊÂÎñ¡£ÊÊºÏSchema-lessµÄÊý¾Ý¡£
+
+ Spark +Hbase + Apache Phoenix + Kafka +ElasticSearch
+  Phoenix is a JDBC driver for Hbase 
 spark
+
 °²×° 
   ./sbt/sbt assembly
   
@@ -20,6 +41,7 @@ SPARK SQL¡¡DataFrameÊÇÒ»¸ö·Ö²¼Ê½µÄ£¬°´ÕÕÃüÃûÁÐµÄÐÎÊ½×éÖ¯µÄÊý¾Ý¼¯ºÏ¡£DataFrame»ùÓ
 ÍÆ¼öÒýÇæÒ»°ãÓÐÁ½ÖÖËã·¨ÊµÏÖ£º»ùÓÚÄÚÈÝ¹ýÂËºÍÐ­Í¬¹ýÂË¡£
 Ð­µ÷¹ýÂËµÄ½â¾ö·½°¸±ÈÆäËûËã·¨ÒªºÃ£¬Spark MLlibÊµÏÖÁËALSÐ­Í¬¹ýÂËËã·¨¡£Spark MLlibµÄÐ­Í¬¹ýÂËÓÐÁ½ÖÖÐÎÊ½£ºÏÔÊ½·´À¡ºÍÒþÊÔ·´À¡¡£ÏÔÊ½·´À¡ÊÇ»ùÓÚÓÃ»§¹ºÂòµÄÉÌÆ·£¨±ÈÈç£¬µçÓ°£©£¬ÏÔÊ½·´À¡ËäºÃ£¬µ«ºÜ¶àÇé¿öÏÂ»á³öÏÖÊý¾ÝÇãÐ±£»ÒþÊÔ·´À¡ÊÇ»ùÓÚÓÃ»§µÄÐÐÎªÊý¾Ý£¬±ÈÈç£¬ä¯ÀÀ¡¢µã»÷¡¢Ï²»¶µÈÐÐÎª¡£ÒþÊÔ·´À¡ÏÖÔÚ´ó¹æÄ£Ó¦ÓÃÔÚ¹¤ÒµÉÏ½øÐÐÊý¾ÝÔ¤²â·ÖÎö£¬ÒòÎªÆäºÜÈÝÒ×ÊÕ¼¯¸÷ÀàÊý¾Ý¡£
 ÁíÍâÓÐ»ùÓÚÄ£ÐÍµÄ·½·¨ÊµÏÖÍÆ¼öÒýÇæ£¬ÕâÀïÔÝÇÒÂÔ¹ý¡£Éñ¾­ÍøÂç¼¼Êõ±»ÓÃÀ´½øÐÐÏúÊÛµãµÄÒì³£¼à²â¡£±ÈÈçÏñPayPalµÈ¹«Ë¾Ê¹ÓÃ²»Í¬µÄ»úÆ÷Ñ§Ï°Ëã·¨£¨±ÈÈç£¬ÏßÐÔ»Ø¹é£¬Éñ¾­ÍøÂçºÍÉî¶ÈÑ§Ï°£©À´½øÐÐ·çÏÕ¹ÜÀí¡£
+
   2015Äê6ÔÂ£¬Spark 1.4·¢²¼ÒýÈëRÓïÑÔ×÷ÎªSparkµÄ½Ó¿Ú¡£RÓïÑÔ½Ó¿ÚÔÚÎÊÊÀÒ»¸ö¶àÔÂÖ®ºóµÄµ÷²éÖÐ¾ÍÓÐ18%µÄÓÃ»§Ê¹ÓÃ¡£
   SparkÄ¿Ç°Ö§³ÖËÄÖÖÓïÑÔµÄ½Ó¿Ú£¬³ýÁËÉÏÃæÌáµ½µÄRÓïÑÔµÄÊ¹ÓÃÂÊÒÔÍâ£¬PythonµÄÊ¹ÓÃÂÊÒ²ÓÐºÜ´óÌáÉý£¬´Ó2014ÄêµÄ38%ÌáÉýµ½2015ÄêµÄ58%£»¶øScala½Ó¿ÚµÄÊ¹ÓÃÂÊÓÐËùÏÂ½µ£¬´Ó84%ÏÂ½µµ½71%¡£Í¬Ê±SparkµÄ²¿Êð»·¾³Ò²ÓÐËù±ä»¯£¬51%µÄ²¿ÊðÔÚ¹«ÓÐÔÆÉÏ£¬48% Ê¹ÓÃstandalone·½Ê½²¿Êð£¬¶øÔÚYARNÉÏµÄÖ»ÓÐ40%ÁË¡£
   ÌÚÑ¶µÄSpark¹æÄ£µ½ÁË8000+½Úµã£¬ÈÕ´¦ÀíÊý¾Ý1PB+¡£°¢Àï°Í°ÍÔËÐÐ×ÅÄ¿Ç°×î³¤Ê±¼äµÄSpark Job£º1PB+Êý¾Ý¹æÄ£µÄSpark Job³¤´ï1ÖÜµÄÊ±¼ä¡£°Ù¶ÈµÄ¹è¹ÈÑÐ¾¿ÔºÒ²ÔÚÌ½Ë÷Spark+TachyonµÄÓ¦ÓÃ³¡¾°¡£

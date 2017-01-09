@@ -1,7 +1,11 @@
 20161129
 这样能直接从shell里面退出，不用敲回车键
 nohup ./bin/startup.sh >some.log 2>&1 </dev/null &
+或者
+at now -f my_script.sh
 
+，bash中0，1，2三个数字分别代表STDIN_FILENO、STDOUT_FILENO、STDERR_FILENO，即标准输入（一般是键盘），标准输出（一般是显示屏，准确的说是用户终端控制台），标准错误（出错信息输出）。
+ >/dev/null 2>&1 & 
 20161018 性能监控命令
 sar tcpdump iostat mpstat(process statistics) vmstat pmap(process memory map) netstat (network statistics)iptraf (ip network monitor) strace  ntop(network top)
 vnstat (dispaly and log network traffic of interface)  htop(more powerful top) ss (socket statistics) 

@@ -1,4 +1,26 @@
+
+从数据上看，Kylin能够在比Hive/SparkSQL在更弱的硬件配置下获得更好的查询性能。  目前，有越来越多的国内外公司将Kylin作为大数据生产环境中的重要组件，如ebay、银联、百度、中国移动等
+Apache Kylin是一个开源的分布式分析引擎，提供Hadoop之上的SQL查询接口及多维分析（OLAP）能力以支持超大规模数据，最初由eBay Inc. 开发并贡献至开源社区，并于2015年11月正式毕业成为Apache顶级项目。
+我们在Apache Kylin集群上跑了多个Cube测试，结果表明它能够有效解决大数据计算分析的3大痛点问题。
+痛点一：百亿级海量数据多维指标动态计算耗时问题，Apache Kylin通过预计算生成Cube结果数据集并存储到HBase的方式解决。
+痛点二：复杂条件筛选问题，用户查询时，Apache Kylin利用router查找算法及优化的HBase Coprocessor解决；
+痛点三：跨月、季度、年等大时间区间查询问题，对于预计算结果的存储，Apache Kylin利用Cube的Data Segment分区存储管理解决。
+
+从第三部分的各个场景对比中可以看出，SequoiaDB数据库在数据插入场景中表现最为突出，甚至超过本身以插入性能著称的Cassandra，混合读写场景下性能也可圈可点。
+而业界普及率最高的MongoDB则在单纯读取性能上最为抢眼，远超其他。
+HBase与Cassandra虽然在写入性能上远高于MongoDB，但是和SequoiaDB相比仍然逊色一筹；而在主键随机读操作方面，
+Cassandra的新版本和之前的版本比起来性能大幅度上升，基本做到和MongoDB处于同一水平线，而HBase则远不能和其他产品相比。
+
+不严谨地讲，Redis定位在"快"，HBase定位于"大",mongodb定位在"灵活"。
+MongoDB是文档型数据库，使用bson结构，可以更加灵活的处理嵌套结构的数据。是这三个里最接近关系型数据库的。
+Redis是k-v型数据库，目标是做高效的分布式缓存。数据一般不实时落地。也不适合做存储和分析。
+HBase是列式数据库，BigTable的一种实现，目标是高效存储大量数据，支持列压缩，行事务。适合Schema-less的数据。
+
+ Spark +Hbase + Apache Phoenix + Kafka +ElasticSearch
+  Phoenix is a JDBC driver for Hbase 
+  Mongodb用于缓存，可以忍受丢失数据的场景
 spark
+
 安装 
   ./sbt/sbt assembly
   

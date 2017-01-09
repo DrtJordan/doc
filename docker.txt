@@ -1,3 +1,5 @@
+Harbor是VMware公司最近开源的企业级Docker Registry项目
+
 Namespace  隔离内容
 UTS 主机名与域名
 IPC   	信号量、消息队列和共享内存
