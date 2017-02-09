@@ -1,3 +1,12 @@
+Ä¿Ç°hadoopÉúÌ¬ÖĞÓĞÁ½´óÁĞ´æ´¢¸ñÊ½£¬Ò»¸öÊÇÓÉHortonworksºÍMicrosoft¿ª·¢µÄORCFile£¬ÁíÒ»¸öÊÇÓÉClouderaºÍTwitter¿ª·¢µÄParquet¡£
+¶àÊı¾İÔ´²éÑ¯£ºPrestoÖ§³Ö´Ómysql£¬cassandra£¬ÉõÖÁkafkaÖĞÈ¥¶ÁÈ¡Êı¾İ£¬Õâ¾Í´ó´ó¼õÉÙÁËÊı¾İÕûºÏÊ±¼ä£¬²»ĞèÒª·Åµ½HDFSÀï²ÅÄÜ²éÑ¯¡£ImpalaºÍHiveÒ²Ö§³Ö²éÑ¯hbase¡£Spark SQLÒ²ÔÚ1.2°æ±¾¿ªÊ¼Ö§³ÖExternal Datasource¡£¹úÄÚÒ²ÓĞÀàËÆµÄ¹¤×÷£¬ÈçÃëÕë¸ÄÔìImpalaÊ¹Ö®ÄÜ²éÑ¯postgres¡£
+Impala¶ÔÄÚ´æÏûºÄ¹ı¸ß£¬ÔÚ½øĞĞÒ»Ğ©´ó±íµÄJoinÊ±
+Presto£¬ÊÇÄ¿Ç°¿ªÔ´½ç×î½Ó½üRedShiftµÄ·½°¸
+HAWQÊÇGreenPlum½«²éÑ¯ÓÅ»¯²ã¶ÀÁ¢³öÀ´£¬²¢ÇÒÒÔHDFS×÷ÎªÊı¾İÔØÌåµÄOLAP·½°¸¡£GreenPlumµÄÊı¾İ¿â²ãÔÚHAWQÀïÖ»×÷ÎªÖ´ĞĞÒıÇæ£¬¶ø²»ÔÙ¸ºÔğ´æ´¢£¬Òò´Ë¿ÉÒÔ·½±ãµÃÒıÈëGreenPlumµÄÆäËûÌØĞÔ£¬±ÈÈç±ê×¼SQL£¬ACIDÊÂÎñ£¬ÒÔ¼°²éÑ¯ÓÅ»¯Æ÷¡£GreenPlumµÄ¸ºÔğÈËÈÔÈ»¹«¿ªĞû³ÆHAWQ±ÈGreenPlumÂı£¬µ«ÊÇÀûÓÃHDFS´æ´¢Êı¾İµÄÓÅÊÆ£¬¿ÉÒÔÈÃHAWQ¸üÊÊºÏ×÷ÎªÍ³Ò»Êı¾İ·ÖÎöÆ½Ì¨µÄ»ù´¡×é¼ş¡£½ñÄêµÄ2ÔÂºÍ10ÔÂ£¬HAWQºÍGreenPlum·Ö±ğÏÈºó¿ªÔ´£¬Òò´ËÕâÊÇÒ»¸öÖµµÃÉîÈëÑĞ¾¿µÄÆ½Ì¨¡£
+ÏÂÃæ¿´¿´HAWQ/GreenPlumĞÔÄÜÓÅÊÆµÄ×îÖ÷Òª×é¼ş£º»ùÓÚ³É±¾Ä£ĞÍµÄ²¢ĞĞ²éÑ¯Ö´ĞĞ¼Æ»®Cost Based Parallel Query Optimizer and Planner[5]¡£
+
+prestoÖ§³ÖhdfsÉÏºÍÍâÃæµÄdata source, HAWQÖ»Ö§³ÖHDFS
+presto²»´æ´¢Êı¾İ£¬Ö»ÊÇSQL engine  £¬²»ÊÇM/R¼Ü¹¹£¬ÊÇMPP¼Ü¹¹ È«ÄÚ´æ±£´æ´¢
 
 ´ÓÊı¾İÉÏ¿´£¬KylinÄÜ¹»ÔÚ±ÈHive/SparkSQLÔÚ¸üÈõµÄÓ²¼şÅäÖÃÏÂ»ñµÃ¸üºÃµÄ²éÑ¯ĞÔÄÜ¡£  Ä¿Ç°£¬ÓĞÔ½À´Ô½¶àµÄ¹úÄÚÍâ¹«Ë¾½«Kylin×÷Îª´óÊı¾İÉú²ú»·¾³ÖĞµÄÖØÒª×é¼ş£¬Èçebay¡¢ÒøÁª¡¢°Ù¶È¡¢ÖĞ¹úÒÆ¶¯µÈ
 Apache KylinÊÇÒ»¸ö¿ªÔ´µÄ·Ö²¼Ê½·ÖÎöÒıÇæ£¬Ìá¹©HadoopÖ®ÉÏµÄSQL²éÑ¯½Ó¿Ú¼°¶àÎ¬·ÖÎö£¨OLAP£©ÄÜÁ¦ÒÔÖ§³Ö³¬´ó¹æÄ£Êı¾İ£¬×î³õÓÉeBay Inc. ¿ª·¢²¢¹±Ï×ÖÁ¿ªÔ´ÉçÇø£¬²¢ÓÚ2015Äê11ÔÂÕıÊ½±ÏÒµ³ÉÎªApache¶¥¼¶ÏîÄ¿¡£
@@ -18,6 +27,7 @@ HBaseÊÇÁĞÊ½Êı¾İ¿â£¬BigTableµÄÒ»ÖÖÊµÏÖ£¬Ä¿±êÊÇ¸ßĞ§´æ´¢´óÁ¿Êı¾İ£¬Ö§³ÖÁĞÑ¹Ëõ£¬ĞĞÊÂÎ
 
  Spark +Hbase + Apache Phoenix + Kafka +ElasticSearch
   Phoenix is a JDBC driver for Hbase 
+  MongodbÓÃÓÚ»º´æ£¬¿ÉÒÔÈÌÊÜ¶ªÊ§Êı¾İµÄ³¡¾°
 spark
 
 °²×° 
@@ -55,4 +65,4 @@ prada Ã¿¼şÒÂ·şÓĞRFID£¬¿ÉÒÔ¾«È·¸ú×ÙÃ¿¸öÓÃ»§ÊÔÒÂÊ±¼ä
 Ëş»ùÌØ°Ù»õÍ¨¹ı·ÖÎöÓÃ»§¹ºÂòÈ·¶¨ÊÇ·ñ»³ÔĞ
 
   
-  
+  Apache Hive is a data warehouse infrastructure built on top of Hadoop. It allows for querying data stored on HDFS for analysis via HQL, an SQL-like language that gets translated to MapReduce jobs. Despite providing SQL functionality, Hive does not provide interactive querying yet - it only runs batch processes on Hadoop.

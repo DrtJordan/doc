@@ -1,3 +1,12 @@
+目前hadoop生态中有两大列存储格式，一个是由Hortonworks和Microsoft开发的ORCFile，另一个是由Cloudera和Twitter开发的Parquet。
+多数据源查询：Presto支持从mysql，cassandra，甚至kafka中去读取数据，这就大大减少了数据整合时间，不需要放到HDFS里才能查询。Impala和Hive也支持查询hbase。Spark SQL也在1.2版本开始支持External Datasource。国内也有类似的工作，如秒针改造Impala使之能查询postgres。
+Impala对内存消耗过高，在进行一些大表的Join时
+Presto，是目前开源界最接近RedShift的方案
+HAWQ是GreenPlum将查询优化层独立出来，并且以HDFS作为数据载体的OLAP方案。GreenPlum的数据库层在HAWQ里只作为执行引擎，而不再负责存储，因此可以方便得引入GreenPlum的其他特性，比如标准SQL，ACID事务，以及查询优化器。GreenPlum的负责人仍然公开宣称HAWQ比GreenPlum慢，但是利用HDFS存储数据的优势，可以让HAWQ更适合作为统一数据分析平台的基础组件。今年的2月和10月，HAWQ和GreenPlum分别先后开源，因此这是一个值得深入研究的平台。
+下面看看HAWQ/GreenPlum性能优势的最主要组件：基于成本模型的并行查询执行计划Cost Based Parallel Query Optimizer and Planner[5]。
+
+presto支持hdfs上和外面的data source, HAWQ只支持HDFS
+presto不存储数据，只是SQL engine  ，不是M/R架构，是MPP架构 全内存保存储  不支持cost based optimization
 
 从数据上看，Kylin能够在比Hive/SparkSQL在更弱的硬件配置下获得更好的查询性能。  目前，有越来越多的国内外公司将Kylin作为大数据生产环境中的重要组件，如ebay、银联、百度、中国移动等
 Apache Kylin是一个开源的分布式分析引擎，提供Hadoop之上的SQL查询接口及多维分析（OLAP）能力以支持超大规模数据，最初由eBay Inc. 开发并贡献至开源社区，并于2015年11月正式毕业成为Apache顶级项目。
@@ -56,4 +65,4 @@ prada 每件衣服有RFID，可以精确跟踪每个用户试衣时间
 塔基特百货通过分析用户购买确定是否怀孕
 
   
-  
+  Apache Hive is a data warehouse infrastructure built on top of Hadoop. It allows for querying data stored on HDFS for analysis via HQL, an SQL-like language that gets translated to MapReduce jobs. Despite providing SQL functionality, Hive does not provide interactive querying yet - it only runs batch processes on Hadoop.
