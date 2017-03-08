@@ -1,0 +1,569 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!-- saved from url=(0077)https://www.ibm.com/developerworks/cn/web/1103_zhaoct_recommstudy1/index.html -->
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh-CN" xml:lang="zh-CN" class="dj_webkit dj_chrome dj_contentbox"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<title>探索推荐引擎内部的秘密，第 1 部分: 推荐引擎初探</title>
+<link rel="schema.DC" href="http://purl.org/DC/elements/1.0/">
+<link rel="SHORTCUT ICON" href="https://www.ibm.com/favicon.ico">
+<meta name="DC.Rights" content="© Copyright IBM Corporation 2011">
+<meta name="Keywords" content="Recommender System, Information Discovery, Web 2.0, tttwaca">
+<meta name="DC.Date" scheme="iso8601" content="2011-03-16">
+<meta name="Source" content="v17 delivery:developerWorks">
+<meta name="Security" content="Public">
+<meta name="Abstract" content="随着 Web 技术的发展，使得内容的创建和分享变得越来越容易。每天都有大量的图片、博客、视频发布到网上。信息的极度爆炸使得人们找到他们需要的信息将变得越来越难。传统的搜索技术是一个相对简单的帮助人们找到信息的工具，也广泛的被人们所使用，但搜索引擎并不能完全满足用户对信息发现的需求，原因一是用户很难用恰当的关键词描述自己的需求，二是基于关键词的信息检索在很多情况下是不够的。而推荐引擎的出现，使用户获取信息的方式从简单的目标明确的数据的搜索转换到更高级更符合人们使用习惯的上下文信息更丰富的信息发现。">
+<meta name="Description" content="随着 Web 技术的发展，使得内容的创建和分享变得越来越容易。每天都有大量的图片、博客、视频发布到网上。信息的极度爆炸使得人们找到他们需要的信息将变得越来越难。传统的搜索技术是一个相对简单的帮助人们找到信息的工具，也广泛的被人们所使用，但搜索引擎并不能完全满足用户对信息发现的需求，原因一是用户很难用恰当的关键词描述自己的需求，二是基于关键词的信息检索在很多情况下是不够的。而推荐引擎的出现，使用户获取信息的方式从简单的目标明确的数据的搜索转换到更高级更符合人们使用习惯的上下文信息更丰富的信息发现。">
+<meta name="IBM.Effective" scheme="W3CDTF" content="2011-03-16">
+<meta name="Owner" content="developerWorks/China/IBM">
+<meta name="DC.Language" scheme="rfc1766" content="zh-CN">
+<meta name="IBM.SpecialPurpose" content="SP001">
+<meta name="IBM.Country" content="CN">
+<meta name="Robots" content="index,follow">
+<meta name="DC.Type" scheme="IBM_ContentClassTaxonomy" content="CT316">
+<meta name="DC.Subject" scheme="IBM_SubjectTaxonomy" content="TTA00">
+<meta name="dW.ContentArea" content="web">
+<meta name="dW.Topic" content="访问,应用集成,应用架构,信息架构,Java 技术,技巧">
+
+<meta scheme="IBM_WTMCategory" name="IBM.WTMCategory" content="SOFDCDEVCN">
+
+<link rel="canonical" href="http://www.ibm.com/developerworks/cn/web/1103_zhaoct_recommstudy1/index.html">
+<!-- HEADER_SCRIPTS_AND_CSS_INCLUDE -->
+<link href="./探索推荐引擎内部的秘密，第 1 部分_ 推荐引擎初探_files/www.css" rel="stylesheet" title="www" type="text/css">
+<link href="./探索推荐引擎内部的秘密，第 1 部分_ 推荐引擎初探_files/cnzh.css" rel="stylesheet" title="www" type="text/css">
+<!-- Masthead/footer -->
+<link href="./探索推荐引擎内部的秘密，第 1 部分_ 推荐引擎初探_files/dw-mfN2015-01.css" media="screen,projection" rel="stylesheet" title="www" type="text/css">
+<link href="./探索推荐引擎内部的秘密，第 1 部分_ 推荐引擎初探_files/dw-article-6.css" rel="stylesheet" title="www" type="text/css">
+<link href="./探索推荐引擎内部的秘密，第 1 部分_ 推荐引擎初探_files/dw-common-features.css" rel="stylesheet" title="www" type="text/css">
+<link href="./探索推荐引擎内部的秘密，第 1 部分_ 推荐引擎初探_files/dw-local-site-v17-N2014-05.css" media="screen,projection" rel="stylesheet" title="www" type="text/css">
+<!-- BEGIN: Use this section to set page specific variables for the Unica Page Tag -->
+<script type="text/javascript" async="" charset="utf-8" id="tealium_cormetrics2" src="./探索推荐引擎内部的秘密，第 1 部分_ 推荐引擎初探_files/eluminate.js.下载"></script><script type="text/javascript" async="" charset="utf-8" id="ebOneTagUrlId" src="./探索推荐引擎内部的秘密，第 1 部分_ 推荐引擎初探_files/ebOneTag.js.下载"></script><script type="text/javascript" async="" charset="utf-8" id="utag_19" src="./探索推荐引擎内部的秘密，第 1 部分_ 推荐引擎初探_files/hotjar-42920.js.下载"></script><script type="text/javascript" async="" charset="utf-8" id="utag_27" src="./探索推荐引擎内部的秘密，第 1 部分_ 推荐引擎初探_files/up_loader.1.1.0.js.下载"></script><script type="text/javascript" async="" charset="utf-8" id="utag_53" src="./探索推荐引擎内部的秘密，第 1 部分_ 推荐引擎初探_files/js"></script><script type="text/javascript" async="" charset="utf-8" id="dle_api_07b08ee184bb4ab167bdd2096e1810b265bac20668bd0ae4934f48b278be8190" src="./探索推荐引擎内部的秘密，第 1 部分_ 推荐引擎初探_files/p_07b08ee184bb4ab167bdd2096e1810b265bac20668bd0ae4934f48b278be8190.js.下载"></script><script src="./探索推荐引擎内部的秘密，第 1 部分_ 推荐引擎初探_files/utag.js.下载" type="text/javascript" async=""></script><script type="text/javascript" async="" defer="" src="./探索推荐引擎内部的秘密，第 1 部分_ 推荐引擎初探_files/piwik.js.下载"></script><script language="JavaScript">var NTPT_PGEXTRA="ibmSkillLevel=4&ibmCmaId=632404&ibmContentAreas=web";</script>
+<!--END -->
+<script type="text/javascript" src="./探索推荐引擎内部的秘密，第 1 部分_ 推荐引擎初探_files/www.js.下载">//</script><script type="text/javascript" src="./探索推荐引擎内部的秘密，第 1 部分_ 推荐引擎初探_files/eluminate.js(1).下载"></script>
+<script type="text/javascript" src="./探索推荐引擎内部的秘密，第 1 部分_ 推荐引擎初探_files/dw-www-v2.js.下载">//</script><script type="text/javascript" charset="utf-8" src="./探索推荐引擎内部的秘密，第 1 部分_ 推荐引擎初探_files/Dialog.xd.js.下载"></script>   
+<script type="text/javascript">
+//  ibmweb.config.set({ sbs: { enabled: false }});
+</script>
+<script type="text/javascript">dojo.addOnLoad(function(){var dw_cclc="hk-en";var dw_lang="zh_CN";var dw_source="dwchina";var dw_register="注册免费的 Bluemix 试用版";var dw_connect="连接 Bluemix 开发者";var dw_vp="在 IBM Bluemix 云平台上开发并部署您的下一个应用。";var dw_cta="开始您的试用";var dw_tile_alt="在 IBM Bluemix 云平台上开发并部署您的下一个应用。现在就开始免费试用";var dw_campaign="bluemix";var dw_content=window.location.pathname.split("/")[window.location.pathname.split("/").length-2];if(dw_content=="library"){dw_content=window.location.pathname.split("/")[window.location.pathname.split("/").length-1];dw_content=window.location.pathname.split("/")[window.location.pathname.split("/").length-3]+"-"+dw_content.substring(0,dw_content.indexOf(".html"))}var bluDevComURL="https://developer.ibm.com/bluemix/";var bluLink="https://www.bluemix.net/";var lnkID;var lnkIDd;var lnkIDt;var bLinkEnd;var bLinkTemp;var idTrkr=[];var idCnt;var artTop=dojo.query("div.ibm-col-1-1")[0];var artChildren=dojo.query(artTop).children();var edgy=false;if(dojo.hasClass(artChildren[0],"ibm-inset"))edgy=true;if((artChildren[0].nodeName=="H2")&&(dojo.hasClass(artChildren[1],"ibm-inset")))edgy=true;if(dojo.hasClass(artChildren[0],"codesection"))edgy=true;if((artChildren[0].nodeName=="H5")&&(dojo.hasClass(artChildren[1],"codesection")))edgy=true;if((artChildren[0].nodeName=="H5")&&(artChildren[1].width>=701))edgy=true;if(artChildren[1].width>=701)edgy=true;if(dojo.hasClass(artChildren[0],"ibm-data-table"))edgy=true;if((artChildren[0].nodeName=="H5")&&(dojo.hasClass(artChildren[1],"ibm-data-table")))edgy=true;if(!(edgy)){var sBarAB='<div class="dw-article-sidebar dw-bluemix" id="dwc-exp-a">'+'<img src="//dw1.s81c.com/developerworks/i/bluemix-graphic.png" height="64" width="64" alt=""/>'+'<p>'+dw_vp+'</p>'+'<p class="ibm-button-link-alternate dw-button-green">'+'<a id="tutc-sbar-bmix-home-btn-ABa" href="'+bluLink+'" class="dw-button-large">'+dw_cta+'</a></p></div>';dojo.place(sBarAB,artTop,"first")}var omitList=["#","/catalog","/doc","/solutions"];dojo.forEach(dojo.query("#ibm-content-main a"),function(item,index){var bLink=dojo.attr(item,"href");if(bLink&&bLink.indexOf("/marketplace/cloud/developerworks/")>-1)bLink=bLink.replace("/developerworks/","/developer-program/");if(bLink&&bLink.indexOf("/marketplace/")>-1&&bLink.indexOf("/developer-program")>-1){bLink="//www.ibm.com/"+dw_cclc+"/marketplace/developer-program"}if(bLink&&(bLink.indexOf("//bluemix.net")>-1))bLink=bLink.replace("//bluemix.net","//www.bluemix.net");if(bLink&&(bLink.indexOf("//ace.ng.bluemix.net")>-1))bLink=bLink.replace("//ace.ng.bluemix.net","//www.bluemix.net");if(bLink&&(bLink.indexOf("//console.ng.bluemix.net")>-1))bLink=bLink.replace("//console.ng.bluemix.net","//www.bluemix.net");if(bLink&&((bLink.indexOf("/marketplace/developer-program")>-1)||(bLink.indexOf("developer.ibm.com/sso/bmregistration")>-1)||(bLink.indexOf("//www.bluemix.net")>-1)||(bLink.indexOf("//hub.jazz.net")>-1)||(bLink.indexOf("//developer.ibm.com/open")>-1))){var omitIt=false;for(var i=omitList.length-1;i>=0;--i){if(bLink.indexOf(omitList[i])!=-1){omitIt=true;break}}if(!(omitIt)){var linkClass=dojo.attr(item,"class");var dw_medium="article";if((dojo.attr(item,"id")!=null)&&(dojo.attr(item,"id").indexOf("-sbar-")>-1))dw_medium="sidebar";if((dojo.attr(item,"id")!=null)&&(dojo.attr(item,"id").indexOf("-vpromo-")>-1))dw_medium="video-promotion";if(dojo.query(item).parents(".dw-article-ps-sidebar").length!=0)dw_medium="sidebar";if(dojo.query(item).children("img").length!=0)dw_medium="ad";if(dojo.query(item).parents("ul.ibm-portrait-module-list").length!=0)dw_medium="tile";bLinkEnd="";bLink=bLink.split("?");if((bLink[1])&&(bLink[1].indexOf("repository=")!=-1)){var deployBtn=true;bLink[0]=bLink[0]+"?"+bLink[1];bLink[1]=null}if((bLink[1])&&(bLink[1].indexOf("/")!=-1))bLinkEnd=bLink[1].substring(bLink[1].indexOf("/"));bLink=bLink[0];if(bLink.indexOf("//developer.ibm.com/open")==-1){if(bLink.indexOf("//hub.jazz.net")>-1){if(!(deployBtn)&&((bLink.indexOf("//hub.jazz.net/git")>-1)||(bLink.indexOf("//hub.jazz.net/project")>-1))){bLink=bLink+"?utm_source="+dw_source+"&utm_medium="+dw_medium+"&utm_content="+dw_content+"&utm_campaign="+dw_campaign}else{if(deployBtn){bLink=bLink+"&cm_mmc="+dw_source+"-_-"+dw_campaign+"-_-"+dw_content+"-_-"+dw_medium}else{bLink=bLink+"?utm_source="+dw_source+"&utm_campaign="+dw_campaign+"&utm_content="+dw_content+"&utm_medium="+dw_medium}}}else{if(bLink.indexOf("/#/")==-1){if(bLink.substring(bLink.length-7)=="/docs/#"){bLink=bLink.replace("/docs/#","/docs/"+"?cm_mmc="+dw_source+"-_-"+dw_campaign+"-_-"+dw_content+"-_-"+dw_medium)}else if(bLink.substring(bLink.length-5)=="/docs"){bLink=bLink.replace("/docs","/docs/"+"?cm_mmc="+dw_source+"-_-"+dw_campaign+"-_-"+dw_content+"-_-"+dw_medium)}else if(bLink.indexOf("/marketplace/developer-program")!=-1){bLink=bLink+"?cm_sp="+dw_source+"-premium"+"-_-"+dw_content+"-_-"+dw_medium;}else{bLink=bLink+"?cm_mmc="+dw_source+"-_-"+dw_campaign+"-_-"+dw_content+"-_-"+dw_medium}}else{bLink=bLink.substring(0,bLink.indexOf("#"))+"?cm_mmc="+dw_source+"-_-"+dw_campaign+"-_-"+dw_content+"-_-"+dw_medium+bLink.substring(bLink.indexOf("#")-1)}}if(bLinkEnd)bLink=bLink+bLinkEnd;if(linkClass.indexOf("bluemix-home")==-1){if((bLink.indexOf("#")==-1)&&(bLink.indexOf("/solutions")==-1)&&(bLink.indexOf("/catalog")==-1)&&((bLink.indexOf("developer.ibm.com/sso/bmregistration")!=-1)||(bLink.indexOf("//www.bluemix.net/")!=-1))){if(bLink.indexOf("//www.bluemix.net/")!=-1)bLink=bLink.replace("//www.bluemix.net/","//developer.ibm.com/sso/bmregistration");if(bLink.indexOf("http://")==0)bLink=bLink.replace("http://","https://");if(bLink.indexOf("//")==0)bLink=bLink.replace("//","https://");if(bLink.indexOf("?cm_mmc=")!=-1)bLink=bLink.replace("?cm_mmc=","?lang="+dw_lang+"&ca=")}if((bLink.indexOf("#")==-1)&&(bLink.indexOf("/solutions")==-1)&&(bLink.indexOf("//www.bluemix.net?")!=-1)){bLink=bLink.replace("//www.bluemix.net","//developer.ibm.com/sso/bmregistration");if(bLink.indexOf("http://")==0)bLink=bLink.replace("http://","https://");if(bLink.indexOf("//")==0)bLink=bLink.replace("//","https://");if(bLink.indexOf("?cm_mmc=")!=-1)bLink=bLink.replace("?cm_mmc=","?lang="+dw_lang+"&ca=")}}else{if(bLink.indexOf("?")!=-1){bLink=bLink.split("?")[0]}bLink=bLink+"?cm_sp="+dw_source+"-"+dw_campaign+"-_-"+dw_content+"-_-"+dw_medium}if((bLink.indexOf("#")!=-1)&&(bLink.indexOf("solutions")!=-1)){bLinkTemp=bLink.substring(0,bLink.indexOf("?"));bLink=bLink.substring(bLink.indexOf("/#/")+3,bLink.length);bLink=bLinkTemp+bLink;bLinkTemp=bLink.substring(0,bLink.indexOf("solution="));bLink=bLink.substring(bLink.indexOf("/solution=")+10,bLink.length);bLink=bLinkTemp+bLink;bLink=bLink+"?cm_mmc="+dw_source+"-_-"+dw_campaign+"-_-"+dw_content+"-_-"+dw_medium}if((bLink.indexOf("#")!=-1)&&(bLink.indexOf("store")!=-1)){if(bLink.indexOf("&cloudOEPaneId=store")!=-1){bLinkTemp=bLink.split("&cloudOEPaneId=store");bLink=bLinkTemp[0]}bLinkTemp=bLink.substring(bLink.indexOf("serviceOfferingGuid=")+20,bLink.length);bLink=bLink.substring(0,bLink.indexOf(".net/")+5)+"catalog/"+bLinkTemp+"?cm_mmc="+dw_source+"-_-"+dw_campaign+"-_-"+dw_content+"-_-"+dw_medium}}dojo.attr(item,"href",bLink);}}});});</script><!-- LEADSPACE_STYLES -->
+
+
+<!-- 
+<PageMap>
+	<DataObject type="document">
+		<Attribute name="topic">访问,应用集成,应用架构,信息架构,Java 技术,技巧</Attribute>
+		<Attribute name="topicId">602,264,707,708,9,62</Attribute>
+		<Attribute name="contentArea">web</Attribute>
+		<Attribute name="contentAreaId">5</Attribute>
+		<Attribute name="abstract">随着 Web 技术的发展，使得内容的创建和分享变得越来越容易。每天都有大量的图片、博客、视频发布到网上。信息的极度爆炸使得人们找到他们需要的信息将变得越来越难。传统的搜索技术是一个相对简单的帮助人们找到信息的工具，也广泛的被人们所使用，但搜索引擎并不能完全满足用户对信息发现的需求，原因一是用户很难用恰当的关键词描述自己的需求，二是基于关键词的信息检索在很多情况下是不够的。而推荐引擎的出现，使用户获取信息的方式从简单的目标明确的数据的搜索转换到更高级更符合人们使用习惯的上下文信息更丰富的信息发现。</Attribute>
+		<Attribute name="pub.date">2011-03-16</Attribute>
+	</DataObject>
+</PageMap>
+-->        
+
+<script type="text/javascript" src="./探索推荐引擎内部的秘密，第 1 部分_ 推荐引擎初探_files/cnzh-utf8.js.下载" id="dojoIoScript1" charset="utf-8"></script><script type="text/javascript" src="./探索推荐引擎内部的秘密，第 1 部分_ 推荐引擎初探_files/saved_resource" id="dojoIoScript2" charset="utf-8"></script><script type="text/javascript" src="./探索推荐引擎内部的秘密，第 1 部分_ 推荐引擎初探_files/profiling.js.下载" id="dojoIoScript3" charset="utf-8"></script><script type="text/javascript" charset="utf-8" src="./探索推荐引擎内部的秘密，第 1 部分_ 推荐引擎初探_files/move.xd.js.下载"></script><script type="text/javascript" charset="utf-8" src="./探索推荐引擎内部的秘密，第 1 部分_ 推荐引擎初探_files/TimedMoveable.xd.js.下载"></script><script type="text/javascript" charset="utf-8" src="./探索推荐引擎内部的秘密，第 1 部分_ 推荐引擎初探_files/_CssStateMixin.xd.js.下载"></script><script type="text/javascript" charset="utf-8" src="./探索推荐引擎内部的秘密，第 1 部分_ 推荐引擎初探_files/_FormMixin.xd.js.下载"></script><script type="text/javascript" charset="utf-8" src="./探索推荐引擎内部的秘密，第 1 部分_ 推荐引擎初探_files/_DialogMixin.xd.js.下载"></script><script type="text/javascript" charset="utf-8" src="./探索推荐引擎内部的秘密，第 1 部分_ 推荐引擎初探_files/DialogUnderlay.xd.js.下载"></script><script type="text/javascript" charset="utf-8" src="./探索推荐引擎内部的秘密，第 1 部分_ 推荐引擎初探_files/ContentPane.xd.js.下载"></script><script type="text/javascript" charset="utf-8" src="./探索推荐引擎内部的秘密，第 1 部分_ 推荐引擎初探_files/common.xd.js.下载"></script><script type="text/javascript" charset="utf-8" src="./探索推荐引擎内部的秘密，第 1 部分_ 推荐引擎初探_files/TooltipDialog.xd.js.下载"></script><script type="text/javascript" src="./探索推荐引擎内部的秘密，第 1 部分_ 推荐引擎初探_files/blackwhite_lists.json" id="dojoIoScript4" charset="utf-8"></script><script type="text/javascript" charset="utf-8" src="./探索推荐引擎内部的秘密，第 1 部分_ 推荐引擎初探_files/Moveable.xd.js.下载"></script><script type="text/javascript" charset="utf-8" src="./探索推荐引擎内部的秘密，第 1 部分_ 推荐引擎初探_files/Mover.xd.js.下载"></script><script type="text/javascript" charset="utf-8" src="./探索推荐引擎内部的秘密，第 1 部分_ 推荐引擎初探_files/_ContentPaneResizeMixin.xd.js.下载"></script><script type="text/javascript" charset="utf-8" src="./探索推荐引擎内部的秘密，第 1 部分_ 推荐引擎初探_files/html.xd.js.下载"></script><script type="text/javascript" charset="utf-8" src="./探索推荐引擎内部的秘密，第 1 部分_ 推荐引擎初探_files/loading.xd.js.下载"></script><script type="text/javascript" charset="utf-8" src="./探索推荐引擎内部的秘密，第 1 部分_ 推荐引擎初探_files/common.xd.js(1).下载"></script><script type="text/javascript" charset="utf-8" src="./探索推荐引擎内部的秘密，第 1 部分_ 推荐引擎初探_files/autoscroll.xd.js.下载"></script><script type="text/javascript" src="./探索推荐引擎内部的秘密，第 1 部分_ 推荐引擎初探_files/atrk.js.下载" id="dojoIoScript5" charset="utf-8"></script><script type="text/javascript" charset="utf-8" src="./探索推荐引擎内部的秘密，第 1 部分_ 推荐引擎初探_files/_LayoutWidget.xd.js.下载"></script><script type="text/javascript" async="" charset="utf-8" id="utag_ibm.web_53" src="./探索推荐引擎内部的秘密，第 1 部分_ 推荐引擎初探_files/utag.53.js.下载"></script><script type="text/javascript" async="" charset="utf-8" id="utag_ibm.web_44" src="./探索推荐引擎内部的秘密，第 1 部分_ 推荐引擎初探_files/utag.44.js.下载"></script><script type="text/javascript" async="" charset="utf-8" id="utag_ibm.web_45" src="./探索推荐引擎内部的秘密，第 1 部分_ 推荐引擎初探_files/utag.45.js.下载"></script><script type="text/javascript" async="" charset="utf-8" id="tiqapp" src="./探索推荐引擎内部的秘密，第 1 部分_ 推荐引擎初探_files/utag.v.js.下载"></script><script type="text/javascript" async="" charset="utf-8" id="utag_ibm.web_2" src="./探索推荐引擎内部的秘密，第 1 部分_ 推荐引擎初探_files/utag.2.js.下载"></script><script type="text/javascript" async="" charset="utf-8" id="utag_ibm.web_27" src="./探索推荐引擎内部的秘密，第 1 部分_ 推荐引擎初探_files/utag.27.js.下载"></script><script type="text/javascript" async="" charset="utf-8" id="utag_ibm.web_19" src="./探索推荐引擎内部的秘密，第 1 部分_ 推荐引擎初探_files/utag.19.js.下载"></script><script type="text/javascript" async="" charset="utf-8" id="utag_ibm.web_52" src="./探索推荐引擎内部的秘密，第 1 部分_ 推荐引擎初探_files/utag.52.js.下载"></script><script language="javascript" type="text/javascript" src="./探索推荐引擎内部的秘密，第 1 部分_ 推荐引擎初探_files/50200000.js.下载"></script><script language="javascript" type="text/javascript" src="./探索推荐引擎内部的秘密，第 1 部分_ 推荐引擎初探_files/rules_50200000.js.下载"></script><script language="javascript" type="text/javascript" src="./探索推荐引擎内部的秘密，第 1 部分_ 推荐引擎初探_files/dispatcher-v3.js.下载"></script><script src="./探索推荐引擎内部的秘密，第 1 部分_ 推荐引擎初探_files/yahoo-min.js.下载" type="text/javascript"></script><script src="./探索推荐引擎内部的秘密，第 1 部分_ 推荐引擎初探_files/cp-v3.js.下载" type="text/javascript"></script><script src="./探索推荐引擎内部的秘密，第 1 部分_ 推荐引擎初探_files/json-min.js.下载" type="text/javascript"></script><script type="text/javascript" async="" charset="utf-8" id="tealium_setTTDid" src="./探索推荐引擎内部的秘密，第 1 部分_ 推荐引擎初探_files/i.js.下载"></script><script type="text/javascript" async="" charset="utf-8" id="tealium_setTTDid" src="./探索推荐引擎内部的秘密，第 1 部分_ 推荐引擎初探_files/i.js.下载"></script><script type="text/javascript" async="" charset="utf-8" id="tealium_visitor_service_45main" src="./探索推荐引擎内部的秘密，第 1 部分_ 推荐引擎初探_files/015a602957ec001d0bfcc83af4680506c0075064006c4"></script><script async="" src="./探索推荐引擎内部的秘密，第 1 部分_ 推荐引擎初探_files/modules-05ea6e00ffc1020d4cf8d62885964e4c.js.下载"></script><style type="text/css">iframe#_hjRemoteVarsFrame {display: none !important; width: 1px !important; height: 1px !important; opacity: 0 !important; pointer-events: none !important;}</style><script type="text/javascript" async="" charset="utf-8" id="tealium_visitor_service_45main" src="./探索推荐引擎内部的秘密，第 1 部分_ 推荐引擎初探_files/015a602957ec001d0bfcc83af4680506c0075064006c4(1)"></script></head>
+<body id="ibm-com" class="v17" aria-busy="false">
+	<div id="ibm-top" class="ibm-landing-page ibm-no-scroll"><img src="./探索推荐引擎内部的秘密，第 1 部分_ 推荐引擎初探_files/ibm_logo_print.png" width="43" height="15" id="ibm-print-masthead" alt="IBM Print">
+
+<!-- MASTHEAD_BEGIN -->		
+<div id="ibm-masthead" role="banner">
+
+    <!-- TOP ROW -->    
+	<div id="dw-masthead-top-row">
+		<ul id="ibm-mast-options-dw" role="toolbar" aria-label="Masthead navigation">
+			<li id="dw-mast-top-4" role="presentation">
+				<a href="http://www.ibm.com/developerworks/cn/" tabindex="0"><img src="./探索推荐引擎内部的秘密，第 1 部分_ 推荐引擎初探_files/dwn-dw-badge.png" width="43" height="22" alt="dW" aria-label="dW"></a>
+			</li>
+			<li id="dw-mast-top-0" role="presentation">
+				<div id="dw-mast-signin">
+					<a id="dw-mf-signin-link" class="" href="https://www.ibm.com/developerworks/dwwi/jsp/ssologin.jsp?d=https%3A%2F%2Fwww.ibm.com%2Fdeveloperworks%2Fcn%2Fweb%2F1103_zhaoct_recommstudy1%2Findex.html&amp;lang=zh_CN&amp;a=dwmav" title="" tabindex="2">登录</a>
+					<span class="dw-mf-signin-spacer">|</span>
+					<a id="dw-mf-reg-link" class="" href="https://www.ibm.com/developerworks/dwwi/jsp/ssoregister.jsp?d=https%3A%2F%2Fwww.ibm.com%2Fdeveloperworks%2Fcn%2Fweb%2F1103_zhaoct_recommstudy1%2Findex.html&amp;lang=zh_CN&amp;a=dwmav" title="" tabindex="3">注册</a>
+				</div>
+				<div id="dw-mast-auth-link" class="dw-mf-hide">
+					<a class="authenticated ibm-active" href="https://www.ibm.com/developerworks/cn/web/1103_zhaoct_recommstudy1/index.html#" role="button" tabindex="2"></a>
+					<ul id="dw-mast-auth-menu" class="dw-mf-hide">
+						<li class="dw-mast-auth-menu-title" aria-hidden="true">developerWorks 社区</li>
+						<li>
+							<span class="dw-mast-auth-menu-arrow" aria-hidden="true">›</span><a href="https://www.ibm.com/developerworks/community/profiles/html/myProfileView.do?lang=zh" tabindex="3">我的概要信息</a>
+						</li>
+						<li>
+							<span class="dw-mast-auth-menu-arrow" aria-hidden="true">›</span><a href="https://www.ibm.com/developerworks/community/groups/service/html/mycommunities?lang=zh" tabindex="4">我的社区</a>
+						</li>
+						<li>
+							<span class="dw-mast-auth-menu-arrow" aria-hidden="true">›</span><a href="https://www.ibm.com/developerworks/community/news/?lang=zh" tabindex="5">设置</a>
+						</li>
+						<li class="dw-mast-auth-menu-divider"><hr></li>
+						<li>
+							<span class="dw-mast-auth-menu-arrow" aria-hidden="true">›</span><a id="dw-mast-signout-link" href="https://www.ibm.com/developerworks/dwwi/jsp/ssologout.jsp?d=http%3A%2F%2Fwww.ibm.com%2Fdeveloperworks%2Fcn%2F&amp;a=dwmav" tabindex="6">退出</a>
+						</li>
+					</ul>				
+				</div>
+			</li>
+			<li id="dw-mast-top-1">
+				<div></div>
+			</li>
+			<li id="dw-mast-top-3" role="presentation">
+				<a href="http://www.ibm.com/cn/zh/" tabindex="1">IBM</a>
+			</li>
+		</ul>
+	</div>
+
+    <!-- BOTTOM ROW -->
+	<div id="ibm-universal-nav-dw" aria-label="Site map">
+		<ul id="ibm-unav-links-dw">
+			<li id="ibm-unav-home-dwlogo">
+				<a href="http://www.ibm.com/developerworks/cn/"><img src="./探索推荐引擎内部的秘密，第 1 部分_ 推荐引擎初探_files/dwn-dw-wordmark.png" width="225" height="28" alt="developerWorks®"></a>
+			</li>
+		</ul>
+		<ul id="ibm-menu-links-dw" class="ibm-menu-links-dw-cn" role="toolbar" aria-label="Site map">
+			<li id="dw-mast-nav-0" role="presentation"><a href="http://www.ibm.com/developerworks/cn/topics/" tabindex="0">技术主题</a></li>
+			<li id="dw-mast-nav-1" role="presentation"><a href="http://www.ibm.com/developerworks/cn/downloads/" tabindex="0">软件下载</a></li>
+			<li id="dw-mast-nav-2" role="presentation"><a href="http://www.ibm.com/developerworks/community/?lang=zh" tabindex="0">社区</a></li>
+			<li id="dw-mast-nav-3" role="presentation"><a href="https://www.ibm.com/developerworks/community/groups/service/html/communityview?communityUuid=6d7f9e5d-5f89-4767-a006-a81b8d186370&amp;lang=zh" tabindex="0">技术讲座</a></li>
+		</ul>
+		<form id="ibm-search-form" action="https://www.ibm.com/search/csass/search/" method="get" name="form1" aria-label="搜索 developerWorks" role="search">
+			<p>
+				<label for="q"><span class="ibm-access">搜索 developerWorks</span></label>
+				<input id="q" type="text" name="q" value="搜索 developerWorks" maxlength="100" class="dw-search-entry">
+				<input type="hidden" name="sn" value="dw">
+				<input type="hidden" name="lang" value="zh">
+				<input type="hidden" name="cc" value="CN">
+				<input type="hidden" name="en" value="utf">
+				<input type="hidden" name="hpp" value="20">
+				<input type="hidden" name="dws" value="cndw">
+				<input type="hidden" name="lo" value="zh">
+				<input id="ibm-search" class="ibm-btn-search" type="submit" value="提交">
+			</p>
+		</form>
+	</div>    
+	
+<div id="ibm-social-tools" role="navigation" aria-label="社交工具" class="" style="display: block;"><ul role="toolbar" aria-label="Social tool list"><li><a class="ibm-share-print" title="打印本页面" href="https://www.ibm.com/developerworks/cn/web/1103_zhaoct_recommstudy1/index.html#" rel="print" dojoattrid="1" role="button" tabindex="0">打印本页面</a></li><li><a class="ibm-share-email" title="用电子邮件发送本页面" href="https://www.ibm.com/developerworks/cn/web/1103_zhaoct_recommstudy1/index.html#" rel="email" dojoattrid="2" role="button" tabindex="-1">用电子邮件发送本页面</a></li><li></li><li></li><li><a class="ibm-share-weibo" tabindex="-1" role="button" dojoattrid="2" rel="新浪微博" title="新浪微博" href="http://service.weibo.com/share/share.php?title=%E6%8E%A2%E7%B4%A2%E6%8E%A8%E8%8D%90%E5%BC%95%E6%93%8E%E5%86%85%E9%83%A8%E7%9A%84%E7%A7%98%E5%AF%86%EF%BC%8C%E7%AC%AC%201%20%E9%83%A8%E5%88%86%3A%20%E6%8E%A8%E8%8D%90%E5%BC%95%E6%93%8E%E5%88%9D%E6%8E%A2&amp;url=https%3A%2F%2Fwww.ibm.com%2Fdeveloperworks%2Fcn%2Fweb%2F1103_zhaoct_recommstudy1%2Findex.html&amp;language=zh_cn" onclick="ibmweb.sbs.clickHandler(event,{url:&#39;http://service.weibo.com/share/share.php?title=%{TITLE}&amp;url=%{URL}&amp;language=zh_cn&#39;});">新浪微博</a></li><li><a class="ibm-share-renren" tabindex="-1" role="button" dojoattrid="3" rel="人人网" title="人人网" href="http://share.renren.com/share/buttonshare?title=%E6%8E%A2%E7%B4%A2%E6%8E%A8%E8%8D%90%E5%BC%95%E6%93%8E%E5%86%85%E9%83%A8%E7%9A%84%E7%A7%98%E5%AF%86%EF%BC%8C%E7%AC%AC%201%20%E9%83%A8%E5%88%86%3A%20%E6%8E%A8%E8%8D%90%E5%BC%95%E6%93%8E%E5%88%9D%E6%8E%A2&amp;link=https%3A%2F%2Fwww.ibm.com%2Fdeveloperworks%2Fcn%2Fweb%2F1103_zhaoct_recommstudy1%2Findex.html" onclick="ibmweb.sbs.clickHandler(event,{url:&#39;http://share.renren.com/share/buttonshare?title=%{TITLE}&amp;link=%{URL}&#39;});">人人网</a></li><li><a class="dwcn-tencent-link" tabindex="-1" role="button" dojoattrid="4" rel="腾讯微博" title="腾讯微博" href="http://v.t.qq.com/share/share.php?title=%E6%8E%A2%E7%B4%A2%E6%8E%A8%E8%8D%90%E5%BC%95%E6%93%8E%E5%86%85%E9%83%A8%E7%9A%84%E7%A7%98%E5%AF%86%EF%BC%8C%E7%AC%AC%201%20%E9%83%A8%E5%88%86%3A%20%E6%8E%A8%E8%8D%90%E5%BC%95%E6%93%8E%E5%88%9D%E6%8E%A2&amp;url=https%3A%2F%2Fwww.ibm.com%2Fdeveloperworks%2Fcn%2Fweb%2F1103_zhaoct_recommstudy1%2Findex.html" onclick="ibmweb.sbs.clickHandler(event,{url:&#39;http://v.t.qq.com/share/share.php?title=%{TITLE}&amp;url=%{URL}&#39;});">腾讯微博</a></li><li><a class="dwcn-sohu-link" tabindex="-1" role="button" dojoattrid="5" rel="搜狐微博" title="搜狐微博" href="http://t.sohu.com/third/post.jsp?title=%E6%8E%A2%E7%B4%A2%E6%8E%A8%E8%8D%90%E5%BC%95%E6%93%8E%E5%86%85%E9%83%A8%E7%9A%84%E7%A7%98%E5%AF%86%EF%BC%8C%E7%AC%AC%201%20%E9%83%A8%E5%88%86%3A%20%E6%8E%A8%E8%8D%90%E5%BC%95%E6%93%8E%E5%88%9D%E6%8E%A2%20&amp;link=https%3A%2F%2Fwww.ibm.com%2Fdeveloperworks%2Fcn%2Fweb%2F1103_zhaoct_recommstudy1%2Findex.html" onclick="ibmweb.sbs.clickHandler(event,{url:&#39;http://t.sohu.com/third/post.jsp?title=%{TITLE}%20&amp;link=%{URL}&#39;});">搜狐微博</a></li><li><a class="dwcn-netease-link" tabindex="-1" role="button" dojoattrid="6" rel="网易微博" title="网易微博" href="http://t.163.com/article/user/checkLogin.do?info=%E6%8E%A2%E7%B4%A2%E6%8E%A8%E8%8D%90%E5%BC%95%E6%93%8E%E5%86%85%E9%83%A8%E7%9A%84%E7%A7%98%E5%AF%86%EF%BC%8C%E7%AC%AC%201%20%E9%83%A8%E5%88%86%3A%20%E6%8E%A8%E8%8D%90%E5%BC%95%E6%93%8E%E5%88%9D%E6%8E%A2%20https%3A%2F%2Fwww.ibm.com%2Fdeveloperworks%2Fcn%2Fweb%2F1103_zhaoct_recommstudy1%2Findex.html" onclick="ibmweb.sbs.clickHandler(event,{url:&#39;http://t.163.com/article/user/checkLogin.do?info=%{TITLE}%20%{URL}&#39;});">网易微博</a></li><li><a class="ibm-share-digg" title="Digg" href="http://digg.com/submit?phase=2&amp;url=https%3A%2F%2Fwww.ibm.com%2Fdeveloperworks%2Fcn%2Fweb%2F1103_zhaoct_recommstudy1%2Findex.html&amp;title=%E6%8E%A2%E7%B4%A2%E6%8E%A8%E8%8D%90%E5%BC%95%E6%93%8E%E5%86%85%E9%83%A8%E7%9A%84%E7%A7%98%E5%AF%86%EF%BC%8C%E7%AC%AC%201%20%E9%83%A8%E5%88%86%3A%20%E6%8E%A8%E8%8D%90%E5%BC%95%E6%93%8E%E5%88%9D%E6%8E%A2" rel="digg" dojoattrid="7" role="button" tabindex="-1" onclick="ibmweb.sbs.clickHandler(event,{url:&#39;http://digg.com/submit?phase=2&amp;url=%{URL}&amp;title=%{TITLE}&#39;});">Digg</a></li><li><a class="ibm-share-facebook" title="Facebook" href="http://www.facebook.com/sharer.php?u=https%3A%2F%2Fwww.ibm.com%2Fdeveloperworks%2Fcn%2Fweb%2F1103_zhaoct_recommstudy1%2Findex.html&amp;t=%E6%8E%A2%E7%B4%A2%E6%8E%A8%E8%8D%90%E5%BC%95%E6%93%8E%E5%86%85%E9%83%A8%E7%9A%84%E7%A7%98%E5%AF%86%EF%BC%8C%E7%AC%AC%201%20%E9%83%A8%E5%88%86%3A%20%E6%8E%A8%E8%8D%90%E5%BC%95%E6%93%8E%E5%88%9D%E6%8E%A2" rel="facebook" dojoattrid="8" role="button" tabindex="-1" onclick="ibmweb.sbs.clickHandler(event,{url:&#39;http://www.facebook.com/sharer.php?u=%{URL}&amp;t=%{TITLE}&#39;});">Facebook</a></li><li><a class="ibm-share-twitter" title="Twitter" href="http://twitter.com/?status=https%3A%2F%2Fwww.ibm.com%2Fdeveloperworks%2Fcn%2Fweb%2F1103_zhaoct_recommstudy1%2Findex.html%20-%20%E6%8E%A2%E7%B4%A2%E6%8E%A8%E8%8D%90%E5%BC%95%E6%93%8E%E5%86%85%E9%83%A8%E7%9A%84%E7%A7%98%E5%AF%86%EF%BC%8C%E7%AC%AC%201%20%E9%83%A8%E5%88%86%3A%20%E6%8E%A8%E8%8D%90%E5%BC%95%E6%93%8E%E5%88%9D%E6%8E%A2" rel="twitter" dojoattrid="9" role="button" tabindex="-1" onclick="ibmweb.sbs.clickHandler(event,{url:&#39;http://twitter.com/?status=%{URL}%20-%20%{TITLE}&#39;});">Twitter</a></li><li><a class="ibm-share-delicious" title="Delicious" href="http://delicious.com/post?url=https%3A%2F%2Fwww.ibm.com%2Fdeveloperworks%2Fcn%2Fweb%2F1103_zhaoct_recommstudy1%2Findex.html&amp;title=%E6%8E%A2%E7%B4%A2%E6%8E%A8%E8%8D%90%E5%BC%95%E6%93%8E%E5%86%85%E9%83%A8%E7%9A%84%E7%A7%98%E5%AF%86%EF%BC%8C%E7%AC%AC%201%20%E9%83%A8%E5%88%86%3A%20%E6%8E%A8%E8%8D%90%E5%BC%95%E6%93%8E%E5%88%9D%E6%8E%A2" rel="delicious" dojoattrid="10" role="button" tabindex="-1" onclick="ibmweb.sbs.clickHandler(event,{url:&#39;http://delicious.com/post?url=%{URL}&amp;title=%{TITLE}&#39;});">Delicious</a></li><li><a class="ibm-share-linkedin" title="Linked In" href="http://www.linkedin.com/shareArticle?mini=true&amp;url=https%3A%2F%2Fwww.ibm.com%2Fdeveloperworks%2Fcn%2Fweb%2F1103_zhaoct_recommstudy1%2Findex.html&amp;title=%E6%8E%A2%E7%B4%A2%E6%8E%A8%E8%8D%90%E5%BC%95%E6%93%8E%E5%86%85%E9%83%A8%E7%9A%84%E7%A7%98%E5%AF%86%EF%BC%8C%E7%AC%AC%201%20%E9%83%A8%E5%88%86%3A%20%E6%8E%A8%E8%8D%90%E5%BC%95%E6%93%8E%E5%88%9D%E6%8E%A2" rel="linkedin" dojoattrid="11" role="button" tabindex="-1" onclick="ibmweb.sbs.clickHandler(event,{url:&#39;http://www.linkedin.com/shareArticle?mini=true&amp;url=%{URL}&amp;title=%{TITLE}&#39;});">Linked In</a></li></ul></div></div>
+<div id="fdiv" class="ibm-access"></div><!-- MASTHEAD_END -->
+	    
+<!-- LAYOUT -->
+<!-- LEADSPACE_BEGIN --> 
+<div id="ibm-access-cntr" role="main"><div id="ibm-leadspace-head">
+	<!-- LEADSPACE_BODY_BEGIN --> 
+	<div id="ibm-leadspace-body">
+		<!-- Navigation_Trail_BEGIN -->
+      <ul id="ibm-navigation-trail" role="directory" aria-label="Bread Crumbs"><li><a href="http://www.ibm.com/developerworks/cn/">developerWorks 中国</a></li><li><a href="http://www.ibm.com/developerworks/cn/topics/">技术主题</a></li><li><a href="http://www.ibm.com/developerworks/cn/web/">Web development</a></li><li><a href="http://www.ibm.com/developerworks/cn/views/web/libraryview.jsp">文档库</a></li></ul>
+		<!-- END_Navigation_Trail -->
+			<!-- Title_Subtitle -->
+			<h1>探索推荐引擎内部的秘密，第 1 部分: 推荐引擎初探
+		</h1>
+	</div>
+	<!-- LEADSPACE_BODY_END --> 
+	<!-- SUMMARY_BEGIN -->
+	<div id="dw-summary-area" class="dw-summary-columns">
+		<div class="ibm-col-6-4">
+		<p>随着 Web 技术的发展，使得内容的创建和分享变得越来越容易。每天都有大量的图片、博客、视频发布到网上。信息的极度爆炸使得人们找到他们需要的信息将变得越来越难。传统的搜索技术是一个相对简单的帮助人们找到信息的工具，也广泛的被人们所使用，但搜索引擎并不能完全满足用户对信息发现的需求，原因一是用户很难用恰当的关键词描述自己的需求，二是基于关键词的信息检索在很多情况下是不够的。而推荐引擎的出现，使用户获取信息的方式从简单的目标明确的数据的搜索转换到更高级更符合人们使用习惯的上下文信息更丰富的信息发现。</p>
+		<p class="ibm-no-print ibm-ind-link">
+
+			
+			<span id="nCmts"><span>20</span><img class="dw-cmts-arrow" alt="" src="./探索推荐引擎内部的秘密，第 1 部分_ 推荐引擎初探_files/dw-cmts-arrow.png" height="7" width="7"> <a href="https://www.ibm.com/developerworks/cn/web/1103_zhaoct_recommstudy1/index.html#icomments" class="dw-cmt-link">评论</a></span>
+		</p>
+		</div>
+		<div class="ibm-col-6-2 dw-toc-margin">
+			<p class="dw-summary-author"><a href="https://www.ibm.com/developerworks/cn/web/1103_zhaoct_recommstudy1/index.html#authorN1001D" class="ibm-popup-link" onclick="ibmweb.overlay.show(&#39;authorN1001D&#39;,this);return false;" role="button">赵 晨婷</a>, 软件工程师,  IBM</p>
+<div id="authorN1001D" class="ibm-common-overlay"><div class="ibm-head"><p><a href="https://www.ibm.com/developerworks/cn/web/1103_zhaoct_recommstudy1/index.html#close" class="ibm-common-overlay-close">关闭 [x]</a></p></div><div class="ibm-body"><div class="ibm-main"><div class="ibm-title"><!--this is where the h2 usually goes--></div><div class="ibm-container ibm-alternate"><div class="ibm-container-body">
+<p><!--.-->
+赵晨婷，现就职于 IBM 中国软件开发中心 Web 2.0 开发小组，对 SOA，J2EE，Web 2.0 应用的开发有丰富的经验。主要关注点在数据处理，数据搜索，推荐算法和推荐系统设计等。</p><br><br></div></div></div></div><div class="ibm-footer"><!----></div></div>
+<p class="dw-summary-author"><a href="https://www.ibm.com/developerworks/cn/web/1103_zhaoct_recommstudy1/index.html#authorN1002D" class="ibm-popup-link" onclick="ibmweb.overlay.show(&#39;authorN1002D&#39;,this);return false;" role="button">马 春娥</a>, 软件工程师,  IBM</p>
+<div id="authorN1002D" class="ibm-common-overlay"><div class="ibm-head"><p><a href="https://www.ibm.com/developerworks/cn/web/1103_zhaoct_recommstudy1/index.html#close" class="ibm-common-overlay-close">关闭 [x]</a></p></div><div class="ibm-body"><div class="ibm-main"><div class="ibm-title"><!--this is where the h2 usually goes--></div><div class="ibm-container ibm-alternate"><div class="ibm-container-body">
+<p><!--.-->
+马春娥，工作在 IBM CSDL Web 2.0 team，开发人员，曾参与 Project Zero 和 Lotus Mashup Center 的开发。主要的关注点在 Web 2.0 领域的数据的建模，数据的处理，数据的可视化，Web 2.0 领域的数据的语义，数据的关联等。
+</p><br><br></div></div></div></div><div class="ibm-footer"><!----></div></div>
+			<p class="dw-summary-date">2011 年 3 月 16 日</p>
+			
+
+
+			<div aria-hidden="true" class="ibm-container" id="dw-toc"><div class="ibm-container-body"><ul class="ibm-twisty"><li><a href="https://www.ibm.com/developerworks/cn/web/1103_zhaoct_recommstudy1/index.html#toggle" class="ibm-twisty-trigger ibm-twisty-trigger-closed"><img src="./探索推荐引擎内部的秘密，第 1 部分_ 推荐引擎初探_files/c.gif" alt="expand"></a><span class="ibm-twisty-head">内容</span><div class="ibm-twisty-body" style="display: none;"><ul style="font-size:0.8em" class="ibm-link-list">
+<li><a class="ibm-anchor-down-em-link" href="https://www.ibm.com/developerworks/cn/web/1103_zhaoct_recommstudy1/index.html#major1">信息发现</a></li>
+<li><a class="ibm-anchor-down-em-link" href="https://www.ibm.com/developerworks/cn/web/1103_zhaoct_recommstudy1/index.html#major2">推荐引擎</a></li>
+<li><a class="ibm-anchor-down-em-link" href="https://www.ibm.com/developerworks/cn/web/1103_zhaoct_recommstudy1/index.html#major3">推荐引擎的分类</a></li>
+<li><a class="ibm-anchor-down-em-link" href="https://www.ibm.com/developerworks/cn/web/1103_zhaoct_recommstudy1/index.html#major4">深入推荐机制</a></li>
+<li><a class="ibm-anchor-down-em-link" href="https://www.ibm.com/developerworks/cn/web/1103_zhaoct_recommstudy1/index.html#major5">推荐引擎的应用</a></li>
+<li><a class="ibm-anchor-down-em-link" href="https://www.ibm.com/developerworks/cn/web/1103_zhaoct_recommstudy1/index.html#major6">总结</a></li>
+<li><a class="ibm-anchor-down-em-link" href="https://www.ibm.com/developerworks/cn/web/1103_zhaoct_recommstudy1/index.html#major7">声明</a></li>
+<li><a class="ibm-anchor-down-em-link" href="https://www.ibm.com/developerworks/cn/web/1103_zhaoct_recommstudy1/index.html#resources">参考资料 </a></li>
+<li><a class="ibm-anchor-down-em-link" href="https://www.ibm.com/developerworks/cn/web/1103_zhaoct_recommstudy1/index.html#icomments">评论</a></li></ul></div></li></ul></div></div>
+		</div>
+	</div>
+	<!-- SUMMARY_END -->
+</div><div id="ibm-pcon">
+
+<!-- BEGIN_IBM-CONTENT -->
+<div id="ibm-content">
+
+<!-- BEGIN_IBM-CONTENT-BODY -->
+<div id="ibm-content-body">
+
+<!-- BEGIN_IBM-CONTENT-MAIN -->
+<div id="ibm-content-main">
+
+<!-- 1_1_COLUMN_BEGIN -->
+<div class="ibm-columns">
+<div class="ibm-col-1-1"><div class="dw-article-sidebar dw-bluemix" id="dwc-exp-a"><img src="./探索推荐引擎内部的秘密，第 1 部分_ 推荐引擎初探_files/bluemix-graphic.png" height="64" width="64" alt=""><p>在 IBM Bluemix 云平台上开发并部署您的下一个应用。</p><p class="ibm-button-link-alternate dw-button-green"><a id="tutc-sbar-bmix-home-btn-ABa" href="https://developer.ibm.com/sso/bmregistration?lang=zh_CN&amp;ca=dwchina-_-bluemix-_-1103_zhaoct_recommstudy1-_-sidebar" class="dw-button-large">开始您的试用</a></p></div>
+
+<p>“探索推荐引擎内部的秘密”系列将带领读者从浅入深的学习探索推荐引擎的机制，实现方法，其中还涉及一些基本的优化方法，例如聚类和分类的应用。同时在理论讲解的基础上，还会结合 Apache Mahout 介绍如何在大规模数据上实现各种推荐策略，进行策略优化，构建高效的推荐引擎的方法。本文作为这个系列的第一篇文章，将深入介绍推荐引擎的工作原理，和其中涉及的各种推荐机制，以及它们各自的优缺点和适用场景，帮助用户清楚的了解和快速构建适合自己的推荐引擎。</p><h2 id="major1">信息发现</h2><p>如今已经进入了一个数据爆炸的时代，随着 Web 2.0 的发展， Web 已经变成数据分享的平台，那么，如何让人们在海量的数据中想要找到他们需要的信息将变得越来越难。</p><p>在这样的情形下，搜索引擎（Google，Bing，百度等等）成为大家快速找到目标信息的最好途径。在用户对自己需求相对明确的时候，用搜索引擎很方便的通过关键字搜索很快的找到自己需要的信息。但搜索引擎并不能完全满足用户对信息发现的需求，那是因为在很多情况下，用户其实并不明确自己的需要，或者他们的需求很难用简单的关键字来表述。又或者他们需要更加符合他们个人口味和喜好的结果，因此出现了推荐系统，与搜索引擎对应，大家也习惯称它为推荐引擎。</p><p>随着推荐引擎的出现，用户获取信息的方式从简单的目标明确的数据的搜索转换到更高级更符合人们使用习惯的信息发现。</p><p>如今，随着推荐技术的不断发展，推荐引擎已经在电子商务 (E-commerce，例如 Amazon，当当网 ) 和一些基于 social 的社会化站点 ( 包括音乐，电影和图书分享，例如豆瓣，Mtime 等 ) 都取得很大的成功。这也进一步的说明了，Web2.0 环境下，在面对海量的数据，用户需要这种更加智能的，更加了解他们需求，口味和喜好的信息发现机制。</p><div class="ibm-alternate-rule"><hr></div><p class="ibm-ind-link ibm-back-to-top"><a href="https://www.ibm.com/developerworks/cn/web/1103_zhaoct_recommstudy1/index.html#ibm-pcon" class="ibm-anchor-up-link">回页首</a></p><h2 id="major2">推荐引擎</h2><p>前面介绍了推荐引擎对于现在的 Web2.0 站点的重要意义，这一章我们将讲讲推荐引擎到底是怎么工作的。推荐引擎利用特殊的信息过滤技术，将不同的物品或内容推荐给可能对它们感兴趣的用户。</p><h5 id="fig1">图 1. 推荐引擎工作原理图</h5><img alt="图 1. 推荐引擎工作原理图" src="./探索推荐引擎内部的秘密，第 1 部分_ 推荐引擎初探_files/image003.jpg" width="403"><p>图 1 给出了推荐引擎的工作原理图，这里先将推荐引擎看作黑盒，它接受的输入是推荐的数据源，一般情况下，推荐引擎所需要的数据源包括：</p><ul class="ibm-bullet-list"><li>
+要推荐物品或内容的元数据，例如关键字，基因描述等；</li><li>
+系统用户的基本信息，例如性别，年龄等</li><li>
+用户对物品或者信息的偏好，根据应用本身的不同，可能包括用户对物品的评分，用户查看物品的记录，用户的购买记录等。其实这些用户的偏好信息可以分为两类：</li></ul><ul class="ibm-bullet-list"><li>
+显式的用户反馈：这类是用户在网站上自然浏览或者使用网站以外，显式的提供反馈信息，例如用户对物品的评分，或者对物品的评论。</li><li>
+隐式的用户反馈：这类是用户在使用网站是产生的数据，隐式的反应了用户对物品的喜好，例如用户购买了某物品，用户查看了某物品的信息等等。</li></ul><p>显式的用户反馈能准确的反应用户对物品的真实喜好，但需要用户付出额外的代价，而隐式的用户行为，通过一些分析和处理，也能反映用户的喜好，只是数据不是很精确，有些行为的分析存在较大的噪音。但只要选择正确的行为特征，隐式的用户反馈也能得到很好的效果，只是行为特征的选择可能在不同的应用中有很大的不同，例如在电子商务的网站上，购买行为其实就是一个能很好表现用户喜好的隐式反馈。</p><p>推荐引擎根据不同的推荐机制可能用到数据源中的一部分，然后根据这些数据，分析出一定的规则或者直接对用户对其他物品的喜好进行预测计算。这样推荐引擎可以在用户进入的时候给他推荐他可能感兴趣的物品。</p><div class="ibm-alternate-rule"><hr></div><p class="ibm-ind-link ibm-back-to-top"><a href="https://www.ibm.com/developerworks/cn/web/1103_zhaoct_recommstudy1/index.html#ibm-pcon" class="ibm-anchor-up-link">回页首</a></p><h2 id="major3">推荐引擎的分类</h2><p>推荐引擎的分类可以根据很多指标，下面我们一一介绍一下：</p><ol type="1"><li>
+推荐引擎是不是为不同的用户推荐不同的数据
+			 
+<p>根据这个指标，推荐引擎可以分为基于大众行为的推荐引擎和个性化推荐引擎</p><ul class="ibm-bullet-list"><li>
+根据大众行为的推荐引擎，对每个用户都给出同样的推荐，这些推荐可以是静态的由系统管理员人工设定的，或者基于系统所有用户的反馈统计计算出的当下比较流行的物品。</li><li>
+个性化推荐引擎，对不同的用户，根据他们的口味和喜好给出更加精确的推荐，这时，系统需要了解需推荐内容和用户的特质，或者基于社会化网络，通过找到与当前用户相同喜好的用户，实现推荐。</li></ul><p>这是一个最基本的推荐引擎分类，其实大部分人们讨论的推荐引擎都是将个性化的推荐引擎，因为从根本上说，只有个性化的推荐引擎才是更加智能的信息发现过程。</p></li><li>
+根据推荐引擎的数据源
+			 
+<p>其实这里讲的是如何发现数据的相关性，因为大部分推荐引擎的工作原理还是基于物品或者用户的相似集进行推荐。那么参考图 1 给出的推荐系统原理图，根据不同的数据源发现数据相关性的方法可以分为以下几种：</p><ul class="ibm-bullet-list"><li>
+根据系统用户的基本信息发现用户的相关程度，这种被称为基于人口统计学的推荐（Demographic-based Recommendation）</li><li>
+根据推荐物品或内容的元数据，发现物品或者内容的相关性，这种被称为基于内容的推荐（Content-based Recommendation）</li><li>
+根据用户对物品或者信息的偏好，发现物品或者内容本身的相关性，或者是发现用户的相关性，这种被称为基于协同过滤的推荐（Collaborative Filtering-based Recommendation）。</li></ul></li><li>
+根据推荐模型的建立方式
+			 
+<p>可以想象在海量物品和用户的系统中，推荐引擎的计算量是相当大的，要实现实时的推荐务必需要建立一个推荐模型，关于推荐模型的建立方式可以分为以下几种：</p><ul class="ibm-bullet-list"><li>
+基于物品和用户本身的，这种推荐引擎将每个用户和每个物品都当作独立的实体，预测每个用户对于每个物品的喜好程度，这些信息往往是用一个二维矩阵描述的。由于用户感兴趣的物品远远小于总物品的数目，这样的模型导致大量的数据空置，即我们得到的二维矩阵往往是一个很大的稀疏矩阵。同时为了减小计算量，我们可以对物品和用户进行聚类， 然后记录和计算一类用户对一类物品的喜好程度，但这样的模型又会在推荐的准确性上有损失。</li><li>
+基于关联规则的推荐（Rule-based Recommendation）：关联规则的挖掘已经是数据挖掘中的一个经典的问题，主要是挖掘一些数据的依赖关系，典型的场景就是“购物篮问题”，通过关联规则的挖掘，我们可以找到哪些物品经常被同时购买，或者用户购买了一些物品后通常会购买哪些其他的物品，当我们挖掘出这些关联规则之后，我们可以基于这些规则给用户进行推荐。</li><li>
+基于模型的推荐（Model-based Recommendation）：这是一个典型的机器学习的问题，可以将已有的用户喜好信息作为训练样本，训练出一个预测用户喜好的模型，这样以后用户在进入系统，可以基于此模型计算推荐。这种方法的问题在于如何将用户实时或者近期的喜好信息反馈给训练好的模型，从而提高推荐的准确度。</li></ul></li></ol><p>其实在现在的推荐系统中，很少有只使用了一个推荐策略的推荐引擎，一般都是在不同的场景下使用不同的推荐策略从而达到最好的推荐效果，例如 Amazon 的推荐，它将基于用户本身历史购买数据的推荐，和基于用户当前浏览的物品的推荐，以及基于大众喜好的当下比较流行的物品都在不同的区域推荐给用户，让用户可以从全方位的推荐中找到自己真正感兴趣的物品。</p><div class="ibm-alternate-rule"><hr></div><p class="ibm-ind-link ibm-back-to-top"><a href="https://www.ibm.com/developerworks/cn/web/1103_zhaoct_recommstudy1/index.html#ibm-pcon" class="ibm-anchor-up-link">回页首</a></p><h2 id="major4">深入推荐机制</h2><p>这一章的篇幅，将详细介绍各个推荐机制的工作原理，它们的优缺点以及应用场景。</p><h3 id="minor4.1">基于人口统计学的推荐</h3><p>基于人口统计学的推荐机制（Demographic-based Recommendation）是一种最易于实现的推荐方法，它只是简单的根据系统用户的基本信息发现用户的相关程度，然后将相似用户喜爱的其他物品推荐给当前用户，图 2 给出了这种推荐的工作原理。</p><h5 id="fig2">图 2. 基于人口统计学的推荐机制的工作原理</h5><img alt="图 2. 基于人口统计学的推荐机制的工作原理" src="./探索推荐引擎内部的秘密，第 1 部分_ 推荐引擎初探_files/image005.jpg" width="351"><p>从图中可以很清楚的看到，首先，系统对每个用户都有一个用户 Profile 的建模，其中包括用户的基本信息，例如用户的年龄，性别等等；然后，系统会根据用户的 Profile 计算用户的相似度，可以看到用户 A 的 Profile 和用户 C 一样，那么系统会认为用户 A 和 C 是相似用户，在推荐引擎中，可以称他们是“邻居”；最后，基于“邻居”用户群的喜好推荐给当前用户一些物品，图中将用户 A 喜欢的物品 A 推荐给用户 C。</p><p>这种基于人口统计学的推荐机制的好处在于：</p><ol type="1"><li>
+因为不使用当前用户对物品的喜好历史数据，所以对于新用户来讲没有“冷启动（Cold Start）”的问题。</li><li>
+这个方法不依赖于物品本身的数据，所以这个方法在不同物品的领域都可以使用，它是领域独立的（domain-independent）。</li></ol><p>那么这个方法的缺点和问题是什么呢？这种基于用户的基本信息对用户进行分类的方法过于粗糙，尤其是对品味要求较高的领域，比如图书，电影和音乐等领域，无法得到很好的推荐效果。可能在一些电子商务的网站中，这个方法可以给出一些简单的推荐。另外一个局限是，这个方法可能涉及到一些与信息发现问题本身无关却比较敏感的信息，比如用户的年龄等，这些用户信息不是很好获取。</p><h3 id="minor4.2">基于内容的推荐</h3><p>基于内容的推荐是在推荐引擎出现之初应用最为广泛的推荐机制，它的核心思想是根据推荐物品或内容的元数据，发现物品或者内容的相关性，然后基于用户以往的喜好记录，推荐给用户相似的物品。图 3 给出了基于内容推荐的基本原理。</p><h5 id="fig3">图 3. 基于内容推荐机制的基本原理</h5><img alt="图 3. 基于内容推荐机制的基本原理" src="./探索推荐引擎内部的秘密，第 1 部分_ 推荐引擎初探_files/image007.jpg" width="357"><p>图 3 中给出了基于内容推荐的一个典型的例子，电影推荐系统，首先我们需要对电影的元数据有一个建模，这里只简单的描述了一下电影的类型；然后通过电影的元数据发现电影间的相似度，因为类型都是“爱情，浪漫”电影 A 和 C 被认为是相似的电影（当然，只根据类型是不够的，要得到更好的推荐，我们还可以考虑电影的导演，演员等等）；最后实现推荐，对于用户 A，他喜欢看电影 A，那么系统就可以给他推荐类似的电影 C。</p><p>这种基于内容的推荐机制的好处在于它能很好的建模用户的口味，能提供更加精确的推荐。但它也存在以下几个问题：</p><ol type="1"><li>
+需要对物品进行分析和建模，推荐的质量依赖于对物品模型的完整和全面程度。在现在的应用中我们可以观察到关键词和标签（Tag）被认为是描述物品元数据的一种简单有效的方法。</li><li>
+物品相似度的分析仅仅依赖于物品本身的特征，这里没有考虑人对物品的态度。</li><li>
+因为需要基于用户以往的喜好历史做出推荐，所以对于新用户有“冷启动”的问题。</li></ol><p>虽然这个方法有很多不足和问题，但他还是成功的应用在一些电影，音乐，图书的社交站点，有些站点还请专业的人员对物品进行基因编码，比如潘多拉，在一份报告中说道，在潘多拉的推荐引擎中，每首歌有超过 100 个元数据特征，包括歌曲的风格，年份，演唱者等等。</p><h3 id="minor4.3">基于协同过滤的推荐</h3><p>随着 Web2.0 的发展，Web 站点更加提倡用户参与和用户贡献，因此基于协同过滤的推荐机制因运而生。它的原理很简单，就是根据用户对物品或者信息的偏好，发现物品或者内容本身的相关性，或者是发现用户的相关性，然后再基于这些关联性进行推荐。基于协同过滤的推荐可以分为三个子类：基于用户的推荐（User-based Recommendation），基于项目的推荐（Item-based Recommendation）和基于模型的推荐（Model-based Recommendation）。下面我们一个一个详细的介绍着三种协同过滤的推荐机制。</p><p><strong>基于用户的协同过滤推荐</strong></p><p>基于用户的协同过滤推荐的基本原理是，根据所有用户对物品或者信息的偏好，发现与当前用户口味和偏好相似的“邻居”用户群，在一般的应用中是采用计算“K- 邻居”的算法；然后，基于这 K 个邻居的历史偏好信息，为当前用户进行推荐。下图 4 给出了原理图。</p><h5 id="fig4">图 4. 基于用户的协同过滤推荐机制的基本原理</h5><img alt="图 4. 基于用户的协同过滤推荐机制的基本原理" src="./探索推荐引擎内部的秘密，第 1 部分_ 推荐引擎初探_files/image009.jpg" width="287"><p>上图示意出基于用户的协同过滤推荐机制的基本原理，假设用户 A 喜欢物品 A，物品 C，用户 B 喜欢物品 B，用户 C 喜欢物品 A ，物品 C 和物品 D；从这些用户的历史喜好信息中，我们可以发现用户 A 和用户 C 的口味和偏好是比较类似的，同时用户 C 还喜欢物品 D，那么我们可以推断用户 A 可能也喜欢物品 D，因此可以将物品 D 推荐给用户 A。</p><p>基于用户的协同过滤推荐机制和基于人口统计学的推荐机制都是计算用户的相似度，并基于“邻居”用户群计算推荐，但它们所不同的是如何计算用户的相似度，基于人口统计学的机制只考虑用户本身的特征，而基于用户的协同过滤机制可是在用户的历史偏好的数据上计算用户的相似度，它的基本假设是，喜欢类似物品的用户可能有相同或者相似的口味和偏好。</p><p><strong>基于项目的协同过滤推荐</strong></p><p>基于项目的协同过滤推荐的基本原理也是类似的，只是说它使用所有用户对物品或者信息的偏好，发现物品和物品之间的相似度，然后根据用户的历史偏好信息，将类似的物品推荐给用户，图 5 很好的诠释了它的基本原理。</p><p>假设用户 A 喜欢物品 A 和物品 C，用户 B 喜欢物品 A，物品 B 和物品 C，用户 C 喜欢物品 A，从这些用户的历史喜好可以分析出物品 A 和物品 C 时比较类似的，喜欢物品 A 的人都喜欢物品 C，基于这个数据可以推断用户 C 很有可能也喜欢物品 C，所以系统会将物品 C 推荐给用户 C。</p><p>与上面讲的类似，基于项目的协同过滤推荐和基于内容的推荐其实都是基于物品相似度预测推荐，只是相似度计算的方法不一样，前者是从用户历史的偏好推断，而后者是基于物品本身的属性特征信息。</p><h5 id="fig5">图 5. 基于项目的协同过滤推荐机制的基本原理</h5><img alt="图 5. 基于项目的协同过滤推荐机制的基本原理" src="./探索推荐引擎内部的秘密，第 1 部分_ 推荐引擎初探_files/image011.jpg" width="301"><p>同时协同过滤，在基于用户和基于项目两个策略中应该如何选择呢？其实基于项目的协同过滤推荐机制是 Amazon 在基于用户的机制上改良的一种策略，因为在大部分的 Web 站点中，物品的个数是远远小于用户的数量的，而且物品的个数和相似度相对比较稳定，同时基于项目的机制比基于用户的实时性更好一些。但也不是所有的场景都是这样的情况，可以设想一下在一些新闻推荐系统中，也许物品，也就是新闻的个数可能大于用户的个数，而且新闻的更新程度也有很快，所以它的形似度依然不稳定。所以，其实可以看出，推荐策略的选择其实和具体的应用场景有很大的关系。</p><p><strong>基于模型的协同过滤推荐</strong></p><p>基于模型的协同过滤推荐就是基于样本的用户喜好信息，训练一个推荐模型，然后根据实时的用户喜好的信息进行预测，计算推荐。</p><p>基于协同过滤的推荐机制是现今应用最为广泛的推荐机制，它有以下几个显著的优点：</p><ol type="1"><li>
+它不需要对物品或者用户进行严格的建模，而且不要求物品的描述是机器可理解的，所以这种方法也是领域无关的。</li><li>
+这种方法计算出来的推荐是开放的，可以共用他人的经验，很好的支持用户发现潜在的兴趣偏好</li></ol><p>而它也存在以下几个问题：</p><ol type="1"><li>
+方法的核心是基于历史数据，所以对新物品和新用户都有“冷启动”的问题。</li><li>
+推荐的效果依赖于用户历史偏好数据的多少和准确性。</li><li>
+在大部分的实现中，用户历史偏好是用稀疏矩阵进行存储的，而稀疏矩阵上的计算有些明显的问题，包括可能少部分人的错误偏好会对推荐的准确度有很大的影响等等。</li><li>
+对于一些特殊品味的用户不能给予很好的推荐。</li><li>
+由于以历史数据为基础，抓取和建模用户的偏好后，很难修改或者根据用户的使用演变，从而导致这个方法不够灵活。</li></ol><h3 id="minor4.4">混合的推荐机制</h3><p>在现行的 Web 站点上的推荐往往都不是单纯只采用了某一种推荐的机制和策略，他们往往是将多个方法混合在一起，从而达到更好的推荐效果。关于如何组合各个推荐机制，这里讲几种比较流行的组合方法。</p><ol type="1"><li>
+加权的混合（Weighted Hybridization）: 用线性公式（linear formula）将几种不同的推荐按照一定权重组合起来，具体权重的值需要在测试数据集上反复实验，从而达到最好的推荐效果。</li><li>
+切换的混合（Switching Hybridization）：前面也讲到，其实对于不同的情况（数据量，系统运行状况，用户和物品的数目等），推荐策略可能有很大的不同，那么切换的混合方式，就是允许在不同的情况下，选择最为合适的推荐机制计算推荐。</li><li>
+分区的混合（Mixed Hybridization）：采用多种推荐机制，并将不同的推荐结果分不同的区显示给用户。其实，Amazon，当当网等很多电子商务网站都是采用这样的方式，用户可以得到很全面的推荐，也更容易找到他们想要的东西。</li><li>
+分层的混合（Meta-Level Hybridization）: 采用多种推荐机制，并将一个推荐机制的结果作为另一个的输入，从而综合各个推荐机制的优缺点，得到更加准确的推荐。</li></ol><div class="ibm-alternate-rule"><hr></div><p class="ibm-ind-link ibm-back-to-top"><a href="https://www.ibm.com/developerworks/cn/web/1103_zhaoct_recommstudy1/index.html#ibm-pcon" class="ibm-anchor-up-link">回页首</a></p><h2 id="major5">推荐引擎的应用</h2><p>介绍完推荐引擎的基本原理，基本推荐机制，下面简要分析几个有代表性的推荐引擎的应用，这里选择两个领域：Amazon 作为电子商务的代表，豆瓣作为社交网络的代表。</p><p><strong>推荐在电子商务中的应用 – Amazon</strong></p><p>Amazon 作为推荐引擎的鼻祖，它已经将推荐的思想渗透在应用的各个角落。Amazon 推荐的核心是通过数据挖掘算法和比较用户的消费偏好于其他用户进行对比，借以预测用户可能感兴趣的商品。对应于上面介绍的各种推荐机制，Amazon 采用的是分区的混合的机制，并将不同的推荐结果分不同的区显示给用户，图 6 和图 7 展示了用户在 Amazon 上能得到的推荐。</p><h5 id="fig6">图 6. Amazon 的推荐机制 - 首页</h5><img alt="图 6. Amazon 的推荐机制 - 首页" src="./探索推荐引擎内部的秘密，第 1 部分_ 推荐引擎初探_files/image013.gif" width="511"><h5 id="fig7">图 7. Amazon 的推荐机制 - 浏览物品</h5><img alt="图 7. Amazon 的推荐机制 - 浏览物品" src="./探索推荐引擎内部的秘密，第 1 部分_ 推荐引擎初探_files/image015.gif" width="475"><p>Amazon 利用可以记录的所有用户在站点上的行为，根据不同数据的特点对它们进行处理，并分成不同区为用户推送推荐：</p><ul class="ibm-bullet-list"><li>
+今日推荐 (Today's Recommendation For You): 通常是根据用户的近期的历史购买或者查看记录，并结合时下流行的物品给出一个折中的推荐。</li><li>
+新产品的推荐 (New For You): 采用了基于内容的推荐机制 (Content-based Recommendation)，将一些新到物品推荐给用户。在方法选择上由于新物品没有大量的用户喜好信息，所以基于内容的推荐能很好的解决这个“冷启动”的问题。</li><li>
+捆绑销售 (Frequently Bought Together): 采用数据挖掘技术对用户的购买行为进行分析，找到经常被一起或同一个人购买的物品集，进行捆绑销售，这是一种典型的基于项目的协同过滤推荐机制。</li><li>
+别人购买 / 浏览的商品 (Customers Who Bought/See This Item Also Bought/See): 这也是一个典型的基于项目的协同过滤推荐的应用，通过社会化机制用户能更快更方便的找到自己感兴趣的物品。</li></ul><p>值得一提的是，Amazon 在做推荐时，设计和用户体验也做得特别独到：</p><p>Amazon 利用有它大量历史数据的优势，量化推荐原因。</p><ul class="ibm-bullet-list"><li>
+基于社会化的推荐，Amazon 会给你事实的数据，让用户信服，例如：购买此物品的用户百分之多少也购买了那个物品；</li><li>
+基于物品本身的推荐，Amazon 也会列出推荐的理由，例如：因为你的购物框中有 ***，或者因为你购买过 ***，所以给你推荐类似的 ***。</li></ul><p>另外，Amazon 很多推荐是基于用户的 profile 计算出来的，用户的 profile 中记录了用户在 Amazon 上的行为，包括看了那些物品，买了那些物品，收藏夹和 wish list 里的物品等等，当然 Amazon 里还集成了评分等其他的用户反馈的方式，它们都是 profile 的一部分，同时，Amazon 提供了让用户自主管理自己 profile 的功能，通过这种方式用户可以更明确的告诉推荐引擎他的品味和意图是什么。</p><p><strong>推荐在社交网站中的应用 – 豆瓣</strong></p><p>豆瓣是国内做的比较成功的社交网站，它以图书，电影，音乐和同城活动为中心，形成一个多元化的社交网络平台，自然推荐的功能是必不可少的，下面我们看看豆瓣是如何推荐的。</p><h5 id="fig8">图 8 . 豆瓣的推荐机制 - 豆瓣电影</h5><img alt="图 8 . 豆瓣的推荐机制 - 豆瓣电影" src="./探索推荐引擎内部的秘密，第 1 部分_ 推荐引擎初探_files/image017.gif" width="336"><p>当你在豆瓣电影中将一些你看过的或是感兴趣的电影加入你看过和想看的列表里，并为它们做相应的评分，这时豆瓣的推荐引擎已经拿到你的一些偏好信息，那么它将给你展示如图 8 的电影推荐。</p><h5 id="fig9">图 9 . 豆瓣的推荐机制 - 基于用户品味的推荐</h5><img alt="图 9 . 豆瓣的推荐机制 - 基于用户品味的推荐" src="./探索推荐引擎内部的秘密，第 1 部分_ 推荐引擎初探_files/image019.gif" width="395"><p>豆瓣的推荐是通过“豆瓣猜”，为了让用户清楚这些推荐是如何来的，豆瓣还给出了“豆瓣猜”的一个简要的介绍。</p><p><em>“</em><em>你的个人推荐是根据你的收藏和评价自动得出的，每个人的推荐清单都不同。你的收藏和评价越多，豆瓣给你的推荐会越准确和丰富。</em><br><em>每天推荐的内容可能会有变化。随着豆瓣的长大，给你推荐的内容也会越来越准。</em><em>”</em></p><p>这一点让我们可以清晰明了的知道，豆瓣必然是基于社会化的协同过滤的推荐，这样用户越多，用户的反馈越多，那么推荐的效果会越来越准确。</p><p>相对于 Amazon 的用户行为模型，豆瓣电影的模型更加简单，就是“看过”和“想看”，这也让他们的推荐更加专注于用户的品味，毕竟买东西和看电影的动机还是有很大不同的。</p><p>另外，豆瓣也有基于物品本身的推荐，当你查看一些电影的详细信息的时候，他会给你推荐出“喜欢这个电影的人也喜欢的电影”， 如图 10，这是一个基于协同过滤的应用。</p><h5 id="fig10">图 10 . 豆瓣的推荐机制 - 基于电影本身的推荐</h5><img alt="图 10 . 豆瓣的推荐机制 - 基于电影本身的推荐" src="./探索推荐引擎内部的秘密，第 1 部分_ 推荐引擎初探_files/image021.gif" width="356"><div class="ibm-alternate-rule"><hr></div><p class="ibm-ind-link ibm-back-to-top"><a href="https://www.ibm.com/developerworks/cn/web/1103_zhaoct_recommstudy1/index.html#ibm-pcon" class="ibm-anchor-up-link">回页首</a></p><h2 id="major6">总结</h2><p>在网络数据爆炸的年代，如何让用户更快的找到想要的数据，如何让用户发现自己潜在的兴趣和需求，无论是对于电子商务还是社会网络的应用都是至关重要的。推荐引擎的出现，使得这个问题越来越被大家关注。但对大多数人来讲，也许还在惊叹它为什么总是能猜到你到底想要些什么。推荐引擎的魔力在于你不清楚在这个推荐背后，引擎到底记录和推理了些什么。</p><p>通过这篇综述性的文章，你可以了解，其实推荐引擎只是默默的记录和观察你的一举一动，然后再借由所有用户产生的海量数据分析和发现其中的规律，进而慢慢的了解你，你的需求，你的习惯，并默默的无声息的帮助你快速的解决你的问题，找到你想要的东西。</p><p>其实，回头想想，很多时候，推荐引擎比你更了解你自己。</p><p>通过第一篇文章，相信大家对推荐引擎有一个清晰的第一印象，本系列的下一篇文章将深入介绍基于协同过滤的推荐策略。在现今的推荐技术和算法中，最被大家广泛认可和采用的就是基于协同过滤的推荐方法。它以其方法模型简单，数据依赖性低，数据方便采集，推荐效果较优等多个优点成为大众眼里的推荐算法“No.1”。本文将带你深入了解协同过滤的秘密，并给出基于 Apache Mahout 的协同过滤算法的高效实现。Apache Mahout 是 ASF 的一个较新的开源项目，它源于 Lucene，构建在 Hadoop 之上，关注海量数据上的机器学习经典算法的高效实现。</p><p>感谢大家对本系列的关注和支持。</p><div class="ibm-alternate-rule"><hr></div><p class="ibm-ind-link ibm-back-to-top"><a href="https://www.ibm.com/developerworks/cn/web/1103_zhaoct_recommstudy1/index.html#ibm-pcon" class="ibm-anchor-up-link">回页首</a></p><h2 id="major7">声明</h2><p>本人所发表的内容仅为个人观点，不代表 IBM 公司立场、战略和观点。</p><!--CMA ID: 632404--><!--Site ID: 10--><!--XSLT stylesheet used to transform this file: dw-document-html-7.0.xsl-->
+
+
+</div>
+</div>
+<!-- 1_1_COLUMN_END -->
+
+<!-- SPLIT_COLUMNS_BEGIN -->
+<div class="ibm-columns">
+
+<!-- 6_4_COLUMN_BEGIN -->
+<div class="ibm-col-6-4">
+
+<h2 id="resources" class="ibm-rule">参考资料 </h2><h3 class="dw-resources-category-heading">学习</h3><ul class="ibm-bullet-list"><li><a href="http://www.slideshare.net/antiraum/recommender-engines-seminar-paper">Recommendation Engines Seminar Paper</a>, Thomas Hess, 2009: 推荐引擎的总结性文章，Thomas 给出推荐引擎的模型，各种推荐机制的工作原理，并分析了推荐引擎面临的众多问题。</li><li><a href="http://portal.acm.org/citation.cfm?id=1070751">Toward the Next Generation of Recommender Systems: A Survey of the State-of-the-Art and Possible Extensions</a>, Adomavicius, G.; Tuzhilin, A., 2005：2005 年的论文，对现今流行的推荐技术进行总结，深入具体的实现技术方法，同时也提出了对下一代推荐引擎的展望。</li><li><a href="http://www.springerlink.com/index/KK844421T5466K35.pdf">A Taxonomy of RecommenderAgents on the Internet</a>, Montaner, M.; Lopez, B.; de la Rosa, J. L., 2003, 对互联网上推荐引擎进行总结，给出的不同推荐方法的分类和特点，帮助读者对推荐引擎有全面的认识。</li><li>
+ Amazon: <a href="http://www.amazon.com/">www.amazon.com</a>：推荐技术的先驱，Amazon 在 B2C 领域的推荐技术值得大家参考。</li><li>
+豆瓣：<a href="http://www.douban.com/">www.douban.com</a>：作为国内社交网络的先驱，豆瓣在推荐技术上也处于领先的位置，同时对于不同内容的推荐策略有深入的研究。</li><li><a href="http://blog.csdn.net/java060515/archive/2007/04/19/1570243.aspx">个性化推荐技术漫谈</a>：对个性化推荐技术的基本原理进行简要介绍，提出了作者对优秀的个性化推荐的多角度认识</li><li><a href="https://groups.google.com/group/resys">Google Recommender System Group</a>：推荐系统的 Google 讨论组，有很多关于推荐引擎的有趣讨论</li><li><a href="http://www.deitel.com/ResourceCenters/Web20/RecommenderSystems/RecommenderSystemAlgorithms/tabid/1317/Default.aspx">Recommender System Algorithms</a>：关于推荐引擎算法的资源</li><li><a href="http://www.slideshare.net/rashmi/design-of-recommender-systems">Design of Recommender System</a>：关于推荐引擎的设计方法的介绍</li><li><a href="http://www.slideshare.net/blueace/how-to-build-a-recommender-system-presentation">How to build a recommender system</a>：这个演示给出了如何构建一个推荐引擎，并结合例子详细介绍了基于协同过滤的推荐策略。</li><li><a href="http://www.ibm.com/developerworks/cn/web/">developerWorks</a><a href="http://www.ibm.com/developerworks/cn/web/">Web</a><a href="http://www.ibm.com/developerworks/cn/web/">技术专区</a>：数百篇关于 Web 编程各个方面的文章。 <br></li><li><a href="http://www.ibm.com/developerworks/cn/ajax/">developerWorks Ajax 资源中心</a>：这是有关 Ajax 编程模型信息的一站式中心，包括很多文档、教程、论坛、blog、wiki 和新闻。任何 Ajax 的新信息都能在这里找到。</li><li><a href="http://www.ibm.com/developerworks/cn/web20/">developerWorks Web 2.0 资源中心</a>，这是有关 Web 2.0 相关信息的一站式中心，包括大量 Web 2.0 技术文章、教程、下载和相关技术资源。您还可以通过 <a href="http://www.ibm.com/developerworks/cn/web20/newto/">Web 2.0 新手入门</a>栏目，迅速了解 Web 2.0 的相关概念。</li><li>查看 <a href="http://www.ibm.com/developerworks/cn/web/lp/html5/">HTML5 专题</a>，了解更多和 HTML5 相关的知识和动向。</li></ul><h3 class="dw-resources-category-heading">讨论</h3><ul class="ibm-bullet-list"><li>加入 <a href="http://www.ibm.com/developerworks/cn/community/" onmouseover="linkQueryAppend(this)">developerWorks 中文社区</a>。</li></ul>
+
+<!-- INLINE_COMMENTS_BEGIN -->
+<h2 id="icomments" class="ibm-alternate-rule ibm-no-print">条评论</h2>
+    
+<div class="ibm-no-print" id="dw-icomments-container">	
+	<div id="threadShow"><img id="imgPlHdr" src="./探索推荐引擎内部的秘密，第 1 部分_ 推荐引擎初探_files/animated-progress-38x38c.gif" alt="" style="display: none;"><div id="cmtTog"><div class="ibm-container ibm-alternate-two dw-commentbox dw-noborder"><div class="ibm-container-body dw-commentbox dw-noborder"><p id="signInSect">请 <a onclick="var e=arguments[0] || window.event; dwsi.siInst &amp;&amp; dwsi.siInst.showSignIn(); if (e.stopPropagation){ e.stopPropagation();} else { e.cancelBubble = true; } e.preventDefault &amp;&amp; e.preventDefault(); return false;" href="https://www.ibm.com/developerworks/cn/web/1103_zhaoct_recommstudy1/index.html#">登录</a> 或 <a href="https://www.ibm.com/developerworks/dwwi/jsp/ssoregister.jsp?d=https%3A%2F%2Fwww.ibm.com%2Fdeveloperworks%2Fcn%2Fweb%2F1103_zhaoct_recommstudy1%2Findex.html%23icomments&amp;lang=cn&amp;a=dwmav">注册</a>  后发表评论。</p><p id="cmtHead"><label for="newCmt"><strong>添加评论:</strong></label></p><p>注意：评论中不支持 HTML 语法</p><div id="infoCmt"></div><form focus="name" enctype="multipart/form-data" method="post" action="https://www.ibm.com/developerworks/cn/web/1103_zhaoct_recommstudy1/index.html" name="form" class="ibm-column-form ibm-styled-form"><p class="6-4-textarea"><textarea rows="5" name="newCmt" id="newCmt" class="dw-inoperable" disabled=""></textarea><br></p><span class="ibm-input-group"><input type="checkbox" value="1" name="comment_notification" id="comment_notification" disabled="disabled"><label id="notifyText" class="ibm-form-note dw-btn-cancel-sec" for="comment_notification">有新评论时提醒我</label></span><span class="ibm-form-note dw-btn-cancel-sec notifySection" id="maxCharsCount">剩余 <span id="charCount">1000</span> 字符</span><p class="ibm-buttons-row"><input type="button" value="发布" name="postCmt" id="postCmt" class="ibm-btn-sec ibm-btn-small ibm-disabled" disabled="disabled"></p></form></div></div><div class="ibm-alternate-rule"><hr></div><div id="topControl" class="ibm-container ibm-alternate-two dw-comment-totals" style=""><div class="ibm-container-body"><form id="selectComments" method="get" action="https://www.ibm.com/developerworks/cn/web/1103_zhaoct_recommstudy1/index.html"><p>&nbsp;<span class="dw-comment-totals-label"><strong>共有评论 (<span id="numCmts">20</span>)</strong></span><span class="dw-how-many-comments-label" id="dropdownCmts"><label for="howManyComments"><strong>显示：</strong></label>&nbsp;<select name="comments" id="howManyComments" class="dw-how-many-comments"><option selected="selected" value="recent">最新评论 </option><option value="all">所有评论</option></select><input type="image" class="ibm-btn-go" name="ibm-go" value="Go" src="./探索推荐引擎内部的秘密，第 1 部分_ 推荐引擎初探_files/short-btn.gif" alt="Go"><br></span></p></form></div></div><div id="cmtSect"><div class="comment"><div class="dw-icomment-container"><div class="dw-icomment-body dw-noborder"><div class="dw-icomment-body dw-noborder"><p>推荐的最终目的是成功引导用户进入推荐的引流。</p><p class="ibm-item-note-alternate dw-item-note-alternate-left">由 <strong><a href="https://www.ibm.com/developerworks/community/profiles/user/razertory">razertory</a></strong>  于 2016年09月21日发布 </p><p class="ibm-ind-link ibm-item-note-alternate dw-item-note-alternate-right"><a class="ibm-caution-link dw-report-abuse" href="https://www.ibm.com/developerworks/community/report?lang=zh&amp;referingURL=https://www.ibm.com/developerworks/cn/web/1103_zhaoct_recommstudy1/index.html&amp;mymessage=%E8%AF%84%E8%AE%BA%EF%BC%9A%20%E6%8E%A8%E8%8D%90%E7%9A%84%E6%9C%80%E7%BB%88%E7%9B%AE%E7%9A%84%E6%98%AF%E6%88%90%E5%8A%9F%E5%BC%95%E5%AF%BC%E7%94%A8%E6%88%B7%E8%BF%9B%E5%85%A5%E6%8E%A8%E8%8D%90%E7%9A%84%E5%BC%95%E6%B5%81%E3%80%82%0D%E7%94%B1%20razertory%20%20%E4%BA%8E%202016%E5%B9%B409%E6%9C%8821%E6%97%A5%E5%8F%91%E5%B8%83%20%0D%0D--%E5%9C%A8%E4%B8%8B%E6%96%B9%E6%B7%BB%E5%8A%A0%E8%AF%84%E8%AE%BA--" target="_self">报告滥用</a></p><div class="dw-clear-both"></div></div></div></div></div><div class="ibm-rule"><hr></div><div class="comment"><div class="dw-icomment-container"><div class="dw-icomment-body dw-noborder"><div class="dw-icomment-body dw-noborder"><p>这系列的文章写的很好，逻辑清晰。我也在搞这一领域，希望能与题主多多交流。http://www.cnblogs.com/wgp13x/<br>这是我的联系方式。</p><p class="ibm-item-note-alternate dw-item-note-alternate-left">由 <strong><a href="https://www.ibm.com/developerworks/community/profiles/user/aitanjupt">aitanjupt</a></strong>  于 2015年12月08日发布 </p><p class="ibm-ind-link ibm-item-note-alternate dw-item-note-alternate-right"><a class="ibm-caution-link dw-report-abuse" href="https://www.ibm.com/developerworks/community/report?lang=zh&amp;referingURL=https://www.ibm.com/developerworks/cn/web/1103_zhaoct_recommstudy1/index.html&amp;mymessage=%E8%AF%84%E8%AE%BA%EF%BC%9A%20%E8%BF%99%E7%B3%BB%E5%88%97%E7%9A%84%E6%96%87%E7%AB%A0%E5%86%99%E7%9A%84%E5%BE%88%E5%A5%BD%EF%BC%8C%E9%80%BB%E8%BE%91%E6%B8%85%E6%99%B0%E3%80%82%E6%88%91%E4%B9%9F%E5%9C%A8%E6%90%9E%E8%BF%99%E4%B8%80%E9%A2%86%E5%9F%9F%EF%BC%8C%E5%B8%8C%E6%9C%9B%E8%83%BD%E4%B8%8E%E9%A2%98%E4%B8%BB%E5%A4%9A%E5%A4%9A%E4%BA%A4%E6%B5%81%E3%80%82http%3A%2F%2Fwww.cnblogs.com%2Fwgp13x%2F%E8%BF%99%E6%98%AF%E6%88%91%E7%9A%84%E8%81%94%E7%B3%BB%E6%96%B9%E5%BC%8F%E3%80%82%0D%E7%94%B1%20aitanjupt%20%20%E4%BA%8E%202015%E5%B9%B412%E6%9C%8808%E6%97%A5%E5%8F%91%E5%B8%83%20%0D%0D--%E5%9C%A8%E4%B8%8B%E6%96%B9%E6%B7%BB%E5%8A%A0%E8%AF%84%E8%AE%BA--" target="_self">报告滥用</a></p><div class="dw-clear-both"></div></div></div></div></div><div class="ibm-rule"><hr></div><div class="comment"><div class="dw-icomment-container"><div class="dw-icomment-body dw-noborder"><div class="dw-icomment-body dw-noborder"><p>勘误： 图一及之后的介绍中出现了“基因信息”的字样，不是很了解。于是去看了Recommendation Engines Seminar Paper, Thomas Hess 这个reference，其中提到的英文是genre，genre的意思是类别，估计作者看成了gene。<br><br>Besides, 这篇文章写得非常棒！</p><p class="ibm-item-note-alternate dw-item-note-alternate-left">由 <strong><a href="https://www.ibm.com/developerworks/community/profiles/user/TomHao">TomHao</a></strong>  于 2015年05月22日发布 </p><p class="ibm-ind-link ibm-item-note-alternate dw-item-note-alternate-right"><a class="ibm-caution-link dw-report-abuse" href="https://www.ibm.com/developerworks/community/report?lang=zh&amp;referingURL=https://www.ibm.com/developerworks/cn/web/1103_zhaoct_recommstudy1/index.html&amp;mymessage=%E8%AF%84%E8%AE%BA%EF%BC%9A%20%E5%8B%98%E8%AF%AF%EF%BC%9A%20%E5%9B%BE%E4%B8%80%E5%8F%8A%E4%B9%8B%E5%90%8E%E7%9A%84%E4%BB%8B%E7%BB%8D%E4%B8%AD%E5%87%BA%E7%8E%B0%E4%BA%86%E2%80%9C%E5%9F%BA%E5%9B%A0%E4%BF%A1%E6%81%AF%E2%80%9D%E7%9A%84%E5%AD%97%E6%A0%B7%EF%BC%8C%E4%B8%8D%E6%98%AF%E5%BE%88%E4%BA%86%E8%A7%A3%E3%80%82%E4%BA%8E%E6%98%AF%E5%8E%BB%E7%9C%8B%E4%BA%86Recommendation%20Engines%20Seminar%20Paper%2C%20Thomas%20Hess%20%E8%BF%99%E4%B8%AAreference%EF%BC%8C%E5%85%B6%E4%B8%AD%E6%8F%90%E5%88%B0%E7%9A%84%E8%8B%B1%E6%96%87%E6%98%AFgenre%EF%BC%8Cgenre%E7%9A%84%E6%84%8F%E6%80%9D%E6%98%AF%E7%B1%BB%E5%88%AB%EF%BC%8C%E4%BC%B0%E8%AE%A1%E4%BD%9C%E8%80%85%E7%9C%8B%E6%88%90%E4%BA%86gene%E3%80%82Besides%2C%20%E8%BF%99%E7%AF%87%E6%96%87%E7%AB%A0%E5%86%99%E5%BE%97%E9%9D%9E%E5%B8%B8%E6%A3%92%EF%BC%81%0D%E7%94%B1%20TomHao%20%20%E4%BA%8E%202015%E5%B9%B405%E6%9C%8822%E6%97%A5%E5%8F%91%E5%B8%83%20%0D%0D--%E5%9C%A8%E4%B8%8B%E6%96%B9%E6%B7%BB%E5%8A%A0%E8%AF%84%E8%AE%BA--" target="_self">报告滥用</a></p><div class="dw-clear-both"></div></div></div></div></div><div class="ibm-rule"><hr></div><div class="comment"><div class="dw-icomment-container"><div class="dw-icomment-body dw-noborder"><div class="dw-icomment-body dw-noborder"><p>想做关于推荐系统的毕业设计，刚好看到了！</p><p class="ibm-item-note-alternate dw-item-note-alternate-left">由 <strong><a href="https://www.ibm.com/developerworks/community/profiles/user/GoingMyWay">GoingMyWay</a></strong>  于 2014年11月16日发布 </p><p class="ibm-ind-link ibm-item-note-alternate dw-item-note-alternate-right"><a class="ibm-caution-link dw-report-abuse" href="https://www.ibm.com/developerworks/community/report?lang=zh&amp;referingURL=https://www.ibm.com/developerworks/cn/web/1103_zhaoct_recommstudy1/index.html&amp;mymessage=%E8%AF%84%E8%AE%BA%EF%BC%9A%20%E6%83%B3%E5%81%9A%E5%85%B3%E4%BA%8E%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E7%9A%84%E6%AF%95%E4%B8%9A%E8%AE%BE%E8%AE%A1%EF%BC%8C%E5%88%9A%E5%A5%BD%E7%9C%8B%E5%88%B0%E4%BA%86%EF%BC%81%0D%E7%94%B1%20GoingMyWay%20%20%E4%BA%8E%202014%E5%B9%B411%E6%9C%8816%E6%97%A5%E5%8F%91%E5%B8%83%20%0D%0D--%E5%9C%A8%E4%B8%8B%E6%96%B9%E6%B7%BB%E5%8A%A0%E8%AF%84%E8%AE%BA--" target="_self">报告滥用</a></p><div class="dw-clear-both"></div></div></div></div></div><div class="ibm-rule"><hr></div><div class="comment"><div class="dw-icomment-container"><div class="dw-icomment-body dw-noborder"><div class="dw-icomment-body dw-noborder"><p>很好的文章，感谢分享。</p><p class="ibm-item-note-alternate dw-item-note-alternate-left">由 <strong><a href="https://www.ibm.com/developerworks/community/profiles/user/shartoo">shartoo</a></strong>  于 2014年03月11日发布 </p><p class="ibm-ind-link ibm-item-note-alternate dw-item-note-alternate-right"><a class="ibm-caution-link dw-report-abuse" href="https://www.ibm.com/developerworks/community/report?lang=zh&amp;referingURL=https://www.ibm.com/developerworks/cn/web/1103_zhaoct_recommstudy1/index.html&amp;mymessage=%E8%AF%84%E8%AE%BA%EF%BC%9A%20%E5%BE%88%E5%A5%BD%E7%9A%84%E6%96%87%E7%AB%A0%EF%BC%8C%E6%84%9F%E8%B0%A2%E5%88%86%E4%BA%AB%E3%80%82%0D%E7%94%B1%20shartoo%20%20%E4%BA%8E%202014%E5%B9%B403%E6%9C%8811%E6%97%A5%E5%8F%91%E5%B8%83%20%0D%0D--%E5%9C%A8%E4%B8%8B%E6%96%B9%E6%B7%BB%E5%8A%A0%E8%AF%84%E8%AE%BA--" target="_self">报告滥用</a></p><div class="dw-clear-both"></div></div></div></div></div></div></div><div id="bottomControl" class="ibm-container ibm-alternate-two dw-comment-totals" style="display:none"><div class="ibm-container-body"><form id="selectComments2" method="get" action="https://www.ibm.com/developerworks/cn/web/1103_zhaoct_recommstudy1/index.html"><p>&nbsp;<span class="dw-comment-totals-label"><strong>共有评论 (<span id="numCmts2">20</span>)</strong></span><span class="dw-how-many-comments-label" id="dropdownCmts2"><label for="howManyComments2"><strong>显示：</strong></label>&nbsp;<select name="comments" id="howManyComments2" class="dw-how-many-comments"><option selected="selected" value="recent">最新评论 </option><option value="all">所有评论</option></select><input type="image" class="ibm-btn-go" name="ibm-go" value="Go" src="./探索推荐引擎内部的秘密，第 1 部分_ 推荐引擎初探_files/short-btn.gif" alt="Go"><br></span></p></form></div></div></div>
+</div>
+<!-- Sign in OVERLAY STARTS HERE -->
+    
+<!-- Sign in OVERLAY STARTS HERE -->
+<div class="ibm-common-overlay" id="signin_overlay">
+<div class="ibm-head">
+<p><a class="ibm-common-overlay-close" href="https://www.ibm.com/developerworks/cn/web/1103_zhaoct_recommstudy1/index.html#" onclick="dwsi.siInst.clearForm();">关闭 [x]</a></p>
+</div>
+<div class="ibm-body">
+<div class="ibm-main">
+
+ <div class="ibm-title">
+<h2>developerWorks: 登录</h2>
+<div id="ibm-overlay-error-signin" class="no-display"></div>
+</div>
+<div class="ibm-container ibm-alternate ibm-buttons-last">
+<div class="ibm-container-body">
+<p class="ibm-overlay-intro">标有星（<span class="ibm-required">*</span>）号的字段是必填字段。</p> 
+<form class="ibm-column-form" id="sFormId" action="https://www.ibm.com/developerworks/cn/web/1103_zhaoct_recommstudy1/index.html" method="post" name="sForm" onsubmit="return false;">
+<p><label for="ibmid">IBM ID:<span class="ibm-required">*</span></label><span>
+    <input name="ibm-id" id="ibmid" size="25" value="" class="required" type="text" onkeypress="dwsi.siInst.handleEP(event,this.form);" aria-required="true">
+    <br><a onclick="window.location=&#39;/developerworks/dwwi/DWAuthRouter?m=reg&amp;lang=zh_CN&amp;d=&#39;+encodeURIComponent(location.protocol + &#39;//&#39; + location.hostname + location.pathname + &#39;#icomments&#39;); return false;" href="https://www.ibm.com/developerworks/cn/web/1103_zhaoct_recommstudy1/index.html#" class="ibm-forward-link">需要一个 IBM ID？</a> <br>
+    <a class="ibm-forward-link" href="https://www.ibm.com/developerworks/dwwi/jsp/WSHelp.jsp?lang=zh_CN">忘记 IBM ID？</a> 
+</span>
+</p> 
+<p><label for="password">密码：<span class="ibm-required">*</span></label><span>
+    <input name="password" id="password" size="25" value="" class="required" type="password" onkeypress="dwsi.siInst.handleEP(event,this.form);">
+    <br><a class="ibm-forward-link" href="https://www.ibm.com/developerworks/cn/web/1103_zhaoct_recommstudy1/index.html#" onclick="(function ()
+        {window.location=&#39;https://www.ibm.com/account/profile?page=forgot&amp;lang=zh_CN&amp;appname=ibm&amp;required=null&amp;d=&#39;+encodeURIComponent(dwsi.siInst.getAuthUrl())+&#39;%3Fm%3Dloginpage%26lang%3Dzh_CN%26d%3D&#39;+encodeURIComponent(location.href);})();">忘记密码？</a>
+    <br><a class="ibm-forward-link" href="https://www.ibm.com/developerworks/cn/web/1103_zhaoct_recommstudy1/index.html#" onclick="(function () {window.location=&#39;https://www.ibm.com/account/profile?page=chpw&amp;lang=zh_CN&amp;appname=ibm&amp;required=null&amp;d=&#39;+encodeURIComponent(location.href);})();">更改您的密码</a></span></p> 
+<p class="dw-perm-box">
+	<span><input id="perm" type="checkbox" name="perm_name"><label for="perm"> 保持登录。</label></span>
+</p>
+<p>单击提交则表示您同意developerWorks 的条款和条件。 <a href="https://www.ibm.com/developerworks/community/terms?lang=zh">查看条款和条件</a>。</p>
+<div class="ibm-buttons-row">
+   <p><input class="ibm-btn-arrow-pri" name="ibm-submit" value="提交" onclick="dwsi.siInst.signin();return false;" type="submit"><span class="ibm-sep">&nbsp;</span>
+<input value="取消" type="button" name="ibm-cancel" class="ibm-btn-cancel-sec" onclick="dwsi.siInst.clearForm();ibmweb.overlay.hide(&#39;signin_overlay&#39;);return false;"></p>
+</div>
+</form>
+ <div class="ibm-overlay-rule"><hr></div> 
+
+<p>在您首次登录 developerWorks 时，会为您创建一份个人概要。<strong>您的个人概要中的信息（您的姓名、国家/地区，以及公司名称）是公开显示的，而且会随着您发布的任何内容一起显示，除非您选择隐藏您的公司名称。</strong>您可以随时更新您的 IBM 帐户。</p>
+<div><p class="dw-c-overlay-secure">所有提交的信息确保安全。</p></div>
+</div>
+</div>
+</div>
+</div>
+<div class="ibm-footer"></div>
+</div>
+<!-- Display name OVERLAY STARTS HERE -->
+<div class="ibm-common-overlay" id="displayname_overlay">
+<div class="ibm-head">
+<p><a class="ibm-common-overlay-close" href="https://www.ibm.com/developerworks/cn/web/1103_zhaoct_recommstudy1/index.html#" onclick="dwsi.siInst.clearForm();">关闭 [x]</a></p>
+</div>
+<div class="ibm-body">
+<div class="ibm-main">
+<div class="ibm-title">
+<h2>选择您的昵称</h2><br><br>
+<div id="ibm-overlay-error-dname" class="no-display"></div>
+</div>
+<div class="ibm-container ibm-alternate ibm-buttons-last">
+<div class="ibm-container-body">
+<p class="ibm-overlay-intro">当您初次登录到 developerWorks 时，将会为您创建一份概要信息，您需要指定一个昵称。您的昵称将和您在 developerWorks 发布的内容显示在一起。</p><p><strong>昵称长度在 3 至 31 个字符之间</strong>。 
+    您的昵称在 developerWorks 社区中必须是唯一的，并且出于隐私保护的原因，不能是您的电子邮件地址。</p>
+<p class="ibm-overlay-intro">标有星（<span class="ibm-required">*</span>）号的字段是必填字段。</p> 
+<form id="dFormId" method="post" action="https://www.ibm.com/developerworks/cn/web/1103_zhaoct_recommstudy1/index.html" name="dForm" onsubmit="return false;" class="ibm-column-form">
+<p><label for="displayname">昵称：<span class="ibm-required">*</span></label><span>
+    <input name="displayname" id="displayname" size="25" value="" type="text" onkeypress="dwsi.siInst.handleEP(event,this.form);" aria-required="true"></span>
+    <span class="ibm-form-note">(昵称长度在 3 至 31 个字符之间)</span>
+</p>
+<p>单击<strong>提交</strong>则表示您同意developerWorks 的条款和条件。 <a href="https://www.ibm.com/developerworks/community/terms?lang=zh">查看条款和条件</a>.</p>
+<div class="ibm-buttons-row">
+   <p><input class="ibm-btn-arrow-pri" name="ibm-submit" value="提交" onclick="dwsi.siInst.signin();return false;" type="submit"><span class="ibm-sep">&nbsp;</span>
+<input value="取消" type="button" name="ibm-cancel" class="ibm-btn-cancel-sec" onclick="dwsi.siInst.clearForm();ibmweb.overlay.hide(&#39;displayname_overlay&#39;);return false;"></p>
+</div>
+</form>
+<div class="ibm-overlay-rule"><hr></div>
+<div><p class="dw-c-overlay-secure">所有提交的信息确保安全。</p></div>
+</div>
+</div>
+</div>
+</div>
+<div class="ibm-footer"></div>
+</div>
+
+
+<!-- INLINE_COMMENTS_END -->
+
+</div>
+<!-- 6_4_COLUMN_END -->
+
+<!-- 6_2_COLUMN_BEGIN -->
+<div class="ibm-col-6-2">
+
+<!-- Next_Steps -->
+<!-- Dig_Deeper -->
+
+
+<!-- Promotion_Module -->
+    
+<!-- PROMOTION_MODULE_START -->
+<div class="ibm-alternate-rule"><hr></div>
+<ul class="ibm-portrait-module-list">
+<li><a class="" href="http://www.ibm.com/developerworks/cn/cloud/bluemix/" tabindex="-1" role="presentation"><img height="60" width="60" src="./探索推荐引擎内部的秘密，第 1 部分_ 推荐引擎初探_files/sm-f-bluemixrobot60.png" alt="IBM Bluemix 资源中心"></a>
+<h3><a class="ibm-feature-link" href="http://www.ibm.com/developerworks/cn/cloud/bluemix/">IBM Bluemix 资源中心</a></h3>
+<p>文章、教程、演示，帮助您构建、部署和管理云应用。</p></li>
+<li><a class="" href="http://www.ibm.com/developerworks/cn/community/" tabindex="-1" role="presentation"><img height="60" width="60" src="./探索推荐引擎内部的秘密，第 1 部分_ 推荐引擎初探_files/sm-f-comcommunity60.png" alt="developerWorks 中文社区"></a>
+<h3><a class="ibm-feature-link" href="http://www.ibm.com/developerworks/cn/community/">developerWorks 中文社区</a></h3>
+<p>立即加入来自 IBM 的专业 IT 社交网络。</p></li>
+<li><a class="" href="http://www.ibm.com/developerworks/cn/downloads/" tabindex="-1" role="presentation"><img height="60" width="60" src="./探索推荐引擎内部的秘密，第 1 部分_ 推荐引擎初探_files/sm-f-evaluationsoftware60.png" alt=""></a>
+<h3><a class="ibm-feature-link" href="http://www.ibm.com/developerworks/cn/downloads/">IBM 软件资源中心</a></h3>
+<p>免费下载、试用软件产品，构建应用并提升技能。</p></li>
+</ul>
+<!-- PROMOTION_MODULE_END -->
+</div>
+<!-- 6_2_COLUMN_END -->
+
+</div>
+<!-- SPLIT_COLUMNS_END -->
+
+<!-- BOTTOM_BACK_TO_TOP -->
+<div class="ibm-columns">
+<div class="ibm-col-1-1">
+	<div class="ibm-alternate-rule"><hr></div><p class="ibm-ind-link ibm-back-to-top"><a href="https://www.ibm.com/developerworks/cn/web/1103_zhaoct_recommstudy1/index.html#ibm-pcon" class="ibm-anchor-up-link">回页首</a></p>
+</div>
+</div>
+
+<!-- Rating_Meta_BEGIN -->
+<!--Rating_Meta_BEGIN--><div class="metavalue">static.content.url=http://www.ibm.com/developerworks/js/artrating/</div><div class="metavalue">SITE_ID=10</div><div class="metavalue">Zone=Web development</div><div class="metavalue">ArticleID=632404</div><div class="metavalue">ArticleTitle=探索推荐引擎内部的秘密，第 1 部分: 推荐引擎初探
+		</div><div class="metavalue">publish-date=03162011</div><script language="javascript" type="text/javascript">document.write('<div class="metavalue">url='+location.href.replace(/</g,  '%3C')+'</div>');</script><div class="metavalue">url=https://www.ibm.com/developerworks/cn/web/1103_zhaoct_recommstudy1/index.html</div><!--Rating_Meta_END-->
+<!-- Rating_Meta_END -->
+
+</div>
+<!-- END_IBM_CONTENT_MAIN -->
+
+</div>
+<!-- END_IBM_CONTENT_BODY -->
+
+</div>
+<!-- END_IBM_CONTENT -->
+
+</div></div>
+<!-- LEADSPACE_END -->
+
+
+<!-- END_IBM_PCON -->
+<!-- FOOTER_BEGIN -->
+<div id="ibm-footer" aria-label="页脚"><!-- IBM footer container; disabled --></div>
+
+<div id="ibm-footer-module-dwwrapper" role="contentinfo" aria-label="developerWorks Footer">
+
+<div id="ibm-footer-module-dw">
+	<div class="dw-footer-columns">
+		<div class="dw-footer-col-6-1 dw-footer-col-6-1-cn">
+			<ul>
+				<li><a href="https://www.ibm.com/developerworks/secure/feedback.jsp?domain=dwchina" tabindex="0">帮助</a></li>
+				<li><a href="http://www.ibm.com/developerworks/cn/author/" tabindex="0">联系编辑</a></li>
+				<li><a href="https://www.ibm.com/developerworks/secure/myideas2.jsp?domain=dwchina" tabindex="0">提交内容</a></li>
+				<li><a href="http://www.ibm.com/developerworks/cn/rss/" tabindex="0">订阅源</a></li>
+			</ul>
+        </div>
+		<div class="dw-footer-col-6-2">
+			<ul>
+				<li><a class="dwcn-sina-link" href="http://weibo.com/ibmdw/" target="_blank" tabindex="0">新浪微博</a></li>
+				<li><a href="https://www.ibm.com/developerworks/community/report?lang=zh" tabindex="0">报告滥用</a></li>
+				<li><a href="https://www.ibm.com/developerworks/community/terms?lang=zh" tabindex="0">使用条款</a></li>
+				<li><a href="https://www.ibm.com/developerworks/cn/community/terms/thirdparty/" tabindex="0">第三方提示</a></li>
+			</ul>
+		</div>
+		<div class="dw-footer-col-6-3">
+			<ul>
+				<li><a href="http://www.ibm.com/privacy/cn/zh/" tabindex="0">隐私条约</a></li>
+				<li><a href="http://www.ibm.com/ibm/accessibility/cn/" tabindex="0">浏览辅助</a></li>
+				<li><a href="http://www.ibm.com/developerworks/cn/academic/" tabindex="0">IBM 教育学院教育培养计划</a></li><li><a href="http://www.ibm.com/developerworks/cn/gep/">IBM 创业企业全球扶持计划</a></li><li><a href="http://www.ibm.com/partnerworld/isv/">ISV 资源 (英语)</a></li>
+			</ul>
+		</div>
+		<div class="dw-footer-col-6-4"> 
+			<ul>
+				<li><a href="https://www.ibm.com/developerworks/cn/newsletter/" tabindex="0">dW 中国每周时事通讯</a></li>
+			</ul>
+			
+		</div>
+		<div class="dw-footer-col-6-5">
+			<ul>
+				<li class="dw-footer-lang-head">选择语言：</li>
+				<li><a href="http://www.ibm.com/developerworks/" tabindex="0">English</a></li>
+				<li><a href="http://www.ibm.com/developerworks/cn/" lang="zh" tabindex="0">中文</a></li>
+				<li><a href="http://www.ibm.com/developerworks/jp/" lang="ja" tabindex="0">日本語</a></li>
+				<li><a href="http://www.ibm.com/developerworks/ru/" lang="ru" tabindex="0">Русский</a></li>
+				<li><a href="http://www.ibm.com/developerworks/br/" lang="pt" tabindex="0">Português (Brasil)</a></li>
+				<li><a href="http://www.ibm.com/developerworks/ssa/" lang="es" tabindex="0">Español</a></li>
+				<li><a href="https://developer.ibm.com/kr/" lang="kr" tabindex="0">한글</a></li>
+			</ul>
+		</div>
+		<div class="dw-footer-col-6-6">
+			<img width="223" height="46" alt="IBM®" src="./探索推荐引擎内部的秘密，第 1 部分_ 推荐引擎初探_files/dwn-ibm-logo-v17.png">
+			<img class="dw-preload" src="./探索推荐引擎内部的秘密，第 1 部分_ 推荐引擎初探_files/ibm_sprite_social_blue_ON.png" alt="" width="1" height="1">
+		</div>
+	</div>
+</div>
+
+</div><!-- FOOTER_END -->
+
+<!-- END_IBM-TOP -->
+</div>
+
+<!-- SCRIPTS_INCLUDE_BEGIN -->
+<script type="text/javascript" src="./探索推荐引擎内部的秘密，第 1 部分_ 推荐引擎初探_files/dw-comments.js.下载">//</script>
+<script type="text/javascript" language="JavaScript">
+	dojo.ready(function(){
+		rBHash = typeof rBHash == "undefined" ? {} : rBHash;
+		rBHash['viperLang'] = 'zh';
+		rBHash['urlLang'] = 'cn';
+		rBHash['dwwi2Lang'] = 'zh_CN';
+		rBHash['appCode'] = 'dwmav';
+		rBHash['signoutUrl'] = (location.host.toLowerCase() === "www.ibm.com" || location.host.toLowerCase() === "developer.ibm.com") ? 'http://www.ibm.com/developerworks/cn/' : ''; 
+		dwsi.siInst = new dwweb.dynnav.dwsi();
+		dwsi.siInst.initSI();		
+
+		// construct the comment widget
+dwc.cmts = '条评论';
+dwc.signInPreText = '请';
+dwc.signIn = '登录';
+dwc.or = '或';
+dwc.register = '注册';
+dwc.signInPostText = '';
+dwc.leaveCmt = '后发表评论。';
+dwc.view = '查看';
+dwc.totalCmts = '共有评论';
+dwc.postYourCmt = '添加您的评论';
+dwc.show = '显示：';
+dwc.recentCmts = '最新评论';
+dwc.allCmts = '所有评论';
+dwc.tooLongCmt = '您的评论超过了 1000 字符限制';
+dwc.numCharsLeft = '剩余 <span id="charCount">{1}</span> 字符';
+dwc.reportAbuse = '报告滥用';
+dwc.notifyMsg = '有新评论时提醒我';
+dwc.htmlWarning = '注意：评论中不支持 HTML 语法'; 
+dwc.cmt = '评论：';
+dwc.addCmts = '添加评论';
+dwc.addCmt = '添加评论';
+dwc.doNotErase = '--在下方添加评论--'; 
+dwc.viewOrAddCmts = '查看或添加评论';
+dwc.reportInapprCont = '举报不良信息';
+dwc.reportInapprContLink = 'http://www.ibm.com/developerworks/forums/forum.jspa?forumID=1834';
+dwc.postingCmt = '正在发布评论……';
+dwc.noCmt = '快来添加第一条评论';
+dwc.netwkErr = '在检索评论时出错，请稍后刷新。';
+dwc.addACmt = '添加评论';
+dwc.instructCmt = '标有星号（<span class="ibm-required">*</span>）的是必填项目。';
+dwc.btnPost = '发布';
+dwc.btnPostAnon = '匿名发布';
+dwc.btnClrCmt = '清除评论';
+dwc.btnCancel = '取消';
+dwc.showRecent = '显示最新的 {1} 条评论'; // {1} is the count to be substituted
+dwc.showNext = '显示后 {1} 条评论'; // {1} is the count to be substituted
+dwc.showAllCmts = '显示所有评论';
+dwc.enterCmt = '请输入评论内容。';
+dwc.loginErr = '暂时无法验证您的登录状态，请稍后再试。';
+dwc.postErr = '暂时无法发布您的评论，请稍后再试。';
+dwc.postBy = '由 <strong>{1}</strong>  于 {2} '; // {1} is the author to be substituted; {2} is the date
+dwc.siteId = 10;
+dwc.lang = 'zh_CN';
+dwc.viperLang = 'zh';
+//dwc.abuseHref =  null;
+dwc.maxChars = 1000;
+dwc.cmtTxt =  '评论';
+dwc.cmtsTxt =  '评论';  
+		dwc && new dwc.comments('threadShow','95%',5,'nCmts','icomments');
+		});
+</script>
+
+
+
+<!-- Piwik -->
+<script type="text/javascript">
+    var _paq = _paq || [];
+    _paq.push(["setDomains", ["*.www.ibm.com/developerworks","*.www.ibm.com/developerworks"]]);
+    _paq.push(['trackPageView']);
+    _paq.push(['enableLinkTracking']);
+    (function() {
+    var u="//developer.ibm.com/piwik/";
+    _paq.push(['setTrackerUrl', u+'piwik.php']);
+    _paq.push(['setSiteId', 7]);
+    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+    g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
+    })();
+</script>
+<noscript>&lt;p&gt;&lt;img src="//developer.ibm.com/piwik/piwik.php?idsite=7" style="border:0;" alt="" /&gt;&lt;/p&gt;</noscript>
+<!-- End Piwik Code --><!-- SCRIPTS_INCLUDE_END -->
+
+<div id="ibm-metrics">
+<script src="./探索推荐引擎内部的秘密，第 1 部分_ 推荐引擎初探_files/stats.js.下载" type="text/javascript">//</script>
+</div>
+
+
+
+<div id="ttdUniversalPixelTag14a49df88763436db0795df4fc90e6a7" style="display:none"><iframe id="universal_pixel" allowtransparency="true" height="0" width="0" style="visibility:hidden;" src="./探索推荐引擎内部的秘密，第 1 部分_ 推荐引擎初探_files/up.html"></iframe></div><div id="ttdUniversalPixelTagaf477d928c164ae0b8f3e1717b910617" style="display:none"><iframe id="universal_pixel" allowtransparency="true" height="0" width="0" style="visibility:hidden;" src="./探索推荐引擎内部的秘密，第 1 部分_ 推荐引擎初探_files/up(1).html"></iframe></div><script src="./探索推荐引擎内部的秘密，第 1 部分_ 推荐引擎初探_files/js(1)" id="mm_pp_background"></script><script type="text/javascript" src="./探索推荐引擎内部的秘密，第 1 部分_ 推荐引擎初探_files/Serving" async=""></script><iframe src="./探索推荐引擎内部的秘密，第 1 部分_ 推荐引擎初探_files/iframe.html" id="mm_sync_back_ground" style="visibility: hidden; display: none;"></iframe><iframe name="_hjRemoteVarsFrame" title="Hotjar Remote Vars Frame" id="_hjRemoteVarsFrame" src="./探索推荐引擎内部的秘密，第 1 部分_ 推荐引擎初探_files/rcj-b2c1bce0a548059f409c021a46ea2224.html" style="display: none !important; width: 1px !important; height: 1px !important; opacity: 0 !important; pointer-events: none !important;"></iframe><div id="ads"></div></body></html>

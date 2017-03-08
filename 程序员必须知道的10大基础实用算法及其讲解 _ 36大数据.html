@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<!-- saved from url=(0034)http://www.36dsj.com/archives/9192 -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><script charset="utf-8" src="./程序员必须知道的10大基础实用算法及其讲解 _ 36大数据_files/s.js.下载"></script>
+
+<meta http-equiv="X-UA-Compatible" content="IE=11,IE=10,IE=9,IE=8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
+<title>程序员必须知道的10大基础实用算法及其讲解 | 36大数据</title>
+<link rel="dns-prefetch" href="http://www.36dsj.com/">
+<link rel="dns-prefetch" href="http://s.w.org/">
+<link rel="alternate" type="application/rss+xml" title="36大数据 » 程序员必须知道的10大基础实用算法及其讲解评论Feed" href="http://www.36dsj.com/archives/9192/feed">
+		<script src="./程序员必须知道的10大基础实用算法及其讲解 _ 36大数据_files/hm.js.下载"></script><script type="text/javascript">
+			window._wpemojiSettings = {"baseUrl":"https:\/\/s.w.org\/images\/core\/emoji\/2.2.1\/72x72\/","ext":".png","svgUrl":"https:\/\/s.w.org\/images\/core\/emoji\/2.2.1\/svg\/","svgExt":".svg","source":{"concatemoji":"http:\/\/www.36dsj.com\/wp-includes\/js\/wp-emoji-release.min.js"}};
+			!function(a,b,c){function d(a){var b,c,d,e,f=String.fromCharCode;if(!k||!k.fillText)return!1;switch(k.clearRect(0,0,j.width,j.height),k.textBaseline="top",k.font="600 32px Arial",a){case"flag":return k.fillText(f(55356,56826,55356,56819),0,0),!(j.toDataURL().length<3e3)&&(k.clearRect(0,0,j.width,j.height),k.fillText(f(55356,57331,65039,8205,55356,57096),0,0),b=j.toDataURL(),k.clearRect(0,0,j.width,j.height),k.fillText(f(55356,57331,55356,57096),0,0),c=j.toDataURL(),b!==c);case"emoji4":return k.fillText(f(55357,56425,55356,57341,8205,55357,56507),0,0),d=j.toDataURL(),k.clearRect(0,0,j.width,j.height),k.fillText(f(55357,56425,55356,57341,55357,56507),0,0),e=j.toDataURL(),d!==e}return!1}function e(a){var c=b.createElement("script");c.src=a,c.defer=c.type="text/javascript",b.getElementsByTagName("head")[0].appendChild(c)}var f,g,h,i,j=b.createElement("canvas"),k=j.getContext&&j.getContext("2d");for(i=Array("flag","emoji4"),c.supports={everything:!0,everythingExceptFlag:!0},h=0;h<i.length;h++)c.supports[i[h]]=d(i[h]),c.supports.everything=c.supports.everything&&c.supports[i[h]],"flag"!==i[h]&&(c.supports.everythingExceptFlag=c.supports.everythingExceptFlag&&c.supports[i[h]]);c.supports.everythingExceptFlag=c.supports.everythingExceptFlag&&!c.supports.flag,c.DOMReady=!1,c.readyCallback=function(){c.DOMReady=!0},c.supports.everything||(g=function(){c.readyCallback()},b.addEventListener?(b.addEventListener("DOMContentLoaded",g,!1),a.addEventListener("load",g,!1)):(a.attachEvent("onload",g),b.attachEvent("onreadystatechange",function(){"complete"===b.readyState&&c.readyCallback()})),f=c.source||{},f.concatemoji?e(f.concatemoji):f.wpemoji&&f.twemoji&&(e(f.twemoji),e(f.wpemoji)))}(window,document,window._wpemojiSettings);
+		</script><script src="./程序员必须知道的10大基础实用算法及其讲解 _ 36大数据_files/wp-emoji-release.min.js.下载" type="text/javascript" defer=""></script>
+		<style type="text/css">
+img.wp-smiley,
+img.emoji {
+	display: inline !important;
+	border: none !important;
+	box-shadow: none !important;
+	height: 1em !important;
+	width: 1em !important;
+	margin: 0 .07em !important;
+	vertical-align: -0.1em !important;
+	background: none !important;
+	padding: 0 !important;
+}
+</style>
+<link rel="stylesheet" id="main-css" href="./程序员必须知道的10大基础实用算法及其讲解 _ 36大数据_files/style.css" type="text/css" media="all">
+<link rel="stylesheet" id="upw_theme_standard-css" href="./程序员必须知道的10大基础实用算法及其讲解 _ 36大数据_files/upw-theme-standard.min.css" type="text/css" media="all">
+<script type="text/javascript" src="./程序员必须知道的10大基础实用算法及其讲解 _ 36大数据_files/jquery.js.下载"></script>
+<link rel="https://api.w.org/" href="http://www.36dsj.com/wp-json/">
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://www.36dsj.com/xmlrpc.php?rsd">
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://www.36dsj.com/wp-includes/wlwmanifest.xml"> 
+<link rel="prev" title="数据可视化：纽约地铁的数字地图" href="http://www.36dsj.com/archives/9202">
+<link rel="next" title="简析“大数据”在商业银行发展中的作用和应对" href="http://www.36dsj.com/archives/9312">
+<link rel="canonical" href="http://www.36dsj.com/archives/9192">
+<link rel="shortlink" href="http://www.36dsj.com/?p=9192">
+<link rel="alternate" type="application/json+oembed" href="http://www.36dsj.com/wp-json/oembed/1.0/embed?url=http%3A%2F%2Fwww.36dsj.com%2Farchives%2F9192">
+<link rel="alternate" type="text/xml+oembed" href="http://www.36dsj.com/wp-json/oembed/1.0/embed?url=http%3A%2F%2Fwww.36dsj.com%2Farchives%2F9192&amp;format=xml">
+<style>a:hover, a:focus,.post-like.actived,.excerpt h2 a:hover,.user-welcome strong,.article-title a:hover,#comments b,.text-muted a:hover,.relates a:hover,.archives .item:hover h3,.linkcat h2,.sticky a:hover,.article-content a:hover,.widget_links li a:hover,.d_postlist li a:hover .text, .d_newtagpost li a:hover h2,.article-meta a:hover{color:#FF6600;}.btn,.article-tags a,.search-form .btn,.widget_tags_inner a:hover:hover,.focusmo a:hover h4,.tagslist .tagname:hover,.excerpt .more a,.pagination ul > .active > a, .pagination ul > .active > span,.widget .title .more,.navbar,.nav li ul > li > a:hover{background-color:#FF6600;}.title strong, .widget .title{border-bottom-color:#FF6600;}#submit{background: #FF6600;border-right: 2px solid #FF6600;border-bottom: 2px solid #FF6600;}.nav li.current-menu-item > a, .nav li.current-menu-parent > a, .nav li.current_page_item > a, .nav li.current-post-ancestor > a,.nav li a:focus,.nav li a:hover, .nav li:hover > a,.nav li ul{background-color:#EC5F00}</style><meta name="keywords" content="基础算法, 数据挖掘, 程序猿, 算法, 干货教程">
+<meta name="description" content="算法一：快速排序算法 快速排序是由东尼·霍尔所发展的一种排序算法。在平均状况下，排序 n 个项目要Ο(n log n)次比较。在最坏状况下则需要Ο(n2)次比较">
+<link rel="shortcut icon" href="http://www.36dsj.com/favicon.ico">
+<!--[if lt IE 9]><script src="http://www.36dsj.com/wp-content/themes/dsj0804/js/html5.js"></script><![endif]-->
+<script src="./程序员必须知道的10大基础实用算法及其讲解 _ 36大数据_files/share.js.下载"></script><link rel="stylesheet" href="./程序员必须知道的10大基础实用算法及其讲解 _ 36大数据_files/share_style0_16.css"><style>html #hm_t_undefined .hm-t-go-top {position:fixed;right:2px;bottom:2px;z-index:99998;cursor:pointer;width:40px;height:37px!important;text-align:center;white-space:normal;font-size:14px;line-height:17px;padding-top:3px;color:#fff;background:#404040;background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEkAAAAXCAYAAABH92JbAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2hpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDowMjgwMTE3NDA3MjA2ODExODA4M0UyNDA4ODdDRTZBQiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDpBQjc5RkRFNkI5ODMxMUUzQkZGNDhENEJFQjM2OTcyRiIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDpBQjc5RkRFNUI5ODMxMUUzQkZGNDhENEJFQjM2OTcyRiIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M2IChNYWNpbnRvc2gpIj4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6MDI4MDExNzQwNzIwNjgxMTgwODNFMjQwODg3Q0U2QUIiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6MDI4MDExNzQwNzIwNjgxMTgwODNFMjQwODg3Q0U2QUIiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz5HPYM5AAACC0lEQVR42uyZTSgEYRjH90NoqaVcpDblvKW2XOSkNh8H5Yac9sBBDqQokiJKSMpNTi5OPo6Ktsgu67JcUHIXWfK1u3b8Xx6Zxuzu+64dM83uv34zNfu8b8/8Z+d5P8YqSZLFJNLsRmyWvIRMKgVD4AhEwA3YAV0pzGwEqyAEwmAddIICHe7FqhnsdQM14FxKLj+ooFiGE2ykiD8GVbJ4I1ELAnTmasMODnAhpVcIFIMicMgRH6Z4IxnUAh4pP3Zu5TVpUOLXDJgWiB8wkEF9IK7IL07X05oUFLjpZ4JXQQOYYwfzafJcoDjVPqw43KE4lWtUTF+AQ8eBqQSsgTaO2E0apJ7URrdCDZOM62hQJfBzGmShOD+1+2XSiYaJ7utkkBsEgEewnYfauZUmzWmU6DuY0sEgLzgArgzbu6i992cu/1WclqXsa1iHIt0DYlnKP0b9fRZu5pWdZs7dWXqa7B80+s//oF5aMSjflGqBPq5BQnFtVv4UmGHjIPEH96PAZ6C5kVMwf6daPzbFKnqCqvx9Bk/yFjSBFTMvcL+1DerAmUA/p9Rm1+y7AHJdgnqwx9EHm1s0gKtc2CpR6gE00/ZHMm3RKxbJlf0kNb2BDrCk8hsbDdvBay5tuiUTGxL7waTs2iLw0YTR9BLZQRwDUVqwjuTS9q3VRB8C1OQUnM6UqdXX/IcADn0IMADs2AqDOPSutQAAAABJRU5ErkJggg==) no-repeat -42px center #666;*background-image:url(http://ecma.bdimg.com/holmes/t-popup-icons-png8.png);_position:absolute;_top:expression(eval(document.documentElement.scrollTop+(document.documentElement.clientHeight||document.body.clientHeight)-this.offsetHeight-2));}</style></head>
+<body class="post-template-default single single-post postid-9192 single-format-standard">
+<section class="container">
+<header class="header">
+	<div class="topbar">
+		<div class="pull-right">
+			<a class="feed-wechat" rel="external nofollow" href="javascript:;" title="" data-content="&lt;img src=&#39;http://www.36dsj.com/wp-content/uploads/2014/07/qrcode_for_gh_8efec1177972_258.png&#39;&gt;" data-original-title="关注”dashuju36“">关注微信</a>&nbsp; | &nbsp;<a class="" rel="external nofollow" href="http://weibo.com/36dsj" title="关注微博" target="_blank">微博</a>&nbsp; | &nbsp;<a class="" rel="external nofollow" href="http://t.qq.com/youx18" title="关注腾讯微博" target="_blank">腾讯微博</a>&nbsp; | &nbsp;<a class="" rel="external nofollow" href="http://www.36dsj.com/feed" title="Feed订阅" target="_blank">RSS订阅</a>
+		</div>
+		读者QQ群②：190771709，投稿请发dashuju36@qq.com	</div>
+
+	<div class="logo"><a href="http://www.36dsj.com/" title="36大数据 | 大数据第一网 专注大数据技术与大数据案例">36大数据</a></div>	<a href="http://www.36dsj.com/tougao" class="btn pull-right btn-tougao">我要投稿</a>
+	<form method="get" class="search-form" action="http://www.36dsj.com/">
+		<input class="form-control" name="s" type="text" placeholder="输入关键字" x-webkit-speech=""><input class="btn" type="submit" value="搜索">
+	</form>
+	
+
+	<div class="navbar">
+		<div class="container">
+		<ul class="nav"><li id="menu-item-2389" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-2389"><a href="http://www.36dsj.com/">首页</a></li>
+<li id="menu-item-13809" class="menu-item menu-item-type-taxonomy menu-item-object-category current-post-ancestor current-menu-parent current-post-parent menu-item-13809"><a href="http://www.36dsj.com/archives/category/ganhuo">干货教程</a></li>
+<li id="menu-item-2390" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-has-children menu-item-2390"><a href="http://www.36dsj.com/archives/category/bigdata">大数据动向</a>
+<ul class="sub-menu">
+	<li id="menu-item-3583" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-3583"><a href="http://www.36dsj.com/archives/category/bigdata/baike">大数据百科</a></li>
+	<li id="menu-item-3586" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-3586"><a href="http://www.36dsj.com/archives/category/bigdata/large-enterprise-data">大数据企业</a></li>
+	<li id="menu-item-3587" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-3587"><a href="http://www.36dsj.com/archives/category/bigdata/big-data-products">大数据产品</a></li>
+	<li id="menu-item-10510" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-10510"><a href="http://www.36dsj.com/archives/category/large-data-tools/das">大数据存储</a></li>
+	<li id="menu-item-11969" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-has-children menu-item-11969"><a href="http://www.36dsj.com/archives/category/bigdata/technology">大数据技术</a>
+	<ul class="sub-menu">
+		<li id="menu-item-10505" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-10505"><a href="http://www.36dsj.com/archives/category/large-data-tools/hadoop">Hadoop</a></li>
+		<li id="menu-item-26053" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-26053"><a href="http://www.36dsj.com/archives/category/large-data-tools/spark">Spark</a></li>
+	</ul>
+</li>
+	<li id="menu-item-10501" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-10501"><a href="http://www.36dsj.com/archives/category/bigdata/bi-2">商业智能</a></li>
+	<li id="menu-item-10502" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-10502"><a href="http://www.36dsj.com/archives/category/bigdata/cloudcomputing">云计算</a></li>
+</ul>
+</li>
+<li id="menu-item-10483" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-has-children menu-item-10483"><a href="http://www.36dsj.com/archives/category/application-area">大数据应用</a>
+<ul class="sub-menu">
+	<li id="menu-item-10484" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-10484"><a href="http://www.36dsj.com/archives/category/application-area/large-medical-data">大数据医疗</a></li>
+	<li id="menu-item-10487" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-10487"><a href="http://www.36dsj.com/archives/category/application-area/marketing-application-area">大数据营销</a></li>
+	<li id="menu-item-10489" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-10489"><a href="http://www.36dsj.com/archives/category/application-area/application-of-case">应用案例</a></li>
+	<li id="menu-item-10490" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-10490"><a href="http://www.36dsj.com/archives/category/application-area/ec">电子商务</a></li>
+	<li id="menu-item-10491" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-10491"><a href="http://www.36dsj.com/archives/category/data-analysi/the-game-data">移动互联网分析</a></li>
+	<li id="menu-item-10500" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-10500"><a href="http://www.36dsj.com/archives/category/the-latest-technology-products/wearable-devices">可穿戴设备</a></li>
+</ul>
+</li>
+<li id="menu-item-11975" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-has-children menu-item-11975"><a href="http://www.36dsj.com/archives/category/bigdata/data-visualization">数据可视化</a>
+<ul class="sub-menu">
+	<li id="menu-item-11976" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-11976"><a href="http://www.36dsj.com/archives/category/bigdata/data-visualization/infographic">信息图</a></li>
+	<li id="menu-item-12748" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-12748"><a href="http://www.36dsj.com/archives/category/bigdata/data-visualization/big-data-video">视频</a></li>
+	<li id="menu-item-11978" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-11978"><a href="http://www.36dsj.com/archives/category/bigdata/data-visualization/data-weekly">数据周刊</a></li>
+	<li id="menu-item-11979" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-11979"><a href="http://www.36dsj.com/archives/category/data-analysi/data-interpretation">有图有真相</a></li>
+</ul>
+</li>
+<li id="menu-item-10495" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-has-children menu-item-10495"><a href="http://www.36dsj.com/archives/category/data-analysi">数据分析</a>
+<ul class="sub-menu">
+	<li id="menu-item-10496" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-10496"><a href="http://www.36dsj.com/archives/category/data-analysi/data-report">数据报告</a></li>
+	<li id="menu-item-10497" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-10497"><a href="http://www.36dsj.com/archives/category/data-analysi/datamining">数据挖掘</a></li>
+	<li id="menu-item-10498" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-10498"><a href="http://www.36dsj.com/archives/category/data-analysi/user-research">用户研究</a></li>
+	<li id="menu-item-10499" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-10499"><a href="http://www.36dsj.com/archives/category/data-analysi/web-analytics">网站分析</a></li>
+</ul>
+</li>
+<li id="menu-item-10512" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-has-children menu-item-10512"><a href="http://www.36dsj.com/archives/category/look/big-data-investment">投资并购</a>
+<ul class="sub-menu">
+	<li id="menu-item-10492" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-10492"><a href="http://www.36dsj.com/archives/category/global-vision">全球视野</a></li>
+	<li id="menu-item-10493" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-10493"><a href="http://www.36dsj.com/archives/category/analysis/foreign-media-reports">外媒报道</a></li>
+	<li id="menu-item-11970" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-11970"><a href="http://www.36dsj.com/archives/category/data-analysi/trend-observation">趋势观察</a></li>
+</ul>
+</li>
+<li id="menu-item-17278" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-17278"><a href="http://www.36dsj.com/qiye">企业专区</a></li>
+</ul>		<div class="navbar-r">
+					<a href="http://www.36dsj.com/wp-login.php?action=register">注册</a>
+			<a class="item" href="http://www.36dsj.com/wp-login.php"><span class="glyphicon glyphicon-user"></span> 登录</a>
+				</div>
+		</div>
+	</div>
+</header><div class="content-wrap">
+	<div class="content">
+				<header class="article-header">
+			<h1 class="article-title"><a href="http://www.36dsj.com/archives/9192">程序员必须知道的10大基础实用算法及其讲解</a></h1>
+			<ul class="article-meta">
+								<li><span class="glyphicon glyphicon-user"></span> 亮亮</li>
+				<li><span class="glyphicon glyphicon-time"></span> 2014-06-20 18:24:26</li>
+				<li><span class="glyphicon glyphicon-list-alt"></span> <a href="http://www.36dsj.com/archives/category/ganhuo" rel="category tag">干货教程</a></li>
+				<li><span class="glyphicon glyphicon-comment"></span> 评论(1)</li>
+				<li class="bdshare"><div class="bdsharebuttonbox bdshare-button-style0-16" data-bd-bind="1488765234976"><a href="http://www.36dsj.com/archives/9192#" class="bds_more" data-cmd="more"></a><a href="http://www.36dsj.com/archives/9192#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"></a><a href="http://www.36dsj.com/archives/9192#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a><a href="http://www.36dsj.com/archives/9192#" class="bds_tqq" data-cmd="tqq" title="分享到腾讯微博"></a><a href="http://www.36dsj.com/archives/9192#" class="bds_renren" data-cmd="renren" title="分享到人人网"></a><a href="http://www.36dsj.com/archives/9192#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a><a href="http://www.36dsj.com/archives/9192#" class="bds_kaixin001" data-cmd="kaixin001" title="分享到开心网"></a><a href="http://www.36dsj.com/archives/9192#" class="bds_tqf" data-cmd="tqf" title="分享到腾讯朋友"></a><a href="http://www.36dsj.com/archives/9192#" class="bds_sqq" data-cmd="sqq" title="分享到QQ好友"></a></div></li>
+			</ul>
+		</header>
+				<article class="article-content">
+			<h2><img class="size-full wp-image-9213 aligncenter" src="./程序员必须知道的10大基础实用算法及其讲解 _ 36大数据_files/5579.jpg" alt="算法" width="600" height="399" data-tag="bdshare" data-bd-imgshare-binded="1"></h2>
+<h2><span style="color: #3366ff;">算法一：快速排序算法</span></h2>
+<p>快速排序是由东尼·霍尔所发展的一种排序算法。在平均状况下，排序 n 个项目要Ο(n log n)次比较。在最坏状况下则需要Ο(n2)次比较，但这种状况并不常见。事实上，快速排序通常明显比其他Ο(n log n) 算法更快，因为它的内部循环(inner loop)可以在大部分的架构上很有效率地被实现出来。</p>
+<p>快速排序使用分治法(Divide and conquer)策略来把一个串行(list)分为两个子串行(sub-lists)。</p>
+<p>&nbsp;</p>
+<p><img class="aligncenter" src="./程序员必须知道的10大基础实用算法及其讲解 _ 36大数据_files/611.gif" alt="快速排序" width="280" height="214" data-tag="bdshare" data-bd-imgshare-binded="1"></p>
+<p>算法步骤：</p>
+<p>1 从数列中挑出一个元素，称为 “基准”(pivot)。</p>
+<p>2 重新排序数列，所有元素比基准值小的摆放在基准前面，所有元素比基准值大的摆在基准的后面(相同的数可以到任一边)。在这个分区退出之后，该基准就处于数列的中间位置。这个称为分区(partition)操作。</p>
+<p>3 递归地(recursive)把小于基准值元素的子数列和大于基准值元素的子数列排序。</p>
+<p>递归的最底部情形，是数列的大小是零或一，也就是永远都已经被排序好了。虽然一直递归下去，但是这个算法总会退出，因为在每次的迭代(iteration)中，它至少会把一个元素摆到它最后的位置去。</p>
+<h2><span style="color: #3366ff;">算法二：堆排序算法</span></h2>
+<p>堆排序(Heapsort)是指利用堆这种数据结构所设计的一种排序算法。堆积是一个近似完全二叉树的结构，并同时满足堆积的性质：即子结点的键值或索引总是小于(或者大于)它的父节点。</p>
+<p>堆排序的平均时间复杂度为Ο(nlogn) 。</p>
+<p><img class="aligncenter" src="./程序员必须知道的10大基础实用算法及其讲解 _ 36大数据_files/612.gif" alt="堆排序算法" width="280" height="214" data-tag="bdshare" data-bd-imgshare-binded="1"></p>
+<p>算法步骤：</p>
+<p>1. 创建一个堆H[0..n-1]。</p>
+<p>2.把堆首(最大值)和堆尾互换。</p>
+<p>3. 把堆的尺寸缩小1，并调用shift_down(0),目的是把新的数组顶端数据调整到相应位置。</p>
+<p>4. 重复步骤2，直到堆的尺寸为1。</p>
+<h2><span style="color: #3366ff;">算法三：归并排序</span></h2>
+<p>归并排序(Merge sort，台湾译作：合并排序)是建立在归并操作上的一种有效的排序算法。该算法是采用分治法(Divide and Conquer)的一个非常典型的应用。</p>
+<p>算法步骤：</p>
+<p>1. 申请空间，使其大小为两个已经排序序列之和，该空间用来存放合并后的序列。</p>
+<p>2. 设定两个指针，最初位置分别为两个已经排序序列的起始位置。</p>
+<p>3. 比较两个指针所指向的元素，选择相对小的元素放入到合并空间，并移动指针到下一位置。</p>
+<p>4. 重复步骤3直到某一指针达到序列尾。</p>
+<p>5. 将另一序列剩下的所有元素直接复制到合并序列尾。</p>
+<p><img class="aligncenter" src="./程序员必须知道的10大基础实用算法及其讲解 _ 36大数据_files/613.gif" alt="归并排序" width="280" height="320" data-tag="bdshare" data-bd-imgshare-binded="1"></p>
+<h2><span style="color: #3366ff;">算法四：二分查找算法</span></h2>
+<p>二分查找算法是一种在有序数组中查找某一特定元素的搜索算法。搜素过程从数组的中间元素开始，如果中间元素正好是要查找的元素，则搜素过程结束;如果某一特定元素大于或者小于中间元素，则在数组大于或小于中间元素的那一半中查找，而且跟开始一样从中间元素开始比较。如果在某一步骤数组为空，则代表找不到。这种搜索算法每一次比较都使搜索范围缩小一半。折半搜索每次把搜索区域减少一半，时间复杂度为Ο(logn) 。</p>
+<h2><span style="color: #3366ff;">算法五：BFPRT(线性查找算法)</span></h2>
+<p>BFPRT算法解决的问题十分经典，即从某n个元素的序列中选出第k大(第k小)的元素，通过巧妙的分析，BFPRT可以保证在最坏情况下仍为线性时间复杂度。该算法的思想与快速排序思想相似，当然，为使得算法在最坏情况下，依然能达到o(n)的时间复杂度，五位算法作者做了精妙的处理。</p>
+<p>算法步骤：</p>
+<p>1. 将n个元素每5个一组，分成n/5(上界)组。</p>
+<p>2. 取出每一组的中位数，任意排序方法，比如插入排序。</p>
+<p>3. 递归的调用selection算法查找上一步中所有中位数的中位数，设为x，偶数个中位数的情况下设定为选取中间小的一个。</p>
+<p>4. 用x来分割数组，设小于等于x的个数为k，大于x的个数即为n-k。</p>
+<p>5. 若i==k，返回x;若i&lt;k，在小于x的元素中递归查找第i小的元素;若i&gt;k，在大于x的元素中递归查找第i-k小的元素。</p>
+<p>终止条件：n=1时，返回的即是i小元素。</p>
+<h2><span style="color: #3366ff;">算法六：DFS(深度优先搜索)</span></h2>
+<p>深度优先搜索算法(Depth-First-Search)，是搜索算法的一种。它沿着树的深度遍历树的节点，尽可能深的搜索树的分支。当节点v的所有边都己被探寻过，搜索将回溯到发现节点v的那条边的起始节点。这一过程一直进行到已发现从源节点可达的所有节点为止。如果还存在未被发现的节点，则选择其中一个作为源节点并重复以上过程，整个进程反复进行直到所有节点都被访问为止。DFS属于盲目搜索。</p>
+<p>深度优先搜索是图论中的经典算法，利用深度优先搜索算法可以产生目标图的相应拓扑排序表，利用拓扑排序表可以方便的解决很多相关的图论问题，如最大路径问题等等。一般用堆数据结构来辅助实现DFS算法。</p>
+<p>深度优先遍历图算法步骤：</p>
+<p>1. 访问顶点v。</p>
+<p>2. 依次从v的未被访问的邻接点出发，对图进行深度优先遍历;直至图中和v有路径相通的顶点都被访问。</p>
+<p>3. 若此时图中尚有顶点未被访问，则从一个未被访问的顶点出发，重新进行深度优先遍历，直到图中所有顶点均被访问过为止。</p>
+<p>上述描述可能比较抽象，举个实例：</p>
+<p>DFS 在访问图中某一起始顶点 v 后，由 v 出发，访问它的任一邻接顶点 w1;再从 w1 出发，访问与 w1邻 接但还没有访问过的顶点 w2;然后再从 w2 出发，进行类似的访问，… 如此进行下去，直至到达所有的邻接顶点都被访问过的顶点 u 为止。</p>
+<p>接着，退回一步，退到前一次刚访问过的顶点，看是否还有其它没有被访问的邻接顶点。如果有，则访问此顶点，之后再从此顶点出发，进行与前述类似的访问;如果没有，就再退回一步进行搜索。重复上述过程，直到连通图中所有顶点都被访问过为止。</p>
+<h2><span style="color: #3366ff;">算法七：BFS(广度优先搜索)</span></h2>
+<p>广度优先搜索算法(Breadth-First-Search)，是一种图形搜索算法。简单的说，BFS是从根节点开始，沿着树(图)的宽度遍历树(图)的节点。如果所有节点均被访问，则算法中止。BFS同样属于盲目搜索。一般用队列数据结构来辅助实现BFS算法。</p>
+<p>算法步骤：</p>
+<p>1. 首先将根节点放入队列中。</p>
+<p>2. 从队列中取出第一个节点，并检验它是否为目标。如果找到目标，则结束搜寻并回传结果，否则将它所有尚未检验过的直接子节点加入队列中。</p>
+<p>3. 若队列为空，表示整张图都检查过了——亦即图中没有欲搜寻的目标。结束搜寻并回传“找不到目标”。</p>
+<p>4. 重复步骤2。</p>
+<p><img class="aligncenter" src="./程序员必须知道的10大基础实用算法及其讲解 _ 36大数据_files/614.gif" alt="BFS" width="187" height="175" data-tag="bdshare" data-bd-imgshare-binded="1"></p>
+<h2><span style="color: #3366ff;">算法八：Dijkstra算法</span></h2>
+<p>戴克斯特拉算法(Dijkstra’s algorithm)是由荷兰计算机科学家艾兹赫尔·戴克斯特拉提出。迪科斯彻算法使用了广度优先搜索解决非负权有向图的单源最短路径问题，算法最终得到一个最短路径树。该算法常用于路由算法或者作为其他图算法的一个子模块。</p>
+<p>该算法的输入包含了一个有权重的有向图 G，以及G中的一个来源顶点 S。我们以 V 表示 G 中所有顶点的集合。每一个图中的边，都是两个顶点所形成的有序元素对。(u, v) 表示从顶点 u 到 v 有路径相连。我们以 E 表示G中所有边的集合，而边的权重则由权重函数 w: E → [0, ∞] 定义。因此，w(u, v) 就是从顶点 u 到顶点 v 的非负权重(weight)。边的权重可以想像成两个顶点之间的距离。任两点间路径的权重，就是该路径上所有边的权重总和。已知有 V 中有顶点 s 及 t，Dijkstra 算法可以找到 s 到 t的最低权重路径(例如，最短路径)。这个算法也可以在一个图中，找到从一个顶点 s 到任何其他顶点的最短路径。对于不含负权的有向图，Dijkstra算法是目前已知的最快的单源最短路径算法。</p>
+<p>算法步骤：</p>
+<p>1. 初始时令 S={V0},T={其余顶点}，T中顶点对应的距离值，若存在&lt;v0,vi&gt;，d(V0,Vi)为&lt;v0,vi&gt;弧上的权值，若不存在&lt;v0,vi&gt;，d(V0,Vi)为∞。</p>
+<p>2. 从T中选取一个其距离值为最小的顶点W且不在S中，加入S。</p>
+<p>3. 对其余T中顶点的距离值进行修改：若加进W作中间顶点，从V0到Vi的距离值缩短，则修改此距离值。</p>
+<p>4.重复上述步骤2、3，直到S中包含所有顶点，即W=Vi为止。</p>
+<p><img class="aligncenter" src="./程序员必须知道的10大基础实用算法及其讲解 _ 36大数据_files/615.gif" alt="Dijkstra" width="283" height="323" data-tag="bdshare" data-bd-imgshare-binded="1"></p>
+<h2><span style="color: #3366ff;">算法九：动态规划算法</span></h2>
+<p>动态规划(Dynamic programming)是一种在数学、计算机科学和经济学中使用的，通过把原问题分解为相对简单的子问题的方式求解复杂问题的方法。 动态规划常常适用于有重叠子问题和最优子结构性质的问题，动态规划方法所耗时间往往远少于朴素解法。</p>
+<p>动态规划背后的基本思想非常简单。大致上，若要解一个给定问题，我们需要解其不同部分(即子问题)，再合并子问题的解以得出原问题的解。 通常许多子问题非常相似，为此动态规划法试图仅仅解决每个子问题一次，从而减少计算量： 一旦某个给定子问题的解已经算出，则将其记忆化存储，以便下次需要同一个子问题解之时直接查表。 这种做法在重复子问题的数目关于输入的规模呈指数增长时特别有用。</p>
+<p>关于动态规划最经典的问题当属背包问题。</p>
+<p>算法步骤：</p>
+<p>1. 最优子结构性质。如果问题的最优解所包含的子问题的解也是最优的，我们就称该问题具有最优子结构性质(即满足最优化原理)。最优子结构性质为动态规划算法解决问题提供了重要线索。</p>
+<p>2. 子问题重叠性质。子问题重叠性质是指在用递归算法自顶向下对问题进行求解时，每次产生的子问题并不总是新问题，有些子问题会被重复计算多次。动态规划算法正是利用了这种子问题的重叠性质，对每一个子问题只计算一次，然后将其计算结果保存在一个表格中，当再次需要计算已经计算过的子问题时，只是在表格中简单地查看一下结果，从而获得较高的效率。</p>
+<h2><span style="color: #3366ff;">算法十：朴素贝叶斯分类算法</span></h2>
+<p>朴素贝叶斯分类算法是一种基于贝叶斯定理的简单概率分类算法。贝叶斯分类的基础是概率推理，就是在各种条件的存在不确定，仅知其出现概率的情况下，如何完成推理和决策任务。概率推理是与确定性推理相对应的。而朴素贝叶斯分类器是基于独立假设的，即假设样本每个特征与其他特征都不相关。</p>
+<p>朴素贝叶斯分类器依靠精确的自然概率模型，在有监督学习的样本集中能获取得非常好的分类效果。在许多实际应用中，朴素贝叶斯模型参数估计使用最大似然估计方法，换言之朴素贝叶斯模型能工作并没有用到贝叶斯概率或者任何贝叶斯模型。</p>
+<p>尽管是带着这些朴素思想和过于简单化的假设，但朴素贝叶斯分类器在很多复杂的现实情形中仍能够取得相当好的效果。</p>
+<p style="color: #555555;">End.</p>
+<p>转载请注明来自36大数据（36dsj.com)：<a href="http://www.36dsj.com/">36大数据</a> » <a href="http://www.36dsj.com/archives/9192">程序员必须知道的10大基础实用算法及其讲解</a></p>		</article>
+				<div class="article-tags">
+			标签：<a href="http://www.36dsj.com/archives/tag/%e5%9f%ba%e7%a1%80%e7%ae%97%e6%b3%95" rel="tag">基础算法</a><a href="http://www.36dsj.com/archives/tag/data-mining" rel="tag">数据挖掘</a><a href="http://www.36dsj.com/archives/tag/%e7%a8%8b%e5%ba%8f%e7%8c%bf" rel="tag">程序猿</a><a href="http://www.36dsj.com/archives/tag/%e7%ae%97%e6%b3%95" rel="tag">算法</a>		</div>
+		<div class="postcode"><img class="alignnone size-full wp-image-11327" src="./程序员必须知道的10大基础实用算法及其讲解 _ 36大数据_files/P3.png" alt="36大数据" width="640" height="141">
+
+&nbsp;
+
+除非特别注明，本站所有文章均不代表本站观点。报道中出现的商标属于其合法持有人。请遵守理性，宽容，换位思考的原则。
+</div>
+						<div class="relates"><h3 class="title"><strong>猜你喜欢</strong></h3><ul><li><a href="http://www.36dsj.com/archives/77753">一个资深数据人对数据挖掘解读</a>2017-02-17</li><li><a href="http://www.36dsj.com/archives/77717">深度增强学习前沿算法思想</a>2017-02-17</li><li><a href="http://www.36dsj.com/archives/77655">从数据服务入手，“网红城堡”获2000万元天使轮融资</a>2017-02-16</li><li><a href="http://www.36dsj.com/archives/77029">从AlphaGo 围棋大战到AI 德扑大战的机器学习技术解析 | 上</a>2017-02-10</li><li><a href="http://www.36dsj.com/archives/76923">手把手教你做文本挖掘</a>2017-02-10</li><li><a href="http://www.36dsj.com/archives/76237">用Spark学习矩阵分解推荐算法</a>2017-02-06</li><li><a href="http://www.36dsj.com/archives/76223">这一年来，数据科学家都用哪些算法?</a>2017-02-06</li><li><a href="http://www.36dsj.com/archives/76100">特普朗撼动世界背后的大数据风暴</a>2017-02-04</li><li><a href="http://www.36dsj.com/archives/75956">算法帝国：华尔街交易怪兽的核武器缔造史</a>2017-02-03</li><li><a href="http://www.36dsj.com/archives/75813">Python 为何能坐稳 AI 时代头牌语言</a>2017-02-01</li></ul></div>				<h3 class="title" id="comments">
+	<div class="text-muted pull-right">
+		</div>
+	<strong>评论 <b>1</b></strong>
+</h3>
+<div id="respond" class="no_webshot">
+		
+	<form action="http://www.36dsj.com/wp-comments-post.php" method="post" id="commentform">
+		
+		<div class="comt-title">
+			<div class="comt-avatar">
+				<img data-original="https://secure.gravatar.com/avatar/" class="avatar avatar-100" height="100" width="100" src="./程序员必须知道的10大基础实用算法及其讲解 _ 36大数据_files/avatar-default.png">			</div>
+			<div class="comt-author">
+						</div>
+			<a id="cancel-comment-reply-link" href="javascript:;">取消</a>
+		</div>
+		
+		<div class="comt">
+			<div class="comt-box">
+				<textarea placeholder="骚年哟，既然都来了，为何不吐槽几句呢？((o(^_ ^)o))" class="input-block-level comt-area" name="comment" id="comment" cols="100%" rows="3" tabindex="1" onkeydown="if(event.ctrlKey&amp;&amp;event.keyCode==13){document.getElementById(&#39;submit&#39;).click();return false};"></textarea>
+				<div class="comt-ctrl">
+					<div class="comt-tips"><input type="hidden" name="comment_post_ID" value="9192" id="comment_post_ID">
+<input type="hidden" name="comment_parent" id="comment_parent" value="0">
+<p style="display: none;"><input type="hidden" id="akismet_comment_nonce" name="akismet_comment_nonce" value="22aa40b113"></p><label for="comment_mail_notify" class="checkbox inline hide" style="padding-top:0"><input type="checkbox" name="comment_mail_notify" id="comment_mail_notify" value="comment_mail_notify" checked="checked">有人回复时邮件通知我</label><p style="display: none;"></p><div class="comt-tip comt-loading" style="display: none;">正在提交, 请稍候...</div><div class="comt-tip comt-error" style="display: none;">#</div></div>
+					<button type="submit" name="submit" id="submit" tabindex="5"><i class="icon-ok-circle icon-white icon12"></i> 提交评论</button>
+					<!-- <span data-type="comment-insert-smilie" class="muted comt-smilie"><i class="icon-thumbs-up icon12"></i> 表情</span> -->
+				</div>
+			</div>
+
+												<div class="comt-comterinfo" id="comment-author-info">
+						<ul>
+							<li class="form-inline"><label class="hide" for="author">昵称</label><input class="ipt" type="text" name="author" id="author" value="" tabindex="2" placeholder="昵称"><span class="text-muted">昵称 (必填)</span></li>
+							<li class="form-inline"><label class="hide" for="email">邮箱</label><input class="ipt" type="text" name="email" id="email" value="" tabindex="3" placeholder="邮箱"><span class="text-muted">邮箱 (必填)</span></li>
+							<li class="form-inline"><label class="hide" for="url">网址</label><input class="ipt" type="text" name="url" id="url" value="" tabindex="4" placeholder="网址"><span class="text-muted">网址</span></li>
+						</ul>
+					</div>
+									</div>
+
+	<input type="hidden" id="ak_js" name="ak_js" value="1488765234780"></form>
+	</div>
+<div id="postcomments">
+	
+	<ol class="commentlist">
+		<li class="comment even thread-even depth-1" id="comment-5277"><div class="c-avatar"><img data-original="https://secure.gravatar.com/avatar/" class="avatar avatar-100" height="100" width="100" src="./程序员必须知道的10大基础实用算法及其讲解 _ 36大数据_files/avatar-default.png"></div><div class="c-main" id="div-comment-5277"><span class="c-author">匿名</span>写的太好了，赞！<time class="c-time">1年前 (2015-11-27)</time><a rel="nofollow" class="comment-reply-link" href="http://www.36dsj.com/archives/9192?replytocom=5277#respond" onclick="return addComment.moveForm( &quot;div-comment-5277&quot;, &quot;5277&quot;, &quot;respond&quot;, &quot;9192&quot; )" aria-label="回复给">回复</a></div></li><!-- #comment-## -->
+	</ol>
+	<div class="pagenav">
+			</div>
+</div>
+	</div>
+</div>
+<aside class="sidebar">	
+<div class="widget widget_text">			<div class="textwidget"><a href="./程序员必须知道的10大基础实用算法及其讲解 _ 36大数据_files/P2.png"><img class="alignnone size-full wp-image-11326" src="./程序员必须知道的10大基础实用算法及其讲解 _ 36大数据_files/P2.png" alt="36大数据" width="300" height="140"></a></div>
+		</div><div class="widget widget_ultimate_posts"><h3 class="title"><strong><a href="http://www.36dsj.com/archives/category/news">你想知道</a></strong></h3>
+
+
+  <ul>
+
+  
+    
+    <li class="">
+
+      
+      <div class="upw-content">
+
+                  <p class="post-title">
+            <a href="http://www.36dsj.com/archives/77851" title="高频/场景驱动下 美团外卖O2O的用户画像实践">
+              高频/场景驱动下 美团外卖O2O的用户画像实践            </a>
+          </p>
+        
+        
+        
+        
+        
+        
+        
+        
+        
+      </div>
+
+    </li>
+
+  
+    
+    <li class="">
+
+      
+      <div class="upw-content">
+
+                  <p class="post-title">
+            <a href="http://www.36dsj.com/archives/77679" title="用户画像是什么鬼，你懂吗?">
+              用户画像是什么鬼，你懂吗?            </a>
+          </p>
+        
+        
+        
+        
+        
+        
+        
+        
+        
+      </div>
+
+    </li>
+
+  
+    
+    <li class="">
+
+      
+      <div class="upw-content">
+
+                  <p class="post-title">
+            <a href="http://www.36dsj.com/archives/77671" title="读书笔记 | 大数据时代">
+              读书笔记 | 大数据时代            </a>
+          </p>
+        
+        
+        
+        
+        
+        
+        
+        
+        
+      </div>
+
+    </li>
+
+  
+    
+    <li class="">
+
+      
+      <div class="upw-content">
+
+                  <p class="post-title">
+            <a href="http://www.36dsj.com/archives/77665" title="全球数据驻留风险管理">
+              全球数据驻留风险管理            </a>
+          </p>
+        
+        
+        
+        
+        
+        
+        
+        
+        
+      </div>
+
+    </li>
+
+  
+    
+    <li class="">
+
+      
+      <div class="upw-content">
+
+                  <p class="post-title">
+            <a href="http://www.36dsj.com/archives/77565" title="10分钟读懂Uber的动态定价策略">
+              10分钟读懂Uber的动态定价策略            </a>
+          </p>
+        
+        
+        
+        
+        
+        
+        
+        
+        
+      </div>
+
+    </li>
+
+  
+    
+    <li class="">
+
+      
+      <div class="upw-content">
+
+                  <p class="post-title">
+            <a href="http://www.36dsj.com/archives/77285" title="作为大数据从业人员，如何写好一份可堪入目的简历?">
+              作为大数据从业人员，如何写好一份可堪入目的简历?            </a>
+          </p>
+        
+        
+        
+        
+        
+        
+        
+        
+        
+      </div>
+
+    </li>
+
+  
+    
+    <li class="">
+
+      
+      <div class="upw-content">
+
+                  <p class="post-title">
+            <a href="http://www.36dsj.com/archives/77281" title="女生特供 | 脱单路径大分析，科学拯救单身的妳">
+              女生特供 | 脱单路径大分析，科学拯救单身的妳            </a>
+          </p>
+        
+        
+        
+        
+        
+        
+        
+        
+        
+      </div>
+
+    </li>
+
+  
+    
+    <li class="">
+
+      
+      <div class="upw-content">
+
+                  <p class="post-title">
+            <a href="http://www.36dsj.com/archives/77158" title="论运营商当下的大数据变现服务模式">
+              论运营商当下的大数据变现服务模式            </a>
+          </p>
+        
+        
+        
+        
+        
+        
+        
+        
+        
+      </div>
+
+    </li>
+
+  
+    
+    <li class="">
+
+      
+      <div class="upw-content">
+
+                  <p class="post-title">
+            <a href="http://www.36dsj.com/archives/76999" title="数据分析师的必读书单">
+              数据分析师的必读书单            </a>
+          </p>
+        
+        
+        
+        
+        
+        
+        
+        
+        
+      </div>
+
+    </li>
+
+  
+    
+    <li class="">
+
+      
+      <div class="upw-content">
+
+                  <p class="post-title">
+            <a href="http://www.36dsj.com/archives/76989" title="用户群体画像功能深度解析">
+              用户群体画像功能深度解析            </a>
+          </p>
+        
+        
+        
+        
+        
+        
+        
+        
+        
+      </div>
+
+    </li>
+
+    
+  </ul>
+
+
+</div><div class="widget widget_text">			<div class="textwidget"><a href="http://www.36dsj.com/archives/category/application-area/major" target="_blank"><img class="alignnone size-full wp-image-14952" src="./程序员必须知道的10大基础实用算法及其讲解 _ 36大数据_files/4110.jpg" alt="马云说" width="300" height="138"></a></div>
+		</div>		<div class="widget widget_recent_entries">		<h3 class="title"><strong>近期文章</strong></h3>		<ul>
+					<li>
+				<a href="http://www.36dsj.com/archives/77993">基于Hadoop的数据仓库Hive 基础知识</a>
+						</li>
+					<li>
+				<a href="http://www.36dsj.com/archives/77989">论大数据的泡沫、价值与应用陷阱</a>
+						</li>
+					<li>
+				<a href="http://www.36dsj.com/archives/77961">中科点击举办2017融资战略发布会，累计获3500万融资</a>
+						</li>
+					<li>
+				<a href="http://www.36dsj.com/archives/77965">谁在听《成都》——大数据描绘歌曲《成都》的听众肖像</a>
+						</li>
+					<li>
+				<a href="http://www.36dsj.com/archives/77955">视频：大数据到底是什么 都说干大数据挣钱 1分钟告诉你都在干什么</a>
+						</li>
+					<li>
+				<a href="http://www.36dsj.com/archives/77947">深入解读《Gartner2017年商业智能和分析平台魔力象限报告》</a>
+						</li>
+					<li>
+				<a href="http://www.36dsj.com/archives/77938">API 设计的七大误区</a>
+						</li>
+					<li>
+				<a href="http://www.36dsj.com/archives/77932">算法得出电台司令最悲伤的歌曲是True Love Waits</a>
+						</li>
+					<li>
+				<a href="http://www.36dsj.com/archives/77921">自动化机器学习将成为下一个AI研究主流？听听数据科学家怎么说</a>
+						</li>
+					<li>
+				<a href="http://www.36dsj.com/archives/77912">你的混合云是不是真的“混合”？</a>
+						</li>
+				</ul>
+		</div>		<div class="widget d_postlist"><h3 class="title"><strong>相关文章<a class="more" href="http://www.36dsj.com/">More+</a></strong></h3><ul><li><a href="http://www.36dsj.com/archives/2499"><span class="thumbnail"><span><img data-original="http://www.36dsj.com/wp-content/uploads/2013/07/108-140x98.png" class="thumb" src="./程序员必须知道的10大基础实用算法及其讲解 _ 36大数据_files/108-140x98.png" style="display: inline;"></span></span><span class="text">【实战经验】数据分析师如何了解老板真正想法？</span><span class="muted">2013-07-26</span><span class="muted"></span></a></li>
+<li><a href="http://www.36dsj.com/archives/21862"><span class="thumbnail"><span><img data-original="http://www.36dsj.com/wp-content/uploads/2015/01/1435-220x150.jpg" class="thumb" src="./程序员必须知道的10大基础实用算法及其讲解 _ 36大数据_files/1435-220x150.jpg" style="display: inline;"></span></span><span class="text">浅析数据化设计思维在阿里系产品的应用</span><span class="muted">2015-01-26</span><span class="muted"></span></a></li>
+<li><a href="http://www.36dsj.com/archives/70992"><span class="thumbnail"><span><img data-original="http://www.36dsj.com/wp-content/uploads/2016/12/1068.jpg" class="thumb" src="./程序员必须知道的10大基础实用算法及其讲解 _ 36大数据_files/1068.jpg" style="display: inline;"></span></span><span class="text">Hadoop平台中SQL优化的四个思路</span><span class="muted">2016-12-08</span><span class="muted"></span></a></li>
+<li><a href="http://www.36dsj.com/archives/50841"><span class="thumbnail"><span><img data-original="http://www.36dsj.com/wp-content/uploads/2016/05/232-220x150.jpg" class="thumb" src="./程序员必须知道的10大基础实用算法及其讲解 _ 36大数据_files/232-220x150.jpg" style="display: inline;"></span></span><span class="text">数据库面试常问的一些基本概念</span><span class="muted">2016-05-23</span><span class="muted"></span></a></li>
+<li><a href="http://www.36dsj.com/archives/66339"><span class="thumbnail"><span><img data-original="http://www.36dsj.com/wp-content/uploads/2016/10/795-1.jpg" class="thumb" src="./程序员必须知道的10大基础实用算法及其讲解 _ 36大数据_files/795-1.jpg" style="display: inline;"></span></span><span class="text">思路+步骤+方法，三步教你如何快速构建用户画像</span><span class="muted">2016-10-27</span><span class="muted"></span></a></li>
+<li><a href="http://www.36dsj.com/archives/63751"><span class="thumbnail"><span><img data-original="http://www.36dsj.com/wp-content/uploads/2016/10/1509-220x150.jpg" class="thumb" src="./程序员必须知道的10大基础实用算法及其讲解 _ 36大数据_files/1509-220x150.jpg" style="display: inline;"></span></span><span class="text">阿里巴巴73款开源产品全向图</span><span class="muted">2016-10-08</span><span class="muted">1评论</span></a></li>
+</ul></div></aside></section>
+<footer class="footer">
+	<div class="container">
+	<div class="item item-01">
+		<ul><li><a href="http://www.36dsj.com/archives/category/large-data-tools/hadoop">Hadoop专区</a></li>
+<li><a href="http://www.36dsj.com/archives/category/bigdata/data-visualization">数据可视化</a></li>
+<li><a href="http://www.36dsj.com/archives/category/large-data-tools/machine-learning">机器学习专区</a></li>
+<li><a href="http://www.36dsj.com/archives/category/large-data-tools/python">Python专区</a></li>
+<li><a href="http://www.36dsj.com/archives/category/large-data-tools/spark">Spark专区</a></li>
+<li><a href="http://www.36dsj.com/archives/category/data-industry">数据科学家</a></li>
+<li><a href="http://www.36dsj.com/about-us">关于我们</a></li>
+<li><a href="http://www.36dsj.com/contact-us">联系我们</a></li>
+<li><a href="http://www.36dsj.com/baodao">寻求报道</a></li>
+<li><a href="http://www.36dsj.com/qiye">企业专区</a></li>
+<li><a href="http://www.36dsj.com/renwu">人物专栏</a></li>
+<li><a href="http://www.36dsj.com/archives/category/large-data-tools/algorithm">算法</a></li></ul>
+	</div>
+	<div class="item item-02">
+		<p>36大数据成立于2013年5月，是中国访问量最大的大数据网站。</p><p>
+
+</p><p>36大数据以独立第三方的角度，为大数据产业生态图谱上的需求商、应用商、服务商、技术解决商等相关公司及从业人员提供全球资讯、商机、案例、技术教程、项目对接、创业投资及专访报道等服务。</p><p>
+
+</p><p>商务合作 邮箱：dashuju36@qq.com  7*24客服电话：010-57280721</p><p>
+
+</p><p>备案号：京ICP备12012135号-2。版权所有，保留一切权利！ © 2014 <a href="http://www.36dsj.com/">36大数据</a> Theme</p><p>    	<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?46db1c7ab0c594c8219d3a3d68e66ff8";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+	</p></div>
+	<div class="item item-03">
+		<img src="./程序员必须知道的10大基础实用算法及其讲解 _ 36大数据_files/232.png">
+	</div>
+    </div>
+</footer>
+
+<script>
+window.jui = {
+	uri: 'http://www.36dsj.com/wp-content/themes/dsj0804',
+	roll: 0}
+</script>
+<script type="text/javascript" src="./程序员必须知道的10大基础实用算法及其讲解 _ 36大数据_files/form.js.下载"></script>
+<script type="text/javascript" src="./程序员必须知道的10大基础实用算法及其讲解 _ 36大数据_files/bootstrap.js.下载"></script>
+<script type="text/javascript" src="./程序员必须知道的10大基础实用算法及其讲解 _ 36大数据_files/custom.js.下载"></script><div class="rollto" style="display: block;"><a href="javascript:;"></a></div>
+<script type="text/javascript" src="./程序员必须知道的10大基础实用算法及其讲解 _ 36大数据_files/wp-embed.min.js.下载"></script>
+
+
+<div id="bdimgshare_1488765234984" class="sr-bdimgshare sr-bdimgshare-list sr-bdimgshare-16 sr-bdimgshare-black" style="height:36px;line-height:26px;font-size:12px;width:autopx;display:none;" data-bd-bind="1488765234984"><div class="bdimgshare-bg"></div><div class="bdimgshare-content bdsharebuttonbox bdshare-button-style0-16"><label class="bdimgshare-lbl">分享到：</label><a href="http://www.36dsj.com/archives/9192#" onclick="return false;" class="bds_qzone" data-cmd="qzone" hidefocus=""></a><a href="http://www.36dsj.com/archives/9192#" onclick="return false;" class="bds_weixin" data-cmd="weixin" hidefocus=""></a><a href="http://www.36dsj.com/archives/9192#" onclick="return false;" class="bds_tsina" data-cmd="tsina" hidefocus=""></a><a href="http://www.36dsj.com/archives/9192#" onclick="return false;" class="bds_tqq" data-cmd="tqq" hidefocus=""></a><a href="http://www.36dsj.com/archives/9192#" onclick="return false;" class="bds_renren" data-cmd="renren" hidefocus=""></a><a href="http://www.36dsj.com/archives/9192#" onclick="return false;" class="bds_sqq" data-cmd="sqq" hidefocus=""></a><a href="http://www.36dsj.com/archives/9192#" onclick="return false;" class="bds_douban" data-cmd="douban" hidefocus=""></a><a href="http://www.36dsj.com/archives/9192#" onclick="return false;" class="bds_more" data-cmd="more" hidefocus=""></a></div></div><div id="hm_t_undefined" class="hm-t-container"><div class="hm-t-go-top" style="display: block;"></div></div></body></html>

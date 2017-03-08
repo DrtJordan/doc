@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<!-- saved from url=(0035)http://www.36dsj.com/archives/72660 -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><script charset="utf-8" src="./互联网金融中的数据科学 _ 36大数据_files/s.js.下载"></script>
+
+<meta http-equiv="X-UA-Compatible" content="IE=11,IE=10,IE=9,IE=8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
+<title>互联网金融中的数据科学 | 36大数据</title>
+<link rel="dns-prefetch" href="http://www.36dsj.com/">
+<link rel="dns-prefetch" href="http://s.w.org/">
+		<script src="./互联网金融中的数据科学 _ 36大数据_files/hm.js.下载"></script><script type="text/javascript">
+			window._wpemojiSettings = {"baseUrl":"https:\/\/s.w.org\/images\/core\/emoji\/2.2.1\/72x72\/","ext":".png","svgUrl":"https:\/\/s.w.org\/images\/core\/emoji\/2.2.1\/svg\/","svgExt":".svg","source":{"concatemoji":"http:\/\/www.36dsj.com\/wp-includes\/js\/wp-emoji-release.min.js"}};
+			!function(a,b,c){function d(a){var b,c,d,e,f=String.fromCharCode;if(!k||!k.fillText)return!1;switch(k.clearRect(0,0,j.width,j.height),k.textBaseline="top",k.font="600 32px Arial",a){case"flag":return k.fillText(f(55356,56826,55356,56819),0,0),!(j.toDataURL().length<3e3)&&(k.clearRect(0,0,j.width,j.height),k.fillText(f(55356,57331,65039,8205,55356,57096),0,0),b=j.toDataURL(),k.clearRect(0,0,j.width,j.height),k.fillText(f(55356,57331,55356,57096),0,0),c=j.toDataURL(),b!==c);case"emoji4":return k.fillText(f(55357,56425,55356,57341,8205,55357,56507),0,0),d=j.toDataURL(),k.clearRect(0,0,j.width,j.height),k.fillText(f(55357,56425,55356,57341,55357,56507),0,0),e=j.toDataURL(),d!==e}return!1}function e(a){var c=b.createElement("script");c.src=a,c.defer=c.type="text/javascript",b.getElementsByTagName("head")[0].appendChild(c)}var f,g,h,i,j=b.createElement("canvas"),k=j.getContext&&j.getContext("2d");for(i=Array("flag","emoji4"),c.supports={everything:!0,everythingExceptFlag:!0},h=0;h<i.length;h++)c.supports[i[h]]=d(i[h]),c.supports.everything=c.supports.everything&&c.supports[i[h]],"flag"!==i[h]&&(c.supports.everythingExceptFlag=c.supports.everythingExceptFlag&&c.supports[i[h]]);c.supports.everythingExceptFlag=c.supports.everythingExceptFlag&&!c.supports.flag,c.DOMReady=!1,c.readyCallback=function(){c.DOMReady=!0},c.supports.everything||(g=function(){c.readyCallback()},b.addEventListener?(b.addEventListener("DOMContentLoaded",g,!1),a.addEventListener("load",g,!1)):(a.attachEvent("onload",g),b.attachEvent("onreadystatechange",function(){"complete"===b.readyState&&c.readyCallback()})),f=c.source||{},f.concatemoji?e(f.concatemoji):f.wpemoji&&f.twemoji&&(e(f.twemoji),e(f.wpemoji)))}(window,document,window._wpemojiSettings);
+		</script><script src="./互联网金融中的数据科学 _ 36大数据_files/wp-emoji-release.min.js.下载" type="text/javascript" defer=""></script>
+		<style type="text/css">
+img.wp-smiley,
+img.emoji {
+	display: inline !important;
+	border: none !important;
+	box-shadow: none !important;
+	height: 1em !important;
+	width: 1em !important;
+	margin: 0 .07em !important;
+	vertical-align: -0.1em !important;
+	background: none !important;
+	padding: 0 !important;
+}
+</style>
+<link rel="stylesheet" id="main-css" href="./互联网金融中的数据科学 _ 36大数据_files/style.css" type="text/css" media="all">
+<link rel="stylesheet" id="upw_theme_standard-css" href="./互联网金融中的数据科学 _ 36大数据_files/upw-theme-standard.min.css" type="text/css" media="all">
+<script type="text/javascript" src="./互联网金融中的数据科学 _ 36大数据_files/jquery.js.下载"></script>
+<link rel="https://api.w.org/" href="http://www.36dsj.com/wp-json/">
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://www.36dsj.com/xmlrpc.php?rsd">
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://www.36dsj.com/wp-includes/wlwmanifest.xml"> 
+<link rel="prev" title="腾讯阿里开打云计算“世界大战” 全球化竞争比拼生态" href="http://www.36dsj.com/archives/72673">
+<link rel="next" title="数据解读幸福感的“玄机”" href="http://www.36dsj.com/archives/72633">
+<link rel="canonical" href="http://www.36dsj.com/archives/72660">
+<link rel="shortlink" href="http://www.36dsj.com/?p=72660">
+<link rel="alternate" type="application/json+oembed" href="http://www.36dsj.com/wp-json/oembed/1.0/embed?url=http%3A%2F%2Fwww.36dsj.com%2Farchives%2F72660">
+<link rel="alternate" type="text/xml+oembed" href="http://www.36dsj.com/wp-json/oembed/1.0/embed?url=http%3A%2F%2Fwww.36dsj.com%2Farchives%2F72660&amp;format=xml">
+<style>a:hover, a:focus,.post-like.actived,.excerpt h2 a:hover,.user-welcome strong,.article-title a:hover,#comments b,.text-muted a:hover,.relates a:hover,.archives .item:hover h3,.linkcat h2,.sticky a:hover,.article-content a:hover,.widget_links li a:hover,.d_postlist li a:hover .text, .d_newtagpost li a:hover h2,.article-meta a:hover{color:#FF6600;}.btn,.article-tags a,.search-form .btn,.widget_tags_inner a:hover:hover,.focusmo a:hover h4,.tagslist .tagname:hover,.excerpt .more a,.pagination ul > .active > a, .pagination ul > .active > span,.widget .title .more,.navbar,.nav li ul > li > a:hover{background-color:#FF6600;}.title strong, .widget .title{border-bottom-color:#FF6600;}#submit{background: #FF6600;border-right: 2px solid #FF6600;border-bottom: 2px solid #FF6600;}.nav li.current-menu-item > a, .nav li.current-menu-parent > a, .nav li.current_page_item > a, .nav li.current-post-ancestor > a,.nav li a:focus,.nav li a:hover, .nav li:hover > a,.nav li ul{background-color:#EC5F00}</style><meta name="keywords" content="互联网金融, 反欺诈, 大数据+, 数据决策, 数据分析, 数据科学, 干货教程">
+<meta name="description" content="文 | 张云松  最近几年这波在资本撬动的互联网金融火爆的浪潮中，大数据和数据科学在互联网金融行业中极大的提升了应用价值。数据分析师不再是苦逼的跑数的、出报表的">
+<link rel="shortcut icon" href="http://www.36dsj.com/favicon.ico">
+<!--[if lt IE 9]><script src="http://www.36dsj.com/wp-content/themes/dsj0804/js/html5.js"></script><![endif]-->
+<script src="./互联网金融中的数据科学 _ 36大数据_files/share.js.下载"></script><link rel="stylesheet" href="./互联网金融中的数据科学 _ 36大数据_files/share_style0_16.css"><style>html #hm_t_undefined .hm-t-go-top {position:fixed;right:2px;bottom:2px;z-index:99998;cursor:pointer;width:40px;height:37px!important;text-align:center;white-space:normal;font-size:14px;line-height:17px;padding-top:3px;color:#fff;background:#404040;background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEkAAAAXCAYAAABH92JbAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2hpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDowMjgwMTE3NDA3MjA2ODExODA4M0UyNDA4ODdDRTZBQiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDpBQjc5RkRFNkI5ODMxMUUzQkZGNDhENEJFQjM2OTcyRiIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDpBQjc5RkRFNUI5ODMxMUUzQkZGNDhENEJFQjM2OTcyRiIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M2IChNYWNpbnRvc2gpIj4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6MDI4MDExNzQwNzIwNjgxMTgwODNFMjQwODg3Q0U2QUIiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6MDI4MDExNzQwNzIwNjgxMTgwODNFMjQwODg3Q0U2QUIiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz5HPYM5AAACC0lEQVR42uyZTSgEYRjH90NoqaVcpDblvKW2XOSkNh8H5Yac9sBBDqQokiJKSMpNTi5OPo6Ktsgu67JcUHIXWfK1u3b8Xx6Zxuzu+64dM83uv34zNfu8b8/8Z+d5P8YqSZLFJNLsRmyWvIRMKgVD4AhEwA3YAV0pzGwEqyAEwmAddIICHe7FqhnsdQM14FxKLj+ooFiGE2ykiD8GVbJ4I1ELAnTmasMODnAhpVcIFIMicMgRH6Z4IxnUAh4pP3Zu5TVpUOLXDJgWiB8wkEF9IK7IL07X05oUFLjpZ4JXQQOYYwfzafJcoDjVPqw43KE4lWtUTF+AQ8eBqQSsgTaO2E0apJ7URrdCDZOM62hQJfBzGmShOD+1+2XSiYaJ7utkkBsEgEewnYfauZUmzWmU6DuY0sEgLzgArgzbu6i992cu/1WclqXsa1iHIt0DYlnKP0b9fRZu5pWdZs7dWXqa7B80+s//oF5aMSjflGqBPq5BQnFtVv4UmGHjIPEH96PAZ6C5kVMwf6daPzbFKnqCqvx9Bk/yFjSBFTMvcL+1DerAmUA/p9Rm1+y7AHJdgnqwx9EHm1s0gKtc2CpR6gE00/ZHMm3RKxbJlf0kNb2BDrCk8hsbDdvBay5tuiUTGxL7waTs2iLw0YTR9BLZQRwDUVqwjuTS9q3VRB8C1OQUnM6UqdXX/IcADn0IMADs2AqDOPSutQAAAABJRU5ErkJggg==) no-repeat -42px center #666;*background-image:url(http://ecma.bdimg.com/holmes/t-popup-icons-png8.png);_position:absolute;_top:expression(eval(document.documentElement.scrollTop+(document.documentElement.clientHeight||document.body.clientHeight)-this.offsetHeight-2));}</style><link rel="stylesheet" href="./互联网金融中的数据科学 _ 36大数据_files/imgshare.css"><link rel="stylesheet" href="./互联网金融中的数据科学 _ 36大数据_files/share_popup.css"></head>
+<body class="post-template-default single single-post postid-72660 single-format-standard">
+<section class="container">
+<header class="header">
+	<div class="topbar">
+		<div class="pull-right">
+			<a class="feed-wechat" rel="external nofollow" href="javascript:;" title="" data-content="&lt;img src=&#39;http://www.36dsj.com/wp-content/uploads/2014/07/qrcode_for_gh_8efec1177972_258.png&#39;&gt;" data-original-title="关注”dashuju36“">关注微信</a>&nbsp; | &nbsp;<a class="" rel="external nofollow" href="http://weibo.com/36dsj" title="关注微博" target="_blank">微博</a>&nbsp; | &nbsp;<a class="" rel="external nofollow" href="http://t.qq.com/youx18" title="关注腾讯微博" target="_blank">腾讯微博</a>&nbsp; | &nbsp;<a class="" rel="external nofollow" href="http://www.36dsj.com/feed" title="Feed订阅" target="_blank">RSS订阅</a>
+		</div>
+		读者QQ群②：190771709，投稿请发dashuju36@qq.com	</div>
+
+	<div class="logo"><a href="http://www.36dsj.com/" title="36大数据 | 大数据第一网 专注大数据技术与大数据案例">36大数据</a></div>	<a href="http://www.36dsj.com/tougao" class="btn pull-right btn-tougao">我要投稿</a>
+	<form method="get" class="search-form" action="http://www.36dsj.com/">
+		<input class="form-control" name="s" type="text" placeholder="输入关键字" x-webkit-speech=""><input class="btn" type="submit" value="搜索">
+	</form>
+	
+
+	<div class="navbar">
+		<div class="container">
+		<ul class="nav"><li id="menu-item-2389" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-2389"><a href="http://www.36dsj.com/">首页</a></li>
+<li id="menu-item-13809" class="menu-item menu-item-type-taxonomy menu-item-object-category current-post-ancestor current-menu-parent current-post-parent menu-item-13809"><a href="http://www.36dsj.com/archives/category/ganhuo">干货教程</a></li>
+<li id="menu-item-2390" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-has-children menu-item-2390"><a href="http://www.36dsj.com/archives/category/bigdata">大数据动向</a>
+<ul class="sub-menu">
+	<li id="menu-item-3583" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-3583"><a href="http://www.36dsj.com/archives/category/bigdata/baike">大数据百科</a></li>
+	<li id="menu-item-3586" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-3586"><a href="http://www.36dsj.com/archives/category/bigdata/large-enterprise-data">大数据企业</a></li>
+	<li id="menu-item-3587" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-3587"><a href="http://www.36dsj.com/archives/category/bigdata/big-data-products">大数据产品</a></li>
+	<li id="menu-item-10510" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-10510"><a href="http://www.36dsj.com/archives/category/large-data-tools/das">大数据存储</a></li>
+	<li id="menu-item-11969" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-has-children menu-item-11969"><a href="http://www.36dsj.com/archives/category/bigdata/technology">大数据技术</a>
+	<ul class="sub-menu">
+		<li id="menu-item-10505" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-10505"><a href="http://www.36dsj.com/archives/category/large-data-tools/hadoop">Hadoop</a></li>
+		<li id="menu-item-26053" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-26053"><a href="http://www.36dsj.com/archives/category/large-data-tools/spark">Spark</a></li>
+	</ul>
+</li>
+	<li id="menu-item-10501" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-10501"><a href="http://www.36dsj.com/archives/category/bigdata/bi-2">商业智能</a></li>
+	<li id="menu-item-10502" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-10502"><a href="http://www.36dsj.com/archives/category/bigdata/cloudcomputing">云计算</a></li>
+</ul>
+</li>
+<li id="menu-item-10483" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-has-children menu-item-10483"><a href="http://www.36dsj.com/archives/category/application-area">大数据应用</a>
+<ul class="sub-menu">
+	<li id="menu-item-10484" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-10484"><a href="http://www.36dsj.com/archives/category/application-area/large-medical-data">大数据医疗</a></li>
+	<li id="menu-item-10487" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-10487"><a href="http://www.36dsj.com/archives/category/application-area/marketing-application-area">大数据营销</a></li>
+	<li id="menu-item-10489" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-10489"><a href="http://www.36dsj.com/archives/category/application-area/application-of-case">应用案例</a></li>
+	<li id="menu-item-10490" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-10490"><a href="http://www.36dsj.com/archives/category/application-area/ec">电子商务</a></li>
+	<li id="menu-item-10491" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-10491"><a href="http://www.36dsj.com/archives/category/data-analysi/the-game-data">移动互联网分析</a></li>
+	<li id="menu-item-10500" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-10500"><a href="http://www.36dsj.com/archives/category/the-latest-technology-products/wearable-devices">可穿戴设备</a></li>
+</ul>
+</li>
+<li id="menu-item-11975" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-has-children menu-item-11975"><a href="http://www.36dsj.com/archives/category/bigdata/data-visualization">数据可视化</a>
+<ul class="sub-menu">
+	<li id="menu-item-11976" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-11976"><a href="http://www.36dsj.com/archives/category/bigdata/data-visualization/infographic">信息图</a></li>
+	<li id="menu-item-12748" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-12748"><a href="http://www.36dsj.com/archives/category/bigdata/data-visualization/big-data-video">视频</a></li>
+	<li id="menu-item-11978" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-11978"><a href="http://www.36dsj.com/archives/category/bigdata/data-visualization/data-weekly">数据周刊</a></li>
+	<li id="menu-item-11979" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-11979"><a href="http://www.36dsj.com/archives/category/data-analysi/data-interpretation">有图有真相</a></li>
+</ul>
+</li>
+<li id="menu-item-10495" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-has-children menu-item-10495"><a href="http://www.36dsj.com/archives/category/data-analysi">数据分析</a>
+<ul class="sub-menu">
+	<li id="menu-item-10496" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-10496"><a href="http://www.36dsj.com/archives/category/data-analysi/data-report">数据报告</a></li>
+	<li id="menu-item-10497" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-10497"><a href="http://www.36dsj.com/archives/category/data-analysi/datamining">数据挖掘</a></li>
+	<li id="menu-item-10498" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-10498"><a href="http://www.36dsj.com/archives/category/data-analysi/user-research">用户研究</a></li>
+	<li id="menu-item-10499" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-10499"><a href="http://www.36dsj.com/archives/category/data-analysi/web-analytics">网站分析</a></li>
+</ul>
+</li>
+<li id="menu-item-10512" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-has-children menu-item-10512"><a href="http://www.36dsj.com/archives/category/look/big-data-investment">投资并购</a>
+<ul class="sub-menu">
+	<li id="menu-item-10492" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-10492"><a href="http://www.36dsj.com/archives/category/global-vision">全球视野</a></li>
+	<li id="menu-item-10493" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-10493"><a href="http://www.36dsj.com/archives/category/analysis/foreign-media-reports">外媒报道</a></li>
+	<li id="menu-item-11970" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-11970"><a href="http://www.36dsj.com/archives/category/data-analysi/trend-observation">趋势观察</a></li>
+</ul>
+</li>
+<li id="menu-item-17278" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-17278"><a href="http://www.36dsj.com/qiye">企业专区</a></li>
+</ul>		<div class="navbar-r">
+					<a href="http://www.36dsj.com/wp-login.php?action=register">注册</a>
+			<a class="item" href="http://www.36dsj.com/wp-login.php"><span class="glyphicon glyphicon-user"></span> 登录</a>
+				</div>
+		</div>
+	</div>
+</header><div class="content-wrap">
+	<div class="content">
+				<header class="article-header">
+			<h1 class="article-title"><a href="http://www.36dsj.com/archives/72660">互联网金融中的数据科学</a></h1>
+			<ul class="article-meta">
+								<li><span class="glyphicon glyphicon-user"></span> 蝙蝠侠</li>
+				<li><span class="glyphicon glyphicon-time"></span> 2016-12-23 7:52:34</li>
+				<li><span class="glyphicon glyphicon-list-alt"></span> <a href="http://www.36dsj.com/archives/category/ganhuo" rel="category tag">干货教程</a></li>
+				<li><span class="glyphicon glyphicon-comment"></span> 评论(0)</li>
+				<li class="bdshare"><div class="bdsharebuttonbox bdshare-button-style0-16" data-bd-bind="1488764480786"><a href="http://www.36dsj.com/archives/72660#" class="bds_more" data-cmd="more"></a><a href="http://www.36dsj.com/archives/72660#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"></a><a href="http://www.36dsj.com/archives/72660#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a><a href="http://www.36dsj.com/archives/72660#" class="bds_tqq" data-cmd="tqq" title="分享到腾讯微博"></a><a href="http://www.36dsj.com/archives/72660#" class="bds_renren" data-cmd="renren" title="分享到人人网"></a><a href="http://www.36dsj.com/archives/72660#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a><a href="http://www.36dsj.com/archives/72660#" class="bds_kaixin001" data-cmd="kaixin001" title="分享到开心网"></a><a href="http://www.36dsj.com/archives/72660#" class="bds_tqf" data-cmd="tqf" title="分享到腾讯朋友"></a><a href="http://www.36dsj.com/archives/72660#" class="bds_sqq" data-cmd="sqq" title="分享到QQ好友"></a></div></li>
+			</ul>
+		</header>
+				<article class="article-content">
+			<p><img class="aligncenter size-full wp-image-72661" src="./互联网金融中的数据科学 _ 36大数据_files/1004-1.jpg" alt="36大数据" width="640" height="421" srcset="http://www.36dsj.com/wp-content/uploads/2016/12/1004-1.jpg 640w, http://www.36dsj.com/wp-content/uploads/2016/12/1004-1-600x395.jpg 600w" sizes="(max-width: 640px) 100vw, 640px" data-tag="bdshare" data-bd-imgshare-binded="1"></p>
+<p>文 | 张云松</p>
+<p>最近几年这波在资本撬动的互联网金融火爆的浪潮中，大数据和数据科学在互联网金融行业中极大的提升了应用价值。数据分析师不再是苦逼的跑数的、出报表的，摇身一变成了风控模型专家、数据科学家。尤其是大数据风控、大数据征信领域，已及现在大热的金融科技概念(Fintech)，一片火热的场景，数据挖掘机器学习相关专业同学的薪资也翻番上涨，越来越多的计算机和统计领域同学加入互联网金融行业。</p>
+<p>面试中发现很多同学的dream job都是我要做机器学习相关工作、我要做算法、我要做模型……但其实以一个从业者角度看，我们大量的时间还是在做数据理解、数据处理、大量的特征工程、重复验证特征、不停的调参、不停的在做实验，我对modeler的定义基本就是半个蓝领。不过在这个学习和工作的过程中，倒逼我们将一些学术论文中的方法和各种五花八门的算法可以真正有机会应用到商业领域并且产生价值。</p>
+<p>本文分享一些互联网金融从业者日常工作中实际用到与数据科学相关的内容。由于日常工作中涉及数据和策略非常敏感，本文中不会透露具体业务中的产品策略，只会对一些思考和方法进行介绍。下面涉及的模型和算法原型内容我们大部分是用R和python实现的，同时为了方便日常工作也开发了自用的R包解决数据处理、特征工程、可视化、自动化模型报告等繁琐的工作。</p>
+<p>由于互联网金融产品形态非常多，下文主要介绍目前很热的小额微贷(cash loan)的在线授信贷款产品中数据科学的应用，在大量用到了Fintech中可能涉及的各种技术及架构，包括传统数据挖掘和机器学习算法、自然语言处理(NLP)、卷积神经网络(cnn)等。在线授信贷款产品也是互金产品中路径最长，最复杂的产品。类似产品形态为蚂蚁借呗、京东白条以及各种手机上的贷款app，如拍拍贷、宜人贷、原子贷、手机贷等。</p>
+<p><img class="aligncenter size-full wp-image-72662" src="./互联网金融中的数据科学 _ 36大数据_files/1215.png" alt="36大数据" width="612" height="353" srcset="http://www.36dsj.com/wp-content/uploads/2016/12/1215.png 612w, http://www.36dsj.com/wp-content/uploads/2016/12/1215-600x346.png 600w" sizes="(max-width: 612px) 100vw, 612px" data-tag="bdshare" data-bd-imgshare-binded="1"></p>
+<p>在线小额微贷产品有别于传统个人信贷产品，用户不用提交一堆纸质材料，也不用上门面签，也不用等几天甚至十几天才能知道审批结果，用户只需要在手机app或微信上完成贷款申请，十几分钟甚至数分钟就能获得贷款额度，很快就能放款成功，极致的互联网贷款体验。用户整个产品流程大体为，线上寻找贷款à比较各类贷款产品à申请贷款à审批à放款à还款，整个过程完全线上化，只要你有一台智能手机。</p>
+<p><img class="aligncenter size-full wp-image-72663" src="./互联网金融中的数据科学 _ 36大数据_files/1216.png" alt="36大数据" width="620" height="542" srcset="http://www.36dsj.com/wp-content/uploads/2016/12/1216.png 620w, http://www.36dsj.com/wp-content/uploads/2016/12/1216-491x429.png 491w" sizes="(max-width: 620px) 100vw, 620px" data-tag="bdshare" data-bd-imgshare-binded="1"></p>
+<h3><strong>反欺诈</strong></h3>
+<p>在线贷款行业是一个大蛋糕，尤其对骗子来说，不管是线下的贷款中介代办包装还是线上的盗号刷单等黑产从业者，都盯上了快速不需面签的在线贷款产品，各种身份伪冒、伪造数据、篡改手机信息等欺诈方式及技术随之而生，甚至有些技术公司和黑客专门为欺诈提供技术服务。可以说反欺诈能否做好是在线贷款行业的一条生死线。</p>
+<p>简单介绍下欺诈模式，可以分为一方欺诈和三方欺诈，一方欺诈通常指骗子来申请贷款后没有还款意愿造成违约，三方欺诈指欺诈分子借用冒用他人身份或协助他人伪造申请信息进行骗贷。下面重点介绍下数据科学在识别三方欺诈中的一个应用。</p>
+<p><span style="color: #ff6600;"><strong>社交网络分析用于识别组团进件</strong></span></p>
+<p>我们存在一个基本的假设，骗子的紧密关联人是骗子概率大，正常还款的用户的朋友正常还款的概率大。同时我们要对不良的贷款中介进行识别，因为中介骗子会帮很多还款意愿不强的人通过提供虚假、伪造、包装申请信息的方式进行骗贷，甚至还会教申请人如何应对贷款审查。通过中介(或者本身就是团伙)进行集中贷款申请的风险非常高，是一种常见的欺诈类型，分析发现社交网络分析和其他交叉检验方法能有效识别上述欺诈模式。</p>
+<p>我们定义用户和用户之间如果共用某些核心信息那么他们之间就存在紧密联系，这些核心信息可以是手机设备、电话号码、身份证、银行卡号、邮箱等。以这些信息作为点，信息之间的关系作为边就可以构造出类似下面的图网络。</p>
+<p><img class="aligncenter size-full wp-image-72664" src="./互联网金融中的数据科学 _ 36大数据_files/1217.png" alt="36大数据" width="597" height="295" data-tag="bdshare" data-bd-imgshare-binded="1"></p>
+<p>如上图，图中有两个用户通过手机申请贷款，一个放款成功，一个放款失败，通过用户申请中提供的信息，将其核心信息构建成一个网络图，可以看到两个用户一共关联到3个手机号，3部手机设备，两个用户是通过一个公用的手机设备联系起来的。上图的真实业务场景是尾号979的用户来申请时，发现与其强相关的用户已经成功放款，并且通过图上的关系已经申请调查出尾号979的用户是之前放款用户的配偶，若批准尾号979的贷款申请则将增加两人整体负债，所以最终审判拒绝掉了这笔贷款申请。</p>
+<p>上面是一个简单例子，真实业务中欺诈与反欺诈是道高一尺魔高一丈的博弈过程，简单的反欺诈策略很容易被真正的欺诈分子发现并规避，简单策略的效果会不断下降。事实上欺诈很难被完全解决，反欺诈的一个重要思路就是不断的提高欺诈分子作弊的成本，并且保证反欺诈策略准确性情况下使反欺诈策略能召回更多的欺诈行为并且使整个反欺诈体系更智能。</p>
+<p>这种思路下同样是通过社交网络反欺诈，我们需要更全面的描述每个用户之间的关系，用户之间关系的定义也不止是上述这些强关系，还包括很多弱关系，比如用户间打过电话，用户间是同一单位，用户家庭住址在同一区域，用户之前是QQ好友等，这些更多的关系关系的叠加很容易出现下面类似的用户间非常复杂的关联网络。</p>
+<p><img class="aligncenter size-full wp-image-72665" src="./互联网金融中的数据科学 _ 36大数据_files/1218.png" alt="36大数据" width="580" height="872" srcset="http://www.36dsj.com/wp-content/uploads/2016/12/1218.png 580w, http://www.36dsj.com/wp-content/uploads/2016/12/1218-285x429.png 285w, http://www.36dsj.com/wp-content/uploads/2016/12/1218-418x629.png 418w" sizes="(max-width: 580px) 100vw, 580px" data-tag="bdshare" data-bd-imgshare-binded="1"></p>
+<p>构建图的同时，对每个点还可以赋予不同的属性，这些属性可以用于后续的特征工程提取。举个例子，对图中用户身份证类型的顶点，可以设置多个属性，如是否黑名单、用户资产、是否有房。后续特征工程中就可以根据顶点属性衍生出具体的特征，如一度关联的身份证是黑名单的顶点个数。</p>
+<p>用户关系网络图构建的最终目的是提升欺诈团伙的识别准确度以及实现自动化的反欺诈决策，即提升欺诈识别的效果和效率。我们希望通过社交网络挖掘出用户更多的特征用于反欺诈模型和策略的训练，所以对于这种复杂的用户关系网络图，接下来我们要进行两件事，其一，用户图特征提取;其二，点属性标签的补全。</p>
+<h3><strong>用户特征提取</strong></h3>
+<p>每个用户的可以通过手机、身份证等关键信息点，获取单个用户网络的连通图(事实上对10亿级节点的图的查询效率已经非常低了，在实时决策的场景下需要通过算法优化来解决响应时间的问题，比如图入库的锁问题，异常点的查询超时)。对每个点计算其在图中常用的属性特征，比如度、接近中心度、page rank中心度、betweenness。这个过程可以看做是对给定用户，通过图数据进行特征工程。大部分策略和模型的效果往往由特征工程的质量决定，甚至特征工程方法也成了各家公司不可泄露的核心内容。</p>
+<p>举几个例子，除了上面简单的点中心度相关的直接特征还能直接想到非常多的特征，比如用户n度关联点的关联手机号数、用户关联到的设备号占所有关联点的比例、用户关联的黑名单身份证号数等等。细心的同学可以看出上述举例的特征计算大部分可以实现标准化，通过开发单独特征工程模型实现特征的自动计算，这样能极大提升模型开发的效率。</p>
+<h3><strong>点属性标签的补全</strong></h3>
+<p>在策略分析和特征计算中，我们需要很多点的标签属性，比如对某一身份证的属性，是否是黑名单，是否有房，是否信用卡额度超过3万等等。但是实际业务中往往大部分用户标签属性是缺失的，比如用户申请到一半就流失了，用户最终放弃了，我们都没法准确收集这些标签。怎么办?我们通过图相关的社群发现算法进行标签补全，比如最常用标签传播算法LPA(Lable Propagation Algorithm)，还有类似的算法，比如SLPA、HANP、DCLP等等。</p>
+<p><img class="aligncenter size-full wp-image-72666" src="./互联网金融中的数据科学 _ 36大数据_files/1219.png" alt="36大数据" width="601" height="344" srcset="http://www.36dsj.com/wp-content/uploads/2016/12/1219.png 601w, http://www.36dsj.com/wp-content/uploads/2016/12/1219-600x343.png 600w" sizes="(max-width: 601px) 100vw, 601px" data-tag="bdshare" data-bd-imgshare-binded="1"></p>
+<p>虽然通过LPA可以快速补全标签属性，但很快我们就发现补全后的效果不一定理想。其中有两个业务产生的数据问题。其一，噪音数据造成很多奇异点使非相关的用户关联到一起，造成数据失真。一个常用的场景就是很多用户都会拨打10086，很多人都会被同一400的骚扰电话骚扰，那么这就导致现实生活中本没有紧密关联的用户被关联到一起;其二，由于用户的贷款是较独立的事情，所以每个用户的图规模较小，没有足够的已标记数据对其进行标签传播，造成最终标签传播的覆盖率降低。类似下图中的情况。</p>
+<p><img class="aligncenter size-full wp-image-72667" src="./互联网金融中的数据科学 _ 36大数据_files/1220.png" alt="36大数据" width="585" height="496" srcset="http://www.36dsj.com/wp-content/uploads/2016/12/1220.png 585w, http://www.36dsj.com/wp-content/uploads/2016/12/1220-506x429.png 506w" sizes="(max-width: 585px) 100vw, 585px" data-tag="bdshare" data-bd-imgshare-binded="1"></p>
+<h3><strong>策略模型</strong></h3>
+<p>小额微贷在线贷款产品的核心竞争力就是数据化决策的效果和效率，整个业务中策略和模型应用非常普遍，基本上在整个用户生命周期中策略和模型都可以体现并发挥价值。如下图：</p>
+<p><img class="aligncenter size-full wp-image-72668" src="./互联网金融中的数据科学 _ 36大数据_files/1221.png" alt="36大数据" width="610" height="396" srcset="http://www.36dsj.com/wp-content/uploads/2016/12/1221.png 610w, http://www.36dsj.com/wp-content/uploads/2016/12/1221-600x390.png 600w" sizes="(max-width: 610px) 100vw, 610px" data-tag="bdshare" data-bd-imgshare-binded="1"></p>
+<p>由于近两年大数据和风控技术的方法论已逐渐普及，这里不对常用的技术进行介绍。我们还是从一个从业者角度分析下工业界模型开发中最关心的几个问题：</p>
+<p><span style="color: #ff6600;"><strong>1. 业务场景造成的模型挑战</strong></span></p>
+<p><strong>a) 业务初期如何解决冷启动问题?</strong>业务上线前没有信贷表现样本，所以授信决策通常由信贷专家的经验决定。但如果一直依赖人工判断，人为判断的不确定性和人工依赖将严重影响业务的扩展，也无法通过互联网快速复制扩展业务。</p>
+<p>所以我们希望业务初期能将人为经验进行一定量化总结，业内常用层次分析法(AHP)这种定性加定量的方式建立风控评分。层次分析法通过将人工授信决策的复杂思考抽象成一个个两辆决策比较，最终将授信决策形成一个量化的评分表。在传统信贷产品中AHP方法在业务初期很长一段时间并不比定量模型差很多。</p>
+<p><strong>b) 建模样本不均衡挑战及模型正样本过少。</strong>在业务发现中期，有了一定放款用户作为模型训练的样本，可以使用真实违约用户作为模型的正样本，但对于信贷业务中违约率通常在5%以下，建模时通常面临不平衡样本(imbalance)问题。实际建模中通常可以用过采样(oversampling)或欠采样(undersampling)处理样本。具体而言，即对违约样本进行重抽样，或从非违约样本中进行抽样。</p>
+<p>在信贷业务中，不止正负比例问题，还有由于总放款量不足，违约样本过少的问题，这种情况经常被称作低违约资产组合 (LowDefaultPortfolio，LDP)。过采样的方法在违约样本过少情况下对模型效果的提升还是非常有限。除了bootstrap的采样方法还可以尝试SMOTE进行采样，不过我实际工作中尝试在信贷风控模型中SMOTE，发现其表现并不稳定。</p>
+<p>实际建模中我们会通过其他替代方法增加正样本，在金融领域可以通过经验丰富的信贷专家对拒绝用户进行人工标注加入模型正样本，或通过用户信息相似度聚类方法对表现期不充分的用户进行标签重置;</p>
+<p>被信贷专家拒绝的申请虽然没法完全证明放款后一定会违约，但其风险通常比被信贷专家通过的高很多，在建模中可以把这些拒绝样本放入模型中作为正样本;另外也可以在建模时损失函数定义中对正负样本赋予不同的权重，在真正业务中很少采用，基本信贷领域的模型还是依赖特征来增强模型效果，对算法的改进往往收效较少。</p>
+<p>虽然这些方法的真实效果不如真实用违约样本进行建模效果好，但在细节模型调优中都是常用的尝试方法。</p>
+<p><span style="color: #ff6600;"><strong>2. 特征工程</strong></span></p>
+<p>特征工程做的好坏是所有模型工作者保持饭碗的有效手段。在线授信领域对特征的挑剔更上一层，由于大部分预测模型都是用历史数据去预测未来几个月甚至1年后发生的违约事件，所以对特征的效果、特征稳定性、可解释性中需要不断平衡。</p>
+<p>每个模型都需要做大量的数据特征处理，为了提升效率最好把常用的特征工程自动化，并开发响应算法自动生成特征。举个特征工程的例子</p>
+<p><img class="aligncenter size-full wp-image-72669" src="./互联网金融中的数据科学 _ 36大数据_files/1222-1.png" alt="36大数据" width="589" height="219" data-tag="bdshare" data-bd-imgshare-binded="1"></p>
+<p>上图中是用户提供的信用卡消费账单数据有用户id、交易金额、交易时间、交易描述。上述只有4个字段的用户数据如何进行特征工程?如下几方面入手考虑：</p>
+<p><strong>1) RFM模型</strong></p>
+<p>对于有用户重复交易的数据，RFM是最有效的特征衍生方法。通过recency, frequency, monetary三个维度衍生出非常多的特征，比如最近1周交易金额次数、最近3个月交易金额平均值等等特征。</p>
+<p><strong>2) 文本分类</strong></p>
+<p>上述交易描述(description)字段中是非结构化的文本，每笔交易可以被赋予一个或多个标签分类，比如通过交易描述中的内容，可以将交易分类为分期交易、取现交易、消费交易。通过交易描述可以产出不止一类的分类体系，比如还可以将交易分成线上交易(支付宝、财付通等)、汽车交易、生活消费交易等等。这些NLP分出的标签可以作为一个分类，然后应用于上述RFM的特征衍生环节，比如最近1周取现交易次数、最近3个月线上交易平均值等。</p>
+<p>对交易描述进行的文本分类会用到一些常用的自然语言处理，比如词聚类(word2vector)、主题词聚类(LDA)、朴素贝叶斯分类等。同时也会用非算法的分析方法，比如通过对分词后的词统计分析的方法给出非常实用的分类。</p>
+<p>无论采用哪种文本分类方法，关键在于这类基础标签的效果如何评估。由于我们最终需要用这些分类标签用于分析用户的违约概率，所以我们可以采用一些先验的方法，使分类标签可以对用户违约风险有比较显著的区分力。</p>
+<p>在实际业务中优化文本分类产生的特征能非常有效的提升，这点很容易理解，文本中挖掘的特征其实是用户真实行为习惯的描述，一旦数据足够充分这种方法衍生的特征就是在刻画一个自然人的金融及生活模式。</p>
+<p><strong>3) 时间序列</strong></p>
+<p>RFM模型中通常只对交易金额进行简单的算术和统计计算，事实上对用户每个用户按时间排序的交易数据，可以看做是一个时间序列。对于交易金额组成的一个时间序列，我们抽取每个用户组成的时间序列中季节性系数、白噪声、时间序列中自回归模型的模型系数。这些值都可以认为是描述一个用户金融行为的特征!</p>
+<p>由于互联网金融业务场景中获取用户强相关的数据相对有限，对于建模来说很多时间就是在不断的无脑挖特征，验证特征，再重复……</p>
+<h3><strong>后记</strong></h3>
+<p>从事数据相关行业十余年来，看到的其实数据科学真正能用充分在工业领域发挥决定性作用的少之又少。从互联网金融到金融科技，越来越多企业在研究将数据科学和实际业务结合起来充分发挥数据的价值进行金融创新。数据化决策未来将会影响整个互联网金融行业，其价值不只是反欺诈和授信模型这些应用点，还将决定整个金融产品的设计和营收模式。希望更多的数据科学家将数据在实际商业场景中发挥出最大的价值。</p>
+<p>End.</p>
+<p>转载请注明来自36大数据（36dsj.com)：<a href="http://www.36dsj.com/">36大数据</a> » <a href="http://www.36dsj.com/archives/72660">互联网金融中的数据科学</a></p>		</article>
+				<div class="article-tags">
+			标签：<a href="http://www.36dsj.com/archives/tag/the-internet-finance" rel="tag">互联网金融</a><a href="http://www.36dsj.com/archives/tag/%e5%8f%8d%e6%ac%ba%e8%af%88" rel="tag">反欺诈</a><a href="http://www.36dsj.com/archives/tag/%e5%a4%a7%e6%95%b0%e6%8d%ae" rel="tag">大数据+</a><a href="http://www.36dsj.com/archives/tag/%e6%95%b0%e6%8d%ae%e5%86%b3%e7%ad%96" rel="tag">数据决策</a><a href="http://www.36dsj.com/archives/tag/data-analysis" rel="tag">数据分析</a><a href="http://www.36dsj.com/archives/tag/datascience" rel="tag">数据科学</a>		</div>
+		<div class="postcode"><img class="alignnone size-full wp-image-11327" src="./互联网金融中的数据科学 _ 36大数据_files/P3.png" alt="36大数据" width="640" height="141">
+
+&nbsp;
+
+除非特别注明，本站所有文章均不代表本站观点。报道中出现的商标属于其合法持有人。请遵守理性，宽容，换位思考的原则。
+</div>
+						<div class="relates"><h3 class="title"><strong>猜你喜欢</strong></h3><ul><li><a href="http://www.36dsj.com/archives/77841">数联易康获千万级A轮融资，PBM大有可为</a>2017-02-17</li><li><a href="http://www.36dsj.com/archives/77631">电商社交数据在大数据风控的应用实践</a>2017-02-17</li><li><a href="http://www.36dsj.com/archives/76058">别让大数据之花自开自落</a>2017-02-06</li><li><a href="http://www.36dsj.com/archives/75665">银行客户信用评分及实现</a>2017-01-23</li><li><a href="http://www.36dsj.com/archives/75610">黑客特种兵潘少华：如何用人工智能“套路”一个骗子？</a>2017-01-22</li><li><a href="http://www.36dsj.com/archives/75412">大数据金融风控大浪淘沙强弱渐分，长路漫漫投机者勿入#深度评论#</a>2017-01-21</li><li><a href="http://www.36dsj.com/archives/41597">数据分析师的30种死法</a>2017-01-19</li><li><a href="http://www.36dsj.com/archives/74845">企业实施大数据的五大关键（更新版）</a>2017-01-13</li><li><a href="http://www.36dsj.com/archives/73512">太多选择——企业如何选择合适的BI工具?</a>2016-12-30</li><li><a href="http://www.36dsj.com/archives/73526">商业数据挖掘的13种应用场景和主题，你懂几个?</a>2016-12-30</li></ul></div>					</div>
+</div>
+<aside class="sidebar">	
+<div class="widget widget_text">			<div class="textwidget"><a href="./互联网金融中的数据科学 _ 36大数据_files/P2.png"><img class="alignnone size-full wp-image-11326" src="./互联网金融中的数据科学 _ 36大数据_files/P2.png" alt="36大数据" width="300" height="140"></a></div>
+		</div><div class="widget widget_ultimate_posts"><h3 class="title"><strong><a href="http://www.36dsj.com/archives/category/news">你想知道</a></strong></h3>
+
+
+  <ul>
+
+  
+    
+    <li class="">
+
+      
+      <div class="upw-content">
+
+                  <p class="post-title">
+            <a href="http://www.36dsj.com/archives/77851" title="高频/场景驱动下 美团外卖O2O的用户画像实践">
+              高频/场景驱动下 美团外卖O2O的用户画像实践            </a>
+          </p>
+        
+        
+        
+        
+        
+        
+        
+        
+        
+      </div>
+
+    </li>
+
+  
+    
+    <li class="">
+
+      
+      <div class="upw-content">
+
+                  <p class="post-title">
+            <a href="http://www.36dsj.com/archives/77679" title="用户画像是什么鬼，你懂吗?">
+              用户画像是什么鬼，你懂吗?            </a>
+          </p>
+        
+        
+        
+        
+        
+        
+        
+        
+        
+      </div>
+
+    </li>
+
+  
+    
+    <li class="">
+
+      
+      <div class="upw-content">
+
+                  <p class="post-title">
+            <a href="http://www.36dsj.com/archives/77671" title="读书笔记 | 大数据时代">
+              读书笔记 | 大数据时代            </a>
+          </p>
+        
+        
+        
+        
+        
+        
+        
+        
+        
+      </div>
+
+    </li>
+
+  
+    
+    <li class="">
+
+      
+      <div class="upw-content">
+
+                  <p class="post-title">
+            <a href="http://www.36dsj.com/archives/77665" title="全球数据驻留风险管理">
+              全球数据驻留风险管理            </a>
+          </p>
+        
+        
+        
+        
+        
+        
+        
+        
+        
+      </div>
+
+    </li>
+
+  
+    
+    <li class="">
+
+      
+      <div class="upw-content">
+
+                  <p class="post-title">
+            <a href="http://www.36dsj.com/archives/77565" title="10分钟读懂Uber的动态定价策略">
+              10分钟读懂Uber的动态定价策略            </a>
+          </p>
+        
+        
+        
+        
+        
+        
+        
+        
+        
+      </div>
+
+    </li>
+
+  
+    
+    <li class="">
+
+      
+      <div class="upw-content">
+
+                  <p class="post-title">
+            <a href="http://www.36dsj.com/archives/77285" title="作为大数据从业人员，如何写好一份可堪入目的简历?">
+              作为大数据从业人员，如何写好一份可堪入目的简历?            </a>
+          </p>
+        
+        
+        
+        
+        
+        
+        
+        
+        
+      </div>
+
+    </li>
+
+  
+    
+    <li class="">
+
+      
+      <div class="upw-content">
+
+                  <p class="post-title">
+            <a href="http://www.36dsj.com/archives/77281" title="女生特供 | 脱单路径大分析，科学拯救单身的妳">
+              女生特供 | 脱单路径大分析，科学拯救单身的妳            </a>
+          </p>
+        
+        
+        
+        
+        
+        
+        
+        
+        
+      </div>
+
+    </li>
+
+  
+    
+    <li class="">
+
+      
+      <div class="upw-content">
+
+                  <p class="post-title">
+            <a href="http://www.36dsj.com/archives/77158" title="论运营商当下的大数据变现服务模式">
+              论运营商当下的大数据变现服务模式            </a>
+          </p>
+        
+        
+        
+        
+        
+        
+        
+        
+        
+      </div>
+
+    </li>
+
+  
+    
+    <li class="">
+
+      
+      <div class="upw-content">
+
+                  <p class="post-title">
+            <a href="http://www.36dsj.com/archives/76999" title="数据分析师的必读书单">
+              数据分析师的必读书单            </a>
+          </p>
+        
+        
+        
+        
+        
+        
+        
+        
+        
+      </div>
+
+    </li>
+
+  
+    
+    <li class="">
+
+      
+      <div class="upw-content">
+
+                  <p class="post-title">
+            <a href="http://www.36dsj.com/archives/76989" title="用户群体画像功能深度解析">
+              用户群体画像功能深度解析            </a>
+          </p>
+        
+        
+        
+        
+        
+        
+        
+        
+        
+      </div>
+
+    </li>
+
+    
+  </ul>
+
+
+</div><div class="widget widget_text">			<div class="textwidget"><a href="http://www.36dsj.com/archives/category/application-area/major" target="_blank"><img class="alignnone size-full wp-image-14952" src="./互联网金融中的数据科学 _ 36大数据_files/4110.jpg" alt="马云说" width="300" height="138"></a></div>
+		</div>		<div class="widget widget_recent_entries">		<h3 class="title"><strong>近期文章</strong></h3>		<ul>
+					<li>
+				<a href="http://www.36dsj.com/archives/77993">基于Hadoop的数据仓库Hive 基础知识</a>
+						</li>
+					<li>
+				<a href="http://www.36dsj.com/archives/77989">论大数据的泡沫、价值与应用陷阱</a>
+						</li>
+					<li>
+				<a href="http://www.36dsj.com/archives/77961">中科点击举办2017融资战略发布会，累计获3500万融资</a>
+						</li>
+					<li>
+				<a href="http://www.36dsj.com/archives/77965">谁在听《成都》——大数据描绘歌曲《成都》的听众肖像</a>
+						</li>
+					<li>
+				<a href="http://www.36dsj.com/archives/77955">视频：大数据到底是什么 都说干大数据挣钱 1分钟告诉你都在干什么</a>
+						</li>
+					<li>
+				<a href="http://www.36dsj.com/archives/77947">深入解读《Gartner2017年商业智能和分析平台魔力象限报告》</a>
+						</li>
+					<li>
+				<a href="http://www.36dsj.com/archives/77938">API 设计的七大误区</a>
+						</li>
+					<li>
+				<a href="http://www.36dsj.com/archives/77932">算法得出电台司令最悲伤的歌曲是True Love Waits</a>
+						</li>
+					<li>
+				<a href="http://www.36dsj.com/archives/77921">自动化机器学习将成为下一个AI研究主流？听听数据科学家怎么说</a>
+						</li>
+					<li>
+				<a href="http://www.36dsj.com/archives/77912">你的混合云是不是真的“混合”？</a>
+						</li>
+				</ul>
+		</div>		<div class="widget d_postlist"><h3 class="title"><strong>相关文章<a class="more" href="http://www.36dsj.com/">More+</a></strong></h3><ul><li><a href="http://www.36dsj.com/archives/18231"><span class="thumbnail"><span><img data-original="http://www.36dsj.com/wp-content/uploads/2014/12/319.jpg" class="thumb" src="./互联网金融中的数据科学 _ 36大数据_files/319.jpg" style="display: inline;"></span></span><span class="text">如何从企业报表看企业的生存能力？</span><span class="muted">2014-12-10</span><span class="muted"></span></a></li>
+<li><a href="http://www.36dsj.com/archives/37136"><span class="thumbnail"><span><img data-original="http://www.36dsj.com/wp-content/uploads/2015/11/2211-220x150.jpg" class="thumb" src="./互联网金融中的数据科学 _ 36大数据_files/2211-220x150.jpg" style="display: inline;"></span></span><span class="text">刘德寰：数据科学的整合与细分 数据科学的七个危险趋势（视频）</span><span class="muted">2015-11-16</span><span class="muted"></span></a></li>
+<li><a href="http://www.36dsj.com/archives/18326"><span class="thumbnail"><span><img data-original="http://www.36dsj.com/wp-content/uploads/2014/12/912.jpg" class="thumb" src="./互联网金融中的数据科学 _ 36大数据_files/912.jpg" style="display: inline;"></span></span><span class="text">大数据下城市计算的典型应用</span><span class="muted">2014-12-11</span><span class="muted"></span></a></li>
+<li><a href="http://www.36dsj.com/archives/73201"><span class="thumbnail"><span><img data-original="http://www.36dsj.com/wp-content/uploads/2016/12/353-1.jpg" class="thumb" src="./互联网金融中的数据科学 _ 36大数据_files/353-1.jpg" style="display: inline;"></span></span><span class="text">手把手教你分析：福耀玻璃是如何成为低调的冠军的</span><span class="muted">2016-12-28</span><span class="muted"></span></a></li>
+<li><a href="http://www.36dsj.com/archives/61429"><span class="thumbnail"><span><img data-original="http://www.36dsj.com/wp-content/uploads/2016/09/707-220x150.jpg" class="thumb" src="./互联网金融中的数据科学 _ 36大数据_files/707-220x150.jpg" style="display: inline;"></span></span><span class="text">剖析用户生命周期和价值</span><span class="muted">2016-09-19</span><span class="muted"></span></a></li>
+<li><a href="http://www.36dsj.com/archives/72618"><span class="thumbnail"><span><img data-original="http://www.36dsj.com/wp-content/uploads/2016/12/1117.jpg" class="thumb" src="./互联网金融中的数据科学 _ 36大数据_files/1117.jpg" style="display: inline;"></span></span><span class="text">腾讯防刷负责人：基于用户画像的腾讯大数据防刷架构</span><span class="muted">2016-12-22</span><span class="muted">1评论</span></a></li>
+</ul></div></aside></section>
+<footer class="footer">
+	<div class="container">
+	<div class="item item-01">
+		<ul><li><a href="http://www.36dsj.com/archives/category/large-data-tools/hadoop">Hadoop专区</a></li>
+<li><a href="http://www.36dsj.com/archives/category/bigdata/data-visualization">数据可视化</a></li>
+<li><a href="http://www.36dsj.com/archives/category/large-data-tools/machine-learning">机器学习专区</a></li>
+<li><a href="http://www.36dsj.com/archives/category/large-data-tools/python">Python专区</a></li>
+<li><a href="http://www.36dsj.com/archives/category/large-data-tools/spark">Spark专区</a></li>
+<li><a href="http://www.36dsj.com/archives/category/data-industry">数据科学家</a></li>
+<li><a href="http://www.36dsj.com/about-us">关于我们</a></li>
+<li><a href="http://www.36dsj.com/contact-us">联系我们</a></li>
+<li><a href="http://www.36dsj.com/baodao">寻求报道</a></li>
+<li><a href="http://www.36dsj.com/qiye">企业专区</a></li>
+<li><a href="http://www.36dsj.com/renwu">人物专栏</a></li>
+<li><a href="http://www.36dsj.com/archives/category/large-data-tools/algorithm">算法</a></li></ul>
+	</div>
+	<div class="item item-02">
+		<p>36大数据成立于2013年5月，是中国访问量最大的大数据网站。</p><p>
+
+</p><p>36大数据以独立第三方的角度，为大数据产业生态图谱上的需求商、应用商、服务商、技术解决商等相关公司及从业人员提供全球资讯、商机、案例、技术教程、项目对接、创业投资及专访报道等服务。</p><p>
+
+</p><p>商务合作 邮箱：dashuju36@qq.com  7*24客服电话：010-57280721</p><p>
+
+</p><p>备案号：京ICP备12012135号-2。版权所有，保留一切权利！ © 2014 <a href="http://www.36dsj.com/">36大数据</a> Theme</p><p>    	<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?46db1c7ab0c594c8219d3a3d68e66ff8";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+	</p></div>
+	<div class="item item-03">
+		<img src="./互联网金融中的数据科学 _ 36大数据_files/232.png">
+	</div>
+    </div>
+</footer>
+
+<script>
+window.jui = {
+	uri: 'http://www.36dsj.com/wp-content/themes/dsj0804',
+	roll: 0}
+</script>
+<script type="text/javascript" src="./互联网金融中的数据科学 _ 36大数据_files/bootstrap.js.下载"></script>
+<script type="text/javascript" src="./互联网金融中的数据科学 _ 36大数据_files/custom.js.下载"></script><div class="rollto" style="display: block;"><a href="javascript:;"></a></div>
+<script type="text/javascript" src="./互联网金融中的数据科学 _ 36大数据_files/wp-embed.min.js.下载"></script>
+
+
+<div id="bdimgshare_1488764480793" class="sr-bdimgshare sr-bdimgshare-list sr-bdimgshare-16 sr-bdimgshare-black" style="height: 36px; line-height: 26px; font-size: 12px; position: absolute; top: 5404.74px; left: 77.9px; width: 602px; display: block;" data-bd-bind="1488764480793"><div class="bdimgshare-bg"></div><div class="bdimgshare-content bdsharebuttonbox bdshare-button-style0-16"><label class="bdimgshare-lbl">分享到：</label><a href="http://www.36dsj.com/archives/72660#" onclick="return false;" class="bds_qzone" data-cmd="qzone" hidefocus=""></a><a href="http://www.36dsj.com/archives/72660#" onclick="return false;" class="bds_weixin" data-cmd="weixin" hidefocus=""></a><a href="http://www.36dsj.com/archives/72660#" onclick="return false;" class="bds_tsina" data-cmd="tsina" hidefocus=""></a><a href="http://www.36dsj.com/archives/72660#" onclick="return false;" class="bds_tqq" data-cmd="tqq" hidefocus=""></a><a href="http://www.36dsj.com/archives/72660#" onclick="return false;" class="bds_renren" data-cmd="renren" hidefocus=""></a><a href="http://www.36dsj.com/archives/72660#" onclick="return false;" class="bds_sqq" data-cmd="sqq" hidefocus=""></a><a href="http://www.36dsj.com/archives/72660#" onclick="return false;" class="bds_douban" data-cmd="douban" hidefocus=""></a><a href="http://www.36dsj.com/archives/72660#" onclick="return false;" class="bds_more" data-cmd="more" hidefocus=""></a></div></div><div id="hm_t_undefined" class="hm-t-container"><div class="hm-t-go-top" style="display: block;"></div></div><iframe frameborder="0" id="bdSharePopup_1488766063543bg" class="bdshare_popup_bg" style="height: 294px; width: 226px; top: 5116.74px; left: 648.9px; display: none;" src="./互联网金融中的数据科学 _ 36大数据_files/saved_resource.html"></iframe><div class="bdshare_popup_box" id="bdSharePopup_1488766063543box" style="width: 226px; top: 5116.74px; left: 648.9px; display: none;"><div class="bdshare_popup_top">分享到</div><ul class="bdshare_popup_list"><li><a href="http://www.36dsj.com/archives/72660#" onclick="return false;" class="popup_mshare" data-cmd="mshare">一键分享</a></li><li><a href="http://www.36dsj.com/archives/72660#" onclick="return false;" class="popup_qzone" data-cmd="qzone">QQ空间</a></li><li><a href="http://www.36dsj.com/archives/72660#" onclick="return false;" class="popup_tsina" data-cmd="tsina">新浪微博</a></li><li><a href="http://www.36dsj.com/archives/72660#" onclick="return false;" class="popup_bdysc" data-cmd="bdysc">百度云收藏</a></li><li><a href="http://www.36dsj.com/archives/72660#" onclick="return false;" class="popup_weixin" data-cmd="weixin">微信</a></li><li><a href="http://www.36dsj.com/archives/72660#" onclick="return false;" class="popup_renren" data-cmd="renren">人人网</a></li><li><a href="http://www.36dsj.com/archives/72660#" onclick="return false;" class="popup_tqq" data-cmd="tqq">腾讯微博</a></li><li><a href="http://www.36dsj.com/archives/72660#" onclick="return false;" class="popup_bdxc" data-cmd="bdxc">百度相册</a></li><li><a href="http://www.36dsj.com/archives/72660#" onclick="return false;" class="popup_kaixin001" data-cmd="kaixin001">开心网</a></li><li><a href="http://www.36dsj.com/archives/72660#" onclick="return false;" class="popup_tqf" data-cmd="tqf">腾讯朋友</a></li><li><a href="http://www.36dsj.com/archives/72660#" onclick="return false;" class="popup_tieba" data-cmd="tieba">百度贴吧</a></li><li><a href="http://www.36dsj.com/archives/72660#" onclick="return false;" class="popup_douban" data-cmd="douban">豆瓣网</a></li><li><a href="http://www.36dsj.com/archives/72660#" onclick="return false;" class="popup_bdhome" data-cmd="bdhome">百度新首页</a></li><li><a href="http://www.36dsj.com/archives/72660#" onclick="return false;" class="popup_sqq" data-cmd="sqq">QQ好友</a></li><li><a href="http://www.36dsj.com/archives/72660#" onclick="return false;" class="popup_thx" data-cmd="thx">和讯微博</a></li><li><a href="http://www.36dsj.com/archives/72660#" onclick="return false;" class="popup_ibaidu" data-cmd="ibaidu">百度中心</a></li></ul><div class="bdshare_popup_bottom"><a href="http://www.36dsj.com/archives/72660#" onclick="return false;" class="popup_more" data-cmd="more" target="_blank;">更多...</a></div></div></body></html>

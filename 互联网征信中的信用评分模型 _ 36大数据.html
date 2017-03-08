@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<!-- saved from url=(0035)http://www.36dsj.com/archives/67835 -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta http-equiv="X-UA-Compatible" content="IE=11,IE=10,IE=9,IE=8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
+<title>互联网征信中的信用评分模型 | 36大数据</title>
+<link rel="dns-prefetch" href="http://www.36dsj.com/">
+<link rel="dns-prefetch" href="http://s.w.org/">
+<link rel="alternate" type="application/rss+xml" title="36大数据 » 互联网征信中的信用评分模型评论Feed" href="http://www.36dsj.com/archives/67835/feed">
+		<script charset="utf-8" src="./互联网征信中的信用评分模型 _ 36大数据_files/s.js.下载"></script><script src="./互联网征信中的信用评分模型 _ 36大数据_files/hm.js.下载"></script><script type="text/javascript">
+			window._wpemojiSettings = {"baseUrl":"https:\/\/s.w.org\/images\/core\/emoji\/2.2.1\/72x72\/","ext":".png","svgUrl":"https:\/\/s.w.org\/images\/core\/emoji\/2.2.1\/svg\/","svgExt":".svg","source":{"concatemoji":"http:\/\/www.36dsj.com\/wp-includes\/js\/wp-emoji-release.min.js"}};
+			!function(a,b,c){function d(a){var b,c,d,e,f=String.fromCharCode;if(!k||!k.fillText)return!1;switch(k.clearRect(0,0,j.width,j.height),k.textBaseline="top",k.font="600 32px Arial",a){case"flag":return k.fillText(f(55356,56826,55356,56819),0,0),!(j.toDataURL().length<3e3)&&(k.clearRect(0,0,j.width,j.height),k.fillText(f(55356,57331,65039,8205,55356,57096),0,0),b=j.toDataURL(),k.clearRect(0,0,j.width,j.height),k.fillText(f(55356,57331,55356,57096),0,0),c=j.toDataURL(),b!==c);case"emoji4":return k.fillText(f(55357,56425,55356,57341,8205,55357,56507),0,0),d=j.toDataURL(),k.clearRect(0,0,j.width,j.height),k.fillText(f(55357,56425,55356,57341,55357,56507),0,0),e=j.toDataURL(),d!==e}return!1}function e(a){var c=b.createElement("script");c.src=a,c.defer=c.type="text/javascript",b.getElementsByTagName("head")[0].appendChild(c)}var f,g,h,i,j=b.createElement("canvas"),k=j.getContext&&j.getContext("2d");for(i=Array("flag","emoji4"),c.supports={everything:!0,everythingExceptFlag:!0},h=0;h<i.length;h++)c.supports[i[h]]=d(i[h]),c.supports.everything=c.supports.everything&&c.supports[i[h]],"flag"!==i[h]&&(c.supports.everythingExceptFlag=c.supports.everythingExceptFlag&&c.supports[i[h]]);c.supports.everythingExceptFlag=c.supports.everythingExceptFlag&&!c.supports.flag,c.DOMReady=!1,c.readyCallback=function(){c.DOMReady=!0},c.supports.everything||(g=function(){c.readyCallback()},b.addEventListener?(b.addEventListener("DOMContentLoaded",g,!1),a.addEventListener("load",g,!1)):(a.attachEvent("onload",g),b.attachEvent("onreadystatechange",function(){"complete"===b.readyState&&c.readyCallback()})),f=c.source||{},f.concatemoji?e(f.concatemoji):f.wpemoji&&f.twemoji&&(e(f.twemoji),e(f.wpemoji)))}(window,document,window._wpemojiSettings);
+		</script><script src="./互联网征信中的信用评分模型 _ 36大数据_files/wp-emoji-release.min.js.下载" type="text/javascript" defer=""></script>
+		<style type="text/css">
+img.wp-smiley,
+img.emoji {
+	display: inline !important;
+	border: none !important;
+	box-shadow: none !important;
+	height: 1em !important;
+	width: 1em !important;
+	margin: 0 .07em !important;
+	vertical-align: -0.1em !important;
+	background: none !important;
+	padding: 0 !important;
+}
+</style>
+<link rel="stylesheet" id="main-css" href="./互联网征信中的信用评分模型 _ 36大数据_files/style.css" type="text/css" media="all">
+<link rel="stylesheet" id="upw_theme_standard-css" href="./互联网征信中的信用评分模型 _ 36大数据_files/upw-theme-standard.min.css" type="text/css" media="all">
+<script type="text/javascript" src="./互联网征信中的信用评分模型 _ 36大数据_files/jquery.js.下载"></script>
+<link rel="https://api.w.org/" href="http://www.36dsj.com/wp-json/">
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://www.36dsj.com/xmlrpc.php?rsd">
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://www.36dsj.com/wp-includes/wlwmanifest.xml"> 
+<link rel="prev" title="如何基于数据快速构建用户模型(Persona)?" href="http://www.36dsj.com/archives/67865">
+<link rel="next" title="大数据来说说喜剧界的江湖" href="http://www.36dsj.com/archives/67849">
+<link rel="canonical" href="http://www.36dsj.com/archives/67835">
+<link rel="shortlink" href="http://www.36dsj.com/?p=67835">
+<link rel="alternate" type="application/json+oembed" href="http://www.36dsj.com/wp-json/oembed/1.0/embed?url=http%3A%2F%2Fwww.36dsj.com%2Farchives%2F67835">
+<link rel="alternate" type="text/xml+oembed" href="http://www.36dsj.com/wp-json/oembed/1.0/embed?url=http%3A%2F%2Fwww.36dsj.com%2Farchives%2F67835&amp;format=xml">
+<style>a:hover, a:focus,.post-like.actived,.excerpt h2 a:hover,.user-welcome strong,.article-title a:hover,#comments b,.text-muted a:hover,.relates a:hover,.archives .item:hover h3,.linkcat h2,.sticky a:hover,.article-content a:hover,.widget_links li a:hover,.d_postlist li a:hover .text, .d_newtagpost li a:hover h2,.article-meta a:hover{color:#FF6600;}.btn,.article-tags a,.search-form .btn,.widget_tags_inner a:hover:hover,.focusmo a:hover h4,.tagslist .tagname:hover,.excerpt .more a,.pagination ul > .active > a, .pagination ul > .active > span,.widget .title .more,.navbar,.nav li ul > li > a:hover{background-color:#FF6600;}.title strong, .widget .title{border-bottom-color:#FF6600;}#submit{background: #FF6600;border-right: 2px solid #FF6600;border-bottom: 2px solid #FF6600;}.nav li.current-menu-item > a, .nav li.current-menu-parent > a, .nav li.current_page_item > a, .nav li.current-post-ancestor > a,.nav li a:focus,.nav li a:hover, .nav li:hover > a,.nav li ul{background-color:#EC5F00}</style><meta name="keywords" content="互联网征信, 大数据, 数据分析, 数据建模, 数据挖掘, 干货教程">
+<meta name="description" content="作者：小丫  面向小微商户以及个人消费的小微信贷是当前互联网金融的重要发展方向，并且正在经历爆发式增长。在这个增长过程中，如何在没有实物抵押的情况下，通过互联网">
+<link rel="shortcut icon" href="http://www.36dsj.com/favicon.ico">
+<!--[if lt IE 9]><script src="http://www.36dsj.com/wp-content/themes/dsj0804/js/html5.js"></script><![endif]-->
+<script src="./互联网征信中的信用评分模型 _ 36大数据_files/share.js.下载"></script><link rel="stylesheet" href="./互联网征信中的信用评分模型 _ 36大数据_files/share_style0_16.css"><style>html #hm_t_undefined .hm-t-go-top {position:fixed;right:2px;bottom:2px;z-index:99998;cursor:pointer;width:40px;height:37px!important;text-align:center;white-space:normal;font-size:14px;line-height:17px;padding-top:3px;color:#fff;background:#404040;background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEkAAAAXCAYAAABH92JbAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2hpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDowMjgwMTE3NDA3MjA2ODExODA4M0UyNDA4ODdDRTZBQiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDpBQjc5RkRFNkI5ODMxMUUzQkZGNDhENEJFQjM2OTcyRiIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDpBQjc5RkRFNUI5ODMxMUUzQkZGNDhENEJFQjM2OTcyRiIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M2IChNYWNpbnRvc2gpIj4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6MDI4MDExNzQwNzIwNjgxMTgwODNFMjQwODg3Q0U2QUIiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6MDI4MDExNzQwNzIwNjgxMTgwODNFMjQwODg3Q0U2QUIiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz5HPYM5AAACC0lEQVR42uyZTSgEYRjH90NoqaVcpDblvKW2XOSkNh8H5Yac9sBBDqQokiJKSMpNTi5OPo6Ktsgu67JcUHIXWfK1u3b8Xx6Zxuzu+64dM83uv34zNfu8b8/8Z+d5P8YqSZLFJNLsRmyWvIRMKgVD4AhEwA3YAV0pzGwEqyAEwmAddIICHe7FqhnsdQM14FxKLj+ooFiGE2ykiD8GVbJ4I1ELAnTmasMODnAhpVcIFIMicMgRH6Z4IxnUAh4pP3Zu5TVpUOLXDJgWiB8wkEF9IK7IL07X05oUFLjpZ4JXQQOYYwfzafJcoDjVPqw43KE4lWtUTF+AQ8eBqQSsgTaO2E0apJ7URrdCDZOM62hQJfBzGmShOD+1+2XSiYaJ7utkkBsEgEewnYfauZUmzWmU6DuY0sEgLzgArgzbu6i992cu/1WclqXsa1iHIt0DYlnKP0b9fRZu5pWdZs7dWXqa7B80+s//oF5aMSjflGqBPq5BQnFtVv4UmGHjIPEH96PAZ6C5kVMwf6daPzbFKnqCqvx9Bk/yFjSBFTMvcL+1DerAmUA/p9Rm1+y7AHJdgnqwx9EHm1s0gKtc2CpR6gE00/ZHMm3RKxbJlf0kNb2BDrCk8hsbDdvBay5tuiUTGxL7waTs2iLw0YTR9BLZQRwDUVqwjuTS9q3VRB8C1OQUnM6UqdXX/IcADn0IMADs2AqDOPSutQAAAABJRU5ErkJggg==) no-repeat -42px center #666;*background-image:url(http://ecma.bdimg.com/holmes/t-popup-icons-png8.png);_position:absolute;_top:expression(eval(document.documentElement.scrollTop+(document.documentElement.clientHeight||document.body.clientHeight)-this.offsetHeight-2));}</style><link rel="stylesheet" href="./互联网征信中的信用评分模型 _ 36大数据_files/imgshare.css"></head>
+<body class="post-template-default single single-post postid-67835 single-format-standard">
+<section class="container">
+<header class="header">
+	<div class="topbar">
+		<div class="pull-right">
+			<a class="feed-wechat" rel="external nofollow" href="javascript:;" title="" data-content="&lt;img src=&#39;http://www.36dsj.com/wp-content/uploads/2014/07/qrcode_for_gh_8efec1177972_258.png&#39;&gt;" data-original-title="关注”dashuju36“">关注微信</a>&nbsp; | &nbsp;<a class="" rel="external nofollow" href="http://weibo.com/36dsj" title="关注微博" target="_blank">微博</a>&nbsp; | &nbsp;<a class="" rel="external nofollow" href="http://t.qq.com/youx18" title="关注腾讯微博" target="_blank">腾讯微博</a>&nbsp; | &nbsp;<a class="" rel="external nofollow" href="http://www.36dsj.com/feed" title="Feed订阅" target="_blank">RSS订阅</a>
+		</div>
+		读者QQ群②：190771709，投稿请发dashuju36@qq.com	</div>
+
+	<div class="logo"><a href="http://www.36dsj.com/" title="36大数据 | 大数据第一网 专注大数据技术与大数据案例">36大数据</a></div>	<a href="http://www.36dsj.com/tougao" class="btn pull-right btn-tougao">我要投稿</a>
+	<form method="get" class="search-form" action="http://www.36dsj.com/">
+		<input class="form-control" name="s" type="text" placeholder="输入关键字" x-webkit-speech=""><input class="btn" type="submit" value="搜索">
+	</form>
+	
+
+	<div class="navbar">
+		<div class="container">
+		<ul class="nav"><li id="menu-item-2389" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-2389"><a href="http://www.36dsj.com/">首页</a></li>
+<li id="menu-item-13809" class="menu-item menu-item-type-taxonomy menu-item-object-category current-post-ancestor current-menu-parent current-post-parent menu-item-13809"><a href="http://www.36dsj.com/archives/category/ganhuo">干货教程</a></li>
+<li id="menu-item-2390" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-has-children menu-item-2390"><a href="http://www.36dsj.com/archives/category/bigdata">大数据动向</a>
+<ul class="sub-menu">
+	<li id="menu-item-3583" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-3583"><a href="http://www.36dsj.com/archives/category/bigdata/baike">大数据百科</a></li>
+	<li id="menu-item-3586" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-3586"><a href="http://www.36dsj.com/archives/category/bigdata/large-enterprise-data">大数据企业</a></li>
+	<li id="menu-item-3587" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-3587"><a href="http://www.36dsj.com/archives/category/bigdata/big-data-products">大数据产品</a></li>
+	<li id="menu-item-10510" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-10510"><a href="http://www.36dsj.com/archives/category/large-data-tools/das">大数据存储</a></li>
+	<li id="menu-item-11969" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-has-children menu-item-11969"><a href="http://www.36dsj.com/archives/category/bigdata/technology">大数据技术</a>
+	<ul class="sub-menu">
+		<li id="menu-item-10505" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-10505"><a href="http://www.36dsj.com/archives/category/large-data-tools/hadoop">Hadoop</a></li>
+		<li id="menu-item-26053" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-26053"><a href="http://www.36dsj.com/archives/category/large-data-tools/spark">Spark</a></li>
+	</ul>
+</li>
+	<li id="menu-item-10501" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-10501"><a href="http://www.36dsj.com/archives/category/bigdata/bi-2">商业智能</a></li>
+	<li id="menu-item-10502" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-10502"><a href="http://www.36dsj.com/archives/category/bigdata/cloudcomputing">云计算</a></li>
+</ul>
+</li>
+<li id="menu-item-10483" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-has-children menu-item-10483"><a href="http://www.36dsj.com/archives/category/application-area">大数据应用</a>
+<ul class="sub-menu">
+	<li id="menu-item-10484" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-10484"><a href="http://www.36dsj.com/archives/category/application-area/large-medical-data">大数据医疗</a></li>
+	<li id="menu-item-10487" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-10487"><a href="http://www.36dsj.com/archives/category/application-area/marketing-application-area">大数据营销</a></li>
+	<li id="menu-item-10489" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-10489"><a href="http://www.36dsj.com/archives/category/application-area/application-of-case">应用案例</a></li>
+	<li id="menu-item-10490" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-10490"><a href="http://www.36dsj.com/archives/category/application-area/ec">电子商务</a></li>
+	<li id="menu-item-10491" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-10491"><a href="http://www.36dsj.com/archives/category/data-analysi/the-game-data">移动互联网分析</a></li>
+	<li id="menu-item-10500" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-10500"><a href="http://www.36dsj.com/archives/category/the-latest-technology-products/wearable-devices">可穿戴设备</a></li>
+</ul>
+</li>
+<li id="menu-item-11975" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-has-children menu-item-11975"><a href="http://www.36dsj.com/archives/category/bigdata/data-visualization">数据可视化</a>
+<ul class="sub-menu">
+	<li id="menu-item-11976" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-11976"><a href="http://www.36dsj.com/archives/category/bigdata/data-visualization/infographic">信息图</a></li>
+	<li id="menu-item-12748" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-12748"><a href="http://www.36dsj.com/archives/category/bigdata/data-visualization/big-data-video">视频</a></li>
+	<li id="menu-item-11978" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-11978"><a href="http://www.36dsj.com/archives/category/bigdata/data-visualization/data-weekly">数据周刊</a></li>
+	<li id="menu-item-11979" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-11979"><a href="http://www.36dsj.com/archives/category/data-analysi/data-interpretation">有图有真相</a></li>
+</ul>
+</li>
+<li id="menu-item-10495" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-has-children menu-item-10495"><a href="http://www.36dsj.com/archives/category/data-analysi">数据分析</a>
+<ul class="sub-menu">
+	<li id="menu-item-10496" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-10496"><a href="http://www.36dsj.com/archives/category/data-analysi/data-report">数据报告</a></li>
+	<li id="menu-item-10497" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-10497"><a href="http://www.36dsj.com/archives/category/data-analysi/datamining">数据挖掘</a></li>
+	<li id="menu-item-10498" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-10498"><a href="http://www.36dsj.com/archives/category/data-analysi/user-research">用户研究</a></li>
+	<li id="menu-item-10499" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-10499"><a href="http://www.36dsj.com/archives/category/data-analysi/web-analytics">网站分析</a></li>
+</ul>
+</li>
+<li id="menu-item-10512" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-has-children menu-item-10512"><a href="http://www.36dsj.com/archives/category/look/big-data-investment">投资并购</a>
+<ul class="sub-menu">
+	<li id="menu-item-10492" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-10492"><a href="http://www.36dsj.com/archives/category/global-vision">全球视野</a></li>
+	<li id="menu-item-10493" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-10493"><a href="http://www.36dsj.com/archives/category/analysis/foreign-media-reports">外媒报道</a></li>
+	<li id="menu-item-11970" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-11970"><a href="http://www.36dsj.com/archives/category/data-analysi/trend-observation">趋势观察</a></li>
+</ul>
+</li>
+<li id="menu-item-17278" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-17278"><a href="http://www.36dsj.com/qiye">企业专区</a></li>
+</ul>		<div class="navbar-r">
+					<a href="http://www.36dsj.com/wp-login.php?action=register">注册</a>
+			<a class="item" href="http://www.36dsj.com/wp-login.php"><span class="glyphicon glyphicon-user"></span> 登录</a>
+				</div>
+		</div>
+	</div>
+</header><div class="content-wrap">
+	<div class="content">
+				<header class="article-header">
+			<h1 class="article-title"><a href="http://www.36dsj.com/archives/67835">互联网征信中的信用评分模型</a></h1>
+			<ul class="article-meta">
+								<li><span class="glyphicon glyphicon-user"></span> 雪姬</li>
+				<li><span class="glyphicon glyphicon-time"></span> 2016-11-07 9:44:46</li>
+				<li><span class="glyphicon glyphicon-list-alt"></span> <a href="http://www.36dsj.com/archives/category/ganhuo" rel="category tag">干货教程</a></li>
+				<li><span class="glyphicon glyphicon-comment"></span> 评论(0)</li>
+				<li class="bdshare"><div class="bdsharebuttonbox bdshare-button-style0-16" data-bd-bind="1488768146640"><a href="http://www.36dsj.com/archives/67835#" class="bds_more" data-cmd="more"></a><a href="http://www.36dsj.com/archives/67835#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"></a><a href="http://www.36dsj.com/archives/67835#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a><a href="http://www.36dsj.com/archives/67835#" class="bds_tqq" data-cmd="tqq" title="分享到腾讯微博"></a><a href="http://www.36dsj.com/archives/67835#" class="bds_renren" data-cmd="renren" title="分享到人人网"></a><a href="http://www.36dsj.com/archives/67835#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a><a href="http://www.36dsj.com/archives/67835#" class="bds_kaixin001" data-cmd="kaixin001" title="分享到开心网"></a><a href="http://www.36dsj.com/archives/67835#" class="bds_tqf" data-cmd="tqf" title="分享到腾讯朋友"></a><a href="http://www.36dsj.com/archives/67835#" class="bds_sqq" data-cmd="sqq" title="分享到QQ好友"></a></div></li>
+			</ul>
+		</header>
+				<article class="article-content">
+			<p><img class="aligncenter size-full wp-image-67843" src="./互联网征信中的信用评分模型 _ 36大数据_files/199.jpg" alt="36大数据" width="600" height="355" data-tag="bdshare" data-bd-imgshare-binded="1"></p>
+<p>作者：小丫</p>
+<p>面向小微商户以及个人消费的小微信贷是当前互联网金融的重要发展方向，并且正在经历爆发式增长。在这个增长过程中，如何在没有实物抵押的情况下，通过互联网大数据分析实现快速准确征信是一个非常重要的问题。</p>
+<p>为此，不同的数据来源将各显神通地为信用评估提供依据。本文将通过一个真实的案例出发，进行分析和探讨，针对用户历史行为数据建立信用评分模型，并通过该模型改进信用评估的预测效果。</p>
+<h3><strong>一&nbsp;行业背景介绍</strong></h3>
+<p>小微信贷，我们定义为金额较小，并且没有抵押担保，完全靠信用的借贷行为。小微信贷可以面向个人(2C)，也可以面向小微企业(2B)。对于2C类业务而言，常常是小额短期信用贷款，这类贷款是为解决借款人临时性的消费需要而发放的期限在1年以内、金额在20万元及以下的、毋需提供担保的人民币信用贷款。对于2B类业务而言，由于小微企业的信贷需求特点是 “短、小、频、急”，这种小额、短期、分散的特征更类似于零售贷款，对资金流动性的要求更高。</p>
+<p>由于小微借贷中的借贷并没有抵押和担保，那么唯一依靠的就是个人或者企业的信用，因此征信过程及其重要。而我们关注的要点就在于如何利用互联网平台的海量信息来帮助我们快速准确的完成这一过程。</p>
+<p>随着计算机技术的发展，大数据运算变得越来越现实，基于大数据应用服务的公司不断崭露头角。大数据在营销领域的应用将广告变成了“窄告”精准营销，而在互联网金融大热的背景下，大数据在金融业征信方面的应用也在逐渐兴起。</p>
+<p>2015年1月5日，中国人民银行印发《关于做好个人征信业务准备工作的通知》，公布了首批获得个人征信牌照的8家机构名单，这8家机构分别为：腾讯征信有限公司、芝麻信用管理有限公司、深圳前海征信中心股份有限公司、鹏元征信有限公司、中诚信征信有限公司、中智诚征信有限公司、拉卡拉信用管理有限公司、北京华道征信有限公司。而央行的征信中心是一个基础数据库，已获批的个人征信机构将提供一些增值和创新服务。所以在征信的平台上，各路英雄将利用起自家数据各显神通。</p>
+<p>如何能够在B2C或者P2P平台上也能够使用海量的互联网数据帮助完成征信的过程，是我们希望能够在互联网不断颠覆传统的今天看到的事。</p>
+<p>本项研究的目标就是通过收集到的用户历史行为数据建立预测用户信用评分的模型。本文的数据收集来自一家小贷公司，为了数据隐私考虑，本文将隐去一部分数据信息以及分析结果，但是不影响分析结果的客观性。</p>
+<h3><strong>二&nbsp;数据描述</strong></h3>
+<p><strong>1. 数据采集</strong></p>
+<p>我们称提供数据的公司为熊小贷(为公司匿名)，熊小贷公司的业务包括2B业务和2C业务。公司已经通过自己的综合数据分析得到了对于2B和2C业务的统一用户信用得分，称为熊得分。但是熊得分广泛针对于公司所有的产品以及所有用户，使得对于特定产品的信用评分对于用户的违约情况预测精度并不高。熊小贷公司希望通过某款2C业务产品用户特有信息的数据支持，建立针对该特定2C产品的用户信用评分模型，预期目标是，通过数据支持建立起的该产品(我们暂称为“熊分期”)用户信用评分模型对于用户是否违约的预测精确度要高于通用的熊得分。</p>
+<p>熊小贷公司的某股东具有第三方支付渠道，故可以收集到独特的用户通过银行卡的交易信息，注册用户只要通过第三方支付渠道进行交易，就能够被记录在案，而通过用户的手机号，就可以搜索到用户的历史交易行为数据。这一数据源具有其独特的优势，避免了传统征信行业中用户自填数据存在的重大问题：</p>
+<p>a. 对个人或者企业进行评级刻画时维度较为单一，不能得到综合全面的立体式评级;</p>
+<p>b. 财务数据造假的可能性较大，例如工资自填，如果用户为了得到贷款审批而夸大了公司水平，小贷公司很难进行确认;</p>
+<p>c. 缺乏其他数据进行交叉验证，使得评级的可靠性降低。但是熊小贷公司采集到的数据则比传统数据丰富得多。</p>
+<p>熊小贷公司共采集了前文提及的产品“熊分期”对应近3万个注册用户信息，自注册APP起的总交易笔数近450万行，以及相对应的其他信息，这些交易信息所处的时间区间跨度超过一年。其中违约用户近1万个，非违约用户近2万个。值得注意的是，此样本为为模型建立抽取的抽样数据并不代表真实注册用户中的违约用户与非违约用户比例。</p>
+<p>具体而言，熊小贷公司的“熊分期”产品所对应的注册用户数据结构主要包括以下四张表格，分别为交易事实表，用户信息表，商户分类信息表，以及银行卡信息表，它们之间的关系如图1所示。这四张表格分别通过不同的关键字连接，具体如下：a. 用户信息表可以通过用户手机号码和交易事实表对应，一个用户手机号码对应多个交易事实记录;b. 商户分类信息表可以通过商户编号和交易事实表对应，多个交易事实可能产生于一个商户编号;c. 银行卡信息表可以通过银行卡的前几位数字(称为卡标首)和交易事实表中的卡号对应。</p>
+<p><strong>四张表格中包含的具体变量信息分别如下：</strong></p>
+<p>(1) 用户信息表：手机号，注册渠道(手机APP注册，或者网站注册)，身份证(提供数据已加密)，提取数据前最近一次的登录时间，注册时间等。</p>
+<p>(2) 商户分类信息表：创建时间，商户号，商户名称，商户1级分类代码及名称，商户2级分类代码及名称，商户3级分类代码及名称，商户4级分类代码及名称等。</p>
+<p>(3) 银行卡信息表(银行卡卡片类型信息)：卡标首(银行卡的前几位数据，决定了属于哪一家银行的哪一种类型的卡片)，账户类型名称(例如储蓄卡或者信用卡)，银行名称等。</p>
+<p>(4) 交易事实表：流水号(每一笔交易会被制定一个流水号码)，交易手机号，交易时间，商户号，银行卡号，支付金额等。</p>
+<p>综上所述，上述四张表格可以通过不同的关键字分别进行匹配连接，从而能够对应到一个用户的多行交易信息。在下一小节中，我们将详细阐述数据的变量提取过程。</p>
+<p><img class="aligncenter size-full wp-image-67845" src="./互联网征信中的信用评分模型 _ 36大数据_files/192-1.png" alt="36大数据" width="600" height="340" data-tag="bdshare" data-bd-imgshare-binded="1"></p>
+<p><strong>2. 变量构建</strong></p>
+<p>首先，按照关键字将所有四张表格合并。每一条观测以一个用户的一次交易行为为单位，包含用户个人信息，银行卡信息，商户分类信息等，总观测行数近450万条。直接处理并不是一个好的解决方法，这样产生的数据量太大，且不直观利于分析。我们的目标是将所有的交易行为信息汇总到每一个用户，定义关于每一个用户的衍生变量。从而，我们分成两个方向的变量来刻画用户特征，分别是：用户基础信息变量以及用户分类信息变量。接下来，我们将进行详细的定义。</p>
+<p><strong>用户基础信息变量</strong></p>
+<p>此处生成的用户基础信息变量包括直接可以从数据中收集的变量以及衍生变量，这些变量多来源于与业务人员的沟通，是建立在对业务的理解之上的。如下所示：</p>
+<p>(1) 用户的熊得分：由于目标要对于原始的综合熊得分进行预测精度的改进，我们将“熊得分”作为解释变量纳入模型，“熊得分”是熊小贷公司的业务人员根据实际业务定义的指标体系从而生成的得分，我们认为其具备一定的业务经验以及背景知识，从而也具备较强的预测能力。熊得分越低，越有可能违约。</p>
+<p>(2，3)用户性别，用户年龄：通过用户身份证号可以提取一个用户的性别，年龄信息，这些数据我们通过与熊小贷公司沟通完成，熊小贷公司并不直接提供用户的身份证号。获取的身份证信息均为加密过后的信息。</p>
+<p>(4)用户的注册年龄：即用户从第一次有交易记录开始距离现在的时间长度，以天为单位。</p>
+<p>(5)交易笔数：用户自从第一笔交易记录开始，被记录的交易总笔数。</p>
+<p>(6)所有行为均值：用户被记录的所有交易行为的平均金额。</p>
+<p>(7)所有行为最大值：用户自从第一笔交易开始，所有交易行为的金额的最大值。这个指标可以度量用户的极端行为情况。直观来看，极端行为越大的用户越有可能违约。</p>
+<p>(8)借贷比率：用户所有行为中，采用贷记卡(或称为信用卡)交易的次数占所有采用贷记卡或者借记卡(或称为储蓄卡)交易次数的比率。这个指标衡量的是用户的交易习惯，例如，有些人习惯直接采用储蓄卡进行消费，而也有些人习惯每个月采用信用卡先进行消费，到了还款日再按时还款，这样既可以消费，又不影响每个月的理财计划。这两种消费习惯的用户群体不同。</p>
+<p>(9)银行卡数：我们每个人需要的银行卡数并不多，银行卡太多的用户与正常用户群体不同。例如，如果需要多张信用卡消费，但是却还不上信用卡的人可能更容易违约。</p>
+<p>通过以上信息，我们定义了以上这9个用户基础信息变量。</p>
+<p><strong>用户分类信息变量与RFMS模型</strong></p>
+<p>在征信问题中，我们通常会面临一个典型的问题，在本案例中也是如此，当一个用户对应多条交易行为关系，如何按照一套既定的指标体系汇总到个人呢?</p>
+<p>在本案例中，每一个用户对应的交易记录小至几十条，大至几千条，通过交易事实对应到商户分类信息表格，我们可以将其归之为不同类型的交易，例如在超市购物，购买游戏点卡，交水电煤气费用等。对应每一种类别的行为，都需要通过一种标准化的方式计算对应每一个人的变量，来衡量对应一系列行为的人的特征。</p>
+<p>为此，我们借鉴营销学中经常采用的RFM模型(图2，参见美国数据库营销研究所Arthur Hughes的研究)。</p>
+<p><img class="aligncenter size-full wp-image-67837" src="./互联网征信中的信用评分模型 _ 36大数据_files/193.png" alt="36大数据" width="609" height="273" srcset="http://www.36dsj.com/wp-content/uploads/2016/11/193.png 609w, http://www.36dsj.com/wp-content/uploads/2016/11/193-600x269.png 600w" sizes="(max-width: 609px) 100vw, 609px" data-tag="bdshare" data-bd-imgshare-binded="1"></p>
+<p>在营销领域，RFM模型是用来衡量客户的价值和客户的创利能力的重要工具和手段。这个模型通过一个客户的近期购买行为、购买的总体频率以及花了多少钱三项指标来描述该客户的综合价值，具体如下：</p>
+<p>(1) R(Recency)，最近一次消费，指上一次购买的时间到现在的距离。理论上，上一次消费时间越近的用户应该是相对而言活跃的用户。</p>
+<p>(2) F(Frequency)，消费频率，即用户在限定的期间内产生购买的总次数。产生购买越频繁的用户，忠诚度越高。</p>
+<p>(3) M(Monetary)，某个用户所有消费金额的平均值。这一指标也可以验证“帕雷托法则”(Pareto’s Law)，粗略来说，公司80%的收入来自20%的顾客。</p>
+<p>在此案例中，我们将重新定义这三个指标，并借助这三个指标来概括用户所产生一类行为的特征，如表格1所示。而由于这三个指标并不能够衡量用户产生行为的波动性，所以我们增加一个指标S(Standard Deviation)来衡量用户行为的波动性。例如，对于购买游戏点卡类行为，我们可以定义R为用户最近一次购买游戏点卡距离数据提取时间的时间间隔，F定义为一年内用户购买游戏点卡的次数(考虑到用户注册时间不一样，此处采用的频数需要采用用户年龄进行标准化，即总次数除以用户年龄。用户年龄的定义参见用户基础变量(4))，M定义为一年内用户每次购买游戏点卡的平均金额，S定义为用户每次购买游戏点卡金额的标准差。我们将所有变量记作类别名称加指标简称的形式，例如游戏R，表示游戏类的Recency。</p>
+<p><img class="aligncenter size-full wp-image-67838" src="./互联网征信中的信用评分模型 _ 36大数据_files/194.png" alt="36大数据" width="603" height="243" srcset="http://www.36dsj.com/wp-content/uploads/2016/11/194.png 603w, http://www.36dsj.com/wp-content/uploads/2016/11/194-600x242.png 600w" sizes="(max-width: 603px) 100vw, 603px" data-tag="bdshare" data-bd-imgshare-binded="1"></p>
+<p>用户行为的分类通过银行卡信息表，以及商户分类信息表，根据业务场景，我们提取了以下类别，每个类别都对应着以上我们已经定义好的RFMS四个指标。类别包括：</p>
+<p>(1)借记类：刻画用户使用储蓄卡的交易行为。不同的用户习惯不同，采用储蓄卡和信用卡的倾向也可能不同。</p>
+<p>(2)消费类：刻画用户的日常消费行为。日常消费行为的金额以及频次不同，用户的还款能力可能不同。</p>
+<p>(3)信贷类：刻画用户之前的小额贷款类行为。用户之前如果有其他消费贷款类行为可能已经习惯进行消费贷款，从而可能具备更良好的信用状况。</p>
+<p>(4)转账类：刻画用户的转账行为。经常通过熊小贷APP转账的用户可能与不转账的用户行为不同。</p>
+<p>(5)话费类：刻画用户的话费充值交易行为。话费充值是否规律与充值金额多少都可能意味着用户群体不同。</p>
+<p>(6)公缴类：刻画用户交水，电，煤气费等交易行为。公缴费用的多少与是否规律也可能说明用户群体的不同。</p>
+<p>(7)游戏类：刻画用户购买游戏点卡的行为。经常玩游戏的用户群体可能与不玩游戏的人不同。</p>
+<p>(8，9)四大行卡类以及中型银行卡类：四大行包括中国银行，中国农业银行，中国工商银行，中国建设银行，中型银行包括招商银行，浦发银行，兴业银行，平安银行等。这个指标的设定有以下两方面原因：a. 不同公司的工资卡不同，小型创业公司一般采用中型银行的银行卡;b. 四大行的信用卡发放较为保守，所以能够申请到四大行信用卡的人可能和采用其他银行信用卡的用户群体不同。</p>
+<p>(10)白金及金卡类：通过卡标首可以对应到银行卡是属于哪家银行的哪种类型的卡，例如招商银行的金葵花卡。我们搜索整理了相应银行的金卡和白金卡卡种名称，并对应到每一个用户。我们初步认为，拥有白金卡和金卡的用户具备更高的还款能力，所以用户群体不同。</p>
+<p>综上所述，我们一共提取了10个类别，每个类别4个指标，共计40个分类信息变量来全方位立体的刻画一个用户的全部交易行为。</p>
+<p><strong>数据预处理与数据汇总</strong></p>
+<p>为了数据质量考虑，我们去掉“用户注册年龄”小于10天的用户，原因在于，这一部分用户的观察行为较少，并不足以代表稳定的用户自身特征。另外，在对数据进行描述分析后，模型建立之前，我们将所有连续数据做对数处理，并进行标准化。由于所有样本均来自于交易行为的归纳汇总，故只要用户有交易行为，分类信息变量就不存在缺失，故此处不需要缺失数据填补。</p>
+<p>最终，我们的数据共包括28816个用户，其中违约用户为9115个，非违约用户19701个;结合9个用户基础信息变量，我们的数据共包括49个解释性变量，这49个变量也包含着对于业务的理解和思考。这对于刻画用户的所有行为而言，只是初步的探索和尝试，但是相较于只采用用户自填信息进行建模而言，已经更为综合和全面。</p>
+<h3><strong>三&nbsp;数据建模</strong></h3>
+<p>在建模部分，我们将先通过部分变量的基础描述分析，来说明变量的基本特征，继而通过建立逻辑回归模型对于预测效果进行阐述。</p>
+<p><strong>1. 描述性分析</strong></p>
+<p>出于数据隐私考虑，我们只针对于其中6个变量作箱线图分析(见图3)。值得注意的是，箱线图能提供有关数据位置和分散程度的关键信息，尤其在比较不同的总体数据时更可表现其差异。此处我们通过对比箱线图对数据进行分析。我们用Yi=0表示违约用户，Yi=1表示非违约用户。从箱线图中可以得出的结论包括：</p>
+<p>(1)熊得分与是否违约：非违约用户与违约用户的箱线图有明显的差别，这表明熊得分对于违约与非违约用户具有一定区分度。</p>
+<p>(2)交易笔数与是否违约：非违约用户较违约用户而言，交易笔数更高。</p>
+<p>(3)用户所有行为均值与是否违约：非违约用户与违约用户相比较，所有行为金额的均值较高。</p>
+<p>(4)借记卡F与是否违约：非违约用户的借记卡F平均高于违约用户。表明非违约用户借记卡的使用频数更高。</p>
+<p>(5)四大行M与是否违约：非违约用户的四大行卡的行为平均值较高，这说明非违约用户更多使用四大行的银行卡。</p>
+<p>(6)信贷R与是否违约：非违约用户通过APP产生借贷行为距离现在的日期，相对于违约用户而言较近。</p>
+<p>通过以上描述分析，我们已经能够观察到在所提取特征中违约用户与非违约用户的不同。通过回归分析，我们将进一步说明通过所有变量特征的设定带来的预测效果的提升。</p>
+<p><img class="aligncenter size-full wp-image-67839" src="./互联网征信中的信用评分模型 _ 36大数据_files/195.png" alt="36大数据" width="605" height="358" srcset="http://www.36dsj.com/wp-content/uploads/2016/11/195.png 605w, http://www.36dsj.com/wp-content/uploads/2016/11/195-600x355.png 600w" sizes="(max-width: 605px) 100vw, 605px" data-tag="bdshare" data-bd-imgshare-binded="1"></p>
+<p><strong>2. 模型设定及估计结果</strong></p>
+<p>在这里，我们采用逻辑回归进行建模，原因在于，在数据进行标准化后，根据逻辑回归结果，我们能够直观看到每一个变量对于因变量是否违约的作用大小，有利于系数解释。但由于变量过多，我们很难对于所有变量进行符合预期的系数解释，这时，我们采用BIC的方法选择模型。</p>
+<p>BIC选模型的估计系数结果如表2所示，由于系数较多，我们省去估计量的估计误差和P值的具体数值，只用“*”标注P值的大小。但注意，当回归系数过多时我们难以直观展示系数结果，为此，我们根据估计系数的正负将变量分类，再按照绝对值的大小排序整理得到图4和图5。由于模型主要分析“熊得分”之外其他变量带来的预测效果的提升，我们只绘制除“熊得分”之外其他变量的系数。</p>
+<p>我们并不逐一解释每一个系数的大小及其含义。值得注意的是，从图4中我们可以总结归纳得出非违约用户的特征，从图5中可以总结归纳出违约用户的特征，通过这两幅图已经可以总结出较为直观的对于违约与非违约用户的理解。我们通过进一步解读模型结果可以直观得出的结论包括但不限于：</p>
+<p>a. 在其他变量控制不变的情况下，借贷比例越高的用户违约可能性越低，这与银行的信用卡额度提升相似，对于经常使用信用卡并按时还款的客户更有可能被银行认为信用良好，从而希望改用户提高信用额度，而如果不经常使用信用卡则无法判断。从而借贷比例越高，表明用户越习惯使用信用卡，进一步越有可能是信用良好的用户。另一方面，用户申请银行的信用卡需要通过银行的信用评估，故有信用卡的用户较没有信用卡的用户会有所不同。</p>
+<p><img class="aligncenter size-full wp-image-67840" src="./互联网征信中的信用评分模型 _ 36大数据_files/196.png" alt="36大数据" width="602" height="594" srcset="http://www.36dsj.com/wp-content/uploads/2016/11/196.png 602w, http://www.36dsj.com/wp-content/uploads/2016/11/196-435x429.png 435w" sizes="(max-width: 602px) 100vw, 602px" data-tag="bdshare" data-bd-imgshare-binded="1"></p>
+<p>b. 借记卡F越大用户违约可能性越低。这表明其他变量不变，用户使用储蓄卡频数越高，越可能是信用良好的用户。</p>
+<p>c. 在其他变量保持不变的情况下，用户每一次交易行为的平均值越大越可能是非违约用户。</p>
+<p>d. 控制其他变量不变，信贷R越小越可能是非违约用户。这一点与之前观察的箱线图吻合，越近产生消费借贷行为的人，越有可能是非违约用户。注意这里产生的借贷行为与Y对应的是否违约并非同一次借贷行为。</p>
+<p>e. 其他变量水平不变，银行卡数越多，越有可能是违约用户。</p>
+<p>f. 保持其他变量不变，用户行为最大值越大，越可能是违约用户。这也验证了我们之前的结论，用户的极端行为越极端，越有可能是违约用户。</p>
+<p><img class="aligncenter size-full wp-image-67846" src="./互联网征信中的信用评分模型 _ 36大数据_files/197-1.png" alt="36大数据" width="607" height="531" srcset="http://www.36dsj.com/wp-content/uploads/2016/11/197-1.png 607w, http://www.36dsj.com/wp-content/uploads/2016/11/197-1-490x429.png 490w" sizes="(max-width: 607px) 100vw, 607px" data-tag="bdshare" data-bd-imgshare-binded="1"></p>
+<p>&nbsp;</p>
+<p><strong>3. 模型预测结果</strong></p>
+<p>我们将对比以下三种模型的预测效果，因变量Y相同，为用户是否违约(Yi=1，用户非违约，Yi=0，用户违约)：</p>
+<p>(1)只根据“熊得分”建立的逻辑回归模型，这时我们对比的基准线，我们希望能够在“熊得分”的基础上做到预测精度的提升;</p>
+<p>(2)用所有49个变量，包含用户基础信息变量与用户分类信息变量建立的逻辑回归模型;</p>
+<p>(3)在(2)模型的基础上通过BIC模型选择方法建立的模型，(2)与(3)相差不大，(3)将是我们最终确定的模型。</p>
+<p>衡量模型的预测效果可以采用指标ROC(Receiver Operating Characteristic)曲线或者AUC(Area Under Curve)值。在R中可以采用pROC包进行ROC曲线的绘制。其中R输出的ROC曲线横坐标为1-false positive rate(FPR)，也称为Specificity。FPR刻画的是模型预测错了，认为为1但真实为0的观测占所有真实为0的观测的比例。纵坐标为true positive rate(TPR)，也称为Sensitivity，刻画的是模型预测所识别出的为1且真实为1的观测占所有真实为1的观测的比例。</p>
+<p>简而言之，ROC曲线越贴近左上角，表明模型的预测效果越好。AUC是ROC曲线下的面积，这一指标取值越大表明模型预测的效果越好。此处我们忽略AUC在计算中采用的公式。</p>
+<p>为了模型对比，我们随机将所有数据划分为训练数据集(80%)和测试数据集(20%)， 在训练集上估计模型的回归系数，将所有系数带入测试数据中进行计算，预测非违约可能性。随机拆分被重复了100次。我们随机抽取其中一次绘制ROC曲线如图6所示。其中，Score表示模型(1)的预测结果，模型中只包含“熊得分”，Full model表示模型(2)对应的预测结果，BIC表示模型(3)对应的预测结果。从图中可以得出结论，在(2)模型与(3)模型的预测效果接近，二者都要远远好于(1)模型的预测效果。进一步地，我们将100次随机拆分计算得到的AUC值取平均。</p>
+<p>出于行业数据机密，我们此处不汇报AUC的绝对提升结果。但是相对于(1)模型而言，(2)模型和(3)模型的预测效果将相对提升13.6%。这将直接使得我们能够在实际业务中更精准的判断出用户的信用状况。</p>
+<p><img class="aligncenter size-full wp-image-67842" src="./互联网征信中的信用评分模型 _ 36大数据_files/198.png" alt="36大数据" width="614" height="354" srcset="http://www.36dsj.com/wp-content/uploads/2016/11/198.png 614w, http://www.36dsj.com/wp-content/uploads/2016/11/198-600x346.png 600w" sizes="(max-width: 614px) 100vw, 614px" data-tag="bdshare" data-bd-imgshare-binded="1"></p>
+<h3><strong>四 模型应用与总结</strong></h3>
+<p>在业务层面，首先，我们需要通过更多数据来验证以上模型结果真实可靠。通过熊小贷公司提供的不同数据，我们已经验证了这一结果。而通过以上数据建立模型的预测结果可以直接进行以下两方面的工作：</p>
+<p>(1)利用预测非违约率来辅助判断是否应该批准用户贷款，即进行用户选择。例如，同样的两个用户申请贷款，A用户的预测非违约率为0.85，B用户的预测非违约率为0.27。那么在资金预算有限的条件下，如果只能批准一个用户进行贷款发放，通过模型就会选择发放给非违约可能性更高的用户A用户。也就是说，通过模型的预测能够帮助我们筛选发放贷款的目标用户。而精准的预测将能够降低我们的贷款成本。</p>
+<p>(2)利用预测概率改进APP中的熊得分。例如，通过线性变换可以将预测概率P转化为400至800的用户得分Q，Q=400+400×P。从而能够更新平台上的熊得分，使得熊得分更加准确。</p>
+<p>另外，本案例中的模型证实了用户的交易记录数据对于征信模型的重要作用，对于业务上拓展数据源也有重要的指导意义。</p>
+<p>本案例针对互联网征信背景下的信用评估模型进行了探讨，通过具体的案例证明了用户历史行为数据对于用户的信用评估具有重要作用。这其中最值得注意的是，业务背景对于指导建立模型具有不可替代的作用，所有的变量产生都应该建立在对于业务背景知识的透彻了解之上。另外，关于本案例的研究有以下可能的改进方向：</p>
+<p>(1)在数据中我们只考虑违约情况为01变量，即，违约与非违约。如果能够记录用户真实的违约天数作为连续变量，将可能对于模型预测有进一步的帮助。</p>
+<p>(2)在本案例中收集的数据只是通过某特定第三方支付平台的所有交易数据，并不能代表用户的所有银行卡交易状况，如果能够收集到用户的所有数据，则将对于用户的交易行为做出更全面客观的刻画。</p>
+<p>(3)从本案例的研究中可知，不同平台的数据对于信用评估可能有不同的优势。从央行下发牌照的8家机构看来，不同机构的数据源不同，各具特色，于是如何能够将不同数据源的数据进行统一后，建立综合的信用评估模型，是值得深入探讨的问题。例如，一个用户可能在京东平台和淘宝平台上的信用得分不一样，这与用户的平台偏好有关，但是如果能够根据不同平台的结果综合对用户进行信用评估，则将得到更准确的结果。</p>
+<p>参考文献：</p>
+<p>[1] 陈文. 网络借贷与中小企业融资[M]. 经济管理出版社, 2014.</p>
+<p>[2] 胡援成, 卢华征. 中小企业融资的调查与思考[J]. 管理世界, 2003(10):11-13.</p>
+<p>[3] 李焰, 高弋君, 李珍妮,等. 借款人描述性信息对投资人决策的影响——基于P2P网络借贷平台的分析[J]. 经济研究, 2014(S1):143-155.</p>
+<p>End.</p>
+<p>转载请注明来自36大数据（36dsj.com)：<a href="http://www.36dsj.com/">36大数据</a> » <a href="http://www.36dsj.com/archives/67835">互联网征信中的信用评分模型</a></p>		</article>
+				<div class="article-tags">
+			标签：<a href="http://www.36dsj.com/archives/tag/%e4%ba%92%e8%81%94%e7%bd%91%e5%be%81%e4%bf%a1" rel="tag">互联网征信</a><a href="http://www.36dsj.com/archives/tag/bigdata1" rel="tag">大数据</a><a href="http://www.36dsj.com/archives/tag/data-analysis" rel="tag">数据分析</a><a href="http://www.36dsj.com/archives/tag/%e6%95%b0%e6%8d%ae%e5%bb%ba%e6%a8%a1" rel="tag">数据建模</a><a href="http://www.36dsj.com/archives/tag/data-mining" rel="tag">数据挖掘</a>		</div>
+		<div class="postcode"><img class="alignnone size-full wp-image-11327" src="./互联网征信中的信用评分模型 _ 36大数据_files/P3.png" alt="36大数据" width="640" height="141">
+
+&nbsp;
+
+除非特别注明，本站所有文章均不代表本站观点。报道中出现的商标属于其合法持有人。请遵守理性，宽容，换位思考的原则。
+</div>
+						<div class="relates"><h3 class="title"><strong>猜你喜欢</strong></h3><ul><li><a href="http://www.36dsj.com/archives/77841">数联易康获千万级A轮融资，PBM大有可为</a>2017-02-17</li><li><a href="http://www.36dsj.com/archives/77679">用户画像是什么鬼，你懂吗?</a>2017-02-17</li><li><a href="http://www.36dsj.com/archives/77435">一个数据分析师如何改变比码农还惨的人生?</a>2017-02-15</li><li><a href="http://www.36dsj.com/archives/76058">别让大数据之花自开自落</a>2017-02-06</li><li><a href="http://www.36dsj.com/archives/75412">大数据金融风控大浪淘沙强弱渐分，长路漫漫投机者勿入#深度评论#</a>2017-01-21</li><li><a href="http://www.36dsj.com/archives/41597">数据分析师的30种死法</a>2017-01-19</li><li><a href="http://www.36dsj.com/archives/73268">搞定用户画像只需5个步骤</a>2016-12-28</li><li><a href="http://www.36dsj.com/archives/72660">互联网金融中的数据科学</a>2016-12-23</li><li><a href="http://www.36dsj.com/archives/72263">经济预测建模步骤分析 | 上</a>2016-12-21</li><li><a href="http://www.36dsj.com/archives/71525">银行影像内容大数据系统的设计以及实例问题分析 | 分析篇</a>2016-12-15</li></ul></div>				<h3 class="title" id="comments">
+	<div class="text-muted pull-right">
+		</div>
+	<strong>评论 <small>抢沙发</small></strong>
+</h3>
+<div id="respond" class="no_webshot">
+		
+	<form action="http://www.36dsj.com/wp-comments-post.php" method="post" id="commentform">
+		
+		<div class="comt-title">
+			<div class="comt-avatar">
+				<img data-original="https://secure.gravatar.com/avatar/" class="avatar avatar-100" height="100" width="100" src="./互联网征信中的信用评分模型 _ 36大数据_files/avatar-default.png">			</div>
+			<div class="comt-author">
+						</div>
+			<a id="cancel-comment-reply-link" href="javascript:;">取消</a>
+		</div>
+		
+		<div class="comt">
+			<div class="comt-box">
+				<textarea placeholder="骚年哟，既然都来了，为何不吐槽几句呢？((o(^_ ^)o))" class="input-block-level comt-area" name="comment" id="comment" cols="100%" rows="3" tabindex="1" onkeydown="if(event.ctrlKey&amp;&amp;event.keyCode==13){document.getElementById(&#39;submit&#39;).click();return false};"></textarea>
+				<div class="comt-ctrl">
+					<div class="comt-tips"><input type="hidden" name="comment_post_ID" value="67835" id="comment_post_ID">
+<input type="hidden" name="comment_parent" id="comment_parent" value="0">
+<p style="display: none;"><input type="hidden" id="akismet_comment_nonce" name="akismet_comment_nonce" value="c27941d63f"></p><label for="comment_mail_notify" class="checkbox inline hide" style="padding-top:0"><input type="checkbox" name="comment_mail_notify" id="comment_mail_notify" value="comment_mail_notify" checked="checked">有人回复时邮件通知我</label><p style="display: none;"></p><div class="comt-tip comt-loading" style="display: none;">正在提交, 请稍候...</div><div class="comt-tip comt-error" style="display: none;">#</div></div>
+					<button type="submit" name="submit" id="submit" tabindex="5"><i class="icon-ok-circle icon-white icon12"></i> 提交评论</button>
+					<!-- <span data-type="comment-insert-smilie" class="muted comt-smilie"><i class="icon-thumbs-up icon12"></i> 表情</span> -->
+				</div>
+			</div>
+
+												<div class="comt-comterinfo" id="comment-author-info">
+						<ul>
+							<li class="form-inline"><label class="hide" for="author">昵称</label><input class="ipt" type="text" name="author" id="author" value="" tabindex="2" placeholder="昵称"><span class="text-muted">昵称 (必填)</span></li>
+							<li class="form-inline"><label class="hide" for="email">邮箱</label><input class="ipt" type="text" name="email" id="email" value="" tabindex="3" placeholder="邮箱"><span class="text-muted">邮箱 (必填)</span></li>
+							<li class="form-inline"><label class="hide" for="url">网址</label><input class="ipt" type="text" name="url" id="url" value="" tabindex="4" placeholder="网址"><span class="text-muted">网址</span></li>
+						</ul>
+					</div>
+									</div>
+
+	<input type="hidden" id="ak_js" name="ak_js" value="1488768146480"></form>
+	</div>
+	</div>
+</div>
+<aside class="sidebar">	
+<div class="widget widget_text">			<div class="textwidget"><a href="./互联网征信中的信用评分模型 _ 36大数据_files/P2.png"><img class="alignnone size-full wp-image-11326" src="./互联网征信中的信用评分模型 _ 36大数据_files/P2.png" alt="36大数据" width="300" height="140"></a></div>
+		</div><div class="widget widget_ultimate_posts"><h3 class="title"><strong><a href="http://www.36dsj.com/archives/category/news">你想知道</a></strong></h3>
+
+
+  <ul>
+
+  
+    
+    <li class="">
+
+      
+      <div class="upw-content">
+
+                  <p class="post-title">
+            <a href="http://www.36dsj.com/archives/77851" title="高频/场景驱动下 美团外卖O2O的用户画像实践">
+              高频/场景驱动下 美团外卖O2O的用户画像实践            </a>
+          </p>
+        
+        
+        
+        
+        
+        
+        
+        
+        
+      </div>
+
+    </li>
+
+  
+    
+    <li class="">
+
+      
+      <div class="upw-content">
+
+                  <p class="post-title">
+            <a href="http://www.36dsj.com/archives/77679" title="用户画像是什么鬼，你懂吗?">
+              用户画像是什么鬼，你懂吗?            </a>
+          </p>
+        
+        
+        
+        
+        
+        
+        
+        
+        
+      </div>
+
+    </li>
+
+  
+    
+    <li class="">
+
+      
+      <div class="upw-content">
+
+                  <p class="post-title">
+            <a href="http://www.36dsj.com/archives/77671" title="读书笔记 | 大数据时代">
+              读书笔记 | 大数据时代            </a>
+          </p>
+        
+        
+        
+        
+        
+        
+        
+        
+        
+      </div>
+
+    </li>
+
+  
+    
+    <li class="">
+
+      
+      <div class="upw-content">
+
+                  <p class="post-title">
+            <a href="http://www.36dsj.com/archives/77665" title="全球数据驻留风险管理">
+              全球数据驻留风险管理            </a>
+          </p>
+        
+        
+        
+        
+        
+        
+        
+        
+        
+      </div>
+
+    </li>
+
+  
+    
+    <li class="">
+
+      
+      <div class="upw-content">
+
+                  <p class="post-title">
+            <a href="http://www.36dsj.com/archives/77565" title="10分钟读懂Uber的动态定价策略">
+              10分钟读懂Uber的动态定价策略            </a>
+          </p>
+        
+        
+        
+        
+        
+        
+        
+        
+        
+      </div>
+
+    </li>
+
+  
+    
+    <li class="">
+
+      
+      <div class="upw-content">
+
+                  <p class="post-title">
+            <a href="http://www.36dsj.com/archives/77285" title="作为大数据从业人员，如何写好一份可堪入目的简历?">
+              作为大数据从业人员，如何写好一份可堪入目的简历?            </a>
+          </p>
+        
+        
+        
+        
+        
+        
+        
+        
+        
+      </div>
+
+    </li>
+
+  
+    
+    <li class="">
+
+      
+      <div class="upw-content">
+
+                  <p class="post-title">
+            <a href="http://www.36dsj.com/archives/77281" title="女生特供 | 脱单路径大分析，科学拯救单身的妳">
+              女生特供 | 脱单路径大分析，科学拯救单身的妳            </a>
+          </p>
+        
+        
+        
+        
+        
+        
+        
+        
+        
+      </div>
+
+    </li>
+
+  
+    
+    <li class="">
+
+      
+      <div class="upw-content">
+
+                  <p class="post-title">
+            <a href="http://www.36dsj.com/archives/77158" title="论运营商当下的大数据变现服务模式">
+              论运营商当下的大数据变现服务模式            </a>
+          </p>
+        
+        
+        
+        
+        
+        
+        
+        
+        
+      </div>
+
+    </li>
+
+  
+    
+    <li class="">
+
+      
+      <div class="upw-content">
+
+                  <p class="post-title">
+            <a href="http://www.36dsj.com/archives/76999" title="数据分析师的必读书单">
+              数据分析师的必读书单            </a>
+          </p>
+        
+        
+        
+        
+        
+        
+        
+        
+        
+      </div>
+
+    </li>
+
+  
+    
+    <li class="">
+
+      
+      <div class="upw-content">
+
+                  <p class="post-title">
+            <a href="http://www.36dsj.com/archives/76989" title="用户群体画像功能深度解析">
+              用户群体画像功能深度解析            </a>
+          </p>
+        
+        
+        
+        
+        
+        
+        
+        
+        
+      </div>
+
+    </li>
+
+    
+  </ul>
+
+
+</div><div class="widget widget_text">			<div class="textwidget"><a href="http://www.36dsj.com/archives/category/application-area/major" target="_blank"><img class="alignnone size-full wp-image-14952" src="./互联网征信中的信用评分模型 _ 36大数据_files/4110.jpg" alt="马云说" width="300" height="138"></a></div>
+		</div>		<div class="widget widget_recent_entries">		<h3 class="title"><strong>近期文章</strong></h3>		<ul>
+					<li>
+				<a href="http://www.36dsj.com/archives/77993">基于Hadoop的数据仓库Hive 基础知识</a>
+						</li>
+					<li>
+				<a href="http://www.36dsj.com/archives/77989">论大数据的泡沫、价值与应用陷阱</a>
+						</li>
+					<li>
+				<a href="http://www.36dsj.com/archives/77961">中科点击举办2017融资战略发布会，累计获3500万融资</a>
+						</li>
+					<li>
+				<a href="http://www.36dsj.com/archives/77965">谁在听《成都》——大数据描绘歌曲《成都》的听众肖像</a>
+						</li>
+					<li>
+				<a href="http://www.36dsj.com/archives/77955">视频：大数据到底是什么 都说干大数据挣钱 1分钟告诉你都在干什么</a>
+						</li>
+					<li>
+				<a href="http://www.36dsj.com/archives/77947">深入解读《Gartner2017年商业智能和分析平台魔力象限报告》</a>
+						</li>
+					<li>
+				<a href="http://www.36dsj.com/archives/77938">API 设计的七大误区</a>
+						</li>
+					<li>
+				<a href="http://www.36dsj.com/archives/77932">算法得出电台司令最悲伤的歌曲是True Love Waits</a>
+						</li>
+					<li>
+				<a href="http://www.36dsj.com/archives/77921">自动化机器学习将成为下一个AI研究主流？听听数据科学家怎么说</a>
+						</li>
+					<li>
+				<a href="http://www.36dsj.com/archives/77912">你的混合云是不是真的“混合”？</a>
+						</li>
+				</ul>
+		</div>		<div class="widget d_postlist"><h3 class="title"><strong>相关文章<a class="more" href="http://www.36dsj.com/">More+</a></strong></h3><ul><li><a href="http://www.36dsj.com/archives/39986"><span class="thumbnail"><span><img data-original="http://www.36dsj.com/wp-content/uploads/2016/01/78790-220x150.jpg" class="thumb" src="./互联网征信中的信用评分模型 _ 36大数据_files/78790-220x150.jpg" style="display: inline;"></span></span><span class="text">数据可视化的五个步骤</span><span class="muted">2016-01-14</span><span class="muted">1评论</span></a></li>
+<li><a href="http://www.36dsj.com/archives/48862"><span class="thumbnail"><span><img data-original="http://www.36dsj.com/wp-content/uploads/2016/05/500-220x150.jpg" class="thumb" src="./互联网征信中的信用评分模型 _ 36大数据_files/500-220x150.jpg" style="display: inline;"></span></span><span class="text">如何搭建一个指标体系</span><span class="muted">2016-05-03</span><span class="muted"></span></a></li>
+<li><a href="http://www.36dsj.com/archives/66889"><span class="thumbnail"><span><img data-original="http://www.36dsj.com/wp-content/uploads/2016/10/234-1.jpg" class="thumb" src="./互联网征信中的信用评分模型 _ 36大数据_files/234-1.jpg" style="display: inline;"></span></span><span class="text">一步步教你如何入门精益数据分析</span><span class="muted">2016-10-31</span><span class="muted"></span></a></li>
+<li><a href="http://www.36dsj.com/archives/67115"><span class="thumbnail"><span><img data-original="http://www.36dsj.com/wp-content/uploads/2016/11/413.jpg" class="thumb" src="./互联网征信中的信用评分模型 _ 36大数据_files/413.jpg" style="display: inline;"></span></span><span class="text">数据模型多了，应该怎么管?</span><span class="muted">2016-11-01</span><span class="muted"></span></a></li>
+<li><a href="http://www.36dsj.com/archives/51222"><span class="thumbnail"><span><img data-original="http://www.36dsj.com/wp-content/uploads/2016/05/309-220x150.jpg" class="thumb" src="./互联网征信中的信用评分模型 _ 36大数据_files/309-220x150.jpg" style="display: inline;"></span></span><span class="text">求职季：关于迷茫的建议</span><span class="muted">2016-05-24</span><span class="muted"></span></a></li>
+<li><a href="http://www.36dsj.com/archives/10223"><span class="thumbnail"><span><img data-original="http://www.36dsj.com/wp-content/uploads/2014/07/115-220x150.png" class="thumb" src="./互联网征信中的信用评分模型 _ 36大数据_files/115-220x150.png" style="display: inline;"></span></span><span class="text">多图技术贴：深入浅出解析大数据平台架构</span><span class="muted">2014-07-23</span><span class="muted">4评论</span></a></li>
+</ul></div></aside></section>
+<footer class="footer">
+	<div class="container">
+	<div class="item item-01">
+		<ul><li><a href="http://www.36dsj.com/archives/category/large-data-tools/hadoop">Hadoop专区</a></li>
+<li><a href="http://www.36dsj.com/archives/category/bigdata/data-visualization">数据可视化</a></li>
+<li><a href="http://www.36dsj.com/archives/category/large-data-tools/machine-learning">机器学习专区</a></li>
+<li><a href="http://www.36dsj.com/archives/category/large-data-tools/python">Python专区</a></li>
+<li><a href="http://www.36dsj.com/archives/category/large-data-tools/spark">Spark专区</a></li>
+<li><a href="http://www.36dsj.com/archives/category/data-industry">数据科学家</a></li>
+<li><a href="http://www.36dsj.com/about-us">关于我们</a></li>
+<li><a href="http://www.36dsj.com/contact-us">联系我们</a></li>
+<li><a href="http://www.36dsj.com/baodao">寻求报道</a></li>
+<li><a href="http://www.36dsj.com/qiye">企业专区</a></li>
+<li><a href="http://www.36dsj.com/renwu">人物专栏</a></li>
+<li><a href="http://www.36dsj.com/archives/category/large-data-tools/algorithm">算法</a></li></ul>
+	</div>
+	<div class="item item-02">
+		<p>36大数据成立于2013年5月，是中国访问量最大的大数据网站。</p><p>
+
+</p><p>36大数据以独立第三方的角度，为大数据产业生态图谱上的需求商、应用商、服务商、技术解决商等相关公司及从业人员提供全球资讯、商机、案例、技术教程、项目对接、创业投资及专访报道等服务。</p><p>
+
+</p><p>商务合作 邮箱：dashuju36@qq.com  7*24客服电话：010-57280721</p><p>
+
+</p><p>备案号：京ICP备12012135号-2。版权所有，保留一切权利！ © 2014 <a href="http://www.36dsj.com/">36大数据</a> Theme</p><p>    	<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?46db1c7ab0c594c8219d3a3d68e66ff8";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+	</p></div>
+	<div class="item item-03">
+		<img src="./互联网征信中的信用评分模型 _ 36大数据_files/232.png">
+	</div>
+    </div>
+</footer>
+
+<script>
+window.jui = {
+	uri: 'http://www.36dsj.com/wp-content/themes/dsj0804',
+	roll: 0}
+</script>
+<script type="text/javascript" src="./互联网征信中的信用评分模型 _ 36大数据_files/form.js.下载"></script>
+<script type="text/javascript" src="./互联网征信中的信用评分模型 _ 36大数据_files/bootstrap.js.下载"></script>
+<script type="text/javascript" src="./互联网征信中的信用评分模型 _ 36大数据_files/custom.js.下载"></script><div class="rollto" style="display: block;"><a href="javascript:;"></a></div>
+<script type="text/javascript" src="./互联网征信中的信用评分模型 _ 36大数据_files/wp-embed.min.js.下载"></script>
+
+
+<div id="bdimgshare_1488768146642" class="sr-bdimgshare sr-bdimgshare-list sr-bdimgshare-16 sr-bdimgshare-black" style="height: 36px; line-height: 26px; font-size: 12px; position: absolute; top: 7584.2px; left: 75.9px; width: 605px; display: none;" data-bd-bind="1488768146642"><div class="bdimgshare-bg"></div><div class="bdimgshare-content bdsharebuttonbox bdshare-button-style0-16"><label class="bdimgshare-lbl">分享到：</label><a href="http://www.36dsj.com/archives/67835#" onclick="return false;" class="bds_qzone" data-cmd="qzone" hidefocus=""></a><a href="http://www.36dsj.com/archives/67835#" onclick="return false;" class="bds_weixin" data-cmd="weixin" hidefocus=""></a><a href="http://www.36dsj.com/archives/67835#" onclick="return false;" class="bds_tsina" data-cmd="tsina" hidefocus=""></a><a href="http://www.36dsj.com/archives/67835#" onclick="return false;" class="bds_tqq" data-cmd="tqq" hidefocus=""></a><a href="http://www.36dsj.com/archives/67835#" onclick="return false;" class="bds_renren" data-cmd="renren" hidefocus=""></a><a href="http://www.36dsj.com/archives/67835#" onclick="return false;" class="bds_sqq" data-cmd="sqq" hidefocus=""></a><a href="http://www.36dsj.com/archives/67835#" onclick="return false;" class="bds_douban" data-cmd="douban" hidefocus=""></a><a href="http://www.36dsj.com/archives/67835#" onclick="return false;" class="bds_more" data-cmd="more" hidefocus=""></a></div></div><div id="hm_t_undefined" class="hm-t-container"><div class="hm-t-go-top" style="display: block;"></div></div></body></html>

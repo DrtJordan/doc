@@ -1,0 +1,20 @@
+ 支持大部分的  SQL:2003 and SQL:2011 (OLAP) 功能
+ 支持数据再 Apache HDFS 或者 HBASE
+ Procedural language with HPL-SQL
+ 支持  user defined functions (UDFs), user defined aggregates (UDAFs), and user defined table functions (UDTFs).
+ 支持文件格式为 Apache Parquet?, Apache ORC  CSV/TSV
+ HCatalog is a component of Hive.  metadata database
+ 
+ 安装 CDH
+ 添加yum
+ [cloudera-cdh5]
+# Packages for Cloudera's Distribution for Hadoop, Version 5, on RedHat	or CentOS 7 x86_64
+name=Cloudera's Distribution for Hadoop, Version 5
+baseurl=https://archive.cloudera.com/cdh5/redhat/7/x86_64/cdh/5/
+gpgkey =https://archive.cloudera.com/cdh5/redhat/7/x86_64/cdh/RPM-GPG-KEY-cloudera    
+gpgcheck = 1
+
+
+
+ rpm --import https://archive.cloudera.com/cdh5/redhat/7/x86_64/cdh/RPM-GPG-KEY-cloudera
+  

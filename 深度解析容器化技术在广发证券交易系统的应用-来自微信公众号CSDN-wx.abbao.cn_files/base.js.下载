@@ -1,0 +1,76 @@
+// adds .naturalWidth() and .naturalHeight() methods to jQuery
+// for retreaving a normalized naturalWidth and naturalHeight.
+(function($){
+  var
+  props = ['Width', 'Height'],
+  prop;
+
+  while (prop = props.pop()) {
+  (function (natural, prop) {
+    $.fn[natural] = (natural in new Image()) ? 
+    function () {
+    return this[0][natural];
+    } : 
+    function () {
+    var 
+    node = this[0],
+    img,
+    value;
+
+    if (node.tagName.toLowerCase() === 'img') {
+      img = new Image();
+      img.src = node.src,
+      value = img[prop];
+    }
+    return value;
+    };
+  }('natural' + prop, prop.toLowerCase()));
+  }
+}(jQuery));
+
+(function(){
+	var ua = navigator.userAgent.toLowerCase(), isMobile = ua.match(/iphone|ipad|android/);
+	if (isMobile ) {
+		$("a").attr("target","_self");
+		$('#bdcs').hide();
+	}
+	var path = window.location.pathname;
+	if(path != '/'){
+		$('.go-home').show();
+		$('.go-home').click(function(){
+			history.go(-1);
+		});
+	}
+	
+})();
+
+$(document).ready(function() {
+	$("img.cover").load(function() {
+		var imgItem = $(this);
+		var width = $(this).naturalWidth();
+		var height = $(this).naturalHeight();
+		console.log(width + 'x' + height);
+		var fixWidth = 140; //120
+		var fixHeight = 105; //90
+		var windowWidth = $(window).width();
+		if (windowWidth < 700 ) {
+			imgItem.css('height',fixHeight+'px').parent().css('background','initial');
+		}else{
+			if(width/height >= fixWidth/fixHeight){
+				imgItem.css('height',fixHeight+'px').css('margin-left',  -((width - ((fixWidth/fixHeight) * height))/2)*(fixHeight/height) +'px');
+			}else{
+				imgItem.css('width',fixWidth+'px').css('margin-top', -((height - ((fixHeight/fixWidth) * width))/2)*(fixWidth/width) +'px');
+			}
+			imgItem.parent().css('background','initial');
+		}
+
+	});
+	
+	if(navigator.appName == "Microsoft Internet Explorer" 
+		&& (navigator.appVersion.split(";")[1].replace(/[ ]/g,"")=="MSIE6.0" || 
+				navigator.appVersion.split(";")[1].replace(/[ ]/g,"")=="MSIE7.0" || 
+				navigator.appVersion.split(";")[1].replace(/[ ]/g,"")=="MSIE8.0" )) 
+	{
+		$('body').prepend('<div style="color:red;margin:10px auto;font-size:16px;font-weight:bold;text-align:center;">本网站不支持IE8及以下浏览器。请使用Chrome浏览器或者IE9以上浏览器重新打开网站。</div>');
+	} 
+});

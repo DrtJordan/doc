@@ -1,0 +1,2183 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- saved from url=(0044)http://mt.sohu.com/20161012/n470035632.shtml -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=GBK"><script type="text/javascript">
+  var pvinsight_page_ancestors = '401312956;408430116;470035632';
+</script>
+
+
+
+
+
+<meta name="viewport" content="width=device-width">
+
+<meta name="keywords" content="为什么一家传统券商选择将交易系统容器化？">
+<meta name="description" content="“交易系统是命根子，为什么这家传统券商选择将其全部容器化？本文根据梁启鸿在InfoQ举办的CNUTCon2016全球容器技术大会上的演讲整理而成。老司机简介梁启">
+<link rel="canonical" href="http://mt.sohu.com/20161012/n470035632.shtml">
+<meta name="robots" content="all">
+<script type="text/javascript">
+  var category =  '401312956;408430116;470035632';
+</script>
+<title>为什么一家传统券商选择将交易系统容器化？-搜狐</title>
+<script src="./为什么一家传统券商选择将交易系统容器化？-搜狐_files/sohuflash_1.js.下载" type="text/javascript"></script>
+
+<link type="text/css" rel="stylesheet" href="./为什么一家传统券商选择将交易系统容器化？-搜狐_files/global1.4.1.css">
+<style>
+
+/* 限制图片大小 */
+#container .text p img {
+    max-width: 600px;
+}
+
+body{color:#333}
+.line,.broken-line,.content-footer,.nav-foot,rightbar-head,.rightbar-foot{height:1px;font-size:0px;margin:0 auto;clear:both;overflow:hidden}
+
+.font-arial{font-family:Arial}
+
+.area{width:1000px}
+a{color:#059}
+
+.list14 li,.list12 li{height:32px;padding:0 0 0 10px;overflow:hidden;line-height:32px;background:url(http://images.sohu.com/uiue/dot.gif) no-repeat -5px 5px}
+.list12 li{height:24px;padding:0 0 0 8px;overflow:hidden;line-height:24px;background-position:-5px -49px}
+
+/* 导航 */
+#nav{height:24px;overflow:hidden;margin:9px auto 0;font:14px/24px "微软雅黑","宋体";;color:#999;text-align:center;}
+#nav a{color:#333;margin:0 6px;}
+#nav a:hover{color:#C00}
+#nav .first{margin-left:0;}
+#nav .last{margin-right:0}
+#nav .n3{margin-right:8px}
+
+/* 通栏广告 */
+.ad-banner{text-align:center;margin:8px auto 0}
+
+/* 频道-dir */
+#channel-dir{margin:17px auto 0;height:61px;border-bottom:3px #346890 solid}
+#channel-dir .left{width:255px;margin-top:10px}
+#channel-dir .left img{float:left}
+#channel-dir .left span{float:left;line-height:20px;font-family: "微软雅黑","宋体";margin-top:4px;margin-left:5px;}
+#channel-dir .right{width:744px;height:48px;border-left:1px #B8D6ED solid;color:#999;font:12px/24px "微软雅黑","宋体"}
+#channel-dir .right .l{width:310px;margin-left:38px}
+#channel-dir .right .c{width:310px;margin-left:50px}
+#channel-dir .right h4{color:#0F76C6;font-size:14px}
+#channel-dir .right h4 a{color:#0F76C6}
+#channel-dir .right p{overflow: hidden;white-space: nowrap;text-overflow: ellipsis;-o-text-overflow: ellipsis;_overflow: hidden;_text-overflow: none;_white-space: normal;}
+/* container */
+#container{margin:10px auto 20px;background:url(http://mt.sohu.com/upload/20140703/images/container_bg.gif) repeat-y right}
+#container .content-footer{height:2px;background:url(http://mt.sohu.com/upload/20140703/images/rightbar_foot.gif) no-repeat right}
+.content-wrapper{float:left;width:660px;font-family:"微软雅黑","宋体"}
+.rightbar-wrapper{float:right;width:300px}
+
+/* 文章标题 */
+.news-info{position:relative;border-bottom:1px #E7E7E7 solid;padding:15px 0}
+.news-info h1{font-size:22px;font-weight:bold;line-height:38px;color:#000}
+.news-info .news-writer{margin:12px auto 0;color:#999;height:24px;line-height:20px}
+.news-info .news-writer span{display:inline-block;float:left;margin-left:10px}
+.news-info .news-writer .writer{margin-left:0}
+.news-info .news-writer .tag{margin-left:0}
+.news-info .news-writer .tag a{margin-left:10px;display:inline-block}
+.news-info .news-writer .comment-num{padding-left:25px;background:url(http://learning.sohu.com/upload/learning20141111/bg09.gif) no-repeat 0 -30px}
+.news-info .news-writer .comment-num a{color:#666}
+.news-info .news-writer .read-num{padding-left:25px;background:url(http://learning.sohu.com/upload/learning20141111/bg09.gif) no-repeat 0 0}
+.news-info .news-writer .read-num a{color:#666}
+.news-info .news-writer .red{color:#D80711}
+.news-info .news-writer span a{color:#0787D8}
+.news-info .news-writer span img{display:inline-block;vertical-align:middle;}
+.news-info .sohu-do{position:absolute;right:0;bottom:50px;width:150px;height:76px;overflow:hidden;
+background:url(http://travel.sohu.com/upload/images20141203/bg08.png);_background:none;_filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(enabled=true,sizingMethod=scale,src=http://travel.sohu.com/upload/images20141203/bg08.png)}
+
+/* 正文 */
+#container .text{line-height:26px;margin:0 auto 24px;font-size:14px}
+#container .text p{padding:26px 0 0;color:#000;word-wrap:break-word;}
+#container .text .text-pic{text-align:center;margin:15px auto 0;}
+#container .text .text-pic table{display:inline-block;}
+#container .text .text-pic img{display:block;margin:0 auto;}
+#container .text .text-pic td{text-align:center;}
+#container .text .text-pic .text-pic-tt{padding:16px 0 0;line-height:22px;font-size:12px;}
+
+/* 分页 */
+#container .pages{height:28px;text-align:center;margin:30px auto 0;line-height:15px;font-family:Arial}
+#container .pages a{display:inline-block;margin:0 3px 0 4px;padding:5px 9px 5px 10px;border:1px #E4E4E4 solid;background:#fff;border-radius:1px;color:#333;text-decoration:none;}
+#container .pages a:hover{font-weight:bold}
+#container .pages span{display:inline-block;margin:0 3px 0 4px;padding:5px 9px 5px 10px;border:1px #059 solid;background:#059;border-radius:1px;color:#fff;font-weight:bold;}
+#container .pages .pages-wd{padding:5px 0;width:64px;}
+
+/* 分享 标签 */
+#container .share{height:26px;padding:10px 0px 10px}
+#container .share ul{float:right}
+#container .share li{float:left;margin:5px 6px 0 0;display:inline}
+#container .share li a{float:left;height:18px;width:18px;display:block;background:url(http://mt.sohu.com/upload/20140703/images/share_icon.gif) no-repeat;}
+#container .share .qq a{background-position:0 0}
+#container .share .sina a{background-position:0 -20px}
+#container .share .txwb a{background-position:0 -40px}
+#container .share .wx a{background-position:0 -60px}
+#container .share .tsohu a{background-position:0 -80px}
+#container .share .share-tt{width:36px;padding:2px 0 0;margin:5px 0 0;color:#999;line-height:14px}
+
+#container .share .go-sohu-home{width:90px;height:16px;overflow:hidden;line-height:500px;background:url(http://mt.sohu.com/upload/20140703/images/go_sohu_home.gif) no-repeat;float:left;margin-top:7px}
+#container .share .go-sohu-home a{display:block;width:100%;height:100%}
+
+#container .share .label-kw{float:left;width:280px}
+#container .share .label-kw strong{line-height:26px;display:inline-block}
+#container .share .label-kw a{padding-top:4px;line-height:20px;display:inline-block;margin-right:8px;font-size:14px;}
+
+#container .news-info .share{cursor:pointer;position:relative;height:19px;padding:0 0 0 23px;border:0;background:url(http://learning.sohu.com/upload/learning20141111/bg09.gif) no-repeat 0 -59px}
+#container .news-info .share .s-tt{display:inline-block;margin-top:2px;width:55px;height:15px;padding:2px 0 0 5px;line-height:15px;}
+#container .news-info .share .s-tt-over{margin-top:1px;border:1px #F3F3F3 solid;box-shadow:0 0 3px #F3F3F3;padding-left:4px}
+#container .news-info .share ul{display:none;position:absolute;left:23px;top:18px;width:50px;padding:3px 0 5px 9px;border:1px #F3F3F3 solid;border-top:0;background:#fff;box-shadow:0 0 3px #F3F3F3;}
+#container .news-info .share .arrow{position:absolute;top:9px;right:5px;width:10px;height:6px;transition: all 0.2s ease-in-out 0s;overflow:hidden;background:url(http://learning.sohu.com/upload/learning20141111/bg09.gif) no-repeat 0 -90px}
+#container .news-info .share:hover .arrow{transform:rotate(180deg);-o-transform:rotate(180deg);-moz-transform:rotate(180deg);-webkit-transform:rotate(180deg);transform-origin:50%, 2px;}
+
+/* 订阅 */
+.subscribe{padding:22px 0;}
+.subscribe .read-do{width:42px;float:left}
+.subscribe .read-do .head-phone{height:42px}
+.subscribe .read-do .head-phone img{border-radius:3px}
+.subscribe .read-do .read{margin:6px auto 0;text-align:center}
+.subscribe .read-do .read a{line-height:19px;background:#7DB7ED;display:inline-block;border:1px #6DAFED solid;height:19px;width:40px;color:#fff;text-decoration:none}
+.subscribe .read-text{float:right;width:580px;line-height:18px;color:#999}
+.subscribe .read-text a{color:#0F76C6}
+.subscribe .read-text .l{width:255px}
+.subscribe .read-text .r{width:255px;margin-right:16px}
+.subscribe .read-text h4{font-size:14px;padding:0 0 10px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;-o-text-overflow: ellipsis;_overflow: hidden;_text-overflow: none;_white-space: normal;}
+
+/* 相关新闻 */
+.mutu-news{margin:10px auto 0}
+.mutu-news a{color:#333}
+.mutu-news a:hover{color:#c00}
+.mutu-news h2{height:26px;line-height:26px}
+.mutu-news h2 span{font:16px/26px "微软雅黑","黑体"}
+.mutu-news h2 span .lne{height:15px;width:3px;float:left;display:inline-block;margin:6px 8px 0 0;background:#7DB7ED}
+.mutu-news .list14 ul{margin:10px auto 0}
+.mutu-news .list14 li{width:305px;float:left;margin-left:15px;display:inline}
+.mutu-news .list14 span{display:none;}
+/* 相关订阅 */
+.mutu-read{margin:20px auto}
+.mutu-read a{color:#333}
+.mutu-read a:hover{color:#c00}
+.mutu-read h2{height:26px;line-height:26px}
+.mutu-read h2 span{font:16px/26px "微软雅黑","黑体"}
+.mutu-read h2 span .lne{height:15px;width:3px;float:left;display:inline-block;margin:6px 8px 0 0;background:#7DB7ED}
+
+.mutu-read .scroll-box{margin:15px auto 0;width:630px;height:46px;overflow:hidden;position:relative;}
+.mutu-read .scroll-box .scroll-con{float:left;width:9999px;position:absolute;left:0;top:0}
+.mutu-read .scroll-box .box{width:300px;height:46px;margin-left:10px;float:left;display:inline}
+.mutu-read .scroll-box .box .l{width:42px}
+.mutu-read .scroll-box .box .l img{border-radius:3px}
+.mutu-read .scroll-box .box .r{width:250px;line-height:18px;color:#999}
+.mutu-read .scroll-box .box h4{height:26px}
+.mutu-read .scroll-box .box h4 span{display:inline-block;}
+.mutu-read .scroll-box .box h4 .read a{line-height:19px;text-align:center;margin-left:12px;background:#7DB7ED;display:inline-block;border:1px #6DAFED solid;height:19px;width:40px;color:#fff;text-decoration:none}
+.mutu-read .scroll-box .box h4 .name{font-size:14px}
+.mutu-read .scroll-box .box p{overflow: hidden;white-space: nowrap;text-overflow: ellipsis;-o-text-overflow: ellipsis;_overflow: hidden;_text-overflow: none;_white-space: normal;}
+
+
+
+.mutu-read .scroll-btns{position:relative;height:1px;font-size:0;line-height:0}
+.mutu-read .scroll-btns a{position:absolute;left:0;top:-35px;width:13px;height:25px;background:url(http://mt.sohu.com/upload/20140703/images/btn_icon.gif) no-repeat 0 0}
+.mutu-read .scroll-btns a.down{left:auto;right:0;background-position:-20px 0}
+.mutu-read .scroll-btns a.uN{background-position:-40px 0}
+.mutu-read .scroll-btns a.dN{background-position:-60px 0}
+
+.ad590{text-align:center;margin:0 auto 20px;}
+
+/* report 20141224 */
+.report{height:30px;}
+.report span{width:165px;text-align:right;float:right;position:relative}
+.report .report-icon{cursor:pointer;line-height:26px;font-size:14px;padding-left:22px;display:inline-block;background:url(http://fashion.sohu.com/upload/report20141107/bg01.gif) no-repeat 0 4px}
+.report .txt{text-align:left;display:none;background:#fff;width:148px;padding:6px 5px 8px 10px;font:12px/20px "宋体";z-index:999;position:absolute;left:75px;top:30px;border:1px #F3F3F3 solid;box-shadow:0 0 3px #F3F3F3;}
+.report .txt .cor{position:absolute;left:64px;top:-8px;width:17px;height:9px;font-size:0;overflow:hidden;background:url(http://fashion.sohu.com/upload/report20141107/bg02.gif)}
+.modify-time{font-size:14px;line-height:26px;color:#666;float:left;margin-right:10px;display:inline;}
+.pagevisit{margin-left:5px;font-size:12px;line-height:26px;color:#333}
+.pagevisit .red{color:#D80711}
+#container .share{border-top: 1px solid #B4B4B4}
+
+/* 彩票 */
+.lottery-box{border:1px #E5E5E5 solid;width:658px;font-size:14px;height:23px;padding:4px 0 0;line-height:19px;text-align:center;margin:0 auto 20px}
+.lottery-box .bg-lot{padding-right:31px;background:url(http://mt.sohu.com/upload/20140703/images/bg_lot.gif) no-repeat right center}
+
+/* 搜狗服务 */
+#container .sogouService{border:1px #E6E6E6 solid;width:658px;text-align:center;padding:0 0 5px}
+#container .sogouService h2{height:22px;line-height:22px;font-size:14px;padding:8px 22px 6px}
+
+/* 右侧 */
+.handset-new,.search-hotword .search,#container .rightbar-wrapper h2,.kind-video .video-menu,.kind-video .video-menu li,.search-hotword .search .search-btn,
+.handset-new .handset-cont .handset-form .handset-btn{background:url(http://mt.sohu.com/upload/20140703/images/bg_right.gif) no-repeat;}
+
+#container .rightbar-wrapper h2{height:30px;padding:11px 16px 0;background-position:0 -150px;color:#FFF;line-height:16px}
+#container .rightbar-wrapper h2 a{color:#FFF;}
+#container .rightbar-wrapper h2 span{font-size:14px;}
+#container .rightbar-wrapper h2 strong{float:left;font-size:14px;margin-left:16px;display:inline;}
+#container .rightbar-wrapper .broken-line{background:url(http://mt.sohu.com/upload/20140703/images/bg_line.gif);width:268px;}
+#container .rightbar-wrapper .rightbar-foot{border-bottom:5px #FFF solid;height:2px;background:url(http://mt.sohu.com/upload/20140703/images/rightbar_foot.gif) no-repeat 0 0}
+#container .rightbar-wrapper .rightbar-head{height:2px;background:url(http://mt.sohu.com/upload/20140703/images/rightbar_head.gif) no-repeat 0 0;font-size:0}
+
+/* 搜索 热词 */
+#container .search-hotword{background:#FFF;padding:10px 0 0}
+#container .search-hotword .search{height:35px;margin:0 auto 10px;background-position:0 -110px;}
+#container .search-hotword .search .search-in{width:155px;float:left;margin:9px 0 0 30px;display:inline;height:16px;background:none;border:0;font-size:14px;color:#666;outline:none}
+#container .search-hotword .search .search-btn{cursor:pointer;float:right;display:inline;margin:2px 2px 0 0;width:73px;height:31px;background:#346890;border:0;color:#FFF;font-size:14px;}
+#container .search-hotword .hotword{margin:0 auto 8px;line-height:24px;color:#999;}
+
+.phone_rss{border-bottom:5px #fff solid}
+.phone_rss img{display:block}
+
+/* 今日推荐 */
+#container .day-commend .pic-text{width:268px;margin:15px auto}
+#container .day-commend .pic-text h4{font:14px/22px "\5B8B\4F53";padding:0 0 5px;}
+#container .day-commend .list12 ul{width:272px;margin:13px auto}
+
+/* 商情推荐 */
+#container .ad-listB{width:296px;margin:12px auto;}
+#container .ad-listB h2{height:22px;padding:6px 14px 0;background:none;color:#333;}
+#container .ad-listB h2 a{color:#333;}
+#container .ad-listB h2 a:hover{color:#C00;}
+
+/* 视频 */
+#container .kind-video{margin:0 auto;height:630px;}
+#container .kind-video .video-menu{height:33px;padding:3px 0 0;background-position:0 -250px;}
+#container .kind-video .video-menu ul{padding-left:4px;}
+#container .kind-video .video-menu li{cursor:pointer;float:left;display:inline;margin-left:-1px;width:74px;height:25px;padding:8px 0 0;background-position:-160px -290px;font-size:14px;color:#FFF;text-align:center;}
+#container .kind-video .video-menu .video-menu-end{background-position:-300px -360px;}
+#container .kind-video .video-menu .video-menu-over{background-position:-80px -290px;}
+#container .kind-video .video-menu .video-menu-now{font-weight:bold;color:#333;background-position:0 -290px;}
+
+#container .kind-video .video-cont{display:none;padding:5px 0 0;}
+#container .kind-video .video-box{width:268px;margin:15px auto;}
+#container .kind-video .video-box .video-pic{float:left;width:125px;position:relative;}
+#container .kind-video .video-box .video-txt{float:right;width:134px;}
+#container .kind-video .video-box .video-txt h4{font-size:14px;line-height:20px;}
+#container .kind-video .video-box .video-txt h5{line-height:18px;color:#666;padding:8px 0 0;}
+#container .kind-video .video-box .video-txt p{margin:8px auto 0;}
+#container .kind-video .video-box .video-txt p span{display:inline-block;padding-left:18px;color:#999;line-height:12px;}
+#container .kind-video .video-box .video-txt p span a{color:#999}
+#container .kind-video .video-box .video-txt .play-num{margin-right:14px;background-position:0 -40px;}
+#container .kind-video .video-box .video-txt .com-num{background-position:0 -60px;}
+#container .kind-video .video-box .video-pic .floor{width:125px;height:85px;position:absolute;top:0;left:0;}
+#container .kind-video .video-box .video-pic .floor a{cursor:pointer;width:125px;height:85px;display:block;_FILTER: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='http://news.sohu.com/upload/article/2012/images/bg_video_play05.png',sizingMethod='scale');background:url(images/bg_video_play05.png)!important;background:none;}
+#container .kind-video .video-box .video-pic .floor a:hover{_FILTER: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='http://news.sohu.com/upload/article/2012/images/bg_video_play06.png',sizingMethod='scale');background:url(images/bg_video_play06.png)!important;background:none;}
+
+#container .kind-video .hot-video .video-box{margin:13px auto 12px}
+#container .kind-video .hot-video .video-pic{width:120px}
+#container .kind-video .hot-video .video-txt{width:139px}
+#container .kind-video .hot-video .video-txt h4{line-height:22px}
+#container .kind-video .hot-video .video-pic .floor{width:120px;height:90px;position:absolute;top:0;left:0;}
+#container .kind-video .hot-video .video-pic .floor a{cursor:pointer;width:120px;height:90px;display:block;_FILTER: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='http://news.sohu.com/upload/article/2012/images/bg_video_play07.png',sizingMethod='scale');background:url(images/bg_video_play07.png)!important;background:none;}
+#container .kind-video .hot-video .video-pic .floor a:hover{_FILTER: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='http://news.sohu.com/upload/article/2012/images/bg_video_play08.png',sizingMethod='scale');background:url(http://mt.sohu.com/upload/20140703/images/bg_video_play08.png)!important;background:none;}
+#container .kind-video .hot-video .video-loading{text-align:center;margin-top:70px;}
+#container .kind-video .hot-video .video-loading span{background:left center url(http://mt.sohu.com/upload/20140703/images/loading01.gif) no-repeat;padding-left:30px;height:20px;display:inline-block;line-height:20px;color:#999;}
+#resultDiv .picText-loading{text-align:center;}
+#resultDiv .picText-loading span{background:left center url(http://mt.sohu.com/upload/20140703/images/loading01.gif) no-repeat;padding-left:30px;height:20px;display:inline-block;line-height:20px;color:#999;margin-top:43px;}
+
+#container .kind-video .pic-group{margin:15px auto 0;width:288px}
+#container .kind-video .pic-group li{width:144px}
+#container .kind-video .pic-group span{line-height:24px;margin:5px auto 10px;height:24px;width:130px;overflow:hidden}
+
+/* 我们说两句排行榜 */
+#container .comment-rank dl{overflow:hidden;width:268px;margin:11px auto 8px;line-height:18px;}
+#container .comment-rank dt{float:left;width:50px;color:#BD0000;font:14px/14px "Arial";}
+#container .comment-rank dt a{color:#BD0000;}
+#container .comment-rank dd{width:212px;float:right;}
+
+/* 社区推荐 */
+#container .leisure .pic-text{width:268px;margin:15px auto 20px;}
+#container .leisure .pic-text div{_margin-right:7px;}
+#container .leisure .pic-text h4{font-size:14px;line-height:22px;padding:0 0 5px;}
+#container .leisure .list12 ul{margin:13px auto 12px;width:272px;}
+
+/* 信息 */
+#container .sohu-info{margin:27px auto;width:280px;}
+#container .sohu-info .contact-icon{width:72px;height:59px;float:left;background:url(http://mt.sohu.com/upload/20140703/images/bg_info.gif)}
+#container .sohu-info .contact-txt{float:right;width:197px;color:#000;margin-top:9px;line-height:22px}
+
+/* big-share */
+.text-explain{font-size:14px;line-height:24px;}
+
+.big-share{padding:10px 0 20px;height:35px;border-top:1px #B4B4B4 solid;position:relative}
+.big-share ul{float:right}
+.big-share li{float:left;margin-left:4px;display:inline}
+.big-share li a{float:left;height:35px;width:35px;display:inline;background:url(http://fashion.sohu.com/upload/page20150410/big_share_icon.gif) no-repeat;}
+.big-share .sina a{background-position:0 0}
+.big-share .qq a{background-position:0 -40px}
+.big-share .tx a{background-position:0 -80px}
+.big-share .wx a{background-position:0 -120px}
+.big-share .share-tt{width:65px;color:#999;font-size:16px;line-height:20px;margin-top:8px}
+
+.big-share .wx{position:relative}
+.big-share .wx .pr-code-con{display:none;text-align:center;position:absolute;top:-195px;left:-52px;z-index:10;width:146px;height:180px;padding:15px 0 0;background:url(http://fashion.sohu.com/upload/page20150410/pr_code_bg.png);_background:none;_filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(enabled=true,sizingMethod=scale,src=http://fashion.sohu.com/upload/page20150410/pr_code_bg.png)}
+.big-share .wx .pr-code-con p{font-size:14px;line-height:20px;margin-top:4px}
+
+.big-share .like-boring{float:left;font-size:14px;line-height:35px}
+.big-share .like-boring dd{float:left;position:relative;margin-right:10px;width:116px;text-align:center}
+.big-share .like-boring a{color:#fff;display:inline-block;width:100%;height:35px;_height:28px;_padding-top:7px;background:#F14D4D;border-radius:2px;text-decoration:none;}
+.big-share .like-boring a.btn-boring{background:#727A98}
+.big-share .like-boring .num{margin-right:6px;}
+.big-share .like-boring i{display:inline-block;margin-right:6px;position:relative;top:2px;*top:-4px;overflow:hidden;width:16px;height:18px;background:url(http://fashion.sohu.com/upload/page20140828/dc_icon.gif) no-repeat 0 0}
+.big-share .like-boring i.icon-boring{background-position:0 -20px;top:4px;*top:-2px;}
+.big-share .like-boring a.btn-invalid{background-color:#bcbcbc}
+.big-share .like-boring .btn-invalid i.icon-like{background-position:0 -40px}
+.big-share .like-boring .btn-invalid i.icon-boring{background-position:0 -60px}
+
+.big-share .login-after{text-align:left;display:none;background:#fff;width:114px;padding:3px 0 10px 0;z-index:66;position:absolute;left:0;top:43px;border:1px #F3F3F3 solid;box-shadow:0 0 5px #E7E7E7;border-radius:2px}
+.big-share .login-after .cor{position:absolute;left:50px;top:-9px;width:17px;height:9px;font-size:0;overflow:hidden;background:url(http://fashion.sohu.com/upload/report20141107/bg02.gif)}
+.big-share .login-after h4{line-height:26px;padding-left:15px}
+.big-share .login-after p{padding-left:13px}
+.big-share .login-after p a{display:inline-block;float:left;margin-right:5px;padding:0;width:26px;height:26px;background:url(http://fashion.sohu.com/upload/page20150410/log_icon.gif) no-repeat 0 0;}
+.big-share .login-after p .log-sina{background-position:0 -30px}
+.big-share .login-after p .log-qq{background-position:0 -60px}
+
+
+/*返回顶部*/
+/*body{overflow-x:hidden;}*//*修正我来说两句评论时出现横向滚动条*/
+.comm-top{position:fixed; left:50%; bottom:176px;margin-left:510px; width:55px; height:113px; _position:absolute; _bottom:auto; _margin-bottom:176px; _top:expression(eval(document.documentElement.scrollTop+document.documentElement.clientHeight-this.offsetHeight-(parseInt(this.currentStyle.marginTop,10)||0)-(parseInt(this.currentStyle.marginBottom,10)||0)));}
+.comm-top .scroll-comm,.comm-top .scroll-top,.comm-top .link-sohu{display:block; width:55px; height:54px; background:url(http://news.sohu.com/upload/article/2015/images/go-top.png) no-repeat; color:#858585;}
+.comm-top .scroll-comm:hover{background-position:0 -64px; color:#fff; text-decoration:none;}
+.comm-top .scroll-comm{height:20px; padding:30px 0 4px; font:14px/20px arial; margin-bottom:5px; text-align:center;}
+.comm-top .scroll-top{display:none; background-position:0 -128px;}
+.comm-top .scroll-top:hover{background-position:0 -192px;}
+.comm-top .link-sohu{margin-bottom:5px;background-position:0 -256px;}
+.comm-top .link-sohu:hover{background-position:0 -320px;}
+
+#container .rightbar-wrapper h2{height:30px;padding:11px 16px 0;background-position:0 -150px;color:#FFF;line-height:16px}
+#container .rightbar-wrapper h2 a{color:#FFF;}
+#container .rightbar-wrapper h2 span{font-size:14px;}
+#container .rightbar-wrapper h2 strong{float:left;font-size:14px;margin-left:16px;display:inline;}
+#container .rightbar-wrapper .broken-line{background:url(http://news.sohu.com/upload/article/2012/images/bg_line.gif);width:268px;}
+#container .rightbar-wrapper .rightbar-foot{border-bottom:5px #FFF solid;height:2px;background-position:-1660px 0;}
+#container .rightbar-wrapper .rightbar-head{height:2px;background-position:-980px -5px;font-size:0}
+
+#foot{width:1000px;margin:30px auto}
+#foot a{color:#333}
+#foot a:hover{color:#C00}
+
+/* user-info */
+.user-info{width:298px;margin:0 auto;background:#F9F9F9;border:1px #EAE9E9 solid;font-family:"微软雅黑","黑体"}
+.user-info .user-intro{width:278px;margin:12px auto 9px}
+.user-info .user-pic{float:left}
+.user-info .user-pic img{border-radius:5px;width:68px;height:68px}
+.user-info .user-txt{float:right;width:194px;line-height:20px}
+.user-info .user-txt h4{padding:0 0 4px;overflow:hidden;clear:both}
+.user-info .user-txt span{display:inline-block;vertical-align: middle;}
+.user-info .user-txt .user-name{font-size:14px}
+.user-info .user-txt .user-grade{color:#E83B4B}
+.user-info .user-txt .grade-icon{float:left;margin:0 3px;display:inline-block;width:17px;height:20px;background:url(http://fashion.sohu.com/upload/page20140828/images/grade_bg.gif) no-repeat 0 0}
+.user-info .user-txt .grade-iconA{background-position:0 0}
+.user-info .user-txt .grade-iconB{background-position:-20px 0}
+.user-info .user-txt .grade-iconC{background-position:-40px 0}
+.user-info .user-data{border-top:1px #EAE9E9 solid;height:49px}
+.user-info .user-data li{float:left;width:98px;height:44px;padding:5px 0 0;text-align:center;line-height:16px;border-right:1px #EAE9E9 solid}
+.user-info .user-data li span{display:block;font:18px/22px "Century Gothic","Arial";color:#F54749}
+.user-info .user-data .numC{border-right:0}
+
+.carddd{border-radius:8px;color:#FFF;cursor:pointer;display:inline-block;font:italic 14px/17px "Arial";text-align:center;height:17px;width:37px;margin-left:10px;vertical-align:middle;}
+a.carddd{text-decoration:none;color:#fff}
+.carddd span{font-size:12px;}
+.lev1{background:#FDD100;}
+.lev2{background:#FDBE00;}
+.lev3{background:#FFA200;}
+.lev4{background:#FF8A00;}
+.lev5{background:#FF7800;}
+.lev6{background:#FF6000;}
+.lev7{background:#FF4E00;}
+.lev8{background:#FF3C00;}
+.lev9{background:#FF1800;}
+
+.user-info .user-pic{position:relative;}
+.cert-icon{position:absolute;left:52px;top:52px;display:block;font-size:0;height:20px;width:20px;overflow:hidden;background:url(http://news.sohu.com/upload/images20150814/cert_bg.png) no-repeat 0 0;}
+.cert-exp{background-position:0 0;}
+.cert-gov{background-position:0 -30px;}
+.cert-med{background-position:0 -60px;}
+.cert-ent{background-position:0 -90px;}
+</style>
+<link type="text/css" rel="stylesheet" href="./为什么一家传统券商选择将交易系统容器化？-搜狐_files/previewAll.css">
+
+<script type="text/javascript">
+  var entityId = 470035632;
+ var mpId=355140; 
+ var channelId=107; 
+</script>	
+<script type="text/javascript" src="./为什么一家传统券商选择将交易系统容器化？-搜狐_files/jquery-1.7.1.min.js.下载"></script>
+<script type="text/javascript" src="./为什么一家传统券商选择将交易系统容器化？-搜狐_files/dynamic.js.下载"></script>
+<script type="text/javascript">
+var videoNum = 0;
+
+jQuery(function(jq){
+	//标签
+	function changeTab(lis, divs, nums, nowCls){
+		lis.each(function(i){
+			var els = jq(this);
+			els.mouseenter(function(){
+				lis.removeClass(nowCls);
+				divs.stop().hide();
+				jq(this).addClass(nowCls);
+				divs.eq(i).show();
+			});
+		}).eq(nums).mouseenter();
+	}
+	
+	var divA = jq("#kind-video"); //视频菜单
+	changeTab(divA.find(".video-menu li"), divA.find(".video-cont"), videoNum, "video-menu-now");
+});
+var jumpUrl=function(x){
+	var url = '', e = encodeURIComponent, s = screen, d = document, wd = 0, hg = 0, u = d.location , y = x;
+	switch (y)
+	{
+	case 't':	url ="http://t.sohu.com/third/post.jsp?link="+e(u.href)+"&title="+e(d.title);wd = 660;hg = 470;break;
+	case 'tsina': url ="http://v.t.sina.com.cn/share/share.php?url="+e(u.href)+'&title='+e(d.title);wd = 650;hg = 700;break; 
+	case 'qq':	url ="http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url="+e(u.href);wd = 900;hg = 700;break;
+	case 'tqq': url ="http://v.t.qq.com/share/share.php?url="+e(u.href)+'&title='+e(d.title);wd = 650;hg = 550;break;
+	default :	return false;
+	}
+	var a=function(){
+		if (!window.open(url, 'sohushare', ['toolbar=0,status=0,resizable=1,width='+ wd +',height='+ hg +',left='+ (s.width - wd) / 2+ ',top='+ (s.height - hg) / 2]))
+			u.href = [url].join('');
+	}
+	if (/Firefox/.test(navigator.userAgent)){
+		setTimeout(a, 0);
+	}else{
+		a();
+	}
+}
+function trimDesc(str){
+	if(str.length > 29){
+		return str.substr(0,29)+"...";
+	}else
+		return str;
+}
+function loadNewsMediaInfo()
+{
+	if(typeof(mpId) != 'undefined'){
+		var idstr = mpId.toString();
+		var a=idstr.slice(-2);
+		var b=idstr.slice(-4,-2);
+		var url= "http://s0.mp.sohu.com/media/" + a + "/" + b + "/" + idstr + ".inc";
+		var ele1 = $(".news-writer");
+		var ele2 = $(".news-read");
+		var ele3 = $(".read-do");   //mparea
+		var ele4 = $(".user-info");
+		try{
+			$.getScript(url,function(){
+				var media = eval("media"+idstr);
+				if(typeof(media) == 'undefined' || media == null){
+					return false;
+				}
+				if(media.weibo == undefined 
+				|| media.name == undefined 
+				|| media.logo == undefined 
+				|| media.desc == undefined){
+					return false;
+				}
+				if(media.logo.length == 0)
+				    media.logo = "http://s0.mp.sohu.com/asset/defaultlogo.gif";
+				if(typeof(ele1) != 'undefined' && ele1.length > 0){
+					$(".writer a",ele1).attr("href",media.weibo).text(media.name);
+					$(".go-text a",ele1).attr("href",media.weibo);
+					$(".writer_desc",ele1).text(media.desc);  //new add span class
+				}
+				if(typeof(ele2) != 'undefined' && ele2.length > 0){	
+					$(".head-phone a",ele2).attr("href",media.weibo);
+					$(".head-phone img",ele2).attr("src",media.logo).attr("alt",media.name);
+					$(".read a",ele2).attr("href",media.weibo);
+				}
+				if(typeof(ele3) != 'undefined' && ele3.length > 0){
+					$(".head-phone a",ele3).attr("href",media.weibo);
+					$(".read a",ele3).attr("href",media.weibo);
+				}
+				if(typeof(ele4) != 'undefined' && ele4.length > 0){
+					$(".user-name a",ele4).attr("href",media.weibo).text(media.name);
+					$(".user-pic img",ele4).attr("src",media.logo);
+					$(".user-pic a",ele4).attr("href",media.weibo);
+					$(".user-txt p",ele4).text(trimDesc(media.desc));
+				}
+			});		
+		}catch(e){
+			return false;
+		}
+	}
+}
+function getNewsData(){
+	var url = "http://mp.sohu.com/openapi/profile/getRichInfo?cb=?";
+	if(typeof(mpId) != 'undefined' && typeof(entityId) != 'undefined'){
+		var data = {mpId:mpId,newsId:entityId};
+		var user_area = $(".user-data");
+		var user_grade = $(".user-grade");
+		var user_pic = $(".user-pic");
+		if(typeof(user_area) == 'undefined' || user_area.length==0)
+			return;
+		try{
+			$.getJSON(url,data,function(data){
+				if(data.status && data.data){
+					var mpPV = data.data.mppv || 0;
+					var mpPVStr = mpPV;
+					if(mpPV >= 100000000){
+						mpPVStr = Math.round(mpPV*10/100000000)/10 + "亿";
+					} else if(mpPV >= 10000){
+						mpPVStr = Math.round(mpPV*10/10000)/10 + "万";
+					}	
+					var newsPV = data.data.newspv || 0;
+					var serate = data.data.serate || 0;
+					var newsCount = data.data.newspass || 1;
+					var commentCnt = data.data.commentcnt || 0;
+					var certtype = data.data.certtype || 0;
+					var rank = data.data.rank;
+					var profileurl = data.data.profileurl+"#level";
+					user_area.find(".numA").html("<span>"+mpPVStr +"</span>阅读量");
+					user_area.find(".numB span").text(newsCount);
+					user_area.find(".numC").html("<span>"+commentCnt+"</span>评论数");
+					user_grade.html('<a href="'+profileurl+'" target="_blank" class="carddd lev'+rank+'">Lv <span>'+rank+'</span>.</a>');
+					if(certtype == 1)
+						user_pic.append('<em class="cert-icon cert-med" title="搜狐媒体平台媒体类型用户"></em>');
+					else if(certtype == 2)
+						user_pic.append('<a class="cert-icon cert-exp" href="http://mt.sohu.com/verify/index.shtml" target="_blank" title="搜狐专家认证"></a>');
+					else if(certtype == 3)
+						user_pic.append('<em class="cert-icon cert-ent" title="搜狐媒体平台企业类型用户"></em>');
+					else if(certtype == 4)
+						user_pic.append('<em class="cert-icon cert-gov" title="搜狐媒体平台政府类型用户"></em>');
+					$(".read-num em").text(newsPV);
+					$(".pagevisit em").text(newsPV);
+				}
+			});
+		}catch(e){}
+	}
+}
+$(document).ready(loadNewsMediaInfo);
+$(document).ready(getNewsData);
+
+function getLikeAndUnlikdData(){
+	var url = "http://life.sohu.com/fapi/jsonp/getarticledetail?callback=?";
+	if(typeof(entityId) != 'undefined'){
+		var data = {cmsid:entityId};
+		var btn_like = $(".btn-like");
+		var btn_unlike = $(".btn-boring");
+		try{
+			$.getJSON(url, data, function(data){
+				if(data.code != null && data.code == 0 && data.data != null)
+				{
+					var liked = data.data.liked;
+					var likes = data.data.likes;
+					var treaded = data.data.treaded;
+					var treads = data.data.treads;
+					btn_like.find(".num").text(0);
+					if(likes && likes >= 0)
+					{
+						btn_like.find(".num").text(likes);
+					}
+					btn_unlike.find(".num").text(0);
+					if(treads && treads >= 0)
+					{
+						btn_unlike.find(".num").text(treads);
+					}
+					if(liked == 1 || treaded == 1)
+					{
+						btn_like.removeAttr('href');
+						btn_like.removeAttr('onclick');
+						btn_unlike.removeAttr('href');
+						btn_unlike.removeAttr('onclick');
+						btn_like.addClass('btn-invalid');
+						btn_unlike.addClass('btn-invalid');
+					}
+					else
+					{
+						btn_like.attr('href', 'javascript:void(0)');
+						btn_like.attr('onclick', 'doLike()');
+						btn_unlike.attr('href', 'javascript:void(0)');
+						btn_unlike.attr('onclick', 'doUnlike()');
+						btn_like.removeClass('btn-invalid');
+						btn_unlike.removeClass('btn-invalid');
+					}
+				}
+				else
+				{
+					btn_like.find(".num").text(0);
+					btn_unlike.find(".num").text(0);
+					btn_like.removeAttr('href');
+					btn_like.removeAttr('onclick');
+					btn_unlike.removeAttr('href');
+					btn_unlike.removeAttr('onclick');
+					btn_like.removeClass('btn-invalid');
+					btn_unlike.removeClass('btn-invalid');
+				}
+			});
+		}catch(e){}
+	}
+}
+
+function doLike(){
+	var url = "http://life.sohu.com/fapi/jsonp/like?callback=?";
+	if(typeof(entityId) != 'undefined'){
+		var data = {cmsid:entityId};
+		var btn_like = $(".btn-like");
+		var btn_unlike = $(".btn-boring");
+		btn_like.removeAttr('href');
+		btn_like.removeAttr('onclick');
+		btn_unlike.removeAttr('href');
+		btn_unlike.removeAttr('onclick');
+		btn_like.addClass('btn-invalid');
+		btn_unlike.addClass('btn-invalid');
+		try{
+			$.getJSON(url, data, function(data){
+				//console.log(data.msg);
+				if(data.code != null)
+				{
+					if(data.code == 0)
+					{
+						getLikeAndUnlikdData();
+					}
+					else if(data.code == 1)
+					{
+						btn_like.attr('href', 'javascript:void(0)');
+						btn_like.attr('onclick', 'doLike()');
+						btn_unlike.attr('href', 'javascript:void(0)');
+						btn_unlike.attr('onclick', 'doUnlike()');
+						btn_like.removeClass('btn-invalid');
+						btn_unlike.removeClass('btn-invalid');
+						/*
+						$(".like-boring dd").hover(function(){
+							$(this).find(".login-after").show();
+							},function(){
+							$(this).find(".login-after").hide();
+						});
+						*/
+						$(".like-boring dd").first().find(".login-after").show();
+					}
+				}
+			});
+		}catch(e){}
+	}
+}
+
+function doUnlike(){
+	var url = "http://life.sohu.com/fapi/jsonp/tread?callback=?";
+	if(typeof(entityId) != 'undefined'){
+		var data = {cmsid:entityId};
+		var btn_like = $(".btn-like");
+		var btn_unlike = $(".btn-boring");
+		btn_like.removeAttr('href');
+		btn_like.removeAttr('onclick');
+		btn_unlike.removeAttr('href');
+		btn_unlike.removeAttr('onclick');
+		btn_like.addClass('btn-invalid');
+		btn_unlike.addClass('btn-invalid');
+		try{
+			$.getJSON(url, data, function(data){
+				if(data.code != null)
+				{
+					if(data.code == 0)
+					{
+						getLikeAndUnlikdData();
+					}
+					else if(data.code == 1)
+					{
+						btn_like.attr('href', 'javascript:void(0)');
+						btn_like.attr('onclick', 'doLike()');
+						btn_unlike.attr('href', 'javascript:void(0)');
+						btn_unlike.attr('onclick', 'doUnlike()');
+						btn_like.removeClass('btn-invalid');
+						btn_unlike.removeClass('btn-invalid');
+						/*
+						$(".like-boring dd").hover(function(){
+							$(this).find(".login-after").show();
+							},function(){
+							$(this).find(".login-after").hide();
+						});
+						*/
+						$(".like-boring dd").last().find(".login-after").show();
+					}
+				}
+			});
+		}catch(e){}
+	}
+}
+function setQRCode(){
+	var localUrl = window.location.href;
+	var re = /^http:\/\/.*\.sohu\.com\/([0-9]{8}\/n[0-9]{9}).shtml/i;
+	var arr = re.exec(localUrl);
+	if(null != arr && null != arr[1] && arr[1] != "")
+	{
+		$(".pr-code-pic img").attr("src", "http://img.mp.sohu.com/qrcode/" + arr[1] + ".jpg");
+	}
+}
+var chkRunner = null;
+function pulseChkLogin(){
+	if(null != chkRunner)
+	{
+		window.clearInterval(chkRunner);
+		chkRunner = null;
+	}
+	var i = 0;
+	var chkRunner = window.setInterval(function(){
+		i++;
+		var c_start=document.cookie.indexOf("ppinf=");
+		if(i>120 || c_start != -1)
+		{
+			window.clearInterval(chkRunner);
+			chkRunner = null;
+			if(c_start != -1)
+			{
+				location.reload();
+			}
+		}
+	}, 1000);
+}
+var iTop = window.screen.availHeight/2-200;
+var iLeft = window.screen.availWidth/2-300;
+$(document).ready(getLikeAndUnlikdData);
+document.onmouseup=function(e){
+	$(".like-boring dd").first().find(".login-after").hide();
+	$(".like-boring dd").last().find(".login-after").hide();
+}
+</script>
+<script type="text/javascript">
+function getScrollTop(){  
+	var scrollTop=0;
+	if(document.documentElement&&document.documentElement.scrollTop){  
+		scrollTop=document.documentElement.scrollTop;
+	}else if(document.body){  
+		scrollTop=document.body.scrollTop;  
+	}  
+	return scrollTop;
+}
+
+function getClientHeight(){  
+	var clientHeight=0;  
+	if(document.body.clientHeight&&document.documentElement.clientHeight){  
+		var clientHeight = (document.body.clientHeight<document.documentElement.clientHeight)?document.body.clientHeight:document.documentElement.clientHeight;
+	}else  {  
+		var clientHeight = (document.body.clientHeight>document.documentElement.clientHeight)?document.body.clientHeight:document.documentElement.clientHeight;      
+	}  
+
+	return clientHeight;  
+}  
+
+function getScrollHeight(){  
+	return Math.max(document.body.scrollHeight,document.documentElement.scrollHeight);  
+}
+
+function clone(myObj){
+	if(typeof(myObj) != 'object') return myObj;
+	if(myObj == null) return myObj;
+	var myNewObj = new Object();
+	for(var i in myObj)
+		myNewObj[i] = myObj[i];//clone(myObj[i]);
+	return myNewObj;
+}
+
+function chkPopVal(){
+	var cName = "indexpoped";
+	var popshowed = true;
+	var arr,reg=new RegExp("(^| )"+cName+"=([^;]*)(;|$)");
+    if(arr=document.cookie.match(reg))
+	{
+		popshowed= true;
+	}
+    else
+	{
+        popshowed = false;
+		var exp = new Date(); 
+		exp.setHours(23);
+		exp.setMinutes(59);
+		exp.setSeconds(59);
+		//exp.setTime(exp.getTime() + 12*60*60*1000);
+		document.cookie = cName + "=1;expires=" + exp.toGMTString() + ";path=/;domain=.sohu.com";
+	}
+	return popshowed;
+}
+function ppp(url,height,width) {
+	var u = navigator.userAgent;
+	//alert(u);
+	//document.title = document.title + "!!!";
+	var show = false;
+	var show360 = false;
+	ver = {
+		ie: /MSIE/.test(u),
+		ie6: !/MSIE 7\.0/.test(u) && /MSIE 6\.0/.test(u) && !/MSIE 8\.0/.test(u) && !/360SE/.test(u) && !/ SE/.test(u) && !/Maxthon/.test(u),
+		ie7:/MSIE 7\.0/.test(u) && !/360SE/.test(u) && !/ SE/.test(u) && !/Maxthon/.test(u),
+		ie8:/MSIE 8\.0/.test(u) && !/360SE/.test(u) && !/ SE/.test(u) && !/Maxthon/.test(u),
+		ie9:/MSIE 9\.0/.test(u) && !/360SE/.test(u) && !/ SE/.test(u) && !/Maxthon/.test(u),
+		tt: /TencentTraveler/.test(u),
+		qh: /360SE/.test(u),
+		sg_cr: / SE/.test(u) && /Chrome/.test(u),
+		sg_ie: / SE/.test(u) && /MSIE/.test(u), 
+        cr: /Chrome/.test(u) && !/ SE/.test(u),
+		ff: /Firefox/.test(u),
+		op: /Opera/.test(u),
+		sf: /Safari/.test(u),
+		mt: /Maxthon/.test(u),
+		qb: /QQBrowser/.test(u)
+		//gg: window.google || window.chrome,
+		//go: /MetaSr/.test(u)
+	};
+
+	var v = u + "\r\n";
+	for(i in ver){
+			v += i + ":" + ver[i] + "\r\n";
+	}
+
+	//if(/debug=1/.test(document.location.search)) 
+	//   alert(v);
+
+	function bottompop(event){
+		if(show) return;
+		var delta = 0;
+		if (!event) event = window.event;
+		if (event.wheelDelta) {
+			delta = event.wheelDelta/120; 
+			if (window.opera) delta = -delta;
+		} else if (event.detail) {
+			delta = -event.detail/3;
+		}
+
+		if (delta && (getScrollTop()+ getClientHeight() >= (getScrollHeight()*0.2))){
+			//alert("ok");
+			setTimeout(pop,2000);
+		}
+	}
+
+	function bottomcheck(event){
+		if(show) return;
+		var delta = 0;
+		if (!event) event = window.event;
+		if (event.wheelDelta) {
+			delta = event.wheelDelta/120; 
+			if (window.opera) delta = -delta;
+		} else if (event.detail) {
+			delta = -event.detail/3;
+		}
+
+		if (delta && (getScrollTop()+ getClientHeight() >= (getScrollHeight()*0.2))){
+			//alert("bottem!");
+			//setTimeout(pop,2000);
+			show360 = true;
+		}
+	}
+	
+	var scrolled = false;
+	function scrollpop(event){
+		//alert("ddee");
+		if(scrolled){
+			return;
+		}else{
+			scrolled = true;
+		}
+
+		if (window.removeEventListener)
+			window.removeEventListener('DOMMouseScroll',scrollpop, false);
+
+		window.onmousewheel = document.onmousewheel = null;
+		if(show) return;
+
+		var delta = 0;
+		if (!event) event = window.event;
+		if (event.wheelDelta) {
+			delta = event.wheelDelta/120; 
+			if (window.opera) delta = -delta;
+		} else if (event.detail) {
+			delta = -event.detail/3;
+		}
+
+		if (delta){
+			if(ver.cr || ver.sg_cr){
+				setTimeout(backpopsimclick,2000);
+			}else{
+				setTimeout(backpop,2000);
+			}	
+		}
+	}
+
+	//init
+	var init = function(){
+		//ie6/ie7/ie8, use mouseup,back pop
+		if(ver.ie6 || ver.ie8 || ver.ie7){
+			//alert(window.addEventListener);
+			document.body.attachEvent("onmouseup", function(e){
+				e = e || window.event;
+				var target = e.target || e.srcElement;
+				if(target.tagName.toLowerCase() == "a")
+				{
+					return;
+				}
+				IEpop();
+			})
+
+			//document.body.onmouseup  = function(){
+			//	alert("ok");
+			//	document.body.onmouseup = null;
+			//	backpop();
+			//}
+
+			if (window.addEventListener)
+				window.addEventListener('DOMMouseScroll',bottomcheck, false);
+
+			window.onmousewheel = document.onmousewheel = bottomcheck;
+			window.attachEvent("onscroll",bottomcheck);
+		}else if(ver.cr || ver.sg_cr){
+			//document.body.onmouseup  = function(){
+			//	document.body.onmouseup = null;
+			//	backpopsimclick();
+			//}
+			var mouseup = function(ev){
+				ev = ev || window.event;
+				var target = ev.target || ev.srcElement;
+				if(target.tagName.toLowerCase() == "a")
+				{
+					return;
+				}
+				//if (document.body.removeEventListener) {
+				//	document.body.removeEventListener("mouseup", mouseup, false);
+				//} else if (document.body.detachEvent) {
+				//	document.body.detachEvent("onmouseup", mouseup);
+				//} else {
+				//	document.body["onmouseup"] = null;
+				//}
+				backpopsimclick();
+			}
+			if (document.body.addEventListener) {
+				document.body.addEventListener("mouseup", mouseup, false);
+			} else if (document.body.attachEvent) {
+				document.body.attachEvent("onmouseup", mouseup);
+			} else {
+				document.body["onmouseup"] = mouseup;
+			}
+
+			if (window.addEventListener)
+				window.addEventListener('DOMMouseScroll',bottomcheck, false);
+			window.onmousewheel = document.onmousewheel = bottomcheck;
+		}else if(ver.sg_ie || ver.ie9 ){
+			var mouseup = function(ev){
+				//alert("begin try...");
+				ev = ev || window.event;
+				var target = ev.target || ev.srcElement;
+				if(target.tagName.toLowerCase() == "a")
+				{
+					return;
+				}
+				var newev = clone(ev);
+				//if (document.body.removeEventListener) {
+				//	document.body.removeEventListener("mouseup", mouseup, false);
+				//} else if (document.body.detachEvent) {
+				//	document.body.detachEvent("onmouseup", mouseup);
+				//} else {
+				//	document.body["onmouseup"] = null;
+				//}
+				function clickscrollpop(){
+					//alert("check"  + show360);
+					//document.title = document.title + ".";
+					//if(!show360){
+						//alert("360false");
+						//alert(clickscrollpop);
+						//setTimeout(clickscrollpop,1000);
+						//return;
+					//}
+					//alert("bingo");
+					IEpop();
+				}
+				clickscrollpop();
+			}
+			if (document.body.addEventListener) {
+				document.body.addEventListener("mouseup", mouseup, false);
+			} else if (document.body.attachEvent) {
+				document.body.attachEvent("onmouseup", mouseup);
+			} else {
+				document.body["onmouseup"] = mouseup;
+			}
+			if (window.addEventListener)
+				window.addEventListener('DOMMouseScroll',bottomcheck, false);
+			window.onmousewheel = document.onmousewheel = bottomcheck;
+		}else if(ver.qh || ver.ff){
+			var mouseup = function(ev){
+				//alert("begin try...");
+				ev = ev || window.event;
+				if(ev.target.tagName.toLowerCase() == "a")
+				{
+					return;
+				}
+				var newev = clone(ev);
+				//if (document.body.removeEventListener) {
+				//	document.body.removeEventListener("mouseup", mouseup, false);
+				//} else if (document.body.detachEvent) {
+				//	document.body.detachEvent("onmouseup", mouseup);
+				//} else {
+				//	document.body["onmouseup"] = null;
+				//}
+				function clickscrollpop(){
+					//alert("check"  + show360);
+					//document.title = document.title + ".";
+					//if(!show360){
+						//alert("360false");
+						//alert(clickscrollpop);
+						//setTimeout(clickscrollpop,1000);
+						//return;
+					//}
+					//alert("bingo");
+					pop();
+				}
+				clickscrollpop();
+			}
+			if (document.body.addEventListener) {
+				document.body.addEventListener("mouseup", mouseup, false);
+			} else if (document.body.attachEvent) {
+				document.body.attachEvent("onmouseup", mouseup);
+			} else {
+				document.body["onmouseup"] = mouseup;
+			}
+			if (window.addEventListener)
+				window.addEventListener('DOMMouseScroll',bottomcheck, false);
+			window.onmousewheel = document.onmousewheel = bottomcheck;
+		}
+	}
+
+	//window.screen.width, window.screen.height
+	var IEpop = function(){
+		if(!show360) return;
+		if(show||chkPopVal()) return;
+		var r=window.open(url);
+		window.focus();
+		if(r)
+		{
+			r.blur();
+			window.focus();
+			show=true;
+		}
+	}
+	var pop = function(){
+		if(!show360) return;
+		if(show||chkPopVal()) return;
+		//var feature = 'height=' + window.screen.height + ',width=' + window.screen.width + ',left=0,top=0,scrollbars=yes';
+		var feature='scrollbars=yes';
+		//var pop = 'window.open("' + url + '", "_blank", "' + feature + '")';
+		var pop = 'window.open("' + url + '", "' + feature + '")';
+		var r = null;
+		try {
+			r = eval(pop);
+			show = true;
+		} catch (q) {
+		}
+	}
+
+	var backpop = function(){
+		if(!show360) return;
+		if(show||chkPopVal()) return;
+		//var feature = 'height=' + window.screen.height + ',width=' + window.screen.width + ',left=0,top=0,scrollbars=yes';
+		var feature='scrollbars=yes';
+		//var pop = 'window.open("' + url + '", "_blank", "' + feature + '")';
+		var pop = 'window.open("' + url + '", "' + feature + '")';
+		var r = null;
+
+		try {
+			r = eval(pop);
+			window.focus();
+		} catch (q) {
+		}
+
+		if (r) {
+			r.blur();
+			window.focus();
+			show = true;
+		} else {
+			//alert("need more things todo ...");
+		}
+	}
+
+	var backpopsimclick = function(){
+		if(!show360) return;
+		if(show||chkPopVal()) return;
+		var link = document.createElement('a');
+		link.setAttribute('href', url);
+		link.setAttribute('target', "_blank");
+		link.setAttribute('style', "display:none;");
+		link.setAttribute('id', "aaaa");
+		var evt = document.createEvent("MouseEvents");
+		evt.initMouseEvent("click", true, true, window,0, 0, 0, 0, 0, true, false, false, false, 0, null);
+		var cb = link;
+		var canceled = !cb.dispatchEvent(evt);
+		show = true;
+	}
+
+	setTimeout(init,800);
+}
+
+var refer = document.referrer;
+if(refer)
+   refer = refer.toLowerCase();
+var allowedCates = ["401312956;401431932;","401312956;401431963;","401312956;403221062;","401312956;403221022;"];
+var isAllowed = true;
+//if(typeof category == "string"){
+//    for(var i=0;i<allowedCates.length;i++){
+//	    if(category.indexOf(allowedCates[i]) >= 0)
+//		    isAllowed = true;
+//	}
+//}
+if(refer.indexOf('www.sohu.com') < 0 && refer.indexOf('mp.sohu.com') < 0 && isAllowed){
+	ppp('http://www.sohu.com/i/?pvid=bfd96a6b41a6bcaa');	
+}
+function getCookie(name) 
+{
+	var arr,reg=new RegExp("(^| )"+name+"=([^;]*)(;|$)");
+	if(arr=document.cookie.match(reg))
+		return unescape(arr[2]); 
+	else 
+		return null; 
+}
+if(/debug=2/.test(document.location.search))
+{
+	var exp = new Date(); 
+    exp.setTime(exp.getTime() - 1); 
+    var cval=getCookie("indexpoped"); 
+    if(cval!=null) 
+        document.cookie= "indexpoped=1;expires="+exp.toGMTString()+";path=/;domain=.sohu.com"; 
+}
+</script>
+<script src="./为什么一家传统券商选择将交易系统容器化？-搜狐_files/saved_resource"></script></head>
+
+<body>
+<div data-type="roll" data-appid="1079" id="isohu-topbar"></div>
+<link type="text/css" rel="stylesheet" href="./为什么一家传统券商选择将交易系统容器化？-搜狐_files/itoolbar.201410281438.css" charset="UTF-8">
+<script src="./为什么一家传统券商选择将交易系统容器化？-搜狐_files/itoolbar.cms.loader.2016010513.js.下载" charset="UTF-8"></script>
+
+<!-- 导航 st -->
+<div id="nav" class="area"><a class="first" href="http://www.sohu.com/">首页</a>-<a href="http://news.sohu.com/">新闻</a>-<a class="n3" href="http://mil.sohu.com/">军事</a>-<a href="http://cul.sohu.com/">文化</a>-<a href="http://history.sohu.com/">历史</a>-<a class="n3" href="http://sports.sohu.com/">体育</a>-<a href="http://sports.sohu.com/nba.shtml">NBA</a>-<a href="http://tv.sohu.com/">视频</a>-<a class="n3" href="http://soyule.sohu.com/">娱谈</a>-<a href="http://business.sohu.com/">财经</a>-<a href="http://view.sohu.com/">世相</a>-<a class="n3" href="http://it.sohu.com/">科技</a>-<a href="http://auto.sohu.com/">汽车</a>-<a href="http://www.focus.cn/">房产</a>-<a class="n3" href="http://fashion.sohu.com/">时尚</a>-<a href="http://health.sohu.com/">健康</a>-<a href="http://learning.sohu.com/">教育</a>-<a class="n3" href="http://baobao.sohu.com/">母婴</a>-<a href="http://travel.sohu.com/">旅游</a>-<a href="http://chihe.sohu.com/">美食</a>-<a class="last" href="http://astro.sohu.com/">星座</a></div>
+<!-- 导航 end -->
+<!-- 翻牌广告 st -->
+<div class="ad-banner area">
+<sohuadcode>												<script src="./为什么一家传统券商选择将交易系统容器化？-搜狐_files/Sohu-0.3.8.min.js.下载" type="text/javascript"></script>
+
+<script> var config = { passion : { PAGEID : "gongyi-article" , CHANNELID : "32"} }; </script>
+<script type="text/javascript" src="./为什么一家传统券商选择将交易系统容器化？-搜狐_files/sohuad2012v15.js.下载"></script>
+<script type="text/javascript" src="./为什么一家传统券商选择将交易系统容器化？-搜狐_files/soip"></script>
+<script src="./为什么一家传统券商选择将交易系统容器化？-搜狐_files/sohu-require.js.下载"></script>
+<script src="./为什么一家传统券商选择将交易系统容器化？-搜狐_files/1000016.shtml"></script><div class="full-ad">
+	<div id="turn-ad" class="area">
+		<div class="ad-banner">
+<table width="970" height="90" align="center" border="0" cellpadding="0" cellspacing="0">
+<tbody><tr>
+<td width="970" height="90" align="middle">
+<div id="TurnAD674" width="970" height="90">
+ <script type="text/javascript">
+var TurnAD674=new Cookie(document,"TurnAD674",24);
+TurnAD674.load();
+TurnAD674.visit=(TurnAD674.visit==null)?parseInt(Math.random()*2+1):TurnAD674.visit;
+if(TurnAD674.visit!=0)var intTurnAD674=TurnAD674.visit;
+TurnAD674.visit++;
+TurnAD674.visit=(TurnAD674.visit>2)?1:TurnAD674.visit;
+TurnAD674.store();
+function showTurnAD674(basenum){
+if (basenum==1){
+if (typeof has_topAd == "undefined" || has_topAd==0) {
+//topnews代码，投放时请带上，轮换代码从下面开始替换
+require(["sjs/matrix/ad/passion"], function (passion) {
+    var _C = "#TurnAD674",_ID = "12780",_W = 970,_H = 90,_T = 1,_F=201;
+    if(_C!=''){jQuery(_C).attr('id', 'beans_' + _ID).css({'margin':'0px auto','width' : _W + 'px', 'height' : _H + 'px'});}
+    passion.ones({itemspaceid : _ID, width : _W, height : _H, adsrc : _F, turn : _T, defbeans : !0});
+});
+//轮换代码结束
+}}
+else{
+if (typeof has_topAd == "undefined" || has_topAd==0) {
+//topnews代码，投放时请带上，轮换代码从下面开始替换
+require(["sjs/matrix/ad/passion"], function (passion) {
+    var _C = "#TurnAD674",_ID = "12780",_W = 970,_H = 90,_T = 2,_F=201;
+    if(_C!=''){jQuery(_C).attr('id', 'beans_' + _ID).css({'margin':'0px auto','width' : _W + 'px', 'height' : _H + 'px'});}
+    passion.ones({itemspaceid : _ID, width : _W, height : _H, adsrc : _F, turn : _T, defbeans : !0});
+});
+//轮换代码结束
+}}
+}
+showTurnAD674(intTurnAD674);
+</script>
+</div>
+</td>
+</tr>
+</tbody></table>
+</div>
+	</div>
+</div>
+</sohuadcode>	
+</div>
+<!-- 翻牌广告 end -->
+
+<!-- 分类头条 st -->
+<div class="area" id="channel-dir">
+	<div class="left"> <a href="http://mt.sohu.com/"><img border="0" alt="搜狐媒体平台-搜狐网站" src="./为什么一家传统券商选择将交易系统容器化？-搜狐_files/mt_logo.gif"></a><span>&gt;<a href="http://mt.sohu.com/it/">IT</a></span> </div>
+	<div class="right">
+	<div class="l">
+			
+                        <h4><a href="http://pic.auto.sohu.com/group-775626.shtml#0" target="_blank">“孙大圣”驾车被交警拿住</a></h4>
+			<p>令人更想不到的是，车上居然还坐着一车“妖魔鬼怪”。</p>
+
+		</div>
+		<div class="c">
+			<h4><a href="http://pic.learning.sohu.com/group-775620.shtml#0" target="_blank">去北影考场看帅哥美女</a></h4>
+			<p>北京电影学院2017年度招考开始，考场外帅哥美女如云。</p>
+		</div>	
+	</div>
+</div>
+<!-- 分类头条 end -->
+<div id="container" class="area">
+	<div class="content-wrapper">
+	   <!-- 文章标题 -->
+		<div class="news-info clear">
+           <div class="news-title">
+			    <h1>为什么一家传统券商选择将交易系统容器化？</h1>
+				<div class="news-writer clear">
+					<span class="writer"><a href="http://mp.sohu.com/profile?xpt=c29odW1wMEMxWlUzQHNvaHUuY29t" target="_blank">InfoQmp</a></span>
+					<span class="time" id="pubtime_baidu" itemprop="datePublished">2016-10-12 08:00:59</span>
+					<span class="tag">
+					  
+					</span>
+					<span class="read-num"> 
+					  <a>阅读(<em class="red">0</em>)</a>
+					</span>
+					<span class="comment-num"><a href="http://pinglun.sohu.com/s470035632.html" itemprop="discussionUrl" target="_blank">评论(<em class="red" id="changyan_count_unit"><img src="./为什么一家传统券商选择将交易系统容器化？-搜狐_files/loading_blue.gif" width="14px" height="14px"></em>)</a></span>
+				</div>
+			</div>
+			
+			
+			<style>
+.state{text-align:right;height:16px;line-height:16px;color:#999;padding-top:5px;overflow:hidden;}
+.state span{float:left;}
+.state a{color:#0787D8}
+</style>
+<div class="state"><span>声明：本文由入驻搜狐公众平台的作者撰写，除搜狐官方账号外，观点仅代表作者本人，不代表搜狐立场。</span><a href="http://quan.sohu.com/q/545c9b6bf6c43b5569fe64a2" target="_blank">举报</a></div>
+		</div>
+		
+		<!-- 正文 -->
+		<div class="text clear" itemprop="articleBody">
+        <p>　　“ </p> 
+<p>　　<span style="font-size: 16px;">交易系统是命根子，为什么这家传统券商选择将其全部容器化？<span>本文根据梁启鸿在InfoQ举办的CNUTCon2016全球容器技术大会上的演讲整理而成。</span></span></p> 
+<p>　　<span style="font-size: 16px;"><strong>老司机简介</strong></span></p> 
+<p>　　<span><strong><span style="font-size: 14px;">梁启鸿</span></strong></span><strong><span style="font-size: 14px;">，广发证券研发董事总经理首席架构师。</span></strong><span style="font-size: 14px;">哥伦比亚大学计算机科学系毕业，出道于纽约IBM T.J. Watson研究院，后投身华尔街，分别在纽约Morgan Stanley、Merrill Lynch和JP Morgan等投行参与交易系统研发。</span></p> 
+<p>　　<span style="font-size: 14px;">本世纪初加入IT界，在Sun Microsystems大中华区专业服务部负责金融行业技术解决方案。此后创建游戏公司并担任CTO职位5年。后作为雅虎Senior Principal Architect加入雅虎，担任北京研究院首席架构师角色。</span></p> 
+<p style="text-align: center;"><span style="font-size: 16px;"><strong>前言</strong></span></p> 
+<p>　　前一段时间中国银监会在“十三五”规划当中提到银行业应该稳步实施架构迁移并逐步过渡到云计算架构平台，广发证券在这方面做了很长时间的探索。 </p> 
+<p>　　广发证券于2014年Docker等容器技术尚未盛行之时开始投入容器化技术的研究，并于2015年开始大规模投入应用—成交量六百亿（2015年）规模的金融电商平台、消息推送日均数千万条级别的社会化投顾问答平台以及日均流经交易量峰值近五十亿的交易总线均被容器化；投入生产的容器化云服务包括行情、资讯、消息推送、自选股、统一认证、实时事件处理等。</p> 
+<p style="text-align: center;"><span style="font-size: 16px;"><strong>从《黑天鹅》说起</strong></span></p> 
+<p>　　我们研究和应用云技术的动机，来源于对“黑天鹅”事件的应对。“黑天鹅”这一概念，是在美国学者、风险分析师、前量化交易员、前对冲基金经理塔勒布（Nassim Nicholas Taleb）的《黑天鹅》（The Black Swan – The impact of the highly improbable）一书发表后在全球被得以高度认知。 </p> 
+<p>　　在发现澳大利亚之前，17世纪之前的欧洲人认为天鹅都是白色的。但随着第一只黑天鹅的出现，这个不可动摇的信念崩溃了。黑天鹅的存在寓意着不可预测的重大稀有事件，它在意料之外并且后果非常严重。 </p> 
+<p>　　一个黑天鹅事件，具有这三个特点：（1）稀缺、通常史无前例（rarity），（2）影响很极端（extreme impact），（3）虽然它具有意外性，但人的本性促使我们在事后为它的发生找到理由——“事后诸葛亮”，并且或多或少认为它是可解释和可预测的（introspective）。 <strong>IT系统、尤其是资本市场里的交易系统，所发生的各种重大问题，其实是很符合黑天鹅事件的特点的。</strong></p> 
+<p>　　<img src="./为什么一家传统券商选择将交易系统容器化？-搜狐_files/75e82aa490914bd8b1274150420e9097_th.jpeg"></p> 
+<p>　　塔勒布用“感恩节的火鸡”很形象解释了黑天鹅的概念——直到被宰掉成为感恩节火鸡晚餐前的每一天，火鸡都应该是活的很不错的，它的一生里没有任何过去的经验供它预测到自己未来的结果，而后果是致命的。 </p> 
+<p>　　一套复杂的IT系统，很有可能就是那只火鸡，例如就个人近年所遭遇的类似事件最典型的两次，一是与某机构对接的技术接口，据称已经存在并稳定使用近10年 – 虽然技术古老但是从未出现问题，然而在过去两年持续创新高的交易量压力之下，问题终究以最无法想象到的方式出现并形成系统性风险（因为对接者不仅一两家）； </p> 
+<p>　　另一，则是老旧的系统因对市场可交易股票数目作了假设（而从未被发现），某天新股上市数量超过一定值而导致部分交易功能无法正常进行。 </p> 
+<p>　　这两个例子都符合黑天鹅特征，一是“史无前例” （如果以前发生过，问题早就被处理了），二是可以“事后诸葛亮”（所有IT系统问题，最后不都可以归结为“一个愚蠢的bug” ？因为开发时需求不清楚、因为开发者粗心、因为技术系统所处的生态环境已经发生变化导致原假设无效）； </p> 
+<p>　　三是“后果严重”（如果技术系统本身是一个广被采购的第三方的商业软件，则整个行业都有受灾可能；如果是自研发的技术，则最起码对交易投资者造成灾难性损失）。 </p> 
+<p>　　事实上，资本市场乃至金融业整体，可能都是黑天鹅最爱光顾的地方。甚至连普罗大众都听过的例子诸如：2010年5月6日的Flash Crash ——在三十分钟内道琼斯指数狂泻近千点、1987年10月19日的Black Monday、国内著名的“乌龙指”事件导致的市场剧动……不一而足。 </p> 
+<p>　　<img src="./为什么一家传统券商选择将交易系统容器化？-搜狐_files/5a775be1d10c47cc9630da99365278e2_th.jpeg"></p> 
+<p>　　导致黑天鹅降临的原因，事后分析五花八门，可能是量化交易导致的、可能是市场流动性不足引起的、也可能是市场心理（例如恐慌抛售）触发的……无论何者，IT系统几乎都是最后被压垮的那只骆驼。正如塔勒布文章中提到，高盛在2007年8月的某天突然经历的为平常24倍的交易量，如果到了29倍，系统是否就已经坍塌了？ </p> 
+<p>　　<img src="./为什么一家传统券商选择将交易系统容器化？-搜狐_files/ec959fc86ad6415980861e6996219ecc_th.jpeg"></p> 
+<p>　　事实上，在这个日益数字化的世界，本身就高度数字化的证券市场，面临的黑天鹅事件会越来越多，出于但不仅限于以下一些因素： </p> 
+<ul> 
+ <li><p>增长的交易规模。</p></li> 
+ <li><p>更高频、更复杂的交易算法（《高频交易员》一书里指出，股票市场已经变成机器人之间的战争）。</p></li> 
+ <li><p>更全球化更加波动 – 海内外政治经济情况引起的突发变化。</p></li> 
+ <li><p>更快速更先进的技术 – 已经出现数百纳秒内完成交易处理的专门性硬件芯片，快到人类根本无法响应。</p></li> 
+</ul> 
+<p>　　数字世界，尤其是金融业的数字世界，正好是塔勒布笔下所谓的“极端斯坦”（Extremistan），它完全不受物理世界的规律影响—— 一切极端皆有可能。例如在物理世界常识告诉我们，一个数百斤的超级胖子的体重加到1000人里面比重依然是可以忽略不计的；但在金融世界，一个比尔盖茨级别的富豪的财产数字，富可敌国。 </p> 
+<p>　　金融IT，正好生存在这么一个“极端斯坦”——这里复杂系统内部充满难以察觉的相互依赖关系和非线性关系，这里概率分布、统计学的“预测”往往不再生效。塔勒布称之为“第四象限”，我们，作为证券交易的IT，刚好在这个象限里谋生。 </p> 
+<p>　　<img src="./为什么一家传统券商选择将交易系统容器化？-搜狐_files/1d0cbde55658472c95146cac70c4f4c5_th.jpeg"></p> 
+<p style="text-align: center;">（塔勒布《黑天鹅》第四象限图） </p> 
+<p>　　上述这一切，和云计算有什么关系呢？ 我们觉得非常紧密，逻辑如下： </p> 
+<ul> 
+ <li><p>世界越来越数字化、更加“数目字可管理”- 一切效率更高。</p></li> 
+ <li><p>本来就数字化的金融世界，日益是个“极端斯坦”，只能更快、更复杂，面临更多黑天鹅事件。</p></li> 
+ <li><p>应对数字世界的黑天鹅，只能用数字世界的手段（而不是“人肉”手工方法），就像《黑客帝国》，你必须进入Matrix，用其中的武器和手段，去解决里面的问题（并影响外面）。</p></li> 
+ <li><p>云计算，不过是世界数字化进程里的一步 – 把承载数字世界的物理载体也进一步数字化，但是它刚好是我们应对数字黑天鹅的基本工具 – 运算资源本身也是“数目字可管理”，并且正因为如此而可以是自动的和智能的。</p></li> 
+</ul> 
+<p>　　即便到了今天，相信很多企业、机构的机房里的运算资源，依然不是“数目字可管理” – 这本身真是一个讽刺。但直到云技术出现，才解决这个问题。结合云计算的技术，交易系统不再是“your grandmother‘s trading system”。 </p> 
+<p style="text-align: center;"><span style="font-size: 16px;"><strong>“反脆弱”的技术系统</strong></span></p> 
+<p>　　<strong>黑天鹅事件是不可预测的，但是并非不可应对。</strong>《黑天鹅》的作者塔勒布，在其另一本有巨大影响力的著作《反脆弱》（Anti-Fragile）里，提到了如何在不确定中获益。这本闪烁着智慧之光的著作，早已超越了金融而进入到政治、经济、宗教、社会学的思考范畴，对IT系统技术架构的设计，同样具有启发意义。 </p> 
+<p>　　想想，一个经常被黑天鹅事件光顾的交易系统，如果不仅没有坍塌、还随着每一次的考验而技术上变的越来越周全和强壮，这对于任何开发工程师、运维工程师来说，是不是一个梦想成真？ </p> 
+<p>　　实际上，这个过程对于任何IT工程师而言都是非常熟悉的，因为我们中很多人每天的工作，可能就是在不断的以各种应急手段紧急救援不堪重负的生产系统、或者在线弥补技术缺陷，在这过程中我们发现一个又一个在开发和测试时没有发现的问题、一次又一次推翻自己在开发时的各种假设、不断解决所遭遇到的此前完全没有想象过的场景。如果项目、系统活下来了，显然它变得更加健壮强韧。 </p> 
+<p>　　只不过，这一切是被动的、低效的、“人肉”的，而且视系统架构和技术而定，变强韧有时是相对容易的、有时则是不可能的 – 正如一艘结构设计有严重缺陷的船，打更多的补丁也总会遇到更大的浪把它打沉。 </p> 
+<p>　　如果基于《反脆弱》的三元论，也许大部分IT系统大致上可以这么看： </p> 
+<ul> 
+ <li><p><strong>脆弱类：</strong>绝大部分企业IT系统，依赖于大量技术假设与条件，不喜欢无序和不稳定环境，暴露于负面“黑天鹅”中。</p></li> 
+ <li><p><strong>强韧类：</strong>小部分大规模分布式系统（也许通常是互联网应用），适应互联网相对不可控的环境（如网络延迟与稳定性、客户端设备水平和浏览器版本、用户量及并发请求变化），经受过海量用户与服务请求的磨练，相对健壮。</p></li> 
+ <li><p><strong>反脆弱类：</strong>能捕捉到正面“黑天鹅”- 系统不仅在冲击中存活，并且变的更加强韧，甚至在这过程中获益。</p></li> 
+</ul> 
+<p>　　这里所谓的“脆弱”，并不是指系统不可靠、单薄、技术不堪一击，而是指这类系统厌恶变化、厌恶不稳定不可控环境、本身架设在基于各种稳定性假设前提的精巧设计上，无法对抗突如其来的、此前无法循证的事件（黑天鹅），更无法从中自适应和壮大。就这个角度看，证券行业甚至整个金融业里，大部分的系统可能都是脆弱系统。传统IT系统有以下一些常见的技术特点，例如： </p> 
+<ul> 
+ <li><p>一切以关系型数据库为中心（RDBMS-centric）。</p></li> 
+ <li><p>很多历史遗留系统（legacy system）有数以百计的表、数以千计的存储过程。</p></li> 
+ <li><p>业务逻辑高度依赖数据库。</p></li> 
+ <li><p>中间层与数据层高度紧耦合。</p></li> 
+ <li><p>多层架构（multi-tiered architecture），层与层之间依赖于高度的约定假设（协议-protocol、接口- API、数据格式 – data format 等），并且这些约定经常来不及同步（例如某个团队改变了维护的接口而没有通知其他团队、或者数据库的表结构改变了但是中间层的对象库因为疏忽而没有及时步调一致的重构），有些约定甚至只存在于协作的开发者脑海中而没有形成文档（即便形成文档也经常因需求变化频繁而无法及时更新）。</p></li> 
+ <li><p>应用程序依赖于某些第三方的代码库，而这些代码库很有可能依赖于某个版本的操作系统及补丁包，并且这种依赖关系是传递的 – 例如某个第三方代码库依赖于另一个第三方代码库而该库依赖于某个版本的操作系统……</p></li> 
+ <li><p>系统设计，往往没有考虑足够的失败场景（因此可能完全没有容错机制），没有考虑例如不稳定网络延迟对业务逻辑的影响（例如大部分企业系统都假设了一个稳定的LAN）。</p></li> 
+ <li><p>组件、模块、代码库、操作系统、应用程序、运维工具各版本之间具有各种线性、非线性依赖关系，形成一个巨大的复杂系统。</p></li> 
+</ul> 
+<p>　　然而，以下这些变化是任何IT系统所不喜欢却无法回避的，例如： </p> 
+<ul> 
+ <li><p>多层架构里，任何一个环节的约定独立发生细微改变，必定导致系统出错（只是严重性大小的差别），这几乎无法很好的避免 – 研发团队的素质不够高、软件工程的水平低、瞬息万变的市场导致的频繁更改等，总是客观存在。</p></li> 
+ <li><p>因为安全原因，需要对操作系统进行打补丁或者升级，导致应用程序所依赖的代码库发生兼容性问题 – 在打补丁或升级后通过测试及时发现兼容问题已经算是幸运的，最怕是在生产环境运行过程中才触发非线性关系的模块中的隐患。</p></li> 
+ <li><p>跨系统（尤其是不同团队、部门、组织负责的系统）的调用协议与接口发生变化，是一个常态性的客观事实。</p></li> 
+ <li><p>互联网环境、甚至企业内部的网络环境，并不是一成不变的，网络拓扑出于安全、合规隔离、性能优化而变化，可能导致延迟、吞吐等性能指标的变化，应用系统本来没有出现的一些问题，有可能因为运行环境的变化而浮现，而系统内部容错机制往往没有考虑到这些问题。</p></li> 
+ <li><p>业务需求永远在变，以数据库为中心的系统，不可避免产生表结构（schema）调整，系统升级需要做数据迁移，而这总是有风险的（例如data integrity需要保证万无一失）。</p></li> 
+</ul> 
+<p>　　于是，传统IT对于这些系统的运维，最佳实践往往不得不这样： </p> 
+<ul> 
+ <li><p>在使用压力增大的情况下，最安全的升级手段是停机、换机器、加CPU、加内存，直到硬件升级、垂直扩容（vertical scale、or scale-up）手段用光。</p></li> 
+ <li><p>维护一个庞大的运维团队，随时救火。</p></li> 
+ <li><p>试图通过软件工程的管理，例如制定规章制度，让协作人员、团队之间在接口升级前走流程、互相通知，来避免随意的系统变化导致的风险。</p></li> 
+ <li><p>加大测试力度 – 通常很有可能是投入更多的人肉测试资源，以保证较高的测试覆盖率和回归测试（regression test）能力。</p></li> 
+ <li><p>强调“纪律”，以牺牲效率为代价，通过“流程”、“审核”设置重重关卡以达到“维稳”效果。</p></li> 
+ <li><p>重度隔离运维与研发，禁止研发人员触碰生产环境，减少误操作 – 例如随意升级操作系统、对应用逻辑抱着侥幸心理打补丁等。</p></li> 
+</ul> 
+<p>　　不可否定，这些“套路”在以往的时代可能是最佳实践，也体现了一个IT组织的管理水平。但是毫无疑问，这样研发、运维和管理的系统，是一个典型的“脆弱系统”，它依赖于很多的技术、工具、环境、流程、纪律、管理制度、组织结构，任何一个环节出现问题，都可能导致轻重不一的各种问题。 </p> 
+<p>　　最重要一点，这样的系统，厌恶变化、喜好稳定，无法在一个“只有变化才是唯一不变”（并且是变化越来越频繁）的世界里强韧存活，更无所谓拥抱变化而生长。 </p> 
+<p>　　强韧类的技术系统，情况要好的多，起码能“响应”变化（如后文所论述）。但是注意，在塔勒布的定义里，“强韧”并非“脆弱”的反面，“强韧系统”只是能相对健壮的对抗更大的压力、更苛刻的环境，它并不能从变化、不确定中获益。 </p> 
+<p>　　“脆弱”的反面，塔勒布在现有语言里找不到一个合适的词语，所以他发明了一个新概念，“反脆弱”（Anti-Fragile）。问题是，接受“变化是一种常态”、拥抱变化并从中获益的“反脆弱”的技术系统，能被构建出来吗？ </p> 
+<p>　　<img src="./为什么一家传统券商选择将交易系统容器化？-搜狐_files/1f422517bb9f4162bdb5a785b30d4bf5_th.jpeg"></p> 
+<p>　　<strong>云计算的出现，有利于帮助IT构建强韧系统，并且让“反脆弱”系统成为可能。</strong>其最根本原因在于，云计算本身是机房物理设施数字化的过程，如上文所述，数字世界的黑天鹅 – 微秒、纳秒内发生的极端事件，只能通过数字化手段才能高效解决。 </p> 
+<p>　　伴随云计算出现的是DCOS（Data Center Operating System）、APM（Application Performance Monitoring）、Infrastructure As Code（基础设施即代码、可编程运维、可编程基础设施……）、DevOps等等技术方案、技术产品、技术理念和方法论。这些都是构建强韧系统的有力武器，而在云计算时代之前，它们严格意义上不曾存在过。 </p> 
+<p>　　<img src="./为什么一家传统券商选择将交易系统容器化？-搜狐_files/696d3cce5ae54d69a0b1edca31796f28_th.jpeg"></p> 
+<p>　　云计算也许是目前为止对于证券交易系统、甚至对于更广义的金融技术系统而言最适合应对黑天鹅的技术手段。监管机构不应该见到“云”字就敏感的与“公有云”、信息安全、交易可监管性等问题联系起来；金融机构则需要与时俱进的学习掌握“云化”的技术手段、架构思维 – 至于系统是运行在公有云、私有云还是混合云，都已经是另一个故事。 </p> 
+<p style="text-align: center;"><span style="font-size: 16px;"><strong>容器技术的救赎</strong></span></p> 
+<p>　　云计算，其中一个最基本目的，是计算资源的集合管理与使用。其实IT界在计算资源的集合使用方面，过去20年起码尝试过三次： </p> 
+<ul> 
+ <li><p>90年代中后期，出现网格计算（Grid Computing），用于蛋白质折叠、金融模型、地震模拟、气候模型方面的应用。</p></li> 
+ <li><p>本世纪初，出现效用计算（Utility Computing）- 推行运算资源按需调用（On-demand）、效用计费（Utility billing）、订户模式（Subion model）的概念。IBM、HP、Sun这些IT公司都尝试推动过这个领域的解决方案，虽然成效不彰。</p></li> 
+ <li><p>10年前，亚马逊AWS发布，算是云计算的标志性事件。云计算覆盖含义更广，网格计算可以是云计算平台上的一类应用，而效用计算则可以被视为云计算服务商所采用的商业模式。</p></li> 
+</ul> 
+<p>　　云计算和大数据技术出现后，这些技术逐渐变身“事务型内存数据库”、“内存网格”（in-memory data-grid）、“流式计算平台”（stream processing）等，然总体来说变的越来越小众。 </p> 
+<p>　　无论如何， <strong>这些技术在云计算出现前已经帮助华尔街机构掌握了计算资源集合运用、分布式架构的一些理念和思维。</strong>而国内证券界甚至金融业IT总体来说，对这类技术是相当陌生的。 </p> 
+<p>　　就对标华尔街同行的证券业IT而言，可以说基本上错过了上述计算资源集合应用的三个浪潮。云计算兴起后，OpenStack之类的技术在证券IT甚至金融界的成功落地、大规模采用的案例极其罕有（如果有的话）。 </p> 
+<p>　　即便是近年来互联网云服务商兴起，部分金融机构因为试水互联网金融而开始使用公有云，很大程度上使用方式也不过是使用了一些虚拟机运行一些互联网边缘（Edge）服务。 </p> 
+<p>　　然而这个时代有趣的地方在于，一些新技术的出现可以让“弯道超车”、“后发制人”成为可能 – 上一个阶段错过了一些东西，但是也可能下一个阶段少了很多历史包袱从而可以轻易跳进最新的技术世代。容器，恰好就是这么一种技术 – 假如你能把握的话。 </p> 
+<p>　　在英语里，“容器”、“集装箱”、“货柜”都是同一个字 – Container。容器技术之于软件业，很有可能可以类比集装箱对运输业的巨大影响。 </p> 
+<p>　　<img src="./为什么一家传统券商选择将交易系统容器化？-搜狐_files/69cf0404f57947538bfb6f52fd2f7b09_th.jpeg"></p> 
+<p>　　实际上，确实有人想过把整个机房放在集装箱里，例如2006年Sun Microsystems推出的Project Blackbox——刚好是亚马逊发布AWS的同一年。但这个集装箱是钢铁的、有物理形体的、重量以吨为单位的；而其中的内容，自然也是各种物理的服务器、网络设备、发电机。那一年，可能谁也没有想到，10年后有一种“数字化”的虚拟集装箱大行其道。 </p> 
+<p>　　<img src="./为什么一家传统券商选择将交易系统容器化？-搜狐_files/b3165edee2d142979268b87b986ce776_th.jpeg"></p> 
+<p>　　技术界不乏认为容器对软件技术产生革命性影响的观点，本人倾向于认同这种观点，因为： </p> 
+<ul> 
+ <li><p>容器影响开发者的开发方式、开发习惯，“强迫”他们去思考例如无状态的服务、业务逻辑粒度的控制、资源的弹性伸缩、应用代码的发布形态、系统里面每一个细节的可监控性等等。</p></li> 
+ <li><p>让真正的DevOps成为可能 – 自动化测试、持续集成（CI）、持续交付（CD）、自动化部署、无人值守的运维… 开发与运维的角色差异进一步缩小，而效率则最大程度提升。</p></li> 
+ <li><p>让“不可变基础设施”（Immutable infrastructure）成为可能——这将颠覆传统软件系统的升级发布和维护方式。</p></li> 
+</ul> 
+<p>　　为什么作为金融系统、交易平台的研发者，我们挑容器出现的时候跳进云计算，而在更早阶段虚拟机系列相关技术成熟时却并没有大的投入。 </p> 
+<p>　　最根本原因在于，作为研发组织，我们从研发视角，基于具体应用场景去持续、积极寻觅能解决强韧性、健壮性问题的解决方案 – 这是一种“Top-Down Thinking”，例如在交易量波动过程中，我们能否有自动化的技术去可靠的应对、实现计算资源的弹性伸缩并且保持超级高效？ </p> 
+<p>　　有什么技术可以帮助我们解决复杂交易系统发布、升级、打补丁的危险和痛苦？交易故障出现时系统内部防止雪崩效应保持快速响应的“熔断”（circuit-breaker、fail-fast）机制有什么更规范的做法？用现有云计算的理论和技术倒着去套，显然是无解的，因为： </p> 
+<ul> 
+ <li><p>虚拟机级别的资源调度，太沉重，可编程接口太弱，无法“融入”到一个高性能运算（HPC – High Performance Computing）的应用中。</p></li> 
+ <li><p>仅仅为了资源的弹性伸缩，去引入一个第三方解决方案，例如一个PaaS（诸如CloudFoundry、OpenShift等），对于交易系统而言，代价太大、可控性太低、编程模型受入侵程度太高。</p></li> 
+ <li><p>不是为了云计算而云计算 – 一切“革新”需要合理、充分的应用理由，场景不符合，架构就不合理。</p></li> 
+</ul> 
+<p>　　“Bottom-up Thinking”，即从基础设施的可管理、资源充分共享、运维更高效等角度去看问题，是一个典型的“运维”视角或者所谓CIO的视角，这种思考，关注的是TCO（Total Cost of Ownership）——成本的降低（IT在垂直行业一直被认为是一个成本中心 – 在现在这个时代这是一个错误观点，但这是另一篇文章的讨论范围了）；可是和核心业务应用非常脱节。 </p> 
+<p>　　<strong>对于一个传统行业尤其是受监管行业的IT而言，技术氛围往往是保守和审慎的</strong>，采用云技术这种在互联网界以外还很大程度被认为是“新生事物”的东西，并不是一件容易的事情：在行业繁荣、企业赚钱的时候，公司很可能并不关注运维除了稳定以外的事情 – 包括用虚拟机还是用物理机、能否节省一点成本等等； </p> 
+<p>　　在市场不景气、公司亏钱的时候，IT却又需要以非常充分的数据来证明建立或者采用云平台能带来显著的大幅的成本节省效果，但是这往往首先涉及第三方软件的采购、机房的改造… 这本身就是一个巨大障碍。 </p> 
+<p>　　所以，悲观一点的看， <strong>很大一部分传统行业IT，很可能需要等到云技术成熟为新世代IT系统的标配</strong>，就像mainframe时代向client-server时代转变、client-server时代向多层架构/web技术时代切换，云技术成为一个主流的、企业决策者不再需要加以思索的事物（“no-brainer”）时，才会顺利进入企业世界。此时，运维的视角也许才能被充分接受。但是，对于以创新为本业的金融科技，那已经太迟。 </p> 
+<p>　　早期的云技术，从运维视角去看是自然的，因为虚拟化技术最开始是把基础设施数字化的一个进程。容器化技术的出现，改变了这一切。容器天然与应用服务结合的更紧密、天然需要程序员的深度介入，“上帝的归上帝，凯撒的归凯撒”，容器里面的归程序猿（code monkey），容器外面的归运维狗（watchdog）——不一定对，只是作为笑话简单粗暴的类比一下，但想说明的是容器内外的关注点是不一样的、而运维与研发的协同则是深度的。 </p> 
+<p>　　在Docker刚出现的时候，一直带着前述问题的我们，从其理念已经体会到容器技术对构建一个强韧交易系统的好处。 </p> 
+<p>　　<img src="./为什么一家传统券商选择将交易系统容器化？-搜狐_files/e455cb21d03d49e3bb36a325ee8f5bee_th.jpeg"></p> 
+<p>　　容器技术的到来，让我们在观念上“弯道超车”： </p> 
+<ul> 
+ <li><p>在软件安装、发布方面，我们还需要去学习、模仿Oracle、IBM们研发什么工具吗？不需要了 – 采用容器、容器编排技术、容器镜像管理技术、容器目录（catalog），我们轻易的“一键发布”，而且谁都可以执行。</p></li> 
+ <li><p>在打补丁方面，我们还要去参考Redhat开发个升级工具吗？没必要了，因为我们不打补丁，已经发布的容器里内容永远不会改变（Immutable），需要修复缺陷或者升级版本，我们就发布新容器 – 发布组件乃至整个全新交易系统，成本都是很低的（并且必须永远维持那么低）。因此，我们也不一定需要什么中心化的、统一的、集中的可视化配置管理工具。</p></li> 
+ <li><p>灰度发布、在线升级、多版本生产环境、回滚现在都是容器化系统天然自带的——因为整个系统的发布、部署是低成本的和快速高效的，只要有硬件资源就再发布一套，不行就切换回旧的那套 – 技术界已经在不断总结最佳实践，总有一款套路适合你。</p><p>　　基于容器的微服务，天然支持多服务版本并存；对于回滚，数据库可能是个问题，但首先一切以数据库为中心就是个很有可能是错误的观念（当然，视应用场景而定），在分布式架构里，关系型数据库有可能不在系统关键路径上、事务有好些办法可以规避、通过很好的面向对象设计解耦内存与持久层的耦合… 实际上，经验告诉我们，关系型数据库被滥用是企业应用软件的通病。</p></li> 
+</ul> 
+<p>　　<strong>而比解决运维问题更有趣的，是这几方面：</strong></p> 
+<ul> 
+ <li><p>Infrastructure As Code – 现在总算不是口号了，对着容器、容器编排技术进行编码，让“无人值守”、“智能运维”真正成为可能。虽然Puppet、Chef、Ansible这些技术早就存在，但是它们基本上仅限于操作基础设施的物理、虚拟资源，与一个专业应用系统通过API深度结合然后基于业务场景、系统业务指标来自我维护，是非常困难的。而容器，基本上只是一个进程，通过其API可以轻易深度整合到交易系统里。</p></li> 
+ <li><p>容器技术出现后，也衍生出更多其他新兴技术，例如CoreOS、RancherOS、Unikernel。对于无止境追求极速性能的交易系统，交易软件到底层硬件之间的耗损越少越好，这和我们所遵循的mechanical sympathy技术理念完全一致。</p><p>　　类似Unikernel这样的所谓“library OS”非常有趣，因为整个操作系统萎缩成一系列的基础库，由应用软件直接调用以便运行在裸机（bare metal）上。想象一个超级轻量的交易中间件，无缝（真正意义上）运行在裸机上的毫无羁绊裸奔的“爽”…</p></li> 
+ <li><p>在广发证券IT而言的所谓“弯道超车”，其实更包括几方面的含义：一是观念上的，颠覆传统软件研发的思维，不必要去做追随者；二是技术成长方面的 – 虽然有些技术如Unikernel并未成熟到可以真正运用，但是两三年前的Docker不也一样吗？重要的是团队和一个革命性技术的共同成长，前瞻性技术的研发投入终将回报（capitalize）；</p><p>　　三是实际效果上的，虽然在云计算发力的前几年，我们并未投入到IaaS、PaaS的“基建”，但是从容器化入手，忽然间就获得了一定的“计算资源集合使用”的能力 – 此前只有技术实力较强的科技企业能做Grid Computing。</p></li> 
+</ul> 
+<p>　　在证券业，我们不是孤独者。 <strong>华尔街投行的表率高盛，今年2月份宣布了他们一年内把90%的运算能力容器化的计划。</strong></p> 
+<p>　　<img src="./为什么一家传统券商选择将交易系统容器化？-搜狐_files/4329c91f4a4b4d70a0066e06801819b7_th.jpeg"></p> 
+<p>　　时至今天，在Docker已经被团队广为接受、被应用到各种业务系统中去的时候，我们从两个方向同时继续推进容器化技术： </p> 
+<ul> 
+ <li><p>第一个方向，继续沿用上文所述的“Top-Down”思路，基于业务场景、具体应用需要，把容器（Docker）、容器编排管理（Rancher）的技术深度整合到交易系统中去，让其获得自伸缩（elastic）、自监控（self monitor）、自修复（self-healing）的自动化能力 – 这是“反脆弱”系统的一个必要非充分条件。</p><p>　　至于什么时候伸缩、什么时候自修复、如何学习自己的运行行为以作自我调整、如何把低级的系统指标换算成业务级别的性能指标作为自己的健康“血压计”… 这些是需持续学习挖掘、测试验证的东西。</p></li> 
+ <li><p>第二个方向，是上文所述的“Bottom-Up”思路，采用例如Kubernetes建立起一个多租户的CaaS（容器即服务）平台，支持非交易的应用系统（例如电商平台、机器人投顾服务、CRM等等）的跨云（公有云、私有云、传统机房）容器化。</p></li> 
+</ul> 
+<p style="text-align: center;"><span style="font-size: 16px;"><strong><span>软件工程没有银弹</span></strong></span></p> 
+<p>　　99年图灵奖获得者Fred Brooks（也就是Brooks’ law的发现者：“往一个已经延误的项目里加人力资源，只能让那个项目更延误”）说过， <strong>软件工程没有银子弹。</strong></p> 
+<p>　　在各种标榜“云”的科技公司层出不穷的今天，其实依然还没有任何“黑科技”帮阁下把你的脆弱系统瞬间变成一个强韧系统甚至一个具备反脆弱能力的系统。所以，容器技术也不过是一个也许必要但不充分的有用工具而已。 </p> 
+<p>　　<img src="./为什么一家传统券商选择将交易系统容器化？-搜狐_files/6f6909c4d83241d79235df582533b546_th.jpeg"></p> 
+<p>　　<strong>能否释放云计算的威力，取决于很多因素。</strong>到一个公有云上使用几个虚拟机，也算一个小小的进步，毕竟它可能（1）缩短了一些传统企业采购硬件、机器上架等等的周期；（2）帮不擅长互联网技术的传统企业解决一部分“互联网最后一公里”问题。然而，这只不过是使用了一些虚拟化基础服务，如果部署在上面的系统本身是一个脆弱系统，那么它在云上依然是一个脆弱系统。 </p> 
+<p>　　实现一个强韧甚至反脆弱的技术系统，你首先得有一个恰当的技术架构，而实现这样的技术架构，你首先需要有研发团队 – 不错，个人观点是，在现阶段如果不具备软件研发能力，那么你的组织其实无法真正利用、享受到云技术带来的福利。 </p> 
+<p>　　<span><strong>怎样的架构才能利用和释放云计算能力？</strong></span></p> 
+<p>　　<strong>首先</strong>，架构设计需要遵循Reactive（响应式）原则（根据“响应式宣言”）： </p> 
+<ul> 
+ <li><p>Elasticity – 弹性响应系统负载变化，基于实时性能监控指标以便通过预测性（predictive）和响应性（reactive）算法来对系统进行扩容。</p></li> 
+ <li><p>Resiliency – 通过复制（replication）、包容（containment）、隔离（isolation）和委托（delegation）等机制，保障在故障发生时系统能继续高度可用。</p></li> 
+ <li><p>Responsive – 系统及时探测侦察问题并解决问题，保障对外的及时响应。</p></li> 
+ <li><p>Message-driven – 采用消息驱动的、非堵塞的异步通讯机制，降低系统内部组件模块间的耦合度，提升吞吐量。</p></li> 
+</ul> 
+<p>　　<strong>其次</strong>，在技术研发过程中，我们采用一系列的所谓“Cloud-native patterns”（原生，或者说“天然”的云计算架构模式）来实现我们的系统，以便让系统达到Cloud-ready（具备云感知能力 – 借用IBM与Intel相关中文版论文的概念）。 </p> 
+<p>　　<strong>此外</strong>，“云感知”和上述“响应式”原则，是完全一致的，云感知也关注“故障恢复能力”、“延迟恢复能力”、“扩展的灵活性”。事实上，在一流的金融IT团队里，这些原则、实践要求，从来都是被遵循的，因为金融的应用系统天然需要这些能力。无论是否在云计算时代，这些原则、要求均非常合理。 </p> 
+<p>　　那么 <strong>容器化技术在这其中有什么作用呢？</strong>实践告诉我们，作用很大。最重要一点是，很多pattern的具体技术实现，可以挪到容器层面去处理。例如Circuit-breaker和Fail-fast这类模式，过去的做法，是各个具体的服务，采用自己的技术工具（例如Node.js的守护进程PM2）和办法，基于开发者自己的理解，各自实现。 </p> 
+<p>　　容器化的好处，是把复杂系统里一切异构的技术（无论以Go、Java、Python还是Node.js实现）都装载到一个个的标准集装箱里，然后通过调度中心基于各种监控对这些集装箱进行调度处理。也就是说，Cloud-native的架构模式，有不少是可以在容器编排调度与协同的这一层实现的。 </p> 
+<p>　　<img src="./为什么一家传统券商选择将交易系统容器化？-搜狐_files/ffd1273655a940f78e5a2b56acb7bb4d_th.jpeg"></p> 
+<p style="text-align: center;"><span style="font-size: 16px;"><strong>DevOps：云计算时代的方法论和文化</strong></span></p> 
+<p>　　南怀瑾在某本著作里举过一个剃头匠悟道的例子 – 无论何种行业，技艺追求到极致可能悟到的道理都是共通的。《黑天鹅》和《反脆弱》的作者塔勒布本人也许算的上是这样的一个触类旁通的好例子 – 由金融而“悟道”于哲学（起码被称之为本世纪有影响力的思想家之一）。 </p> 
+<p>　　IT领域不知道有无类似的人物，诸如面向对象设计、架构设计模式、敏捷开发领域的大师级人物Martin Fowler等，显然是抽象思维特别强的人，能够对复杂的技术世界进行“模式识别”而作出一些深刻思考。 </p> 
+<p>　　在技术世界里，我们一向强调方法论，可是有时候也需要形成“世界观”、“信仰”。在无数次的项目危机管理、技术故障攻坚、运维救火之后，IT人也许应该对“世间唯一不变的是变化本身”有深刻体会，从而接受“拥抱不确定”的观念。 </p> 
+<p>　　IT界面对变化与不确定性的态度，这十多年来看也是一个有趣的演变： </p> 
+<ul> 
+ <li><p>直到本世纪初，很多项目管理及软件工程的方法论，依然强调所谓的“Change management”（变更管理），通过组织（“变更委员会”）、流程来“管理”业务系统需求方不断提出的需求管理，视需求变化为项目延误、系统不稳定的根源，以项目“按时”交付为终极目标，可以说这些方法论本质上“厌恶“变更。</p></li> 
+ <li><p>互联网风起云涌后，出于应对瞬息万变的激烈竞争、在线高效运营的刚需，接受“需求变化是常态”、对变更友好的“敏捷”（Agile）方法被自然而然引入到日常项目中，成为过去十年的主流方法论，并且终于把传统企业IT牵引其中（例如广发证券IT启动金融电商系列项目研发前的第一件事就是先把敏捷实践建立起来 – 对口的方法论才可能带来对的结果）。</p></li> 
+ <li><p>然而，绝大部分企业的敏捷实践都局限在垂直业务线的项目团队里，而运维作为一个维护全企业IT生产资源的横向平台型组织，通常被排除在敏捷实践之外。</p><p>　　敏捷迭代方法解决得了业务需求变更的问题，解决不了系统上线后各种突发性的变化 – 故障的及时解决、版本的迅速更新（业务部门总是迫不及待的）、在线经营的瞬间生效（运营人员分分秒秒催着）…</p><p>　　在一切都嫌慢的“互联网时间”里，运维貌似成为最后掉链的一环，以“稳健”为主导的运维团队与“进取”的研发、运营团队无可避免产生冲突</p></li> 
+ <li><p>时至今天，随着“把基础设施数字化”的云计算的普及，一个新的方法论 – DevOps，闪亮登场。之所以说这是一个方法论，是因为它绝不仅仅是“Dev + Ops”这样简单粗暴的把开发工程师和运维工程师捆在一起，用“同一个项目组”、“同一套KPI”来强迫他们分享“同一个梦想”了事。</p><p>　　它是在APM（应用性能监控）、Infrastructure As Code（可编程运维）、Virtualization（虚拟化）、Containerization（容器化）等等这些云计算时代的产物出现后，基于新的技术工具、技术理念而自然产生的。</p><p>　　持续集成（Continuous Integration）、持续交付（Continuous Delivery）、持续运维（Continuous Operation）是DevOps的具体环节和手段，它相当于把一条纯数字化链路上不同的参与者关联到一起 – 无论是开发工程师还是运维工程师，最终都不过是身份稍微差异的Information worker。</p></li> 
+</ul> 
+<p>　　<img src="./为什么一家传统券商选择将交易系统容器化？-搜狐_files/9791ad26c03a4d6fafcfa5c7bb5a0e70_th.jpeg"></p> 
+<p>　　DevOps可能不仅仅是个概念、方法论、技术新名词，它是伴随云计算自然发生的。但它的接受与运用，对于传统企业的IT，尤其是“维稳”为主导思想的受监管行业的IT，可能是一种文化冲击。 </p> 
+<p>　　传统IT甚至是今天的很多技术相对前沿的互联网公司，依然把团队拆分成“运维”、“开发”，在组织结构层面建立相互制衡，以避免开发团队的“冲动冒进”导致生产系统的不稳定，但运维职能往往变成一种“权力”（privilege）- 系统的迭代更新都需要获得运维“审批”，这本身显然就是一个“脆弱系统”，因为对变更是绝不友好的。在技术进步、时代变迁的大环境下，这种过去合理的做法，早晚变成一个将要被颠覆的存在。 </p> 
+<p>　　无论如何，我们认为割裂的讨论一个高性能运算（HPC）的技术系统（如证券交易系统）的容器化、“云化”是不够的，DevOps是构建“反脆弱”技术系统的方法论（起码到目前为止。也许将来有新的思维出现），也是我们系统能力的天然一部分。 </p> 
+<p style="text-align: center;"><span style="font-size: 16px;"><strong><span>结语</span></strong></span></p> 
+<p>　　我们 <strong>从软件研发的视角、证券交易的视角来看待云计算</strong>，深感把促进基础设施数字化、运维代码化的容器化技术，运用到交易系统技术中，是天作之合 – 假如运用得当的话，结合机器学习和智能算法，能帮助我们构建一些“反脆弱”的技术方案（既然有能下围棋的阿尔法狗，我们是否也可以开始憧憬懂得自救的运维狗？）。 </p> 
+<p>　　可以看到的潮流脉络是， <strong>世界是越来越数字化的、变化是越来越频繁的</strong>、而IT是需要拥抱变化的，云计算则只是这个潮流里完全符合趋势而自然出现的技术阶段。 </p> 
+<p>　　有一天Oracle、SAP、各种著名与非知名的专业软件都把它们自身的产品基于容器来构建（例如一个多进程组成的数据库实例里的进程各自运行在自己的容器中），也许对于行业监管者、企业技术决策者而言，云已经无需概念上的存在，而能被毫无质疑的接受。 </p> 
+<p>　　但是这一天到来之前，大部分企业也许可以先尝试调整一个对云服务友好的财务制度 – 项目立项的时候，硬件预算按CPU核数、内存量、存储量来报算，有形的物理机器不再作为资产稽核到各条业务线各个项目组，一切物理硬件归IT。制度和文化，往往才是隐形的决定因素，不是吗？ </p> 
+<p>　　<span><strong>「ArchSummit 北京 2016」</strong></span>12月年底技术嘉年华，阿里云研究员褚霸、Go基金会主席谢孟军、饿了么框架工具部研发总监兰建刚、腾讯毫秒服务引擎技术负责人杨宇将带我们去看架构从0到1，从1到100的进化之路。 <strong>8折限时优惠，现在报名立减千元，点击“<span>阅读原文</span>”了解大会更多精彩！</strong></p> 
+<p style="text-align: center;"><strong><span><strong><span>▽</span></strong></span></strong></p> 
+<blockquote> 
+ <p style="text-align: center;"><span><strong>延展阅读</strong>（点击标题）：</span></p> 
+ <ul> 
+  <li><p><a href="http://mp.weixin.qq.com/s?__biz=MjM5MDE0Mjc4MA==&amp;mid=2650994360&amp;idx=1&amp;sn=dd2664e2db6bfc7427a4ea738899840e&amp;chksm=bdbf0eeb8ac887fdd3019e907ead70c9b4b869cb4e38dfe70cfc56eb0499d4ac757d3c918d27&amp;scene=21#wechat_redirect" target="_blank"><span>微服务那么热，创业公司怎么选用实践？</span></a></p></li> 
+  <li><p><a href="http://mp.weixin.qq.com/s?__biz=MjM5MDE0Mjc4MA==&amp;mid=2650994345&amp;idx=1&amp;sn=0999eb0d4e2b0819751a6b73334c2b0c&amp;chksm=bdbf0efa8ac887ec4eab294794fec20f6883f181f25eb3bf0c41cb1eb27c62a0789e47251772&amp;scene=21#wechat_redirect" target="_blank"><span>从概念到底层技术，一篇文看懂重塑世界的区块链</span></a></p></li> 
+  <li><p><a href="http://mp.weixin.qq.com/s?__biz=MjM5MDE0Mjc4MA==&amp;mid=2650994338&amp;idx=1&amp;sn=2f2f3865c2c1eab6db0672eb6519e37b&amp;chksm=bdbf0ef18ac887e7231b1601cb06d18633836278a96d309c5c4998ff142bb7b778e4819b95fa&amp;scene=21#wechat_redirect" target="_blank"><span>微信小程序来了，产品和运营就不需要跪求程序员了？</span></a></p></li> 
+ </ul> 
+</blockquote> 
+<p style="text-align: center;"><strong>喜欢我们的会点赞，爱我们的会分享！</strong></p>
+		</div>
+		<!-- seo标签描述 -->
+	    <div style="display:none;">
+		    <span id="url" itemprop="url">http://mt.sohu.com/20161012/n470035632.shtml</span>
+            <span id="indexUrl" itemprop="indexUrl">mt.sohu.com</span>
+            <span id="isOriginal" itemprop="isOriginal">true</span>
+			<span id="sourceOrganization" itemprop="sourceOrganization" itemscope="" itemtype="http://schema.org/Organization"><span itemprop="name">InfoQmp</span></span>
+			<span id="author" itemprop="author" itemscope="" itemtype="http://schema.org/Organization"><span itemprop="name"></span></span>
+			<span id="isBasedOnUrl" itemprop="isBasedOnUrl">http://mt.sohu.com/20161012/n470035632.shtml</span>
+			<span id="genre" itemprop="genre">report</span>
+			<span id="wordCount" itemprop="wordCount">20394</span>
+			<span id="description" itemprop="description">“交易系统是命根子，为什么这家传统券商选择将其全部容器化？本文根据梁启鸿在InfoQ举办的CNUTCon2016全球容器技术大会上的演讲整理而成。老司机简介梁启</span>
+		</div>
+		<!-- 返利区 -->
+		<div id="mparea"></div>
+		<!-- 举报 -->
+		<div class="report" id="report">
+		
+		<a class="pagevisit">阅读(<em class="red">0</em>)</a>
+		<span><em class="report-icon"><a href="http://quan.sohu.com/q/545c9b6bf6c43b5569fe64a2" target="_blank">举报</a></em>
+			<div class="txt"><div class="cor"></div>欢迎举报抄袭、转载、暴力色情及含有欺诈和虚假信息的不良文章。</div>
+		</span>
+		</div>
+		<script type="text/javascript">
+		jQuery(function(jq){
+			jq("#report span").hover(function(){
+				jq("#report .txt").show();
+			},function(){
+				jq("#report .txt").hide();
+			});
+		});
+		</script>
+		<!-- 分享 -->
+		<div class="big-share clear" id="big-share" style="z-index: 1;">
+			<div class="like-boring">
+				<dt>
+				</dt><dd><a class="btn-like btn-invalid"><i class="icon-like"></i><em class="num">0</em>喜欢</a>
+					<div class="login-after" style="display: none;">
+						<div class="cor"></div>
+						<h4>请先登录再操作</h4>
+						<p>
+						  <a class="log-sohu" href="javascript:void(0)" onclick="window.open(&#39;http://changyan.sohu.com/api/2/login/passport?client_id=cyqemw6s1&amp;platform_id=11&#39;,&#39;搜狐登陆&#39;,&#39;height=400,width=600,top=&#39;+iTop+&#39;,left=&#39;+iLeft);pulseChkLogin();" title="sohu登录" alt="搜狐"></a>
+						  <a class="log-sina" href="javascript:void(0)" onclick="window.open(&#39;http://changyan.sohu.com/api/2/login/passport?client_id=cyqemw6s1&amp;platform_id=2&#39;,&#39;搜狐登陆&#39;,&#39;height=400,width=600,top=&#39;+iTop+&#39;,left=&#39;+iLeft);pulseChkLogin();" title="sina登录" alt="新浪微博"></a>
+						  <a class="log-qq" href="javascript:void(0)" onclick="window.open(&#39;http://changyan.sohu.com/api/2/login/passport?client_id=cyqemw6s1&amp;platform_id=3&#39;,&#39;搜狐登陆&#39;,&#39;height=400,width=700,top=&#39;+iTop+&#39;,left=&#39;+iLeft);pulseChkLogin();" title="qq登录" alt="QQ"></a>
+						</p>
+					</div>
+				</dd>
+				<dd><a class="btn-boring btn-invalid"><i class="icon-boring"></i><em class="num">0</em>没劲</a>
+					<div class="login-after" style="display: none;">
+						<div class="cor"></div>
+						<h4>请先登录再操作</h4>
+						<p>
+						  <a class="log-sohu" href="javascript:void(0)" onclick="window.open(&#39;http://changyan.sohu.com/api/2/login/passport?client_id=cyqemw6s1&amp;platform_id=11&#39;,&#39;搜狐登陆&#39;,&#39;height=400,width=600,top=&#39;+iTop+&#39;,left=&#39;+iLeft);pulseChkLogin();" title="sohu登录" alt="搜狐"></a>
+						  <a class="log-sina" href="javascript:void(0)" onclick="window.open(&#39;http://changyan.sohu.com/api/2/login/passport?client_id=cyqemw6s1&amp;platform_id=2&#39;,&#39;搜狐登陆&#39;,&#39;height=400,width=600,top=&#39;+iTop+&#39;,left=&#39;+iLeft);pulseChkLogin();" title="sina登录" alt="新浪微博"></a>
+						  <a class="log-qq" href="javascript:void(0)" onclick="window.open(&#39;http://changyan.sohu.com/api/2/login/passport?client_id=cyqemw6s1&amp;platform_id=3&#39;,&#39;搜狐登陆&#39;,&#39;height=400,width=700,top=&#39;+iTop+&#39;,left=&#39;+iLeft);pulseChkLogin();" title="qq登录" alt="QQ"></a>
+						</p>
+					</div>
+				</dd>
+				
+			</div>
+			<ul>
+				<li class="share-tt">分享到</li>
+				<li class="sian"><a href="javascript:void(0)" onclick="jumpUrl(&#39;tsina&#39;)" title="分享到新浪微博"></a></li>
+				<li class="qq"><a href="javascript:void(0)" onclick="jumpUrl(&#39;qq&#39;)" title="分享给QQ好友"></a></li>
+				<li class="wx" id="wx_reader"><a href="javascript:void(0)" title="分享给微信好友"></a>
+					<div class="pr-code-con" style="display: none;">
+						<div class="pr-code-pic"><img src="http://mt.sohu.com/20161012/n470035632.shtml" width="116" height="116" alt="图片说明"></div>
+						<p>微信扫一扫<br>分享至朋友圈</p>
+					</div>
+				</li>
+			</ul>
+			<script type="text/javascript">
+			(function(){
+				var $wxReader = $('#wx_reader');
+				$wxReader.hover(function(){
+					$wxReader.find('.pr-code-con').show();
+					$('#big-share').css({"z-index":20});
+					setQRCode();
+				},function(){
+					$wxReader.find('.pr-code-con').hide();
+					$('#big-share').css({"z-index":1});
+				});
+			})();
+			</script>
+		</div>
+		
+        <!-- 相关新闻 -->
+		<!-- 相关关注 -->
+        <div class="mutu-read clear" id="mutu-read">
+			<h2><span><em class="lne"></em>热门关注</span></h2>
+			<div class="scroll-box">
+			<div class="scroll-con">
+				<div class="box">
+					<div class="l"><a href="http://mp.i.sohu.com/soshenghuo2014/profile" target="_blank"><img src="http://sucimg.itc.cn/avatarimg/493fc7efa0494d8f9e0e2bfb82893f60_1415687594630_c175" width="42" height="42" alt="搜生活"></a></div>
+					<div class="r">
+						<h4><span class="name"><a href="http://mp.i.sohu.com/soshenghuo2014/profile" target="_blank">搜生活</a></span><span class="read"><a href="http://mp.i.sohu.com/soshenghuo2014/profile" target="_blank">+关注</a></span></h4>
+						<p>搜狐公众平台官方账号</p>
+					</div>
+				</div>
+					
+				<div class="box">
+					<div class="l"><a href="http://mp.i.sohu.com/littlemagicyang/profile" target="_blank"><img src="./为什么一家传统券商选择将交易系统容器化？-搜狐_files/f0e87c761e0f4d66adee8873c14940bd_1439280539709_c175" width="42" height="42" alt="MAGIC杨梦晶"></a></div>
+					<div class="r">
+						<h4><span class="name"><a href="http://mp.i.sohu.com/littlemagicyang/profile" target="_blank">MAGIC杨梦晶</a></span><span class="read"><a href="http://mp.i.sohu.com/littlemagicyang/profile" target="_blank">+关注</a></span></h4>
+						<p>生活时尚&amp;搭配博主 /生活时尚自媒体 /时尚类书籍作者</p>
+					</div>
+				</div>
+				<div class="box">
+					<div class="l"><a href="http://mp.i.sohu.com/sohu1223978/profile" target="_blank"><img src="./为什么一家传统券商选择将交易系统容器化？-搜狐_files/b5983703f1bc4678af8bb2160ef88d42_1412922032756_c175" width="42" height="42" alt="搜狐教育"></a></div>
+					<div class="r">
+						<h4><span class="name"><a href="http://mp.i.sohu.com/sohu1223978/profile" target="_blank">搜狐教育</a></span><span class="read"><a href="http://mp.i.sohu.com/sohu1223978/profile" target="_blank">+关注</a></span></h4>
+						<p>搜狐网教育频道官方账号</p>
+					</div>
+				</div>
+				<div class="box">
+					<div class="l"><a href="http://mp.i.sohu.com/my-way/profile" target="_blank"><img src="./为什么一家传统券商选择将交易系统容器化？-搜狐_files/ca259500fdd14cec8ebd959e3d28690c_1407467973723_c175" width="42" height="42" alt="星吧GEO"></a></div>
+					<div class="r">
+						<h4><span class="name"><a href="http://mp.i.sohu.com/my-way/profile" target="_blank">星吧GEO</a></span><span class="read"><a href="http://mp.i.sohu.com/my-way/profile" target="_blank">+关注</a></span></h4>
+						<p>全球最大华文占星网站-专业研究星座命理及测算服务机构</p>
+					</div>
+				</div>
+			</div>
+			</div>
+			<div class="scroll-btns"><a href="javascript:void(0)" class="up uN"></a><a href="javascript:void(0)" class="down"></a></div>
+			<script type="text/javascript">
+			SOHU_MDC_PU.autoScroll({
+				slideOuter : jQuery('#mutu-read'),
+				picList : jQuery('#mutu-read .scroll-con .box'),
+				showCount : 2
+			});
+			</script>
+		</div>
+	    <!-- 畅言 -->	
+	    <script type="text/javascript" src="http://s0.mp.sohu.com/js/mpV2.js"></script>
+		<div id="changyanface"></div>
+<div id="SOHUCS" sid="470035632"></div>
+<script>
+document.domain = "sohu.com";
+if(typeof entityId != 'undefined'){
+    document.getElementById('SOHUCS').setAttribute('sid',entityId); 
+    var category = typeof category != 'undefined' ? category :'';                 
+    var _config = {
+                    jumpUrl: 'http://pinglun.sohu.com/s[topicId].html',
+                    varName: entityId, 
+                    customSohu: true,
+                    //listStyle: 'indent',
+                    //listModule: 'scs.listIndent',
+                    //listType: 'hot',
+                    cyanTitle : '我来说两句',
+                    commentHide : true ,
+                    pageSize: 10,
+                    categoryId: category
+                }
+    }
+    window.SCS_NO_IFRAME = true;
+</script>
+
+<script src="./为什么一家传统券商选择将交易系统容器化？-搜狐_files/changyan.js.下载" charset="utf-8"></script>
+<script type="text/javascript" src="./为什么一家传统券商选择将交易系统容器化？-搜狐_files/plugins.count.js.下载"></script>
+
+<link type="text/css" rel="stylesheet" href="./为什么一家传统券商选择将交易系统容器化？-搜狐_files/chagnyan.face.v2013091220.css">
+<script type="text/javascript" src="./为什么一家传统券商选择将交易系统容器化？-搜狐_files/changyan.freeaccount.v2013112016.js.下载" charset="gbk"></script>
+<script type="text/javascript" src="./为什么一家传统券商选择将交易系统容器化？-搜狐_files/changyan.face.v2013102411.js.下载" charset="gbk"></script>
+
+<script type="text/javascript">
+function createFace(){
+if(!window.SOHUCS || !SOHUCS.nodeData)
+{
+setTimeout(createFace,1000);
+return;
+}
+		var afterVoteCallback=function(desc,voteId,topicId, changYanId){
+			var saymore=new window.changYanSayMore({el:"#changyanface",voteId:voteId,changYanId:changYanId,topicId:newsId,defaultText:desc,afterSubmitCallback:function(){saymore.destory();}});
+			saymore.render();
+		};
+		
+		var face=new window.changYanFace({el:"#changyanface",topicId:newsId,afterVoteCallback:afterVoteCallback,changYanId:SOHUCS.nodeData.listData.topic_id});
+		face.render();
+	}
+
+ $(function(){createFace();});
+
+</script>
+<script>
+if(!window.PassportSC)
+{
+document.write("<script"+" src=\"http://comment.news.sohu.com/upload/comment4_1/javascript/core/passport.js\">"+"</script"+">");
+}
+</script><script src="./为什么一家传统券商选择将交易系统容器化？-搜狐_files/passport.js.下载"></script>
+<link type="text/css" rel="stylesheet" href="./为什么一家传统券商选择将交易系统容器化？-搜狐_files/comment2.v2013032608.css">
+<script type="text/javascript" src="./为什么一家传统券商选择将交易系统容器化？-搜狐_files/sohu.comment.v2013040210.js.下载"></script>
+<script type="text/javascript" src="./为什么一家传统券商选择将交易系统容器化？-搜狐_files/comm.login.v2013040210.js.下载"></script>
+
+				<script src="./为什么一家传统券商选择将交易系统容器化？-搜狐_files/news_scrolltop.js.下载"></script>
+				<script src="./为什么一家传统券商选择将交易系统容器化？-搜狐_files/news_commentbar.js.下载"></script>
+				<script>
+					evtDispatcher.addEvent('public.jsonData', function(evt){
+					    var data = evt.json;
+					   var url = $('#commentTab .com-label a').attr('href');
+					   if(typeof url == 'undefined')
+    					      url = 'http://pinglun.sohu.com/s'+entityId+'.html';
+    					   newsCommentBar(data.partiCount||0,url)
+         			           $.scrollTop(".scroll-top"); 
+					});
+				</script>
+	</div>		
+    <!-- 右侧 -->	
+    <div class="rightbar-wrapper">
+		<div class="user-info clear">
+			<div class="user-intro clear">
+				<div class="user-pic"><a href="http://mp.sohu.com/profile?xpt=c29odW1wMEMxWlUzQHNvaHUuY29t" target="_blank"><img src="./为什么一家传统券商选择将交易系统容器化？-搜狐_files/017e6972f96542b4a70fa14df84569ee.jpg"></a></div>
+				<div class="user-txt">
+					<h4>
+					  <span class="user-name"><a href="http://mp.sohu.com/profile?xpt=c29odW1wMEMxWlUzQHNvaHUuY29t" target="_blank">InfoQmp</a></span>
+					  <span class="user-grade">
+					  </span>
+					</h4>
+					<p></p>
+				</div>
+			</div>
+			<div class="user-data">
+				<ul>
+					<li class="numA"><span>0</span>阅读量</li>
+					<li class="numB"><span>556</span>文章数</li>
+					<li class="numC"><span>0</span>评论数</li>
+				</ul>
+			</div>
+		  </div>
+		  
+		<!-- 搜索 热词 -->
+		<div class="search-hotword clear">
+			<div class="search">
+				<form action="http://www.sogou.com/web" method="get" target="_blank" id="searchform" name="searchform" onsubmit="return CheckKeyWord();" autocomplete="off"> 
+					<input type="text" name="query" id="query" class="search-in" value="为什么一家传统券商选择将交易系统容器化？">
+					<input type="hidden" name="t" id="t" value="news">
+					<input type="submit" class="search-btn" value="搜狗搜索" onmouseover="this.className=&#39;search-btn search-btn-over&#39;" onmouseout="this.className=&#39;search-btn&#39;">
+				</form>
+			</div>
+			<div class="hotword">热词：
+<a href="http://www.sogou.com/sogou?pid=sogou-inse-c5ab6cebaca97f71&amp;query=%E5%A5%B3%E7%8E%8B%E4%BB%B0%E8%BA%AB%E7%A9%BF%E8%BD%A6%E5%BA%95" target="_blank" rel="nofollow">软体女神</a>
+<a href="http://www.sogou.com/sogou?pid=sogou-inse-c5ab6cebaca97f71&amp;query=%E7%94%B7%E7%AB%A5%E9%85%B7%E4%BC%BC%E5%A4%96%E6%98%9F%E4%BA%BA" target="_blank" rel="nofollow">外星人男童</a>
+<a href="http://www.sogou.com/sogou?pid=sogou-inse-c5ab6cebaca97f71&amp;query=%E6%83%85%E4%BA%BA%E8%8A%82%E5%82%AC%E7%94%9F%E5%A4%A9%E4%BB%B7%E7%8E%AB%E7%91%B0" target="_blank" rel="nofollow">天价玫瑰</a>
+<a href="http://www.sogou.com/sogou?pid=sogou-inse-c5ab6cebaca97f71&amp;query=%E7%BE%8E%E5%9B%BD%E7%8E%B0%E6%A9%99%E8%89%B2%E7%9F%AD%E5%90%BB%E9%B3%84" target="_blank" rel="nofollow">橙色短吻鳄</a></div>
+		</div>
+        <script type="text/javascript">
+        function CheckKeyWord(){
+                 var sf = document.searchform;
+                 with(sf){
+          //if (query.value == "为什么一家传统券商选择将交易系统容器化？") {
+          //                query.value = "";
+          //                setTimeout("query.value='为什么一家传统券商选择将交易系统容器化？'", 1000);
+          //       }
+        }
+                 return true;
+        }
+        
+        // 改变提交的查询动作
+        function CheckFormAction(v){
+                 var sf = document.searchform;
+                 with(sf){
+          if (v=='web') {
+                          action = "http://www.sogou.com/web";
+            p.value = "02240100";                                 
+                 } else {
+                          p.value = "02240101";
+                          action = "http://news.sogou.com/news";
+                 }
+        }
+                 return true;
+        }
+
+        jQuery(function(jq){
+                 var searchValue = jq(".search-in").val();
+                 jq(".search-in").focus(function(){
+                          jq(this).val("").css("color","#333");
+                          jq(".search").addClass("search-act");
+                 }).blur(function(){
+                          if(jq(this).val() == ""){
+                                    jq(this).val(searchValue).css("color","#666");
+                                    jq(".search").removeClass("search-act");
+                          } 
+                 })
+        });
+        </script>
+	    <!-- 手机看新闻 -->
+            <div class="phone_rss">
+   <a href="http://home.focus.cn/" target="_blank"><img src="./为什么一家传统券商选择将交易系统容器化？-搜狐_files/3422_0a7e7ae4_00e8_3636_d752_8ee7fdf0bbd5_1.jpg" width="300" height="92"></a></div>
+<div class="blank5B"></div>
+	    
+
+<!-- 相关图片 -->
+		<div style="height:auto" id="hotpicnew" class="mutu-pic kind-video clear">
+			<h2><span>热门图片</span></h2>
+			<style>
+			#container .mutu-pic .list12 ul{margin:0 auto 12px;width:272px}
+			</style>
+			<div class="pic-group">
+				<ul>
+					<li><a rel="nofollow" target="_blank" href="http://qihuayao.com/portal.php?mod=view&amp;aid=20018"><img width="125" height="85" alt="" src="./为什么一家传统券商选择将交易系统容器化？-搜狐_files/a75_b19169e2_1423_a6e7_854f_b3a0521135e3_1.jpg"><span>赵本山女儿晒香艳照</span></a></li>
+
+					<li><a rel="nofollow" target="_blank" href="http://qihuayao.com/portal.php?mod=view&amp;aid=20040"><img width="125" height="85" alt="" src="./为什么一家传统券商选择将交易系统容器化？-搜狐_files/a75_62d0c048_8d68_f170_b81e_da5b4142e2eb_1.jpg"><span>遭痛批没素质的明星</span></a></li>
+
+					<li><a rel="nofollow" target="_blank" href="http://913ent.com/a/yule/bagua/20170123/18306.html"><img width="125" height="85" alt="" src="./为什么一家传统券商选择将交易系统容器化？-搜狐_files/a75_fde48be6_486c_f277_c513_1ffc50b64fda_1.jpg"><span>比正室还嚣张的女星</span></a></li>
+
+					<li><a rel="nofollow" target="_blank" href="http://yule.1meitu.com/a/yule/bagua/2017/0112/11431.html"><img width="125" height="85" alt="" src="./为什么一家传统券商选择将交易系统容器化？-搜狐_files/a75_b97d89ce_1fdc_0461_20bb_7da551c13400_1.jpg"><span>衣裤滑落丢死人的女星</span></a></li>
+
+
+				</ul>
+			</div>
+		</div>		
+
+ <div class="rightbar-foot"></div>
+<!-- 影视视频 -->
+		<div class="kind-video clear" id="kind-video">
+			<div class="video-menu">
+				<ul>
+					
+					<li>热点视频</li>
+					
+					<li>影视剧</li>
+					<li>综艺</li>
+					<li class="video-menu-end">原创</li>
+				</ul>
+			</div>
+			<div class="video-cont hot-video clear">
+				<div class="pic-group">
+<ul> 
+                           <li><a href="http://tv.sohu.com/20150316/n409834355.shtml?pvid=6de360dfc764657c" target="_blank"><img src="./为什么一家传统券商选择将交易系统容器化？-搜狐_files/303f_ff71c405_7624_4b35_7515_8f742c0878c2_1.jpg" width="130" height="75" alt=""></a><span><a href="http://tv.sohu.com/20150316/n409834355.shtml?pvid=6de360dfc764657c" target="_blank">看黄片副局长已被停职</a></span></li>
+
+                           <li><a href="http://tv.sohu.com/20150316/n409838033.shtml?pvid=6de360dfc764657c" target="_blank"><img src="./为什么一家传统券商选择将交易系统容器化？-搜狐_files/303f_1048f05b_2acf_5848_8111_7d6a3be8aa7e_1.jpg" width="130" height="75" alt=""></a><span><a href="http://tv.sohu.com/20150316/n409838033.shtml?pvid=6de360dfc764657c" target="_blank">小学开课教掼蛋合适吗</a></span></li>
+
+                          <li><a href="http://tv.sohu.com/20150316/n409835383.shtml?pvid=6de360dfc764657c" target="_blank"><img src="./为什么一家传统券商选择将交易系统容器化？-搜狐_files/303f_dfeaa20e_f90e_86d2_8e12_a8cbc16cd4cf_1.jpg" width="130" height="75" alt=""></a><span><a href="http://tv.sohu.com/20150316/n409835383.shtml?pvid=6de360dfc764657c" target="_blank">空姐招聘现场美腿抢镜</a></span></li>
+
+                          <li><a href="http://tv.sohu.com/20150315/n409813255.shtml?pvid=6de360dfc764657c" target="_blank"><img src="./为什么一家传统券商选择将交易系统容器化？-搜狐_files/303f_52294433_eedd_318a_6784_819b76093f98_1.jpg" width="130" height="75" alt=""></a><span><a href="http://tv.sohu.com/20150315/n409813255.shtml?pvid=6de360dfc764657c" target="_blank">准妈妈堕胎捐骨髓救妹</a></span></li>
+
+                          <li><a href="http://tv.sohu.com/20150315/n409803867.shtml?pvid=6de360dfc764657c" target="_blank"><img src="./为什么一家传统券商选择将交易系统容器化？-搜狐_files/303f_dbaae501_7d45_0fa4_1aeb_358073975ece_1.jpg" width="130" height="75" alt=""></a><span><a href="http://tv.sohu.com/20150315/n409803867.shtml?pvid=6de360dfc764657c" target="_blank">辣条生产场地环境肮脏</a></span></li>
+
+                          <li><a href="http://tv.sohu.com/20150316/n409834326.shtml?pvid=6de360dfc764657c" target="_blank"><img src="./为什么一家传统券商选择将交易系统容器化？-搜狐_files/303f_652310c6_5c2d_ccc8_06d0_fae2b0438be5_1.jpg" width="130" height="75" alt=""></a><span><a href="http://tv.sohu.com/20150316/n409834326.shtml?pvid=6de360dfc764657c" target="_blank">百岁老太高空跳伞庆生</a></span></li> 
+                         
+                        <li><a href="http://tv.sohu.com/20150312/n409662402.shtml?pvid=6de360dfc764657c" target="_blank"><img src="./为什么一家传统券商选择将交易系统容器化？-搜狐_files/3498_64839fc8_0c6a_8d85_3e9d_c1d582a97827_1.jpg" width="130" height="75" alt=""></a><span><a href="http://tv.sohu.com/20150312/n409662402.shtml?pvid=6de360dfc764657c" target="_blank">&lt;屌丝男士4&gt;爆笑开机</a></span></li>
+
+                        <li><a href="http://tv.sohu.com/20150315/n409812870.shtml?pvid=6de360dfc764657c" target="_blank"><img src="./为什么一家传统券商选择将交易系统容器化？-搜狐_files/303f_dfe82e52_0c81_9775_86d5_9452f74be014_1.jpg" width="130" height="75" alt=""></a><span><a href="http://tv.sohu.com/20150315/n409812870.shtml?pvid=6de360dfc764657c" target="_blank">刘欢回应二当冠军导师</a></span></li>
+
+                        <li><a href="http://tv.sohu.com/s2014/sdxlyz/?pvid=6de360dfc764657c" target="_blank"><img src="./为什么一家传统券商选择将交易系统容器化？-搜狐_files/3498_8dbb8eae_37e2_23bc_cd70_8acb874f9e62_1.jpg" width="130" height="75" alt=""></a><span><a href="http://tv.sohu.com/s2014/sdxlyz/?pvid=6de360dfc764657c" target="_blank">神雕侠侣-大结局</a></span></li>                        
+
+                        <li><a href="http://tv.sohu.com/s2014/jxyhlmx/?pvid=6de360dfc764657c" target="_blank"><img src="./为什么一家传统券商选择将交易系统容器化？-搜狐_files/303f_0e8725c6_0849_7024_bbf9_185f922431f7_1.jpg" width="130" height="75" alt=""></a><span><a href="http://tv.sohu.com/s2014/jxyhlmx/?pvid=6de360dfc764657c" target="_blank">同步热播-锦绣缘</a></span></li>
+      
+                   </ul></div>
+			</div>
+			<div class="video-cont tv-mv clear">
+				<script src="./为什么一家传统券商选择将交易系统容器化？-搜狐_files/count.js.下载"></script>
+
+
+                                 <div class="video-box clear">
+					<div class="video-pic"><a href="http://tv.sohu.com/s2014/jxyhlmx?pvid=9e67c19acc243c17" target="_blank"><img src="./为什么一家传统券商选择将交易系统容器化？-搜狐_files/340a_3666a831_f282_da5d_9ac1_745d79f5bd33_1.jpg" width="125" height="85" alt="锦绣缘"></a><em class="floor"><a href="http://tv.sohu.com/s2014/jxyhlmx?pvid=9e67c19acc243c17" target="_blank"></a></em></div>
+					<div class="video-txt">
+						<h4><a href="http://tv.sohu.com/s2014/jxyhlmx?pvid=9e67c19acc243c17" target="_blank">同步热播-锦绣缘</a></h4>
+						<h5>主演：黄晓明/陈乔恩/乔任梁/谢君豪/吕佳容/戚迹</h5>
+						
+					</div>
+				</div>
+				
+				
+				<div class="broken-line"></div>
+
+								<div class="video-box clear">
+					<div class="video-pic"><a href="http://tv.sohu.com/s2014/sdxlyz?pvid=9e67c19acc243c17" target="_blank"><img src="./为什么一家传统券商选择将交易系统容器化？-搜狐_files/340a_e6c94874_1d62_3a17_7b87_41130e0ecdb2_1.jpg" width="125" height="85" alt="神雕侠侣"></a><em class="floor"><a href="http://tv.sohu.com/s2014/sdxlyz?pvid=9e67c19acc243c17" target="_blank"></a></em></div>
+					<div class="video-txt">
+						<h4><a href="http://tv.sohu.com/s2014/sdxlyz?pvid=9e67c19acc243c17" target="_blank">大结局-神雕侠侣</a></h4>
+						<h5>主演：陈晓/陈妍希/张馨予/杨明娜/毛晓彤/孙耀琦</h5>
+						
+					</div>	</div>
+				
+				<div class="broken-line"></div>
+
+				<div class="video-box clear">
+					<div class="video-pic"><a href="http://tv.sohu.com/s2015/fsyx?pvid=9e67c19acc243c17" target="_blank"><img src="./为什么一家传统券商选择将交易系统容器化？-搜狐_files/340a_5683baff_f82b_50ce_e3b4_15003d8f17e8_1.jpg" width="125" height="85" alt="封神英雄榜"></a><em class="floor"><a href="http://tv.sohu.com/s2015/fsyx?pvid=9e67c19acc243c17" target="_blank"></a></em></div>
+					<div class="video-txt">
+						<h4><a href="http://tv.sohu.com/s2015/fsyx?pvid=9e67c19acc243c17" target="_blank">同步热播-封神英雄榜</a></h4>
+						<h5>主演：陈键锋/李依晓/张迪/郑亦桐/张明明/何彦霓</h5>		
+</div> </div>
+<div class="broken-line"></div>
+
+<div class="video-box clear">
+					<div class="video-pic"><a href="http://tv.sohu.com/20140225/n395634904.shtml?spayid=220011&amp;pvid=2de045044c8b9117" target="_blank"> <img src="./为什么一家传统券商选择将交易系统容器化？-搜狐_files/340a_0cbbceec_8372_e2f3_6d53_b326179090ac_1.jpg" width="125" height="85" alt="六颗子弹"></a><em class="floor"><a href="http://tv.sohu.com/20140225/n395634904.shtml?spayid=220011&amp;pvid=2de045044c8b9117" target="_blank"></a></em></div>
+					<div class="video-txt">
+						<h4><a href="http://tv.sohu.com/20140225/n395634904.shtml?spayid=220011&amp;pvid=2de045044c8b9117" target="_blank">六颗子弹</a></h4>
+						<h5>主演：尚格·云顿/乔·弗拉尼甘/Bianca Bree</h5>
+						
+					</div>
+								</div>
+				<div class="broken-line"></div>
+<div class="video-box clear">
+					<div class="video-pic"><a href="http://film.sohu.com/album/8409725.html?channeled=1200120000&amp;pvid=2de045044c8b9117" target="_blank"><img src="./为什么一家传统券商选择将交易系统容器化？-搜狐_files/332e_b88fc379_0036_cfb4_d7eb_0d2882d2da71_1.jpg" width="125" height="85" alt="龙虎少年队2"></a><em class="floor"><a href="http://film.sohu.com/album/8409725.html?channeled=1200120000&amp;pvid=2de045044c8b9117" target="_blank"></a></em></div>
+					<div class="video-txt">
+						<h4><a href="http://film.sohu.com/album/8409725.html?channeled=1200120000&amp;pvid=2de045044c8b9117" target="_blank">龙虎少年队2</a></h4>
+						<h5>主演：艾斯·库珀/ 查宁·塔图姆/ 乔纳·希尔</h5>
+						
+					</div>
+				</div>
+			</div>
+			<div class="video-cont zy clear">
+				<div class="video-box clear">
+					<div class="video-pic"><a href="http://tv.sohu.com/20150327/n410395671.shtml" target="_blank"><img src="./为什么一家传统券商选择将交易系统容器化？-搜狐_files/302c_bdac395e_b317_62e9_89d2_1ee2cca62d91_1.jpg" width="125" height="85" alt=""></a><em class="floor"><a href="http://tv.sohu.com/20150327/n410395671.shtml" target="_blank"></a></em></div>
+					<div class="video-txt">
+						<h4><a href="http://tv.sohu.com/20150327/n410395671.shtml" target="_blank">《奔跑吧兄弟》
+
+</a></h4>
+						<h5>baby14岁写真曝光</h5>
+						
+                                        </div>    
+		</div>
+
+<div class="broken-line"></div>
+
+
+
+
+<div class="video-box clear">
+
+                                <div class="video-pic"><a href="http://tv.sohu.com/20150327/n410389926.shtml" target="_blank"><img src="./为什么一家传统券商选择将交易系统容器化？-搜狐_files/302c_3a252901_b387_56f1_0dca_abbed524b034_1.jpg" width="125" height="85" alt=""></a><em class="floor"><a href="http://tv.sohu.com/20150327/n410389926.shtml" target="_blank"></a></em></div>
+					<div class="video-txt">
+						<h4><a href="http://tv.sohu.com/20150327/n410389926.shtml" target="_blank">《我看你有戏》
+
+</a></h4>
+						<h5>李冰冰向成龙撒娇争宠</h5>
+					</div>
+
+</div>
+
+<div class="broken-line"></div>
+
+
+
+
+<div class="video-box clear">
+									
+                   <div class="video-pic"><a href="http://tv.sohu.com/20150326/n410381650.shtml" target="_blank"><img src="./为什么一家传统券商选择将交易系统容器化？-搜狐_files/302c_bd547e5d_20cd_3d1c_f94b_7571fa2ae7b7_1.jpg" width="125" height="85" alt=""></a><em class="floor"><a href="http://tv.sohu.com/20150326/n410381650.shtml" target="_blank"></a></em></div>
+					<div class="video-txt">
+						<h4><a href="http://tv.sohu.com/20150326/n410381650.shtml" target="_blank">《明星同乐会》
+
+</a></h4>
+						<h5>李湘遭闺蜜曝光旧爱</h5>
+					</div>
+				
+				</div>
+<div class="broken-line"></div>
+
+
+
+
+<div class="video-box clear">
+									
+                   <div class="video-pic"><a href="http://tv.sohu.com/20150330/n410557508.shtml" target="_blank"><img src="./为什么一家传统券商选择将交易系统容器化？-搜狐_files/2ed3_2d8cfcb5_fe51_6b90_760a_bcccd53ab45f_1.jpg" width="125" height="85" alt=""></a><em class="floor"><a href="http://tv.sohu.com/20150330/n410557508.shtml" target="_blank"></a></em></div>
+					<div class="video-txt">
+						<h4><a href="http://tv.sohu.com/20150330/n410557508.shtml" target="_blank">《非你莫属》
+
+</a></h4>
+						<h5>美女模特教老板走秀</h5>
+					</div>
+		</div>
+
+<div class="broken-line"></div>
+
+
+
+
+<div class="video-box clear">
+
+                  <div class="video-pic"><a href="http://tv.sohu.com/20150331/n410558103.shtml" target="_blank"><img src="./为什么一家传统券商选择将交易系统容器化？-搜狐_files/2ed3_22a28787_35e5_2577_3d10_ca4d5b761a71_1.jpg" width="125" height="85" alt=""></a><em class="floor"><a href="http://tv.sohu.com/20150331/n410558103.shtml" target="_blank"></a></em></div>
+					<div class="video-txt">
+						<h4><a href="http://tv.sohu.com/20150331/n410558103.shtml" target="_blank">《一站到底》
+
+</a></h4>
+						<h5>曝搬砖男神奇葩择偶观</h5>	
+						
+	    </div>
+		</div>
+             
+<div class="broken-line"></div>
+			</div>
+			<div class="video-cont ych clear">
+				<div class="video-box clear">
+<div class="video-pic"><a href="http://tv.sohu.com/20150319/n410013604.shtml?pvid=9e67c19acc243c17" target="_blank"><img src="./为什么一家传统券商选择将交易系统容器化？-搜狐_files/3324_d560f802_49ac_3757_a5a8_70d7cc8926eb_1.jpg" width="125" height="85" alt=""></a><em class="floor"><a href="http://tv.sohu.com/20150319/n410013604.shtml?pvid=9e67c19acc243c17" target="_blank"></a></em></div>
+<div class="video-txt">
+<h4><a href="http://tv.sohu.com/20150319/n410013604.shtml?pvid=9e67c19acc243c17" target="_blank">搜狐视频娱乐播报</a></h4>
+<h5>柳岩被迫成赚钱工具</h5>
+</div>
+
+
+
+</div>				
+<div class="broken-line"></div>               
+<div class="video-box clear">
+<div class="video-pic"><a href="http://tv.sohu.com/20150326/n410326406.shtml?pvid=9e67c19acc243c17" target="_blank"><img src="./为什么一家传统券商选择将交易系统容器化？-搜狐_files/3324_d615c64a_2c91_beaa_99eb_94fe42750228_1.jpg" width="125" height="85" alt=""></a><em class="floor"><a href="http://tv.sohu.com/20150326/n410326406.shtml?pvid=9e67c19acc243c17" target="_blank"></a></em></div>
+<div class="video-txt">
+<h4><a href="http://tv.sohu.com/20150326/n410326406.shtml?pvid=9e67c19acc243c17" target="_blank">大鹏嘚吧嘚</a></h4>
+<h5>大屁小P虐心恋</h5>
+</div>
+
+</div>
+<div class="broken-line"></div>
+<div class="video-box clear">
+<div class="video-pic"><a href="http://tv.sohu.com/20140929/n404763039.shtml?pvid=9e67c19acc243c17" target="_blank"><img src="./为什么一家传统券商选择将交易系统容器化？-搜狐_files/3324_7ea48c51_92e4_34c0_b159_49b270c3102e_1.jpg" width="125" height="85" alt=""></a><em class="floor"><a href="http://tv.sohu.com/20140929/n404763039.shtml?pvid=9e67c19acc243c17" target="_blank"></a></em></div>
+<div class="video-txt">
+<h4><a href="http://tv.sohu.com/20140929/n404763039.shtml?pvid=9e67c19acc243c17" target="_blank">匆匆那年第16集</a></h4>
+<h5>匆匆那年大结局</h5>
+</div>
+
+</div>
+<div class="broken-line"></div>
+<div class="video-box clear">
+<div class="video-pic"><a href="http://tv.sohu.com/20140918/n404436802.shtml?pvid=9e67c19acc243c17" target="_blank"><img src="./为什么一家传统券商选择将交易系统容器化？-搜狐_files/3324_fd4e5c62_d401_93b9_3ede_04a060be2fdc_1.jpg" width="125" height="85" alt=""></a><em class="floor"><a href="http://tv.sohu.com/20140918/n404436802.shtml?pvid=9e67c19acc243c17" target="_blank"></a></em></div>
+<div class="video-txt">
+<h4><a href="http://tv.sohu.com/20140918/n404436802.shtml?pvid=9e67c19acc243c17" target="_blank">隐秘而伟大第二季</a></h4>
+<h5>乔杉遭粉丝骚扰</h5>
+</div>
+
+
+</div>
+<div class="broken-line"></div>
+<div class="video-box clear">
+<div class="video-pic"><a href="http://tv.sohu.com/20141128/n406479410.shtml?pvid=9e67c19acc243c17" target="_blank"><img src="./为什么一家传统券商选择将交易系统容器化？-搜狐_files/3324_19604b98_5c63_aa71_9451_fefab7835efb_1.jpg" width="125" height="85" alt=""></a><em class="floor"><a href="http://tv.sohu.com/20141128/n406479410.shtml?pvid=9e67c19acc243c17" target="_blank"></a></em></div>
+<div class="video-txt">
+<h4><a href="http://tv.sohu.com/20141128/n406479410.shtml?pvid=9e67c19acc243c17" target="_blank">The Kelly Show</a></h4>
+<h5>男闺蜜的尴尬初夜</h5>
+</div>
+
+				</div>
+			</div>
+		</div>
+            <div class="rightbar-foot"></div>
+	    <!-- 我来说两句排行榜 -->
+		
+
+<div class="comment-rank clear">
+    <h2>
+        <span>我来说两句排行榜</span>
+    </h2>
+    
+    <dl>
+        <dt>
+            <a href="http://pinglun.sohu.com/s480530427.html" target="_blank">772</a>
+        </dt>
+        <dd>
+            <a href="http://news.sohu.com/20170213/n480530427.shtml" target="_blank">新郎新婚夜锤杀新娘：不能承受的天价彩礼之痛</a>
+            [<em class="red"><a href="http://pinglun.sohu.com/s480530427.html" target="_blank">评</a></em>]
+        </dd>
+    </dl>
+    
+    <div class="broken-line"></div>
+    
+    
+    <dl>
+        <dt>
+            <a href="http://pinglun.sohu.com/s480530350.html" target="_blank">442</a>
+        </dt>
+        <dd>
+            <a href="http://news.sohu.com/20170213/n480530350.shtml" target="_blank">中国游客遭越南边防人员殴打 现已转院治疗</a>
+            [<em class="red"><a href="http://pinglun.sohu.com/s480530350.html" target="_blank">评</a></em>]
+        </dd>
+    </dl>
+    
+    <div class="broken-line"></div>
+    
+    
+    <dl>
+        <dt>
+            <a href="http://pinglun.sohu.com/s480526346.html" target="_blank">274</a>
+        </dt>
+        <dd>
+            <a href="http://news.sohu.com/20170212/n480526346.shtml" target="_blank">央媒调查村霸现象：有“两委”班子成员沦为“村霸”</a>
+            [<em class="red"><a href="http://pinglun.sohu.com/s480526346.html" target="_blank">评</a></em>]
+        </dd>
+    </dl>
+    
+    <div class="broken-line"></div>
+    
+    
+    <dl>
+        <dt>
+            <a href="http://pinglun.sohu.com/s480531728.html" target="_blank">460</a>
+        </dt>
+        <dd>
+            <a href="http://news.sohu.com/20170213/n480531728.shtml" target="_blank">中学生撞宝马车留道歉信并赔311元 车主送他1万元-搜狐新闻</a>
+            [<em class="red"><a href="http://pinglun.sohu.com/s480531728.html" target="_blank">评</a></em>]
+        </dd>
+    </dl>
+    
+    <div class="broken-line"></div>
+    
+    
+    <dl>
+        <dt>
+            <a href="http://pinglun.sohu.com/s480531768.html" target="_blank">226</a>
+        </dt>
+        <dd>
+            <a href="http://news.sohu.com/20170213/n480531768.shtml" target="_blank">“收购玉米获刑案”今再审 当事人：若判无罪还收</a>
+            [<em class="red"><a href="http://pinglun.sohu.com/s480531768.html" target="_blank">评</a></em>]
+        </dd>
+    </dl>
+    
+    <div class="broken-line"></div>
+    
+    
+    <dl>
+        <dt>
+            <a href="http://pinglun.sohu.com/s480519724.html" target="_blank">287</a>
+        </dt>
+        <dd>
+            <a href="http://news.sohu.com/20170212/n480519724.shtml" target="_blank">连曝3起打游客事件！丽江要求旅游业“刮骨疗毒”</a>
+            [<em class="red"><a href="http://pinglun.sohu.com/s480519724.html" target="_blank">评</a></em>]
+        </dd>
+    </dl>
+    
+    <div class="broken-line"></div>
+    
+    
+    <dl>
+        <dt>
+            <a href="http://pinglun.sohu.com/s480508420.html" target="_blank">1263</a>
+        </dt>
+        <dd>
+            <a href="http://news.sohu.com/20170212/n480508420.shtml" target="_blank">员工上班喝牛奶被通报 官方：被群众看到影响不好</a>
+            [<em class="red"><a href="http://pinglun.sohu.com/s480508420.html" target="_blank">评</a></em>]
+        </dd>
+    </dl>
+    
+    <div class="broken-line"></div>
+    
+    
+    <dl>
+        <dt>
+            <a href="http://pinglun.sohu.com/s480519789.html" target="_blank">506</a>
+        </dt>
+        <dd>
+            <a href="http://news.sohu.com/20170212/n480519789.shtml" target="_blank">少年公车指认小偷遭殴打 2名嫌疑人已被抓捕归案</a>
+            [<em class="red"><a href="http://pinglun.sohu.com/s480519789.html" target="_blank">评</a></em>]
+        </dd>
+    </dl>
+    
+    <div class="broken-line"></div>
+    
+    
+    <dl>
+        <dt>
+            <a href="http://pinglun.sohu.com/s480350661.html" target="_blank">667</a>
+        </dt>
+        <dd>
+            <a href="http://mt.sohu.com/it/p/125900342_128135" target="_blank">搜狐公众平台 - 不怕货比货 vivo拍照对比苹果、三星S7</a>
+            [<em class="red"><a href="http://pinglun.sohu.com/s480350661.html" target="_blank">评</a></em>]
+        </dd>
+    </dl>
+    
+    <div class="broken-line"></div>
+    
+    
+    <dl>
+        <dt>
+            <a href="http://pinglun.sohu.com/s480530334.html" target="_blank">38</a>
+        </dt>
+        <dd>
+            <a href="http://news.sohu.com/20170213/n480530334.shtml" target="_blank">江苏首位70后地级市书记诞生：毕业3年即为正科-搜狐新闻</a>
+            [<em class="red"><a href="http://pinglun.sohu.com/s480530334.html" target="_blank">评</a></em>]
+        </dd>
+    </dl>
+    
+    
+</div>
+                <div class="rightbar-foot"></div>
+                 <div class="rightbar-head"></div>
+	    <!-- 信息 -->
+		<div class="sohu-info clear">
+			<div class="contact-icon"></div>
+			<div class="contact-txt">
+				<p>客服热线：86-10-58511234</p>
+				<p>客服邮箱：<a href="mailto:kf@vip.sohu.com" target="_blank">kf@vip.sohu.com</a></p>
+			</div>
+		</div>
+        </div>
+</div>
+<!-- 标准尾 start -->
+<div collection="Y">
+<div class="clear"></div>
+	<div id="foot" class="Area area">
+		<a href="javascript:void(0)" onclick="this.style.behavior=&#39;url(#default#homepage)&#39;;this.setHomePage(&#39;http://www.sohu.com&#39;);return" false;="">设置首页</a>
+		- <a href="http://pinyin.sogou.com/" target="_blank" rel="nofollow">搜狗输入法</a>
+		- <a href="http://pay.sohu.com/" target="_blank" rel="nofollow">支付中心</a>
+		- <a href="http://hr.sohu.com/" target="_blank" rel="nofollow">搜狐招聘</a>
+		- <a href="http://ad.sohu.com/" target="_blank" rel="nofollow">广告服务</a>
+		- <a href="http://sohucallcenter.blog.sohu.com/" target="_blan" rel="nofollow" k="">客服中心</a>
+		- <a href="http://corp.sohu.com/s2006/contactus/" target="_blank" rel="nofollow">联系方式</a>
+		- <a href="http://www.sohu.com/about/privacy.html" target="_blank" rel="nofollow">保护隐私权</a>
+		- <a href="http://investors.sohu.com/" target="_blank" rel="nofollow">About SOHU</a>
+		- <a href="http://corp.sohu.com/indexcn.shtml" target="_blank" rel="nofollow">公司介绍</a>
+		- <a href="http://sitemap.sohu.com/" target="_blank">网站地图</a>
+		- <a href="http://roll.sohu.com/" target="_blank">全部新闻</a>
+		- <a href="http://blog.sohu.com/roll" target="_blank">全部博文</a>
+		<br>Copyright <span class="fontArial">&#169;</span> 2017 Sohu.com Inc. All Rights Reserved. 搜狐公司 <span class="unline"><a href="http://corp.sohu.com/s2007/copyright/" target="_blank" rel="nofollow">版权所有</a></span>
+		<br>搜狐不良信息举报邮箱：<a href="mailto:jubao@contact.sohu.com">jubao@contact.sohu.com</a>
+	</div>
+	<script language="JavaScript" src="./为什么一家传统券商选择将交易系统容器化？-搜狐_files/spv.1309051632.js.下载"></script>
+	<script language="javascript" src="./为什么一家传统券商选择将交易系统容器化？-搜狐_files/wrating20120726.js.下载"></script>
+	<script language="javascript"> 
+		var  _wratingId = null;
+		try{
+		_wratingId = _getAcc();
+		}catch(e){}
+		if(_wratingId !=null){
+		document.write('<scr'+'ipt type="text/javascript" src="http://sohu.wrating.com/a1.js"></scr'+'ipt>');
+		}
+		</script><script type="text/javascript" src="./为什么一家传统券商选择将交易系统容器化？-搜狐_files/a1.js.下载"></script>
+		<script language="javascript"> 
+		if(_wratingId !=null){
+		document.write('<scr'+'ipt type="text/javascript">');
+		document.write('var vjAcc="'+_wratingId+'";');
+		document.write('var wrUrl="http://sohu.wrating.com/";');
+		document.write('try{vjTrack();}catch(e){}');
+		document.write('</scr'+'ipt>');
+		}
+	</script><script type="text/javascript">var vjAcc="860010-0626010000";var wrUrl="http://sohu.wrating.com/";try{vjTrack();}catch(e){}</script><div style="display:none"><img src="./为什么一家传统券商选择将交易系统容器化？-搜狐_files/a.gif" id="wrTagImage" width="1" height="1"></div>
+	<!--SOHU:DIV_FOOT-->
+</div>
+<!-- 标准尾 end -->
+
+<sohuadcode></sohuadcode>
+<script type="text/javascript">	
+	function q(s) {return s.replace(/%/g,"%25").replace(/&/g,"%26").replace(/#/g,"%23");}	
+	var sogou_is_brand_url = "http://cpc.brand.sogou.com/brand_ad_new";	
+	var brand_cnt = 0;	
+	for(var p in sogou_is_brand)	
+	{	           if(typeof(sogou_is_brand[p]) == "string")
+	               sogou_is_brand_url += (brand_cnt++ ? "&" : "?") + q(p) + "=" + q(sogou_is_brand[p]);	
+	}	
+	if (brand_cnt>3)	
+	{	
+	         var test= document.createElement('SCRIPT');	
+	         test.src=sogou_is_brand_url;	
+	         document.getElementsByTagName('head')[0].appendChild(test);	
+	}	
+</script>
+
+
+
+</body></html>

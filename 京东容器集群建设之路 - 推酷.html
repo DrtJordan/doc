@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<!-- saved from url=(0039)http://www.tuicool.com/articles/3uaYnmy -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta content="authenticity_token" name="csrf-param">
+<meta content="/k/dOvTDG5jTq2sq3gng0aMVlJwM6dWsSkoqM2qnph0=" name="csrf-token">
+    <title>
+            京东容器集群建设之路 - 推酷
+   </title>
+    <meta name="description" content="京东容器集群建设之路">
+  <link rel="shortcut icon" href="http://static0.tuicool.com/favicon.ico" type="image/x-icon">
+  <link href="http://static0.tuicool.com/images/icon114.png" rel="Bookmark">
+  <link rel="apple-touch-icon" sizes="57x57" href="http://static1.tuicool.com/images/icon57.png"> 
+  <link rel="apple-touch-icon" sizes="72x72" href="http://static2.tuicool.com/images/icon72.png">  
+  <link rel="apple-touch-icon" sizes="114x114" href="http://static0.tuicool.com/images/icon114.png">    
+  <link rel="apple-touch-icon" sizes="144x144" href="http://static1.tuicool.com/images/icon144.png">
+  <link href="./京东容器集群建设之路 - 推酷_files/pub.css" rel="stylesheet">
+  <link href="./京东容器集群建设之路 - 推酷_files/application-da24178704400a98517fd74416cba3ff.css" media="screen" rel="stylesheet" type="text/css">
+  <link href="./京东容器集群建设之路 - 推酷_files/font-awesome.min.css" rel="stylesheet">
+  <script type="text/javascript" src="./京东容器集群建设之路 - 推酷_files/pub.js.下载"></script>
+  <script src="./京东容器集群建设之路 - 推酷_files/application-74ba20ce7249ed1768c5e664dcc14ffa.js.下载" type="text/javascript"></script>
+  
+      <style type="text/css">
+      .btn-large {
+        padding: 0;
+      }
+      .load-fail {
+        display: none;
+      }
+    </style>
+
+</head>
+<body>
+  
+  <div id="header" class="navbar-fixed-top">
+    <div class="container">
+      <div class="navbar">
+        <div class="navbar-inner">
+          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse"> 
+            <span class="icon-bar"></span> 
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span> 
+          </a>
+          <a href="http://www.tuicool.com/" class="brand">推酷</a>        
+        <nav class="nav-collapse collapse">
+            <ul class="nav navbar primary-nav">                            
+              <li class="active">
+                <a href="http://www.tuicool.com/ah">
+                  文章
+                </a>
+              </li>              
+              <li class="">
+                <a href="http://www.tuicool.com/sites/hot">
+                  站点
+                </a>
+              </li>
+              <li class="">
+                <a href="http://www.tuicool.com/topics">
+                  主题
+                </a>
+              </li>
+              <li class="">
+                <a href="http://huodong.tuicool.com/">
+                  活动
+                </a>
+              </li>
+              <li class="">
+                <a href="http://www.tuicool.com/mobile">
+                  APP
+                    <sup style="font-size:0.8em;color: #16A085;">荐</sup>
+                </a>
+              </li>
+              <li class="dropdown  ">
+                <a href="http://www.tuicool.com/articles/3uaYnmy#" class="dropdown-toggle" data-toggle="dropdown">周刊 <b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                  <li><a href="http://www.tuicool.com/mags">编程狂人</a></li>
+                  <li><a href="http://www.tuicool.com/mags/design">设计匠艺</a></li> 
+                  <li><a href="http://www.tuicool.com/mags/startup">创业周刊</a></li> 
+                  <li><a href="http://www.tuicool.com/mags/tech">科技周刊</a></li>      
+                  <li><a href="http://www.tuicool.com/mags/guru">Guru Weekly</a></li> 
+                  <li><a href="http://www.tuicool.com/articles/weekly">一周拾遗</a></li>                  
+                </ul>
+              </li>
+              <li class="dropdown">
+                <a href="http://www.tuicool.com/articles/3uaYnmy#" class="dropdown-toggle" data-toggle="dropdown">更多 <b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                  <li><a href="http://course.tuicool.com/">
+                    公开课
+                  </a>
+                  </li>
+                  <li><a href="http://www.tuicool.com/bbs/go/issues">意见反馈</a></li>
+                </ul>
+              </li>
+              </ul>
+            <form class="navbar-search pull-left" action="http://www.tuicool.com/search">
+              <input type="text" class="search-query span2" name="kw" placeholder="搜索">
+            </form>
+            <ul class="nav pull-right">
+                <li><a href="http://www.tuicool.com/login">登录</a></li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+  </div>   
+</div>
+  <div id="flash_container" class="noPrint">    
+  </div>
+  
+  <div class="container-fluid">  
+      
+<div class="row-fluid article_row_fluid">
+    <div class="span8 contant article_detail_bg">
+        <h1>京东容器集群建设之路</h1>
+        <div class="article_meta">
+            <div style="margin-bottom: 5px;">
+            <span class="timestamp">时间&nbsp;2016-12-26 14:55:25
+            </span>
+            <span class="from">
+                <i class="icon-globe"></i>
+                    <a class="cut cut28 from" href="http://www.tuicool.com/sites/aQVvqiq" target="_blank">DockOne
+                    </a>
+            </span>
+            </div>
+            <div class="source">
+                <i style="float:left;">原文</i>&nbsp; 
+                <a class="cut cut70" href="http://dockone.io/article/1948?utm_source=tuicool&amp;utm_medium=referral" style="display:inline-block;">http://dockone.io/article/1948</a>
+            </div>
+            <div>
+                <span>主题</span>
+                <a href="http://www.tuicool.com/topics/10050011" target="_blank">
+                    <span class="new-label">京东</span>
+                </a>
+            </div>
+        </div>
+        <div class="article_body" id="nei">
+            <div> 
+ <h3>从0诞生</h3> 
+ <p>2013年初，京东商城研发布局虚拟化技术方向。那时的我们从0起步。从几人小团队开始起航。</p> 
+ <p>在物理机时代，应用上线等待分配物理机时间平均在一周。应用混部要看脸看颜值的，没有隔离的应用混部如履薄冰，所以在物理机时代混部的比例平均每台物理机低于9个不同应用的Tomcat实例。</p> 
+ <p>从痛点入手可以极大提升新项目的落地实践机会。即刻我们着手规划京东虚拟化平台项目。从痛点以及当时2013-2014年的技术氛围可以容易想到，京东是从OpenStack开始，那个时代OpenStack研发人员炙手可热就像今天深度学习人才一样。京东强大的人才自培养传统发挥作用，在6个月内，就组建了一支14人的研发团队，并迅速掌握了OpenStack的核心代码。</p> 
+ <p>OpenStack对VM支持是天生的最好，所以接入第一个核心业务，就发现了问题。业务是一个并发量非常大又对延迟要求40ms以内的0级系统，我们对VM做了所有我们能知道的优化，依然无法达到预期，一直徘徊在60ms左右，但从VM切到物理机上运行性能稳稳的在40ms以内，期间动用了多种性能定位工具，如SystemTap等。 在那2周只有黑夜和香烟的日子里面是漫无目的的郁闷，团队骨干已经杀红了眼做各种try。结果是残酷的，核心系统研发同事安慰着：兄弟，我们等你。在整个2013年夏到2014年夏，退而求其次支撑了几百个非核心系统运行在KVM环境。在团队看来这是一个不小的挫折和压力。这一年是郁闷是压力也是积攒经验；这一年团队对京东业务有了极其深刻的了解，在OpenStack的掌控能力已经到了极高的段位并在此期间代表京东主导了OpenStack几个BP研发。</p> 
+ <p>时光来到2014年秋，公司安排研发首席架构师刘海锋带领虚拟化团队，首席架构师带来新的启发和规划。团队重新出发，新的方案，新的思路。Docker进入我们的视野，那时候Docker非常单薄，单薄到只有镜像和对CGroup简便的操作等功能是可用之外，其他基本是无法生产环境使用的。稍加改造做了基本性能测试，tp99可以有部分降低到40ms范围，这就是曙光。虽然还不完美，只是部分请求可以满足40ms要求，但是这就是未来。</p> 
+ <p>虽然有了Docker，拿什么来管理数以万计的Docker容器实例。14年秋，没有Kubernetes，没有Swarm，没有……通过2013——2014推广KVM所了解的业务，不难发现，直接彻底按容器的方式太过脱离业务研发的现状。作为最底层的计算层，稳定性，可靠性等质量要求极高，质量承诺坚如磐石。如果自研一套容器集群管理平台，时间是最大的成本，并且团队积累的openstack经验。最终团队选择OpenStack + Docker的架构，并定义为京东第一代容器引擎平台 JDOS 1.0（JD DataCenter OS）。后面的故事京东研发同事基本是知晓。</p> 
+ <p>基础平台部推出的京东第一代容器引擎平台推广速度极快，从15年的起步到到16年618完成100%应用运行环境容器化。</p> 
+ <p>研发上线申请计算资源由之前的一周缩短到分钟级，不管是1台容器还是1千台容器，在京东IDC经过计算资源池化后随时不限量秒级供应。京东第一代容器引擎强隔离特点，解决了研发同事再也不用靠颜值来争取和别的业务混合部署了。所有的研发同事从部署艰难选择求合体中解放出来，0级系统不再有vip待遇，应用不分0级和非0级，是否混部完全依靠京东第一代容器引擎平台通过算法预测和部署之后动态调度。</p> 
+ <p>平均部署应用密度提升3倍，近似可以认为物理机使用率提升3倍，带来极大的经济收益。在容器化过程中，我们创造的容器新世界有效借力了京东已经运行了多年的多个稳定系统，包括数据库，缓存JIMDB，JMQ，服务框架JSF等。在容器化之前，基础设施以物理机为主。因此，京东容器落地的第一件主要工作是基础设施容器化，同时在应用的运维方面，兼用了之前的配套系统。</p> 
+ <p>当我们向研发同事讲述什么是容器的时候，常常用虚拟机作类比。在给用户进行普及的时候，我们可以告诉他，容器是一种轻量级的虚拟机。但是在真正的落地实践的时候，我们要让用户明白这是容器，而不是虚拟机。这两者是有本质的区别的。虚拟机的本质上是模拟。通过模拟物理机上的硬件，向用户提供资源。容器的基石是经过隔离与限制的Linux进程。容器提供的是性能损失更小的原生物理机的计算能力，容器之间唯一共享的是Linux内核。</p> 
+ <h3>成长之痛</h3> 
+ <p>京东第一代容器引擎（JDOS）1.0版本从2015年开始部署，并在10月份陆续将部分业务迁移到弹性云平台。第一批业务包括核心和非核心系统如单品页，图片处理，订单等。</p> 
+ <p> <img src="./京东容器集群建设之路 - 推酷_files/ZFzaEra.png!web" class="alignCenter"> </p> 
+ <p> <em>JDOS1.0架构</em> </p> 
+ <p>京东第一代容器引擎基于OpenStack Icehouse + Docker 1.3 + OVS 2.1.3架构简单，可靠。但随着集群规模越来越大，痛就开始显现：</p> 
+ <h4>OpenStack集群规模受限</h4> 
+ <p>很快OpenStack就遇到集群规模的问题，发生严重的不可靠问题；如：创建容器消息在MQ传输过程丢失，容器状态挂起，DB连接数过大，计算节点各种Agent定时任务hang，部署升级无法核对升级结果。</p> 
+ <p> <img src="./京东容器集群建设之路 - 推酷_files/QNVJB3u.png!web" class="alignCenter"> </p> 
+ <p>京东基础平台部团队在OpenStack领域已经深入遨游许久，社区暂时没有遇到这么大规模，那研发团队只能自己动手创造了。如上图，设计目标单个集群1万台物理节点，对的，单个OpenStack集群管理1万台物理计算节点。首先改造的是MQ，原理也简单，自己实现一个Python版本的RPC（brood），解除对MQ依赖。特别是依赖MQ操作DB的全部替代使用京东自研的Python版本RPC框架，对数据库的全部操作均使用RPC自带支持的京东JIMDB（内存缓存集群）。这样计算节点的定时任务无需直接update数据库，支持透明通过京东的RPC update到JIMDB。</p> 
+ <p> <img src="./京东容器集群建设之路 - 推酷_files/vIbUbqR.png!web" class="alignCenter"> </p> 
+ <p>我们采用多IDC部署方式，使用同一的全局API开放对接到上线系统。支撑业务跨IDC部署。</p> 
+ <h4>可运维性挑战</h4> 
+ <p>单个OpenStack集群京东最大是1万台物理计算节点，最小是4K台计算节点。京东容器化战略是非常彻底的，应用运行环境100%全部容器化。这么多物理机和容器，运维是一个非常有意思的挑战。在研发京东第一代容器引擎之初，即定下来一个特点可运维性，所以目前运维这几万台物理机和几十万容器的运维工程师共2人，把日常运维工作系统归类。</p> 
+ <ul> 
+  <li>京东第一代容器引擎扩容，一套基于Chef的自动部署，在大促前集中上线扩容时候核算过，从机器上架加电完后开始计算到新的节点加入集群资源池可用的效率是 4千台物理节点/天/每人。</li> 
+  <li>物理机硬件故障，值得一提的是京东统一监控平台也是基础平台部设计研发推出。全新设计，跨IDC，基于容器部署，监控效率高效，故障信息自动收敛。特别是对硬件故障的感知特别靠谱，网卡CRC错误，内核信息关于硬件故障，ILO口获得的硬件状态等途径，还特别与机器学习Team合作，对硬件故障智能预测，特别对磁盘故障预测收获极大。这些信息都会自动通知到机房现场IDC同事进行处理，并自动通知受影响业务方，并预测给出恢复时间。</li> 
+  <li>新一代容器引擎平台自身故障，设计之初所有组件都是无状态，停止新一代容器引擎的组件，不影响已经正在运行容器的正常运行提供服务。</li> 
+  <li> 每日X光检查所有集群。从物理机，OS，OpenStack，依赖的组件，内核日志，进程，京东第一代容器引擎的一切都检查一遍。 <br> 
+   <div> 
+    <img src="./京东容器集群建设之路 - 推酷_files/a6J73aZ.png!web" class="alignCenter"> 
+   </div> </li> 
+ </ul> 
+ <h4>性能&amp;稳定性是最致命的</h4> 
+ <p>规模大之后，遇到很多低概率但是实实在在发生了性能和稳定性问题；如MAC表满导致无法网络通信，UDP大报文硬塞，丢包，中断异常，系统Slab集中回收性内存申请锁住时间过长；很快我们意识到原来做容器其实是在做Linux Kernel，一切性能和稳定性问题都回归到最根本的点—Linux Kernel。</p> 
+ <p>即刻组建了Linux Kernel团队，当然最应该感谢的是京东所有研发同事，在大家的包容与呵护下，京东第一代容器引擎才有机会不断实践不断改进。特别是组建Linux Kernel团队之前，很多性能&amp;稳定性问题，虽然解决但是并不能知其所以然。作为京东所有业务运行依赖之基石，不之所以然是非常不踏实的。任何性能瓶颈，稳定性现象，一定能找到那段代码，做到知其所以然。</p> 
+ <p> <img src="./京东容器集群建设之路 - 推酷_files/qYjEJzA.png!web" class="alignCenter"> </p> 
+ <p>该图是京东一个优化Slab回收策略和机制原理。大家知道容器虽然隔离了CPU，内存，各种IO，但是依然是一个内核，内核要做内存回收是统一的策略，类比到很多的资源。京东Linux Kernel团队一条一条梳理，一点一滴建设，调优，最终维护京东Linux Kernel分支。踏实感油然而生。</p> 
+ <p> 至此，基础平台部完成了京东第一代容器引擎的研发&amp;推广&amp;运营。 </p> 
+ <h3>快速发展</h3> 
+ <p>——15万容器助力16年京东618大促</p> 
+ <p>经过近两年的运营，容器集群团队的技术能力也得到了业务研发团队的普遍认可。京东已经将所有业务迁移到容器集群平台中，并且第一代容器引擎平台也顺利保障了本年度618和双11大促活动。</p> 
+ <p> <img src="./京东容器集群建设之路 - 推酷_files/EJbYJfu.png!web" class="alignCenter"> </p> 
+ <p>当下，我们生产环境中的容器数量已超过15万，我们不知道这个规模是不是全球最大的，但能肯定的是，这应该是国内容器规模最大的。越努力，越上进。第一代容器引擎平台收获的不仅仅是成功上线和运营，更大的收获是研发同事对容器技术的认可和信任。</p> 
+ <p>在第一代容器引擎正直壮年时候，团队又接受新的挑战，把京东数据库迁移到容器环境上，把京东实时计算Storm，Spark集群迁移到容器环境上。在团队内部，京东数据库容器化叫CDS，同样解决2个痛点，物理机资源利用率和申请DB速度。JDOS 1.0解决这2个痛点，做的非常好。只是做了2方面改进，即可直接支持：</p> 
+ <ul> 
+  <li>Local disk使用SSD做了磁盘调度算法优化，更适合SSD</li> 
+  <li>调度算法适合主从，多从的创建调度</li> 
+ </ul> 
+ <p>项目很快上线，也很快见到成果收益。数据库实例创建时间缩短到现在的1分钟，机器资源利用率提升5倍。到16年双11期间，70%的DB实例运行在容器环境上。</p> 
+ <p> <img src="./京东容器集群建设之路 - 推酷_files/BvIVf2Y.png!web" class="alignCenter"> </p> 
+ <p>当下，实时计算平台，上容器平台是水到渠成的事，资源弹性伸缩的便利性，是最大的吸引。目前第一代容器集群运行的最大Storm集群是1K容器实例，充分的容器资源伸缩，镜像发布，极大方便实时计算平台的对部署和资源的诉求。</p> 
+ <h3>回望——不忘初心</h3> 
+ <p> <img src="./京东容器集群建设之路 - 推酷_files/FNFbueF.png!web" class="alignCenter"> </p> 
+ <p>在完成的第一代容器引擎落地实践中，我们更多的是使用IaaS的思维，管理VM的方式来管理容器。</p> 
+ <p>这种方式有利于业务的转变，从物理机和虚拟机上直接迁移到云上来。但是弊端在于，我们是一种“重”型的思维，因此JDOS 1.0是一个基础设施层而不是应用平台。私有云的弹性更多的是空壳容器的弹性伸缩，并没有真正意义上的应用的伸缩。但是京东第一代容器引擎的实践是非常有意义的，其意义在于把业务迁到了容器中，已经尽可能的踩过了应用容器化的坑，容器的网络、存储都逐渐磨合成熟。而这些都为我们后面基于1.0的经验，开发一个全新的应用平台打下了坚实的基础。</p> 
+ <p>不畏将来，不念过往，我们的征途是星辰大海。当JDOS 1.0从一千、两千的容器规模，逐渐增长到六万、十万的规模时，基础平台部已经启动新一代容器引擎平台研发。这次我们的目标不仅仅是一个基础设施的管理平台，更是一个直面应用的容器平台，整合了1.0的存储、网络，打通从源码到镜像，再到上线部署的CI/CD全流程，提供从日志、监控、排障，终端，编排等一站式的功能。</p> 
+ <p>让研发同事专注产品快速交付，让运维同事专注于系统线上高质量运行；京东新一代容器引擎平台已经上线，并在快速推广阶段。</p> 
+ <p> <img src="./京东容器集群建设之路 - 推酷_files/BrIVvuq.png!web" class="alignCenter"> </p> 
+ <p>新一代容器引擎项目在原1.0基础上，支持应用研发上线全流程：应用构建、镜像仓库、配置中心、应用上线、运维、监控、日志、排障等。</p> 
+ <p> <img src="./京东容器集群建设之路 - 推酷_files/qIZZvqu.png!web" class="alignCenter"> </p> 
+ <p> <em>新一代容器引擎项目架构</em> </p> 
+ <p> <img src="./京东容器集群建设之路 - 推酷_files/qi2qYjj.png!web" class="alignCenter"> </p> 
+ <p> <em>版本预发布</em> </p> 
+ <p>新一代容器引擎平台目标体现在：</p> 
+ <ul> 
+  <li> 调度数据中心全部计算资源； <br> 不仅仅线上生产环境的资源调度，还希望可以把整个数据中心的全部资源都统一调度，包括测试环境，预发环境，借助京东第一代容器引擎在虚拟化网络的积累和优势，有信心在确保网络隔离安全情况下，在大促期间借助测试环境，预发环境的计算能力一起为大促贡献计算能力。 <br> 
+   <div> 
+    <img src="./京东容器集群建设之路 - 推酷_files/VRfAfmz.png!web" class="alignCenter"> 
+   </div> </li> 
+  <li> 开发者一站式解决平台 <br> 
+   <div> 
+    <img src="http://img1.tuicool.com/rye2qan.png!web" class="alignCenter"> 
+   </div> </li> 
+  <li> 应用广泛 <br> 不仅仅应用，数据库，实时计算。我们还计划支持离线计算，深度学习，中间件等系统，做数据中心计算的统一载体。 <br> 
+   <div> 
+    <img src="./京东容器集群建设之路 - 推酷_files/77ZvAfz.png!web" class="alignCenter"> 
+   </div> </li> 
+  <li> 灵活调度 <br> 特别是抢占式调度，有效支撑离线大数据计算任务，深度学习算法训练。基于第一代容器引擎带来的业务100%容器化的红利，新一代容器引擎从调度IaaS资源提升到调度应用业务为中心。 <br> 
+   <div> 
+    <img src="./京东容器集群建设之路 - 推酷_files/jyiI3yB.png!web" class="alignCenter"> 
+   </div> </li> 
+ </ul> 
+ <h3>星辰大海</h3> 
+ <p>新一代容器引擎平台研发已经完成，正在紧张的推广阶段。</p> 
+ <p>京东第一代容器引擎借助OpenStack和Docker社区的力量快速上线&amp;演进，打磨。京东新一代容器引擎基于Kubernetes、Docker、OVS等等开源社区项目，京东研发经过一线大规模实践的检验，目前是一个非常好的时机与社区互动，贡献社区。京东CNCF-JD在社区贡献top30，希望可以继续多多与社区互动。把京东一线大规模实践的经验与社区分享，并主动开源一批生产环境正在使用的项目：</p> 
+ <ul> 
+  <li>Hades；分布式智能DNS，基于DPDK对UDP加速能力，实现一个性能极高的DNS服务</li> 
+  <li>Cane；Kubernetes网络项目集中了京东在两代容器引擎平台上高性能网络经验</li> 
+  <li>JNX；京东维护的nginx分支，特别加强适应容器集群平衡切换功能，以及防刷模块</li> 
+  <li>JLK；京东维护的Linux kernel分支，在大规模容器实践过程对内核的心得和改进</li> 
+  <li>MDC；京东统一监控平台，适应应用Cloud Native设计注重告警聚合&amp;收敛，集中了高效运维所需的功能支持</li> 
+  <li>Spider；京东东西向无阻塞网络，有效支持分布式系统在容器运行运行</li> 
+ </ul> 
+ <p>本文转载自公众号：IPD-Chat，该公众号为京东商城基础平台部门官方公众号，基础平台部门包括数据库、容器集群、中间件、图片存储、应用架构、机器学习、系统保障等技术方向。运营多个数据中心数万台服务器，支撑京东无数在线任务。</p> 
+</div>
+        </div>
+        <div class="article_social">
+         <div class="article_like">
+    <div class="circle circle-like" id="my_zan" data_id="3uaYnmy">  </div>
+
+</div>
+        <div id="share_weixin_image">
+            <img width="100px" height="100px" src="./京东容器集群建设之路 - 推酷_files/qrcode.php">
+        </div>
+<div class="article_share_fav">
+    <div class="share" id="ckepop">
+        <span>分享</span>
+        <button class="share_weibo" id="share_weibo_id" title="分享到新浪微博"></button>
+        <button class="share_qq" id="share_qq_id" title="分享到QQ空间"></button>
+        <button class="share_weixin" id="share_weixin_id"></button>
+    </div>
+    <div class="fav_correct">
+        <button id="my_fav" data_id="3uaYnmy">
+            <i class="icon icon-star-empty"></i> <span id="fav_tip">收藏</span>
+        </button>
+        <button id="article-correct" data_id="3uaYnmy" uid="0">
+            <i class="icon icon-warning-sign"></i>
+            <span>纠错</span>
+        </button>
+    </div>
+</div>
+<script type="text/javascript">
+$("#share_weibo_id").click( function() {
+   window.open("http://share.baidu.com/s?type=text&searchPic=0&sign=on&to=tsina&url=http://www.tuicool.com/articles/3uaYnmy&title=%E4%BA%AC%E4%B8%9C%E5%AE%B9%E5%99%A8%E9%9B%86%E7%BE%A4%E5%BB%BA%E8%AE%BE%E4%B9%8B%E8%B7%AF++%28%E5%88%86%E4%BA%AB%E8%87%AA+%40%E6%8E%A8%E9%85%B7%E7%BD%91%29&key=3113829255");
+});
+$("#share_qq_id").click( function() {
+   window.open("http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=http://www.tuicool.com/articles/3uaYnmy&title=%E4%BA%AC%E4%B8%9C%E5%AE%B9%E5%99%A8%E9%9B%86%E7%BE%A4%E5%BB%BA%E8%AE%BE%E4%B9%8B%E8%B7%AF&desc=&summary=&site=");
+});
+$("#share_weixin_id").click( function() {
+  $("#share_weixin_image").toggle();
+});
+</script>
+
+
+            <div class="bottom_plink huodong-detail-plink-banner clearfix">
+                    <a href="https://sspaas.com/" target="_blank"><img src="./京东容器集群建设之路 - 推酷_files/sspaas700.jpg"></a>
+
+            </div>
+        </div>
+        <div id="site_articles" style="clear:both;">
+              <div class="article-part-title">
+                <span>推荐文章</span>
+              </div>
+          <ul class="side_article_list">
+                <li class="side_article_list_item">
+                    1.<a href="http://www.tuicool.com/articles/aMryemN" target="_blank" title="Docker、Containerd、RunC...：你应该知道的所有">
+                    Docker、Containerd、RunC...：你应该知道的所有
+                    </a>
+                </li>
+                <li class="side_article_list_item">
+                    2.<a href="http://www.tuicool.com/articles/7JR7Ffb" target="_blank" title="记一次kubernetes网络调试">
+                    记一次kubernetes网络调试
+                    </a>
+                </li>
+                <li class="side_article_list_item">
+                    3.<a href="http://www.tuicool.com/articles/JJRzqmj" target="_blank" title="使用 NGINX 和 NGINX Plus 的 Ingress Controller 进行 Kubernetes 的负载均衡">
+                    使用 NGINX 和 NGINX Plus 的 Ingress Controller 进行 Kubernetes ..
+                    </a>
+                </li>
+                <li class="side_article_list_item">
+                    4.<a href="http://www.tuicool.com/articles/IZbyUnb" target="_blank" title="案例分享〡三拾众筹持续交付开发流程支撑创新业务">
+                    案例分享〡三拾众筹持续交付开发流程支撑创新业务
+                    </a>
+                </li>
+                <li class="side_article_list_item">
+                    5.<a href="http://www.tuicool.com/articles/zim26b" target="_blank" title="10大容器生态系统里程碑">
+                    10大容器生态系统里程碑
+                    </a>
+                </li>
+                <li class="side_article_list_item">
+                    6.<a href="http://www.tuicool.com/articles/7BJJbm7" target="_blank" title="GitLab 8.16现在包括监控工具并将自动部署扩展到Google Container Engine上">
+                    GitLab 8.16现在包括监控工具并将自动部署扩展到Google Container E..
+                    </a>
+                </li>
+          </ul>
+        </div>
+        <div id="kan_articles"></div>
+        <div id="article_weibo" style="display:none;">
+            <div class="article-part-title">
+                <span>相关微博</span>
+                <sub>
+                    <a href="http://www.tuicool.com/articles/weibo_list/3uaYnmy" target="_blank">(<i id="weibo_num"></i>)</a> 
+               </sub>
+            </div>
+            <div class="related-weibo-list"></div>
+        </div>
+        <div class="comments">
+    <div class="comments-area">
+    <div class="comments-header">
+        <h5>我来评几句</h5>
+        <div class="alert comment-alert alert-error" style="display:none;">
+            错误
+        </div>
+            <textarea cols="60" rows="5" id="comment-body" placeholder="请输入评论内容..." style="resize: none;"></textarea>
+            <span class="btn btn-medium btn-submit" id="comment-submit">登录后评论</span>
+        <p style="margin-top: 5px;margin-left:10px;">
+            已发表评论数(<span class="comment_cnt"></span>)
+        </p>
+    </div>
+    <div class="comments-list">
+        <div class="empty-cmts alert alert-success" style="display:none;">
+            没有更多评论了^^
+        </div>
+    </div>
+    <div class="more-comments" style="display:none;">
+        <a href="http://www.tuicool.com/articles/3uaYnmy">更多评论</a>
+    </div>
+    <div class="load-fail" style="display:none;">
+        评论加载失败，<a href="javascript:reload_comments(&#39;3uaYnmy&#39;,1,0,-1);">重新加载</a>
+    </div>
+    </div>
+</div>
+
+    </div>
+        <div class="span4 article_right_side">
+            <div class="right_top">
+    <div class="article_related_site article_detail_bg">
+    <h4 class="article-part-title">相关站点</h4>
+    <div class="article_related_site_body clearfix">
+        <div class="logo">
+            <img src="./京东容器集群建设之路 - 推酷_files/aQVvqiq.png">
+        </div>
+        <div class="name">
+            <div>
+                <a href="http://www.tuicool.com/sites/aQVvqiq" target="_blank"> DockOne</a>
+            </div>
+            <div>
+                <div class="btn btn-success right_site_follow" id="my_follow" data_id="aQVvqiq">＋订阅</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="right_site_articles" class="article_detail_bg">
+    <div class="article-part-title">
+        <span>热门文章</span>
+    </div>
+    <ul class="side_article_list">
+        <li class="side_article_list_item">
+            1.<a href="http://www.tuicool.com/articles/aMryemN" target="_blank" title="Docker、Containerd、RunC...：你应该知道的所有"> Docker、Containerd、RunC...：你应该知道的所有 </a>
+        </li>
+        <li class="side_article_list_item">
+            2.<a href="http://www.tuicool.com/articles/7JR7Ffb" target="_blank" title="记一次kubernetes网络调试"> 记一次kubernetes网络调试 </a>
+        </li>
+        <li class="side_article_list_item">
+            3.<a href="http://www.tuicool.com/articles/JJRzqmj" target="_blank" title="使用 NGINX 和 NGINX Plus 的 Ingress Controller 进行 Kubernetes 的负载均衡"> 使用 NGINX 和 NGINX Plus 的 Ingress Controller 进行 Kubernetes 的负载均衡 </a>
+        </li>
+        <li class="side_article_list_item">
+            4.<a href="http://www.tuicool.com/articles/IZbyUnb" target="_blank" title="案例分享〡三拾众筹持续交付开发流程支撑创新业务"> 案例分享〡三拾众筹持续交付开发流程支撑创新业务 </a>
+        </li>
+        <li class="side_article_list_item">
+            5.<a href="http://www.tuicool.com/articles/zim26b" target="_blank" title="10大容器生态系统里程碑"> 10大容器生态系统里程碑 </a>
+        </li>
+    </ul>
+</div>
+
+
+      <div class="right-link">
+                <a href="https://sspaas.com/" target="_blank"><img src="./京东容器集群建设之路 - 推酷_files/sspaas320.jpg"></a>
+
+      </div>
+      <div class="right-link" style="margin-top: 5px">
+                <a href="https://www.mysubmail.com/sms?s=tuicool" target="_blank"><img src="./京东容器集群建设之路 - 推酷_files/submail120.jpg"></a>
+
+      </div>
+      <div class="right-link" style="margin-top: 5px">
+                <a href="http://click.aliyun.com/m/9996/" target="_blank"><img src="./京东容器集群建设之路 - 推酷_files/aliyun120.jpg"></a>
+
+      </div>
+</div>
+<div class="operate_zone">
+        <div class="frd_pos">
+        <script async="" src="./京东容器集群建设之路 - 推酷_files/adsbygoogle.js.下载"></script>
+<ins class="adsbygoogle" style="display:inline-block;width:300px;height:250px" data-ad-client="ca-pub-7054762349007490" data-ad-slot="5705695566"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+
+        </div>
+</div>
+         </div>
+</div>
+
+<div>
+   <!-- add_article to kan -->
+<div id="add-article-to-kan" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <span class="add-title">收藏到推刊</span>
+    <a href="http://www.tuicool.com/articles/3uaYnmy#new-kan" class="btn pull-right" data-toggle="modal">创建推刊</a>
+    <i class="clearfix"></i>
+  </div>
+  <div class="modal-body">
+    <ul id="add-kan-list">
+    </ul>
+  </div>
+  <div class="modal-footer">
+    <input type="hidden" value="3uaYnmy" class="article-id"> 
+    <button class="btn btn-primary pull-left add-to-btn">  收 藏  </button>
+    <button class="btn" data-dismiss="modal" aria-hidden="true" style="margin-right: 15px">取消</button>
+  </div>
+</div>
+
+   <div id="new-kan" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-body">
+    <input type="text" name="name" id="new-kan-name" placeholder="推刊名(必填)" required="" data-validation-required-message="请填写推刊名">
+    <span class="new-ness-name">请填写推刊名</span>
+    <br>
+    <textarea name="desc" id="desc" rows="6" placeholder="推刊描述"></textarea>
+    <span class="new-ness-desc">描述不能大于100个字符!</span>
+    <br>
+    权限设置：<input type="radio" name="type" value="1" checked="checked"> 公开
+    <input type="radio" name="type" value="0"> 仅自己可见
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-primary pull-left create-kan-btn" disabled="">创建</button>
+    <button class="btn dismiss-new-kan" data-dismiss="modal" aria-hidden="true">取消</button>
+  </div>
+</div>
+
+
+</div>
+<div id="article-correct-modal" class="modal hide fade in" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="false">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+            ×
+        </button>
+        <h3>文章纠错</h3>
+    </div>
+    <div class="modal-body">
+        <input type="hidden" value="3uaYnmy" id="article-correct-source">
+        <div>
+            <label for="article-correct-email">
+                邮箱地址
+            </label>
+            <input type="email" id="article-correct-email" class="input-large">
+        </div>
+        <div>
+            <label for="article-correct-select">
+                错误类型
+            </label>
+            <select id="article-correct-select">
+                <option value="正文不准确">正文不准确</option>
+                <option value="标题不准确">标题不准确</option>
+                <option value="排版有问题">排版有问题</option>
+                <option value="排版有问题">主题不准确</option>
+                <option value="没有分页内容">没有分页内容</option>
+                <option value="图片无法显示">图片无法显示</option>
+                <option value="视频无法显示">视频无法显示</option>
+                <option value="与原文不一致">与原文不一致</option>
+            </select>
+        </div>
+        <div>
+            <label for="article-correct-other">
+                补充信息
+            </label>
+            <textarea id="article-correct-other" class="span4"></textarea>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary pull-right huodong_correct_submit" id="article-correct-submit">
+            &nbsp;&nbsp;提交&nbsp;&nbsp;
+        </button>
+    </div>
+</div>
+<script type="text/javascript">
+    $('table').each(function(i) {
+        var size = $(this).children().size();
+        if (size > 1) {
+            $(this).attr('class',"table table-bordered");
+        } else if (size == 1) {
+            var e11 = $(this).children(":first");
+            var e1 = e11[0];
+            var name = e1.nodeName.toLowerCase();
+            if ("tbody" == name) {
+                if (e1.children.length > 1) {
+                    $(this).attr('class',"table table-bordered");
+                } else if (e1.children.length == 1){
+                    var e12 = e1.children[0];
+                    var name2 = e12.nodeName.toLowerCase();
+                    if ("tr" == name2) {
+                       if (e12.children.length > 1) {
+                         $(this).attr('class',"table table-bordered");
+                       }
+                    }
+                }
+            }
+        }
+    });
+            related_kan("3uaYnmy");
+        window.page = 0;
+        window.last = 0;    
+        window.first = true;
+        resize_article_image('#nei', 550);
+                load_comments("3uaYnmy",1,0,-1);
+                window.uid = -1;
+        open_add_article_to_kan("false");
+        async_do_zan_article();
+          
+       handle_follow_site("#my_follow","已订阅","+ 订阅");
+</script>
+
+
+    <div class="loader-inner ball-pulse ball-loading-center" id="page-loading" style="display: none">
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+    <div class="read-later-alert"></div>
+  </div>
+
+        <div class="footer">
+      <div class="footer-inner" style="padding-top: 50px;padding-bottom: 50px">
+        <a href="http://www.tuicool.com/about" target="_blank">关于我们</a>
+        <a href="http://www.tuicool.com/mobile" target="_blank">移动应用</a>
+        <a href="http://www.tuicool.com/bbs/go/issues" target="_blank">意见反馈</a>
+        <a target="_blank" href="http://e.weibo.com/tuicool2012">官方微博</a>
+      </div>
+    </div>
+    <div style="display:none;">
+      <script src="./京东容器集群建设之路 - 推酷_files/stat.php" language="JavaScript"></script>
+    </div>
+
+    <script type="text/javascript" src="./京东容器集群建设之路 - 推酷_files/tip.js.下载" async=""></script>
+
+
+</body></html>

@@ -1,0 +1,5 @@
+(function(){
+    AD_DATA = window["AD_DATA"] || {};
+})();
+
+// w0:20161213090001:T0

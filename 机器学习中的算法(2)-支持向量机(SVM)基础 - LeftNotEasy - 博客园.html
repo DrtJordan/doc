@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<!-- saved from url=(0066)http://www.cnblogs.com/LeftNotEasy/archive/2011/05/18/2034566.html -->
+<html lang="zh-cn"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>机器学习中的算法(2)-支持向量机(SVM)基础 - LeftNotEasy - 博客园</title>
+<link type="text/css" rel="stylesheet" href="./机器学习中的算法(2)-支持向量机(SVM)基础 - LeftNotEasy - 博客园_files/blog-common.css">
+<link id="MainCss" type="text/css" rel="stylesheet" href="./机器学习中的算法(2)-支持向量机(SVM)基础 - LeftNotEasy - 博客园_files/bundle-SimpleMemory.css">
+<link id="mobile-style" media="only screen and (max-width: 768px)" type="text/css" rel="stylesheet" href="./机器学习中的算法(2)-支持向量机(SVM)基础 - LeftNotEasy - 博客园_files/bundle-SimpleMemory-mobile.css">
+<link title="RSS" type="application/rss+xml" rel="alternate" href="http://www.cnblogs.com/LeftNotEasy/rss">
+<link title="RSD" type="application/rsd+xml" rel="EditURI" href="http://www.cnblogs.com/LeftNotEasy/rsd.xml">
+<link type="application/wlwmanifest+xml" rel="wlwmanifest" href="http://www.cnblogs.com/LeftNotEasy/wlwmanifest.xml">
+<script async="" src="./机器学习中的算法(2)-支持向量机(SVM)基础 - LeftNotEasy - 博客园_files/analytics.js.下载"></script><script src="./机器学习中的算法(2)-支持向量机(SVM)基础 - LeftNotEasy - 博客园_files/jquery.js.下载" type="text/javascript"></script>  
+<script type="text/javascript">var currentBlogApp = 'LeftNotEasy', cb_enable_mathjax=false;var isLogined=false;</script>
+<script src="./机器学习中的算法(2)-支持向量机(SVM)基础 - LeftNotEasy - 博客园_files/blog-common.js.下载" type="text/javascript"></script>
+</head>
+<body>
+<a name="top"></a>
+
+<!--done-->
+<div id="home">
+<div id="header">
+	<div id="blogTitle">
+	<a id="lnkBlogLogo" href="http://www.cnblogs.com/LeftNotEasy/"><img id="blogLogo" src="./机器学习中的算法(2)-支持向量机(SVM)基础 - LeftNotEasy - 博客园_files/logo.gif" alt="返回主页"></a>			
+		
+<!--done-->
+<h1><a id="Header1_HeaderTitle" class="headermaintitle" href="http://www.cnblogs.com/LeftNotEasy/">LeftNotEasy - Wangda Tan</a></h1>
+<h2>关注于 机器学习、数据挖掘、并行计算、数学</h2>
+
+
+
+		
+	</div><!--end: blogTitle 博客的标题和副标题 -->
+	<div id="navigator">
+		
+<ul id="navList">
+<li><a id="blog_nav_sitehome" class="menu" href="http://www.cnblogs.com/">博客园</a></li>
+<li><a id="blog_nav_myhome" class="menu" href="http://www.cnblogs.com/LeftNotEasy/">首页</a></li>
+<li></li>
+<li><a id="blog_nav_contact" class="menu" rel="nofollow" href="https://msg.cnblogs.com/send/LeftNotEasy">联系</a></li>
+<li><a id="blog_nav_rss" class="menu" href="http://www.cnblogs.com/LeftNotEasy/rss">订阅</a>
+<!--<a id="blog_nav_rss_image" class="aHeaderXML" href="http://www.cnblogs.com/LeftNotEasy/rss"><img src="//www.cnblogs.com/images/xml.gif" alt="订阅" /></a>--></li>
+<li><a id="blog_nav_admin" class="menu" rel="nofollow" href="https://i.cnblogs.com/">管理</a></li>
+</ul>
+		<div class="blogStats">
+			
+			
+			
+		</div><!--end: blogStats -->
+	</div><!--end: navigator 博客导航栏 -->
+</div><!--end: header 头部 -->
+
+<div id="main">
+	<div id="mainContent">
+	<div class="forFlow">
+		
+<div id="post_detail">
+<!--done-->
+<div id="topics">
+	<div class="post">
+		<h1 class="postTitle">
+			<a id="cb_post_title_url" class="postTitle2" href="http://www.cnblogs.com/LeftNotEasy/archive/2011/05/02/basic-of-svm.html">机器学习中的算法(2)-支持向量机(SVM)基础</a>
+		</h1>
+		<div class="clear"></div>
+		<div class="postBody">
+			<div id="cnblogs_post_body"><p><strong><span style="color: #008000; font-size: large;">版权声明：</span></strong></p>
+<p><span style="font-size: large;">&nbsp;&nbsp;&nbsp; 本文由LeftNotEasy发布于</span><a href="http://leftnoteasy.cnblogs.com/"><span style="font-size: large;">http://leftnoteasy.cnblogs.com</span></a><span style="font-size: large;">, 本文可以被全部的转载或者部分使用，但请注明出处，如果有问题，请联系</span><span style="font-size: large;"><a href="mailto:wheeleast@gmail.com">wheeleast@gmail.com</a>。也可以加我的微博:&nbsp;<a href="http://weibo.com/leftnoteasy" target="_blank">@leftnoteasy</a></span></p>
+<p>&nbsp;</p>
+<p><strong><span style="color: #008000; font-size: large;">前言：</span></strong></p>
+<p><span style="font-size: large;">&nbsp;&nbsp;&nbsp; 又有很长的一段时间没有更新博客了，距离上次更新已经有两个月的时间了。其中一个很大的原因是，不知道写什么好-_-，最近一段时间看了看关于SVM(Support Vector Machine)的文章，觉得SVM是一个非常有趣，而且自成一派的方向，所以今天准备写一篇关于关于SVM的文章。</span></p>
+<p><span style="font-size: large;">&nbsp;&nbsp;&nbsp; 关于SVM的论文、书籍都非常的多，引用强哥的话“SVM是让应用数学家真正得到应用的一种算法”。SVM对于大部分的普通人来说，要完全理解其中的数学是非常困难的，所以要让这些普通人理解，得要把里面的数学知识用简单的语言去讲解才行。而且想明白了这些数学，对学习其他的内容也是大有裨益的。我就是属于绝大多数的普通人，为了看明白SVM，看了不少的资料，这里把我的心得分享分享。</span></p>
+<p><span style="font-size: large;">&nbsp;&nbsp;&nbsp; 其实现在能够找到的，关于SVM的中文资料已经不少了，不过个人觉得，每个人的理解都不太一样，所以还是决定写一写，一些雷同的地方肯定是不可避免的，不过还是希望能够写出一点与别人不一样的地方吧。另外本文准备不谈太多的数学（因为很多文章都谈过了），尽量简单地给出结论，就像题目一样-机器学习中的<strong>算法</strong>（之前叫做机器学习中的数学），<strong>所以本系列的内容将更偏重应用一些。如果想看更详细的数学解释，可以看看参考文献中的资料。</strong></span></p>
+<p>&nbsp;</p>
+<p><strong><span style="color: #008000; font-size: large;">一、线性分类器：</span></strong></p>
+<p><span style="font-size: large;">&nbsp;&nbsp;&nbsp; <strong>首先给出一个非常非常简单的分类问题（线性可分）</strong>，我们要用一条直线，将下图中黑色的点和白色的点分开，很显然，图上的这条直线就是我们要求的直线之一（可以有无数条这样的直线）</span></p>
+<p><a href="http://images.cnblogs.com/cnblogs_com/LeftNotEasy/201105/201105022055565831.png"><img style="display: block; float: none; margin-left: auto; margin-right: auto; border-width: 0px;" title="image" src="./机器学习中的算法(2)-支持向量机(SVM)基础 - LeftNotEasy - 博客园_files/201105022055571894.png" alt="image" width="240" height="230" border="0"></a><span style="font-size: large;">&nbsp;&nbsp;&nbsp; 假如说，我们令黑色的点 = -1， 白色的点 =&nbsp; +1，直线f(x) = w.x + b，这儿的x、w是向量，其实写成这种形式也是等价的f(x) = w1x1 + w2x2 … + wnxn + b, 当向量x的维度=2的时候，f(x) 表示二维空间中的一条直线， 当x的维度=3的时候，f(x) 表示3维空间中的一个平面，当x的维度=n &gt; 3的时候，表示n维空间中的n-1维超平面。这些都是比较基础的内容，如果不太清楚，可能需要复习一下微积分、线性代数的内容。</span></p>
+<p><span style="font-size: large;">&nbsp;&nbsp;&nbsp; 刚刚说了，我们令黑色白色两类的点分别为+1, -1，所以当有一个新的点x需要预测属于哪个分类的时候，我们用sgn(f(x))，就可以预测了，sgn表示符号函数，当f(x) &gt; 0的时候，sgn(f(x)) = +1, 当f(x) &lt; 0的时候sgn(f(x)) = –1。</span></p>
+<p><span style="font-size: large;">&nbsp;&nbsp;&nbsp; 但是，我们怎样才能取得一个最优的划分直线f(x)呢？下图的直线表示几条可能的f(x)</span></p>
+<p><a href="http://images.cnblogs.com/cnblogs_com/LeftNotEasy/201105/201105022055574369.png"><img style="display: block; float: none; margin-left: auto; margin-right: auto; border-width: 0px;" title="image" src="./机器学习中的算法(2)-支持向量机(SVM)基础 - LeftNotEasy - 博客园_files/201105022055574336.png" alt="image" width="240" height="225" border="0"></a></p>
+<p><span style="font-size: large;">&nbsp;&nbsp;&nbsp; 一个很直观的感受是，让这条直线到给定样本中最近的点最远，这句话读起来比较拗口，下面给出几个图，来说明一下：</span></p>
+<p><span style="font-size: large;">&nbsp;&nbsp;&nbsp; 第一种分法：</span></p>
+<p align="center"><a href="http://images.cnblogs.com/cnblogs_com/LeftNotEasy/201105/201105022055573224.png"><img style="display: inline; border-width: 0px;" title="image" src="./机器学习中的算法(2)-支持向量机(SVM)基础 - LeftNotEasy - 博客园_files/201105022055589287.png" alt="image" width="240" height="231" border="0"></a></p>
+<p><span style="font-size: large;">&nbsp;&nbsp;&nbsp; 第二种分法：</span></p>
+<p><a href="http://images.cnblogs.com/cnblogs_com/LeftNotEasy/201105/201105022055585350.png"><img style="display: block; float: none; margin-left: auto; margin-right: auto; border-width: 0px;" title="image" src="./机器学习中的算法(2)-支持向量机(SVM)基础 - LeftNotEasy - 博客园_files/201105022055589777.png" alt="image" width="240" height="233" border="0"></a></p>
+<p><span style="font-size: large;">&nbsp;&nbsp;&nbsp; 这两种分法哪种更好呢？从直观上来说，就是分割的间隙越大越好，把两个类别的点分得越开越好。就像我们平时判断一个人是男还是女，就是很难出现分错的情况，这就是男、女两个类别之间的间隙非常的大导致的，让我们可以更准确的进行分类。<strong>在SVM中，称为Maximum Marginal，是SVM的一个理论基础之一。</strong>选择使得间隙最大的函数作为分割平面是由很多道理的，比如说从概率的角度上来说，就是使得置信度最小的点置信度最大（听起来很拗口），从实践的角度来说，这样的效果非常好，等等。这里就不展开讲，作为一个结论就ok了，:)</span></p>
+<p><span style="font-size: large;">&nbsp;&nbsp;&nbsp; 上图被红色和蓝色的线圈出来的点就是所谓的支持向量(support vector)。</span></p>
+<p><span style="font-size: large;">&nbsp;&nbsp; </span><a href="http://images.cnblogs.com/cnblogs_com/LeftNotEasy/201105/201105022055584204.png"><span style="color: #000000; font-size: large;"><img style="display: block; float: none; margin-left: auto; margin-right: auto; border-width: 0px;" title="image" src="./机器学习中的算法(2)-支持向量机(SVM)基础 - LeftNotEasy - 博客园_files/201105022055599155.png" alt="image" width="445" height="154" border="0"></span></a><span style="font-size: large;">&nbsp;&nbsp;&nbsp; 上图就是一个对之前说的类别中的间隙的一个描述。Classifier Boundary就是f(x)，红色和蓝色的线（plus plane与minus plane）就是support vector所在的面，红色、蓝色线之间的间隙就是我们要最大化的分类间的间隙。</span><a href="http://images.cnblogs.com/cnblogs_com/LeftNotEasy/201105/201105022055592153.png"><img style="display: block; float: none; margin-left: auto; margin-right: auto; border-width: 0px;" title="image" src="./机器学习中的算法(2)-支持向量机(SVM)基础 - LeftNotEasy - 博客园_files/201105022056007660.png" alt="image" width="373" height="154" border="0"></a></p>
+<p><span style="font-size: large;">&nbsp;&nbsp;&nbsp; 这里直接给出M的式子：（从高中的解析几何就可以很容易的得到了，也可以参考后面Moore的ppt）</span></p>
+<p align="center"><a href="http://images.cnblogs.com/cnblogs_com/LeftNotEasy/201105/201105022056009056.png"><img style="display: inline; border-width: 0px;" title="image" src="./机器学习中的算法(2)-支持向量机(SVM)基础 - LeftNotEasy - 博客园_files/201105022056005675.png" alt="image" width="115" height="59" border="0"></a></p>
+<p><span style="font-size: large;">&nbsp;&nbsp;&nbsp; 另外支持向量位于wx + b = 1与wx + b = -1的直线上，我们在前面乘上一个该点所属的类别y（还记得吗?y不是+1就是-1），就可以得到支持向量的表达式为：y(wx + b) = 1，这样就可以更简单的将支持向量表示出来了。</span></p>
+<p><span style="font-size: large;">&nbsp;&nbsp;&nbsp; 当支持向量确定下来的时候，分割函数就确定下来了，两个问题是等价的。得到支持向量，还有一个作用是，让支持向量后方那些点就不用参与计算了。这点在后面将会更详细的讲讲。</span></p>
+<p><span style="font-size: large;">&nbsp;&nbsp;&nbsp; 在这个小节的最后，给出我们要优化求解的表达式：</span></p>
+<p><a href="http://images.cnblogs.com/cnblogs_com/LeftNotEasy/201105/201105022056002611.png"><img style="display: block; float: none; margin-left: auto; margin-right: auto; border: 0px;" title="image" src="./机器学习中的算法(2)-支持向量机(SVM)基础 - LeftNotEasy - 博客园_files/201105022056009546.png" alt="image" width="240" height="60" border="0"></a></p>
+<p><span style="font-size: large;">&nbsp;&nbsp;&nbsp; ||w||的意思是w的二范数，跟上面的M表达式的分母是一个意思，之前得到，M = 2 / ||w||，最大化这个式子等价于最小化||w||, 另外由于||w||是一个单调函数，我们可以对其加入平方，和前面的系数，熟悉的同学应该很容易就看出来了，这个式子是为了方便求导。</span></p>
+<p><span style="font-size: large;">&nbsp;&nbsp;&nbsp; 这个式子有还有一些限制条件，完整的写下来，应该是这样的：（<strong><span style="color: #0000ff;">原问题</span></strong>）</span></p>
+<p><a href="http://images.cnblogs.com/cnblogs_com/LeftNotEasy/201105/201105022056018433.png"><img style="display: block; float: none; margin-left: auto; margin-right: auto; border: 0px;" title="image" src="./机器学习中的算法(2)-支持向量机(SVM)基础 - LeftNotEasy - 博客园_files/20110502205601593.png" alt="image" width="352" height="47" border="0"></a></p>
+<p><span style="font-size: large;">&nbsp;&nbsp;&nbsp; s.t的意思是subject to，也就是在后面这个限制条件下的意思，这个词在svm的论文里面非常容易见到。这个其实是一个带约束的二次规划(quadratic programming, QP)问题，是一个凸问题，凸问题就是指的不会有局部最优解，可以想象一个漏斗，不管我们开始的时候将一个小球放在漏斗的什么位置，这个小球最终一定可以掉出漏斗，也就是得到全局最优解。s.t.后面的限制条件可以看做是一个凸多面体，我们要做的就是在这个凸多面体中找到最优解。这些问题这里不展开，因为展开的话，一本书也写不完。如果有疑问请看看wikipedia。</span></p>
+<p>&nbsp;</p>
+<p><strong><span style="color: #008000; font-size: large;">二、转化为对偶问题，并优化求解:</span></strong></p>
+<p><span style="font-size: large;">&nbsp;&nbsp;&nbsp; 这个优化问题可以用<a href="http://en.wikipedia.org/wiki/Lagrange_multiplier">拉格朗日乘子法</a>去解，使用了<a href="http://en.wikipedia.org/wiki/Karush%E2%80%93Kuhn%E2%80%93Tucker_conditions">KKT条件</a>的理论，这里直接作出这个式子的拉格朗日目标函数：</span></p>
+<p><a href="http://images.cnblogs.com/cnblogs_com/LeftNotEasy/201105/201105022056015020.png"><img style="display: block; float: none; margin-left: auto; margin-right: auto; border: 0px;" title="image" src="./机器学习中的算法(2)-支持向量机(SVM)基础 - LeftNotEasy - 博客园_files/201105022056017495.png" alt="image" width="374" height="50" border="0"></a></p>
+<p><span style="font-size: large;">&nbsp;&nbsp;&nbsp; 求解这个式子的过程需要</span><a href="http://en.wikipedia.org/wiki/Quadratic_programming#Lagrangian_duality"><span style="font-size: large;">拉格朗日对偶性</span></a><span style="font-size: large;">的相关知识（另外pluskid也有<a href="http://blog.pluskid.org/?p=702">一篇文章</a>专门讲这个问题），并且有一定的公式推导，如果不感兴趣，<strong>可以直接跳到后面</strong>用<span style="color: #0000ff;"><strong>蓝色公式</strong></span>表示的结论，该部分推导主要参考自</span><a href="http://blog.pluskid.org/?p=682"><span style="font-size: large;">plukids的文章</span></a><span style="font-size: large;">。</span></p>
+<p><span style="font-size: large;">&nbsp;&nbsp;&nbsp; 首先让L关于w，b最小化，分别令L关于w，b的偏导数为0，得到关于<strong>原问题</strong>的一个表达式</span></p>
+<p><a href="http://images.cnblogs.com/cnblogs_com/LeftNotEasy/201105/201105022056032314.png"><img style="display: block; float: none; margin-left: auto; margin-right: auto; border: 0px;" title="image" src="./机器学习中的算法(2)-支持向量机(SVM)基础 - LeftNotEasy - 博客园_files/201105022056034789.png" alt="image" width="187" height="107" border="0"></a></p>
+<p><span style="font-size: large;">&nbsp;&nbsp;&nbsp; 将两式带回L(w,b,a)得到对偶问题的表达式</span></p>
+<p><span style="font-size: large;"><img style="display: block; float: none; margin-left: auto; margin-right: auto; border: 0px;" title="image" src="./机器学习中的算法(2)-支持向量机(SVM)基础 - LeftNotEasy - 博客园_files/201105022056037264.png" alt="image" width="381" height="62" border="0"> </span></p>
+<p><span style="font-size: large;">&nbsp;&nbsp;&nbsp; 新问题加上其限制条件是（<span style="color: #0000ff;"><strong>对偶问题</strong></span>）:</span></p>
+<p><a href="http://images.cnblogs.com/cnblogs_com/LeftNotEasy/201105/201105022056041691.png"><span style="color: #000000; font-size: large;"><img style="display: block; float: none; margin-left: auto; margin-right: auto; border: 0px;" title="image" src="./机器学习中的算法(2)-支持向量机(SVM)基础 - LeftNotEasy - 博客园_files/201105022056046118.png" alt="image" width="295" height="151" border="0"></span></a></p>
+<p><span style="font-size: large;">&nbsp;&nbsp;&nbsp; 这个就是我们需要最终优化的式子。至此，<strong>得到了线性可分问题的优化式子</strong>。</span></p>
+<p><span style="font-size: large;">&nbsp;&nbsp;&nbsp; 求解这个式子，有很多的方法，比如<a href="http://en.wikipedia.org/wiki/Sequential_minimal_optimization">SMO</a>等等，个人认为，求解这样的一个带约束的凸优化问题与得到这个凸优化问题是比较独立的两件事情，所以在这篇文章中准备完全不涉及如何求解这个话题，如果之后有时间可以补上一篇文章来谈谈:)。</span></p>
+<p>&nbsp;</p>
+<p><strong><span style="color: #008000; font-size: large;">三、线性不可分的情况（软间隔）：</span></strong></p>
+<p><span style="font-size: large;">&nbsp;&nbsp;&nbsp; 接下来谈谈线性不可分的情况，因为<strong>线性可分这种假设实在是太有局限性</strong>了：</span></p>
+<p><span style="font-size: large;">&nbsp;&nbsp;&nbsp; 下图就是一个典型的线性不可分的分类图，我们没有办法用一条直线去将其分成两个区域，每个区域只包含一种颜色的点。</span></p>
+<p><a href="http://images.cnblogs.com/cnblogs_com/LeftNotEasy/201105/201105022056043054.png"><span style="font-size: large;"><img style="display: block; float: none; margin-left: auto; margin-right: auto; border: 0px;" title="image" src="./机器学习中的算法(2)-支持向量机(SVM)基础 - LeftNotEasy - 博客园_files/201105022056045213.png" alt="image" width="240" height="236" border="0"></span></a><span style="font-size: large;">&nbsp;&nbsp;&nbsp;&nbsp; 要想在这种情况下的分类器，有两种方式，<strong>一种是用曲线</strong>去将其完全分开，曲线就是一种<strong>非线性</strong>的情况，跟之后将谈到的<strong>核函数</strong>有一定的关系：</span></p>
+<p><a href="http://images.cnblogs.com/cnblogs_com/LeftNotEasy/201105/201105022056057688.png"><span style="font-size: large;"><img style="display: block; float: none; margin-left: auto; margin-right: auto; border: 0px;" title="image" src="./机器学习中的算法(2)-支持向量机(SVM)基础 - LeftNotEasy - 博客园_files/201105022056056576.png" alt="image" width="240" height="226" border="0"></span></a><span style="font-size: large;">&nbsp;&nbsp;&nbsp;&nbsp; <strong>另外一种还是用直线，不过不用去保证可分性</strong>，就是包容那些分错的情况，不过我们得加入惩罚函数，使得点分错的情况越合理越好。其实在很多时候，不是在训练的时候分类函数越完美越好，因为训练函数中有些数据本来就是噪声，可能就是在人工加上分类标签的时候加错了，如果我们在训练（学习）的时候把这些错误的点学习到了，那么模型在下次碰到这些错误情况的时候就难免出错了（假如老师给你讲课的时候，某个知识点讲错了，你还信以为真了，那么在考试的时候就难免出错）。这种学习的时候学到了“噪声”的过程就是一个过拟合（over-fitting），这在机器学习中是一个大忌，我们宁愿少学一些内容，也坚决杜绝多学一些错误的知识。还是回到主题，用直线怎么去分割线性不可分的点：</span></p>
+<p><span style="font-size: large;">&nbsp;&nbsp;&nbsp;&nbsp; 我们可以为分错的点加上一点惩罚，对一个分错的点的<strong>惩罚函数</strong>就是<strong>这个点到其正确位置的距离：</strong></span></p>
+<p><a href="http://images.cnblogs.com/cnblogs_com/LeftNotEasy/201105/201105022056057099.png"><span style="font-size: large;"><img style="display: block; float: none; margin-left: auto; margin-right: auto; border: 0px;" title="image" src="./机器学习中的算法(2)-支持向量机(SVM)基础 - LeftNotEasy - 博客园_files/201105022056051526.png" alt="image" width="240" height="214" border="0"></span></a></p>
+<p>&nbsp;</p>
+<p><span style="font-size: large;">&nbsp;&nbsp;&nbsp; 在上图中，<span style="color: #0000ff;">蓝色</span>、<span style="color: #ff0000;">红色</span>的直线分别为支持向量所在的边界，<span style="color: #008000;">绿色</span>的线为决策函数，那些<span style="color: #800080;">紫色</span>的线<strong>表示分错的点到其相应的决策面的距离</strong>，这样我们可以在原函数上面加上一个惩罚函数，并且带上其限制条件为：</span></p>
+<p><img style="display: block; float: none; margin-left: auto; margin-right: auto; border: 0px;" title="image" src="./机器学习中的算法(2)-支持向量机(SVM)基础 - LeftNotEasy - 博客园_files/201105022056054001.png" alt="image" width="406" height="47" border="0"></p>
+<p><span style="font-size: large;">&nbsp;&nbsp;&nbsp; 公式中蓝色的部分为在线性可分问题的基础上加上的惩罚函数部分，当xi在正确一边的时候，ε=0，R为全部的点的数目，C是一个由用户去指定的系数，表示对分错的点加入多少的惩罚，当C很大的时候，分错的点就会更少，但是过拟合的情况可能会比较严重，当C很小的时候，分错的点可能会很多，不过可能由此得到的模型也会不太正确，所以如何选择C是有很多学问的，不过在大部分情况下就是通过经验尝试得到的。</span></p>
+<p><span style="font-size: large;">&nbsp;&nbsp;&nbsp; 接下来就是同样的，求解一个拉格朗日对偶问题，得到一个原问题的对偶问题的表达式：</span></p>
+<p><a href="http://images.cnblogs.com/cnblogs_com/LeftNotEasy/201105/201105022056067556.png"><img style="display: block; float: none; margin-left: auto; margin-right: auto; border: 0px;" title="image" src="./机器学习中的算法(2)-支持向量机(SVM)基础 - LeftNotEasy - 博客园_files/20110502205606347.png" alt="image" width="265" height="139" border="0"></a></p>
+<p><span style="font-size: large;">&nbsp;&nbsp;&nbsp; 蓝色的部分是与线性可分的对偶问题表达式的不同之处。在线性不可分情况下得到的对偶问题，不同的地方就是α的范围从[0, +∞)，变为了[0, C]，增加的惩罚ε没有为对偶问题增加什么复杂度。</span></p>
+<p>&nbsp;</p>
+<p><strong><span style="color: #008000; font-size: large;">四、核函数：</span></strong></p>
+<p><span style="font-size: large;">&nbsp;&nbsp;&nbsp; 刚刚在谈不可分的情况下，提了一句，如果使用某些非线性的方法，可以得到将两个分类完美划分的曲线，比如接下来将要说的核函数。</span></p>
+<p><span style="font-size: large;"><strong>&nbsp;&nbsp;&nbsp; </strong>我们可以<strong>让空间从原本的线性空间变成一个更高维的空间</strong>，<strong>在这个高维的线性空间下，再用一个超平面进行划分</strong>。这儿举个例子，来理解一下如何利用空间的维度变得更高来帮助我们分类的（例子以及图片来自</span><a href="http://blog.pluskid.org/?p=685"><span style="font-size: large;">pluskid的kernel函数部分</span></a><span style="font-size: large;">）：</span></p>
+<p><span style="font-size: large;">&nbsp;&nbsp;&nbsp; 下图是一个典型的线性不可分的情况</span></p>
+<p><a href="http://images.cnblogs.com/cnblogs_com/LeftNotEasy/201105/201105022056068362.png"><span style="font-size: large;"><img style="display: block; float: none; margin-left: auto; margin-right: auto; border: 0px;" title="image" src="./机器学习中的算法(2)-支持向量机(SVM)基础 - LeftNotEasy - 博客园_files/201105022056079965.png" alt="image" width="240" height="188" border="0"></span></a></p>
+<p><span style="font-size: large;">&nbsp;&nbsp;&nbsp; 但是当我们把这两个类似于椭圆形的点映射到一个高维空间后，映射函数为：</span></p>
+<p><a href="http://images.cnblogs.com/cnblogs_com/LeftNotEasy/201105/201105022056071361.png"><span style="font-size: large;"><img style="display: block; float: none; margin-left: auto; margin-right: auto; border: 0px;" title="image" src="./机器学习中的算法(2)-支持向量机(SVM)基础 - LeftNotEasy - 博客园_files/201105022056078296.png" alt="image" width="240" height="37" border="0"></span></a><span style="font-size: large;">&nbsp;&nbsp;&nbsp; 用这个函数可以将上图的平面中的点映射到一个三维空间（z1,z2,z3)，并且对映射后的坐标加以旋转之后就可以得到一个线性可分的点集了。</span></p>
+<p><a href="http://images.cnblogs.com/cnblogs_com/LeftNotEasy/201105/201105022056107476.gif"><span style="font-size: large;"><img style="display: block; float: none; margin-left: auto; margin-right: auto;" title="rotate" src="./机器学习中的算法(2)-支持向量机(SVM)基础 - LeftNotEasy - 博客园_files/201105022056122751.gif" alt="rotate" width="240" height="192"></span></a></p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p><span style="font-size: large;">&nbsp;&nbsp;&nbsp; 用另外一个哲学例子来说：世界上本来没有两个完全一样的物体，对于所有的两个物体，我们可以通过增加维度来让他们最终有所区别，比如说两本书，从(颜色，内容)两个维度来说，可能是一样的，我们可以加上 <strong>作者</strong> 这个维度，是在不行我们还可以加入 <strong>页码</strong>，可以加入 <strong>拥有者</strong>，可以加入 <strong>购买地点</strong>，可以加入 <strong>笔记内容</strong>等等。<strong>当维度增加到无限维的时候，一定可以让任意的两个物体可分了</strong>。</span></p>
+<p><span style="font-size: large;">&nbsp;&nbsp;&nbsp; 回忆刚刚得到的对偶问题表达式：</span></p>
+<p><a href="http://images.cnblogs.com/cnblogs_com/LeftNotEasy/201105/201105022056126306.png"><img style="display: block; float: none; margin-left: auto; margin-right: auto; border: 0px;" title="image" src="./机器学习中的算法(2)-支持向量机(SVM)基础 - LeftNotEasy - 博客园_files/201105022056134322.png" alt="image" width="255" height="137" border="0"></a></p>
+<p><span style="font-size: large;">&nbsp;&nbsp;&nbsp; 我们可以将红色这个部分进行改造，令：</span></p>
+<p><a href="http://images.cnblogs.com/cnblogs_com/LeftNotEasy/201105/201105022056135717.png"><span style="font-size: large;"><img style="display: block; float: none; margin-left: auto; margin-right: auto; border: 0px;" title="image" src="./机器学习中的算法(2)-支持向量机(SVM)基础 - LeftNotEasy - 博客园_files/201105022056132652.png" alt="image" width="178" height="36" border="0"></span></a><span style="font-size: large;">&nbsp;&nbsp;&nbsp;&nbsp; 这个式子所做的事情就是将线性的空间映射到高维的空间,k(x, xj)有很多种，下面是比较典型的两种：</span></p>
+<p><a href="http://images.cnblogs.com/cnblogs_com/LeftNotEasy/201105/201105022056135128.png"><span style="font-size: large;"><img style="display: block; float: none; margin-left: auto; margin-right: auto; border: 0px;" title="image" src="./机器学习中的算法(2)-支持向量机(SVM)基础 - LeftNotEasy - 博客园_files/201105022056149239.png" alt="image" width="240" height="90" border="0"></span></a><span style="font-size: large;">&nbsp;&nbsp;&nbsp; 上面这个核称为多项式核，下面这个核称为高斯核，高斯核甚至是将原始空间映射为无穷维空间，另外核函数有一些比较好的性质，比如说不会比线性条件下增加多少额外的计算量，等等，这里也不再深入。一般对于一个问题，不同的核函数可能会带来不同的结果，一般是需要尝试来得到的。</span></p>
+<p>&nbsp;</p>
+<p><span style="color: #008000; font-size: large;"><strong>五、一些其他的问题：</strong></span></p>
+<p><span style="font-size: large;">&nbsp;&nbsp;&nbsp;&nbsp; 1）如何进行多分类问题：</span></p>
+<p><span style="font-size: large;">&nbsp;&nbsp;&nbsp;&nbsp; 上面所谈到的分类都是2分类的情况，当N分类的情况下，主要有两种方式，一种是1 vs (N – 1)一种是1 vs 1，前一种方法我们需要训练N个分类器，第i个分类器是看看是属于分类i还是属于分类i的补集（出去i的N-1个分类）。</span></p>
+<p><span style="font-size: large;">&nbsp;&nbsp;&nbsp;&nbsp; 后一种方式我们需要训练N * (N – 1) / 2个分类器，分类器(i,j)能够判断某个点是属于i还是属于j。</span></p>
+<p><span style="font-size: large;">&nbsp;&nbsp;&nbsp;&nbsp; 这种处理方式不仅在SVM中会用到，在很多其他的分类中也是被广泛用到，从林教授（libsvm的作者）的结论来看，1 vs 1的方式要优于1 vs (N – 1)。</span></p>
+<p><span style="font-size: large;">&nbsp;&nbsp;&nbsp;&nbsp; 2）SVM会overfitting吗？</span></p>
+<p><span style="font-size: large;">&nbsp;&nbsp;&nbsp;&nbsp; SVM避免overfitting，一种是调整之前说的惩罚函数中的C，另一种其实从式子上来看，min ||w||^2这个看起来是不是很眼熟？在最小二乘法回归的时候，我们看到过这个式子，这个式子可以让函数更平滑，所以SVM是一种不太容易over-fitting的方法。</span></p>
+<p>&nbsp;</p>
+<p><span style="color: #008000; font-size: large;"><strong>参考文档：</strong></span></p>
+<p><span style="font-size: large;">&nbsp;&nbsp;&nbsp; 主要的参考文档来自4个地方，wikipedia（在文章中已经给出了超链接了），<a href="http://blog.pluskid.org/?page_id=683">pluskid关于SVM的博文</a>，<a href="http://www.autonlab.org/tutorials/svm15.pdf">Andrew moore的ppt</a>（文章中不少图片都是引用或者改自Andrew Moore的ppt，以及prml</span></p>
+<p><span style="font-size: large;">&nbsp;&nbsp;&nbsp;&nbsp; </span></p>
+<p>&nbsp;</p></div><div id="MySignature"></div>
+<div class="clear"></div>
+<div id="blog_post_info_block">
+<div id="BlogPostCategory">分类: <a href="http://www.cnblogs.com/LeftNotEasy/category/273622.html" target="_blank">机器学习</a>,<a href="http://www.cnblogs.com/LeftNotEasy/category/273623.html" target="_blank">数学</a></div>
+<div id="EntryTag">标签: <a href="http://www.cnblogs.com/LeftNotEasy/tag/Support%20Vector%20Machine/">Support Vector Machine</a>, <a href="http://www.cnblogs.com/LeftNotEasy/tag/%E6%94%AF%E6%8C%81%E5%90%91%E9%87%8F%E6%9C%BA/">支持向量机</a>, <a href="http://www.cnblogs.com/LeftNotEasy/tag/%E6%A0%B8%E5%87%BD%E6%95%B0/">核函数</a>, <a href="http://www.cnblogs.com/LeftNotEasy/tag/SVM/">SVM</a>, <a href="http://www.cnblogs.com/LeftNotEasy/tag/Kernel/">Kernel</a>, <a href="http://www.cnblogs.com/LeftNotEasy/tag/Optimization/">Optimization</a>, <a href="http://www.cnblogs.com/LeftNotEasy/tag/Quadratic/">Quadratic</a>, <a href="http://www.cnblogs.com/LeftNotEasy/tag/%E4%BA%8C%E6%AC%A1%E8%A7%84%E5%88%92/">二次规划</a></div>
+<div id="blog_post_info"><div id="green_channel">
+        <a href="javascript:void(0);" id="green_channel_digg" onclick="DiggIt(2034566,cb_blogId,1);green_channel_success(this,&#39;谢谢推荐！&#39;);">好文要顶</a>
+            <a id="green_channel_follow" onclick="follow(&#39;e78b6fc1-4fa4-de11-ba8f-001cf0cd104b&#39;);" href="javascript:void(0);">关注我</a>
+    <a id="green_channel_favorite" onclick="AddToWz(cb_entryId);return false;" href="javascript:void(0);">收藏该文</a>
+    <a id="green_channel_weibo" href="javascript:void(0);" title="分享至新浪微博" onclick="ShareToTsina()"><img src="./机器学习中的算法(2)-支持向量机(SVM)基础 - LeftNotEasy - 博客园_files/icon_weibo_24.png" alt=""></a>
+    <a id="green_channel_wechat" href="javascript:void(0);" title="分享至微信" onclick="shareOnWechat()"><img src="./机器学习中的算法(2)-支持向量机(SVM)基础 - LeftNotEasy - 博客园_files/wechat.png" alt=""></a>
+</div>
+<div id="author_profile">
+    <div id="author_profile_info" class="author_profile_info">
+            <a href="http://home.cnblogs.com/u/LeftNotEasy/" target="_blank"><img src="./机器学习中的算法(2)-支持向量机(SVM)基础 - LeftNotEasy - 博客园_files/u89123.png" class="author_avatar" alt=""></a>
+        <div id="author_profile_detail" class="author_profile_info">
+            <a href="http://home.cnblogs.com/u/LeftNotEasy/">LeftNotEasy</a><br>
+            <a href="http://home.cnblogs.com/u/LeftNotEasy/followees">关注 - 16</a><br>
+            <a href="http://home.cnblogs.com/u/LeftNotEasy/followers">粉丝 - 1147</a>
+        </div>
+    </div>
+    <div class="clear"></div>
+    <div id="author_profile_honor"></div>
+    <div id="author_profile_follow">
+                <a href="javascript:void(0);" onclick="follow(&#39;e78b6fc1-4fa4-de11-ba8f-001cf0cd104b&#39;);return false;">+加关注</a>
+    </div>
+</div>
+<div id="div_digg">
+    <div class="diggit" onclick="votePost(2034566,&#39;Digg&#39;)">
+        <span class="diggnum" id="digg_count">40</span>
+    </div>
+    <div class="buryit" onclick="votePost(2034566,&#39;Bury&#39;)">
+        <span class="burynum" id="bury_count">0</span>
+    </div>
+    <div class="clear"></div>
+    <div class="diggword" id="digg_tips">
+    </div>
+</div>
+</div>
+<div class="clear"></div>
+<div id="post_next_prev"><a href="http://www.cnblogs.com/LeftNotEasy/archive/2011/03/07/random-forest-and-gbdt.html" class="p_n_p_prefix">« </a> 上一篇：<a href="http://www.cnblogs.com/LeftNotEasy/archive/2011/03/07/random-forest-and-gbdt.html" title="发布于2011-03-07 23:53">机器学习中的算法(1)-决策树模型组合之随机森林与GBDT</a><br><a href="http://www.cnblogs.com/LeftNotEasy/archive/2011/05/15/pymining-second-edition.html" class="p_n_p_prefix">» </a> 下一篇：<a href="http://www.cnblogs.com/LeftNotEasy/archive/2011/05/15/pymining-second-edition.html" title="发布于2011-05-15 22:21">PyMining-开源中文文本数据挖掘平台 Ver 0.1发布</a><br></div>
+</div>
+
+
+		</div>
+		<div class="postDesc">posted @ <span id="post-date">2011-05-02 20:56</span> <a href="http://www.cnblogs.com/LeftNotEasy/">LeftNotEasy</a> 阅读(<span id="post_view_count">123185</span>) 评论(<span id="post_comment_count">39</span>)  <a href="https://i.cnblogs.com/EditPosts.aspx?postid=2034566" rel="nofollow">编辑</a> <a href="http://www.cnblogs.com/LeftNotEasy/archive/2011/05/18/2034566.html#" onclick="AddToWz(2034566);return false;">收藏</a></div>
+	</div>
+	<script type="text/javascript">var allowComments=true,cb_blogId=62514,cb_entryId=2034566,cb_blogApp=currentBlogApp,cb_blogUserGuid='e78b6fc1-4fa4-de11-ba8f-001cf0cd104b',cb_entryCreatedDate='2011/5/2 20:56:00';loadViewCount(cb_entryId);</script>
+	
+</div><!--end: topics 文章、评论容器-->
+</div><a name="!comments"></a><div id="blog-comments-placeholder"><div id="comments_pager_top"></div>
+<br>
+<div class="feedback_area_title">评论列表</div>
+<div class="feedbackNoItems"></div>	
+
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/LeftNotEasy/archive/2011/05/18/2034566.html#2084985" class="layer">#1楼</a><a name="2084985" id="comment_anchor_2084985"></a>  <span class="comment_date">2011-05-03 06:26</span> <a id="a_comment_author_2084985" href="http://www.cnblogs.com/G_Anthony/" target="_blank">G.Anthony</a> <a href="http://msg.cnblogs.com/send/G.Anthony" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_2084985" class="blog_comment_body">很难理解啊</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(2084985,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(2084985,&#39;Bury&#39;,this)">反对(1)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/LeftNotEasy/archive/2011/05/18/2034566.html#2084998" class="layer">#2楼</a><a name="2084998" id="comment_anchor_2084998"></a>  <span class="comment_date">2011-05-03 08:27</span> <a id="a_comment_author_2084998" href="http://www.cnblogs.com/ganggang09/" target="_blank">pmonkey</a> <a href="http://msg.cnblogs.com/send/pmonkey" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_2084998" class="blog_comment_body">以前学过支持向量机的课，但是一直处于半懂状态，看了你的指导，豁然开朗啊，谢谢。</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(2084998,&#39;Digg&#39;,this)">支持(4)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(2084998,&#39;Bury&#39;,this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/LeftNotEasy/archive/2011/05/18/2034566.html#2084999" class="layer">#3楼</a><a name="2084999" id="comment_anchor_2084999"></a>  <span class="comment_date">2011-05-03 08:27</span> <a id="a_comment_author_2084999" href="http://www.cnblogs.com/ganggang09/" target="_blank">pmonkey</a> <a href="http://msg.cnblogs.com/send/pmonkey" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_2084999" class="blog_comment_body">写的非常好</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(2084999,&#39;Digg&#39;,this)">支持(1)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(2084999,&#39;Bury&#39;,this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/LeftNotEasy/archive/2011/05/18/2034566.html#2086631" class="layer">#4楼</a><a name="2086631" id="comment_anchor_2086631"></a>  <span class="comment_date">2011-05-04 20:10</span> <a id="a_comment_author_2086631" href="http://www.cnblogs.com/vivounicorn/" target="_blank">Leo Zhang</a> <a href="http://msg.cnblogs.com/send/Leo%20Zhang" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_2086631" class="blog_comment_body">嗯 写的很明白 我个人是非常喜欢svm<br>   基本上在数据维度特别大的时候 我还是比较喜欢用线性核或者径向核 如果使用sigmoid核则svm就变成了一个包含一个隐层的多层感知器 只不过隐层节点个数不用咱们自己去定且不会陷入局部最优 我觉得这点挺爽<br>   关于软间隔优化有一阶软间隔和二阶软间隔 可以用一个通式来表示 这样研究时候也比较方便<br>   目前解支持向量机的算法基本分两种 求解原问题或者求解其对偶问题 当然不同算法适合于不同场景 没有最好的只有最适合的<br>   对于对偶问题我想多说一点 这时候计算的复杂度不再取决于空间维数而取决于样本数（特别是支持向量个数）因此虽说feature越少越具有代表性越好 不过我不知道某些情况下是不是可以弱化特征提取的作用 换句话说我觉得svm是最不依赖于特征提取过程的分类算法<br>  总之svm是一种超赞的思想或者方法 嘿嘿<br><br></div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(2086631,&#39;Digg&#39;,this)">支持(2)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(2086631,&#39;Bury&#39;,this)">反对(0)</a></div><span id="comment_2086631_avatar" style="display:none;">http://pic.cnblogs.com/face/u45320.png?id=08140945</span>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/LeftNotEasy/archive/2011/05/18/2034566.html#2086741" class="layer">#5楼</a><a name="2086741" id="comment_anchor_2086741"></a>[<span class="louzhu">楼主</span>]  <span class="comment_date">2011-05-04 22:43</span> <a id="a_comment_author_2086741" href="http://www.cnblogs.com/LeftNotEasy/" target="_blank">LeftNotEasy</a> <a href="http://msg.cnblogs.com/send/LeftNotEasy" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_2086741" class="blog_comment_body"><a href="http://www.cnblogs.com/LeftNotEasy/archive/2011/05/18/2034566.html#2086631" title="查看所回复的评论" onclick="commentManager.renderComments(0,50,2086631);">@</a>
+Leo Zhang<br>呵呵，谢谢补充，最好能放上一点关于解法的参考资料，我也可以补充到博客中来。<br>其实我也不准备现在把svm搞得太深，只是当做一个知识储备，所以对于一些解法就暂时不去研究了，不过我倒是有打算再好好看看libsvm的代码，我大概读了一下，结构、效率都兼顾得不错。完整的看看应该是好处挺多的。</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(2086741,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(2086741,&#39;Bury&#39;,this)">反对(0)</a></div><span id="comment_2086741_avatar" style="display:none;">http://pic.cnblogs.com/face/u89123.png</span>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/LeftNotEasy/archive/2011/05/18/2034566.html#2087757" class="layer">#6楼</a><a name="2087757" id="comment_anchor_2087757"></a>  <span class="comment_date">2011-05-05 21:53</span> <a id="a_comment_author_2087757" href="http://www.cnblogs.com/vivounicorn/" target="_blank">Leo Zhang</a> <a href="http://msg.cnblogs.com/send/Leo%20Zhang" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_2087757" class="blog_comment_body"><a href="http://www.cnblogs.com/LeftNotEasy/archive/2011/05/18/2034566.html#2086741" title="查看所回复的评论" onclick="commentManager.renderComments(0,50,2086741);">@</a>
+LeftNotEasy<br>参考资料：<br>1、An Introduction to Support Vector Machines and Other Kernel-based Learning Methods（中文译本叫支持向量机导论） <br>2、the nature of statistical learning theory（中文译本叫统计学习理论的本质） 这本书偏重于理论<br>3、A Dual Coordinate Descent Method for Large-scale Linear SVM，线性svm的一个效率很高的算法，针对的是对偶问题，思想是在不同的坐标方向上通过固定其它分量来最小化目标函数<br>4、Sequential minimal optimization for SVM，SMO方法<br>5、PSVM: Parallelizing Support Vector Machines on Distributed Computers，另外一种思路，在Grim矩阵上做文章，利用不完全乔里斯基分解来实现并行的svm<br>6、这个网址下有较多资料<a href="http://hi.baidu.com/zxdker/blog/item/bbe1571e625b1fcfa686692e.html" target="_blank">http://hi.baidu.com/zxdker/blog/item/bbe1571e625b1fcfa686692e.html</a></div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(2087757,&#39;Digg&#39;,this)">支持(1)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(2087757,&#39;Bury&#39;,this)">反对(0)</a></div><span id="comment_2087757_avatar" style="display:none;">http://pic.cnblogs.com/face/u45320.png?id=08140945</span>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/LeftNotEasy/archive/2011/05/18/2034566.html#2088440" class="layer">#7楼</a><a name="2088440" id="comment_anchor_2088440"></a>[<span class="louzhu">楼主</span>]  <span class="comment_date">2011-05-06 12:51</span> <a id="a_comment_author_2088440" href="http://www.cnblogs.com/LeftNotEasy/" target="_blank">LeftNotEasy</a> <a href="http://msg.cnblogs.com/send/LeftNotEasy" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_2088440" class="blog_comment_body"><a href="http://www.cnblogs.com/LeftNotEasy/archive/2011/05/18/2034566.html#2087757" title="查看所回复的评论" onclick="commentManager.renderComments(0,50,2087757);">@</a>
+Leo Zhang<br>谢谢补充，呵呵：）</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(2088440,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(2088440,&#39;Bury&#39;,this)">反对(0)</a></div><span id="comment_2088440_avatar" style="display:none;">http://pic.cnblogs.com/face/u89123.png</span>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/LeftNotEasy/archive/2011/05/18/2034566.html#2099585" class="layer">#8楼</a><a name="2099585" id="comment_anchor_2099585"></a>  <span class="comment_date">2011-05-18 00:43</span> <a id="a_comment_author_2099585" href="http://www.cnblogs.com/lanke_2009/" target="_blank">蓝柯</a> <a href="http://msg.cnblogs.com/send/%E8%93%9D%E6%9F%AF" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_2099585" class="blog_comment_body">谢谢楼主，写的深入浅出！</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(2099585,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(2099585,&#39;Bury&#39;,this)">反对(0)</a></div><span id="comment_2099585_avatar" style="display:none;">http://pic.cnblogs.com/face/u191878.jpg</span>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/LeftNotEasy/archive/2011/05/18/2034566.html#2183462" class="layer">#9楼</a><a name="2183462" id="comment_anchor_2183462"></a>  <span class="comment_date">2011-08-23 10:19</span> <a id="a_comment_author_2183462" href="http://www.cnblogs.com/xiangshancuizhu/" target="_blank">hailong</a> <a href="http://msg.cnblogs.com/send/hailong" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_2183462" class="blog_comment_body">谢谢啦，写的非常好，不过如果能看到博主把实际做的东西写出来点就更好啦！</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(2183462,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(2183462,&#39;Bury&#39;,this)">反对(0)</a></div><span id="comment_2183462_avatar" style="display:none;">http://pic.cnblogs.com/face/u109225.jpg</span>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/LeftNotEasy/archive/2011/05/18/2034566.html#2183476" class="layer">#10楼</a><a name="2183476" id="comment_anchor_2183476"></a>  <span class="comment_date">2011-08-23 10:25</span> <a id="a_comment_author_2183476" href="http://www.cnblogs.com/xiangshancuizhu/" target="_blank">hailong</a> <a href="http://msg.cnblogs.com/send/hailong" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_2183476" class="blog_comment_body"><a href="http://www.cnblogs.com/LeftNotEasy/archive/2011/05/18/2034566.html#2086631" title="查看所回复的评论" onclick="commentManager.renderComments(0,50,2086631);">@</a>
+Leo Zhang<br>说得好！</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(2183476,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(2183476,&#39;Bury&#39;,this)">反对(0)</a></div><span id="comment_2183476_avatar" style="display:none;">http://pic.cnblogs.com/face/u109225.jpg</span>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/LeftNotEasy/archive/2011/05/18/2034566.html#2184190" class="layer">#11楼</a><a name="2184190" id="comment_anchor_2184190"></a>[<span class="louzhu">楼主</span>]  <span class="comment_date">2011-08-24 09:33</span> <a id="a_comment_author_2184190" href="http://www.cnblogs.com/LeftNotEasy/" target="_blank">LeftNotEasy</a> <a href="http://msg.cnblogs.com/send/LeftNotEasy" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_2184190" class="blog_comment_body"><a href="http://www.cnblogs.com/LeftNotEasy/archive/2011/05/18/2034566.html#2183476" title="查看所回复的评论" onclick="commentManager.renderComments(0,50,2183476);">@</a>
+hailong<br><a href="http://www.cnblogs.com/vivounicorn/" target="_blank">http://www.cnblogs.com/vivounicorn/</a> Leo Zhang的博客里面有更多关于SVM的文章，他也正在实现一个SVM，可以期待一下，呵呵～</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(2184190,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(2184190,&#39;Bury&#39;,this)">反对(0)</a></div><span id="comment_2184190_avatar" style="display:none;">http://pic.cnblogs.com/face/u89123.png</span>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/LeftNotEasy/archive/2011/05/18/2034566.html#2184525" class="layer">#12楼</a><a name="2184525" id="comment_anchor_2184525"></a>  <span class="comment_date">2011-08-24 14:45</span> <a id="a_comment_author_2184525" href="http://www.cnblogs.com/xiangshancuizhu/" target="_blank">hailong</a> <a href="http://msg.cnblogs.com/send/hailong" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_2184525" class="blog_comment_body"><a href="http://www.cnblogs.com/LeftNotEasy/archive/2011/05/18/2034566.html#2184190" title="查看所回复的评论" onclick="commentManager.renderComments(0,50,2184190);">@</a>
+LeftNotEasy<br>我也有在看啊，不过博主如果写个libsvm做实际项目的例子给大家看看就好啦啊，我现在libsvm拿到手，可是不知道具体该怎么搞啊</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(2184525,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(2184525,&#39;Bury&#39;,this)">反对(0)</a></div><span id="comment_2184525_avatar" style="display:none;">http://pic.cnblogs.com/face/u109225.jpg</span>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/LeftNotEasy/archive/2011/05/18/2034566.html#2233692" class="layer">#13楼</a><a name="2233692" id="comment_anchor_2233692"></a>  <span class="comment_date">2011-11-02 15:59</span> <a id="a_comment_author_2233692" href="http://home.cnblogs.com/u/346887/" target="_blank">wbleach</a> <a href="http://msg.cnblogs.com/send/wbleach" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_2233692" class="blog_comment_body">不知道是不是理解错了，在文章的开头的时候，怎么感觉当X是一维的时候，f(x)应该是一个二维空间里面的直线，当x是n-1维的时候，f(x)应该是n维里面的超平面呢？<br>求解？</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(2233692,&#39;Digg&#39;,this)">支持(1)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(2233692,&#39;Bury&#39;,this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/LeftNotEasy/archive/2011/05/18/2034566.html#2234312" class="layer">#14楼</a><a name="2234312" id="comment_anchor_2234312"></a>[<span class="louzhu">楼主</span>]  <span class="comment_date">2011-11-03 09:24</span> <a id="a_comment_author_2234312" href="http://www.cnblogs.com/LeftNotEasy/" target="_blank">LeftNotEasy</a> <a href="http://msg.cnblogs.com/send/LeftNotEasy" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_2234312" class="blog_comment_body"><a href="http://www.cnblogs.com/LeftNotEasy/archive/2011/05/18/2034566.html#2233692" title="查看所回复的评论" onclick="commentManager.renderComments(0,50,2233692);">@</a>
+wbleach<br>我的理解是，x如果是2维（平面），那么要区分这个2维的点，则需要画一条1维多平面（直线），所以f(x)的维度=x的维度-1</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(2234312,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(2234312,&#39;Bury&#39;,this)">反对(0)</a></div><span id="comment_2234312_avatar" style="display:none;">http://pic.cnblogs.com/face/u89123.png</span>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/LeftNotEasy/archive/2011/05/18/2034566.html#2235936" class="layer">#15楼</a><a name="2235936" id="comment_anchor_2235936"></a>  <span class="comment_date">2011-11-05 00:40</span> <a id="a_comment_author_2235936" href="http://home.cnblogs.com/u/347723/" target="_blank">lighthearts</a> <a href="http://msg.cnblogs.com/send/lighthearts" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_2235936" class="blog_comment_body">还没读完，求偏导那里有一个小的标记错误（对L求b偏导那里），最近在看利用svm做回归预测（低阶映射到高阶成线性函数），想不通使用这样的优化求值（w，b）对最后的函数有什么影响。。。</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(2235936,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(2235936,&#39;Bury&#39;,this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/LeftNotEasy/archive/2011/05/18/2034566.html#2251098" class="layer">#16楼</a><a name="2251098" id="comment_anchor_2251098"></a>  <span class="comment_date">2011-11-22 22:53</span> <a id="a_comment_author_2251098" href="http://www.cnblogs.com/runzhi/" target="_blank">RunZhi</a> <a href="http://msg.cnblogs.com/send/RunZhi" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_2251098" class="blog_comment_body">写的太好了。<br><br>发现了两个小问题：一是lighthearts提出的笔误，二是，偏导之后L的表达式的两项的前一项好像系数不是1/2，下文也没有1/2。不知道是不是我理解错了... ...<br></div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(2251098,&#39;Digg&#39;,this)">支持(1)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(2251098,&#39;Bury&#39;,this)">反对(0)</a></div><span id="comment_2251098_avatar" style="display:none;">http://pic.cnblogs.com/face/u284190.png?id=01161910</span>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/LeftNotEasy/archive/2011/05/18/2034566.html#2253836" class="layer">#17楼</a><a name="2253836" id="comment_anchor_2253836"></a>[<span class="louzhu">楼主</span>]  <span class="comment_date">2011-11-25 17:35</span> <a id="a_comment_author_2253836" href="http://www.cnblogs.com/LeftNotEasy/" target="_blank">LeftNotEasy</a> <a href="http://msg.cnblogs.com/send/LeftNotEasy" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_2253836" class="blog_comment_body"><a href="http://www.cnblogs.com/LeftNotEasy/archive/2011/05/18/2034566.html#2235936" title="查看所回复的评论" onclick="commentManager.renderComments(0,50,2235936);">@</a>
+lighthearts<br>@RunZhi<br>谢谢二位这么仔细地指出错误，这里确实是一个标记的错误，不过好在不算太影响阅读，这里就先不改了</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(2253836,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(2253836,&#39;Bury&#39;,this)">反对(0)</a></div><span id="comment_2253836_avatar" style="display:none;">http://pic.cnblogs.com/face/u89123.png</span>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/LeftNotEasy/archive/2011/05/18/2034566.html#2277469" class="layer">#18楼</a><a name="2277469" id="comment_anchor_2277469"></a>  <span class="comment_date">2011-12-23 09:58</span> <a id="a_comment_author_2277469" href="http://www.cnblogs.com/GreenHand/" target="_blank">placebo</a> <a href="http://msg.cnblogs.com/send/placebo" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_2277469" class="blog_comment_body">LZ写的太棒了 超喜欢你的风格<br>但是机器学习系列很久没更新啦 期待下一篇啊</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(2277469,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(2277469,&#39;Bury&#39;,this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/LeftNotEasy/archive/2011/05/18/2034566.html#2280032" class="layer">#19楼</a><a name="2280032" id="comment_anchor_2280032"></a>[<span class="louzhu">楼主</span>]  <span class="comment_date">2011-12-26 22:09</span> <a id="a_comment_author_2280032" href="http://www.cnblogs.com/LeftNotEasy/" target="_blank">LeftNotEasy</a> <a href="http://msg.cnblogs.com/send/LeftNotEasy" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_2280032" class="blog_comment_body"><a href="http://www.cnblogs.com/LeftNotEasy/archive/2011/05/18/2034566.html#2277469" title="查看所回复的评论" onclick="commentManager.renderComments(0,50,2277469);">@</a>
+placebo<br>呵呵，谢谢，现在一天比一天忙，真来不及写了。。。</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(2280032,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(2280032,&#39;Bury&#39;,this)">反对(0)</a></div><span id="comment_2280032_avatar" style="display:none;">http://pic.cnblogs.com/face/u89123.png</span>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/LeftNotEasy/archive/2011/05/18/2034566.html#2521390" class="layer">#20楼</a><a name="2521390" id="comment_anchor_2521390"></a>  <span class="comment_date">2012-11-01 09:00</span> <a id="a_comment_author_2521390" href="http://home.cnblogs.com/u/462495/" target="_blank">austinls</a> <a href="http://msg.cnblogs.com/send/austinls" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_2521390" class="blog_comment_body">太谢谢楼主了！非常易懂！<br>我弄完这个准备开始神经网络了！</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(2521390,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(2521390,&#39;Bury&#39;,this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/LeftNotEasy/archive/2011/05/18/2034566.html#2528996" class="layer">#21楼</a><a name="2528996" id="comment_anchor_2528996"></a>  <span class="comment_date">2012-11-10 19:10</span> <a id="a_comment_author_2528996" href="http://home.cnblogs.com/u/466743/" target="_blank">等你爱我</a> <a href="http://msg.cnblogs.com/send/%E7%AD%89%E4%BD%A0%E7%88%B1%E6%88%91" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_2528996" class="blog_comment_body">高手，顶礼膜拜！</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(2528996,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(2528996,&#39;Bury&#39;,this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/LeftNotEasy/archive/2011/05/18/2034566.html#2574548" class="layer">#22楼</a><a name="2574548" id="comment_anchor_2574548"></a>  <span class="comment_date">2012-12-10 22:01</span> <a id="a_comment_author_2574548" href="http://home.cnblogs.com/u/478146/" target="_blank">DoctorXu</a> <a href="http://msg.cnblogs.com/send/DoctorXu" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_2574548" class="blog_comment_body">开头处写错了，x为2维向量时，f(x)=wx+b代表3维空间中的平面，正确写法为f(x)=0</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(2574548,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(2574548,&#39;Bury&#39;,this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/LeftNotEasy/archive/2011/05/18/2034566.html#2645845" class="layer">#23楼</a><a name="2645845" id="comment_anchor_2645845"></a>  <span class="comment_date">2013-03-29 17:24</span> <a id="a_comment_author_2645845" href="http://www.cnblogs.com/kaituorensheng/" target="_blank">jihite</a> <a href="http://msg.cnblogs.com/send/jihite" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_2645845" class="blog_comment_body">不是一般的牛！</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(2645845,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(2645845,&#39;Bury&#39;,this)">反对(0)</a></div><span id="comment_2645845_avatar" style="display:none;">http://pic.cnblogs.com/face/u408927.jpg?id=16165421</span>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/LeftNotEasy/archive/2011/05/18/2034566.html#2838213" class="layer">#24楼</a><a name="2838213" id="comment_anchor_2838213"></a>  <span class="comment_date">2013-12-16 13:27</span> <a id="a_comment_author_2838213" href="http://www.cnblogs.com/bestheart/" target="_blank">Beenking</a> <a href="http://msg.cnblogs.com/send/Beenking" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_2838213" class="blog_comment_body"><img src="./机器学习中的算法(2)-支持向量机(SVM)基础 - LeftNotEasy - 博客园_files/16132654-ba9877cb888d42c2974339aedaa977e9.png" alt="" border="0" "=""><br>应该是对b的偏导的</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(2838213,&#39;Digg&#39;,this)">支持(1)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(2838213,&#39;Bury&#39;,this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/LeftNotEasy/archive/2011/05/18/2034566.html#2840289" class="layer">#25楼</a><a name="2840289" id="comment_anchor_2840289"></a>  <span class="comment_date">2013-12-18 21:36</span> <a id="a_comment_author_2840289" href="http://home.cnblogs.com/u/592760/" target="_blank">WhatUknow</a> <a href="http://msg.cnblogs.com/send/WhatUknow" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_2840289" class="blog_comment_body">支持楼主</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(2840289,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(2840289,&#39;Bury&#39;,this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/LeftNotEasy/archive/2011/05/18/2034566.html#2925186" class="layer">#26楼</a><a name="2925186" id="comment_anchor_2925186"></a>  <span class="comment_date">2014-04-25 11:23</span> <a id="a_comment_author_2925186" href="http://home.cnblogs.com/u/627691/" target="_blank">宇翼</a> <a href="http://msg.cnblogs.com/send/%E5%AE%87%E7%BF%BC" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_2925186" class="blog_comment_body">如果早看到楼主的帖子就好了！写的深入浅出，而且形象生动，将抽象的东西具象化。除此之外，排版干净，颜色的运用恰到好处，给了读者很好的指引作用。写的真不错！感谢楼主把自己的思想拿出来跟大家分享！我也受益匪浅！</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(2925186,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(2925186,&#39;Bury&#39;,this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/LeftNotEasy/archive/2011/05/18/2034566.html#2991610" class="layer">#27楼</a><a name="2991610" id="comment_anchor_2991610"></a>  <span class="comment_date">2014-07-21 16:17</span> <a id="a_comment_author_2991610" href="http://home.cnblogs.com/u/652849/" target="_blank">Minda</a> <a href="http://msg.cnblogs.com/send/Minda" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_2991610" class="blog_comment_body">楼主所说的||W|| = √W.W 应该是√W（转置）.W 吧</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(2991610,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(2991610,&#39;Bury&#39;,this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/LeftNotEasy/archive/2011/05/18/2034566.html#3046758" class="layer">#28楼</a><a name="3046758" id="comment_anchor_3046758"></a>  <span class="comment_date">2014-10-19 17:07</span> <a id="a_comment_author_3046758" href="http://home.cnblogs.com/u/613605/" target="_blank">bianhua</a> <a href="http://msg.cnblogs.com/send/bianhua" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3046758" class="blog_comment_body">博主写得很好，对理解SVM很有帮助</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3046758,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3046758,&#39;Bury&#39;,this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/LeftNotEasy/archive/2011/05/18/2034566.html#3061677" class="layer">#29楼</a><a name="3061677" id="comment_anchor_3061677"></a>  <span class="comment_date">2014-11-11 15:31</span> <a id="a_comment_author_3061677" href="http://www.cnblogs.com/subconscious/" target="_blank">计算机的潜意识</a> <a href="http://msg.cnblogs.com/send/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%9A%84%E6%BD%9C%E6%84%8F%E8%AF%86" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3061677" class="blog_comment_body">非常好，赞一个！</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3061677,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3061677,&#39;Bury&#39;,this)">反对(0)</a></div><span id="comment_3061677_avatar" style="display:none;">http://pic.cnblogs.com/face/673793/20140918201411.png</span>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/LeftNotEasy/archive/2011/05/18/2034566.html#3172626" class="layer">#30楼</a><a name="3172626" id="comment_anchor_3172626"></a>  <span class="comment_date">2015-04-29 11:05</span> <a id="a_comment_author_3172626" href="http://home.cnblogs.com/u/751403/" target="_blank">jensxx</a> <a href="http://msg.cnblogs.com/send/jensxx" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3172626" class="blog_comment_body">“假如说，我们令黑色的点 = -1， 白色的点 =  +1”<br>读到这里感觉怪怪的。。不是黑色代表直线以上的点 应该是1 而白色=-1么？</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3172626,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3172626,&#39;Bury&#39;,this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/LeftNotEasy/archive/2011/05/18/2034566.html#3272465" class="layer">#31楼</a><a name="3272465" id="comment_anchor_3272465"></a>  <span class="comment_date">2015-09-23 11:47</span> <a id="a_comment_author_3272465" href="http://home.cnblogs.com/u/815127/" target="_blank">挖掘都督</a> <a href="http://msg.cnblogs.com/send/%E6%8C%96%E6%8E%98%E9%83%BD%E7%9D%A3" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3272465" class="blog_comment_body">写的非常好，看完博文我完成了SVM的整体数学推导。文中有几处写的不准确，此处指正一下：1，对b求偏导，公式书写错误；2，对偶问题表达式，前边没有1/2</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3272465,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3272465,&#39;Bury&#39;,this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/LeftNotEasy/archive/2011/05/18/2034566.html#3329050" class="layer">#32楼</a><a name="3329050" id="comment_anchor_3329050"></a>  <span class="comment_date">2015-12-17 16:10</span> <a id="a_comment_author_3329050" href="http://home.cnblogs.com/u/485525/" target="_blank">gystld</a> <a href="http://msg.cnblogs.com/send/gystld" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3329050" class="blog_comment_body">推荐一款最易用的支持向量机软件：Excel+SVM，无需繁琐安装，无需复杂参数设置，一键自动寻优，高精度单因变量、多因变量回归、两分类、多分类。www.plsexcelword.com。</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3329050,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3329050,&#39;Bury&#39;,this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/LeftNotEasy/archive/2011/05/18/2034566.html#3375052" class="layer">#33楼</a><a name="3375052" id="comment_anchor_3375052"></a>  <span class="comment_date">2016-03-08 20:34</span> <a id="a_comment_author_3375052" href="http://home.cnblogs.com/u/485525/" target="_blank">gystld</a> <a href="http://msg.cnblogs.com/send/gystld" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3375052" class="blog_comment_body">易用易懂的支持向量机<br>        有二分类、多分类、单因变量回归、多因变量回归功能。软件自动寻优，只需要标记、确定两步就能完成操作，得到准确率高的分类和回归结果。由于是调用LS-SVM工具箱函数，准确性不用怀疑。是目前市面上最易用的支持向量机软件包。www.plsexcelword.com</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3375052,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3375052,&#39;Bury&#39;,this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/LeftNotEasy/archive/2011/05/18/2034566.html#3407375" class="layer">#34楼</a><a name="3407375" id="comment_anchor_3407375"></a>  <span class="comment_date">2016-04-13 21:00</span> <a id="a_comment_author_3407375" href="http://home.cnblogs.com/u/816932/" target="_blank">xingchuilvye</a> <a href="http://msg.cnblogs.com/send/xingchuilvye" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3407375" class="blog_comment_body">目前看得还不够深入，所以也没法评价，但是对这些知识点很感兴趣，所以直接分享了，感谢博主，mark，慢慢消化</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3407375,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3407375,&#39;Bury&#39;,this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/LeftNotEasy/archive/2011/05/18/2034566.html#3412055" class="layer">#35楼</a><a name="3412055" id="comment_anchor_3412055"></a>  <span class="comment_date">2016-04-19 15:20</span> <a id="a_comment_author_3412055" href="http://home.cnblogs.com/u/485525/" target="_blank">gystld</a> <a href="http://msg.cnblogs.com/send/gystld" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3412055" class="blog_comment_body">推荐一款最易用中文excel神经网络软件包，支持向量机。有BP、RBF、PNN、GRNN、Elman、SOM、LVQ七种神经网络功能。偏最小二乘回归。一键操作，易用易懂。<a href="http://www.plsexcelword.com/" target="_blank">http://www.plsexcelword.com/</a>。</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3412055,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3412055,&#39;Bury&#39;,this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/LeftNotEasy/archive/2011/05/18/2034566.html#3428461" class="layer">#36楼</a><a name="3428461" id="comment_anchor_3428461"></a>  <span class="comment_date">2016-05-11 11:04</span> <a id="a_comment_author_3428461" href="http://home.cnblogs.com/u/930007/" target="_blank">yeepom</a> <a href="http://msg.cnblogs.com/send/yeepom" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3428461" class="blog_comment_body">x为二维向量，对应的分离超平面是w1*x1+w2*x2+b=0，是一条直线。如果你预测的值(x11,x12)带入超平面方程后，w1*x11+w2*x12+b&gt;0，则预测的值是+1类；如果w1*x11+w2*x12&lt;0，则预测的值是-1类。</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3428461,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3428461,&#39;Bury&#39;,this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/LeftNotEasy/archive/2011/05/18/2034566.html#3433731" class="layer">#37楼</a><a name="3433731" id="comment_anchor_3433731"></a>  <span class="comment_date">2016-05-18 09:55</span> <a id="a_comment_author_3433731" href="http://home.cnblogs.com/u/929767/" target="_blank">miffymoon</a> <a href="http://msg.cnblogs.com/send/miffymoon" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3433731" class="blog_comment_body">厉害，厉害，膜拜学习！！！</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3433731,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3433731,&#39;Bury&#39;,this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/LeftNotEasy/archive/2011/05/18/2034566.html#3579767" class="layer">#38楼</a><a name="3579767" id="comment_anchor_3579767"></a>  <span class="comment_date">2016-12-13 20:57</span> <a id="a_comment_author_3579767" href="http://www.cnblogs.com/heshao20/" target="_blank">鹤少20</a> <a href="http://msg.cnblogs.com/send/%E9%B9%A4%E5%B0%9120" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3579767" class="blog_comment_body">一目了然，牛</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3579767,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3579767,&#39;Bury&#39;,this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/LeftNotEasy/archive/2011/05/18/2034566.html#3614272" class="layer">#39楼</a><a name="3614272" id="comment_anchor_3614272"></a><span id="comment-maxId" style="display:none;">3614272</span><span id="comment-maxDate" style="display:none;">2017/2/8 15:32:47</span>  <span class="comment_date">2017-02-08 15:32</span> <a id="a_comment_author_3614272" href="http://home.cnblogs.com/u/800581/" target="_blank">whattoshow</a> <a href="http://msg.cnblogs.com/send/whattoshow" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3614272" class="blog_comment_body">讲的清楚明了，赞一个~！</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3614272,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3614272,&#39;Bury&#39;,this)">反对(0)</a></div>
+			</div>
+		</div>
+	<div id="comments_pager_bottom"></div></div><script type="text/javascript">var commentManager = new blogCommentManager();commentManager.renderComments(0);</script>
+<div id="comment_form" class="commentform">
+<a name="commentform"></a>
+<div id="divCommentShow"></div>
+<div id="comment_nav"><span id="span_refresh_tips"></span><a href="javascript:void(0);" onclick="return RefreshCommentList();" id="lnk_RefreshComments" runat="server" clientidmode="Static">刷新评论</a><a href="http://www.cnblogs.com/LeftNotEasy/archive/2011/05/18/2034566.html#" onclick="return RefreshPage();">刷新页面</a><a href="http://www.cnblogs.com/LeftNotEasy/archive/2011/05/18/2034566.html#top">返回顶部</a></div>
+<div id="comment_form_container"><div class="login_tips">注册用户登录后才能发表评论，请 <a rel="nofollow" href="javascript:void(0);" class="underline" onclick="return login(&#39;commentform&#39;);">登录</a> 或 <a rel="nofollow" href="javascript:void(0);" class="underline" onclick="return register();">注册</a>，<a href="http://www.cnblogs.com/">访问</a>网站首页。</div></div>
+<div class="ad_text_commentbox" id="ad_text_under_commentbox"></div>
+<div id="ad_t2"><a href="http://www.ucancode.com/index.htm" target="_blank">【推荐】50万行VC++源码: 大型组态工控、电力仿真CAD与GIS源码库</a><br><a href="http://cn.udacity.com/fend/?utm_source=cnblogs&amp;utm_medium=referral&amp;utm_campaign=newFEND" target="_blank">【推荐】Google+GitHub联手打造前端工程师课程</a><br></div>
+<div id="opt_under_post"></div>
+<div id="ad_c1" class="c_ad_block"><a href="http://click.aliyun.com/m/12044/" target="_blank"><img width="300" height="250" src="./机器学习中的算法(2)-支持向量机(SVM)基础 - LeftNotEasy - 博客园_files/24442-20170301190900595-1906438193.jpg" alt=""></a></div>
+<div id="under_post_news"><div class="itnews c_ad_block"><b>最新IT新闻</b>:<br> ·  <a href="http://news.cnblogs.com/n/564389/" target="_blank">百度CEO呼吁积极吸纳被特朗普挡在门外的科技人才</a><br> ·  <a href="http://news.cnblogs.com/n/564388/" target="_blank">扔掉繁琐线缆！高通推一体化VR头盔 无需连接PC</a><br> ·  <a href="http://news.cnblogs.com/n/564387/" target="_blank">谷歌Play Store上线五周年 热销内容中国用户也不陌生</a><br> ·  <a href="http://news.cnblogs.com/n/564386/" target="_blank">《福布斯》列举三大理由力促Snap收购GoPro</a><br> ·  <a href="http://news.cnblogs.com/n/564385/" target="_blank">富士康妙手回春 夏普股价三年涨三倍</a><br>» <a href="http://news.cnblogs.com/" title="IT新闻" target="_blank">更多新闻...</a></div></div>
+<div id="ad_c2" class="c_ad_block"><a href="http://bbs.h3bpm.com/index.php?m=app&amp;app=product_download&amp;a=reg&amp;utm_source=csdn&amp;utm_medium=pic&amp;utm_campaign=show&amp;utm_content=v10&amp;utm_term=%E5%85%8D%E8%B4%B9%E4%B8%8B%E8%BD%BD" target="_blank"><img width="468" height="60" src="./机器学习中的算法(2)-支持向量机(SVM)基础 - LeftNotEasy - 博客园_files/24442-20170118152220281-363324784.jpg" alt=""></a></div>
+<div id="under_post_kb"><div class="itnews c_ad_block" id="kb_block"><b>最新知识库文章</b>:<br><div id="kb_recent"> ·  <a href="http://kb.cnblogs.com/page/562433/" target="_blank">垃圾回收原来是这么回事</a><br> ·  <a href="http://kb.cnblogs.com/page/554260/" target="_blank">「代码家」的学习过程和学习经验分享</a><br> ·  <a href="http://kb.cnblogs.com/page/556770/" target="_blank">写给未来的程序媛</a><br> ·  <a href="http://kb.cnblogs.com/page/558087/" target="_blank">高质量的工程代码为什么难写</a><br> ·  <a href="http://kb.cnblogs.com/page/555750/" target="_blank">循序渐进地代码重构</a><br></div>» <a href="http://kb.cnblogs.com/" target="_blank">更多知识库文章...</a></div></div>
+<div id="HistoryToday" class="c_ad_block"></div>
+<script type="text/javascript">
+    fixPostBody();
+    setTimeout(function () { incrementViewCount(cb_entryId); }, 50);
+    deliverAdT2();
+    deliverAdC1();
+    deliverAdC2();    
+    loadNewsAndKb();
+    loadBlogSignature();
+    LoadPostInfoBlock(cb_blogId, cb_entryId, cb_blogApp, cb_blogUserGuid);
+    GetPrevNextPost(cb_entryId, cb_blogId, cb_entryCreatedDate);
+    loadOptUnderPost();
+    GetHistoryToday(cb_blogId, cb_blogApp, cb_entryCreatedDate);   
+</script>
+</div>
+
+
+	</div><!--end: forFlow -->
+	</div><!--end: mainContent 主体内容容器-->
+
+	<div id="sideBar">
+		<div id="sideBarMain">
+			
+			<div id="blog-calendar" style="display:none"></div><script type="text/javascript">loadBlogDefaultCalendar();</script>
+			
+			<div id="leftcontentcontainer">
+				<div id="blog-sidecolumn"><div id="sidebar_search" class="sidebar-block"></div><div id="sidebar_shortcut" class="sidebar-block">
+<div class="catListLink">
+<h3 class="catListTitle">常用链接</h3>
+<ul>
+<li><a href="http://www.cnblogs.com/LeftNotEasy/p/" title="我的博客的随笔列表">我的随笔</a></li><li><a href="http://www.cnblogs.com/LeftNotEasy/MyComments.html" title="我发表过的评论列表">我的评论</a></li><li><a href="http://www.cnblogs.com/LeftNotEasy/OtherPosts.html" title="我评论过的随笔列表">我的参与</a></li><li><a href="http://www.cnblogs.com/LeftNotEasy/RecentComments.html" title="我的博客的评论列表">最新评论</a></li><li><a href="http://www.cnblogs.com/LeftNotEasy/tag/" title="我的博客的标签列表">我的标签</a></li>
+</ul>
+<div id="itemListLin_con" style="display:none;">
+<ul>
+
+</ul>
+</div>
+</div></div><div id="sidebar_toptags" class="sidebar-block">
+<div class="catListTag">
+<h3 class="catListTitle">我的标签</h3>
+<ul>
+<li><a href="http://www.cnblogs.com/LeftNotEasy/tag/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a>(8)</li><li><a href="http://www.cnblogs.com/LeftNotEasy/tag/%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E/">搜索引擎</a>(7)</li><li><a href="http://www.cnblogs.com/LeftNotEasy/tag/Lucene/">Lucene</a>(6)</li><li><a href="http://www.cnblogs.com/LeftNotEasy/tag/machine%20learning/">machine learning</a>(4)</li><li><a href="http://www.cnblogs.com/LeftNotEasy/tag/Hadoop/">Hadoop</a>(4)</li><li><a href="http://www.cnblogs.com/LeftNotEasy/tag/mathmatics/">mathmatics</a>(3)</li><li><a href="http://www.cnblogs.com/LeftNotEasy/tag/pymining/">pymining</a>(3)</li><li><a href="http://www.cnblogs.com/LeftNotEasy/tag/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/">人工智能</a>(3)</li><li><a href="http://www.cnblogs.com/LeftNotEasy/tag/%E6%95%B0%E6%8D%AE%E6%8C%96%E6%8E%98/">数据挖掘</a>(3)</li><li><a href="http://www.cnblogs.com/LeftNotEasy/tag/PCA/">PCA</a>(2)</li><li><a href="http://www.cnblogs.com/LeftNotEasy/tag/">更多</a></li>
+</ul>
+</div></div><div id="sidebar_categories">
+<div id="sidebar_postcategory" class="catListPostCategory sidebar-block">
+<h3 class="catListTitle">随笔分类</h3>
+
+<ul>
+
+<li><a id="CatList_LinkList_0_Link_0" href="http://www.cnblogs.com/LeftNotEasy/category/355677.html">Hadoop(4)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_1" href="http://www.cnblogs.com/LeftNotEasy/category/220705.html">Lucene C++重写心得(2)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_2" href="http://www.cnblogs.com/LeftNotEasy/category/220704.html">Lucene JAVA心得(9)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_3" href="http://www.cnblogs.com/LeftNotEasy/category/220702.html">安排，计划，总结(3)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_4" href="http://www.cnblogs.com/LeftNotEasy/category/220709.html">分布式存储(2)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_5" href="http://www.cnblogs.com/LeftNotEasy/category/273622.html">机器学习(10)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_6" href="http://www.cnblogs.com/LeftNotEasy/category/261428.html">结构设计(1)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_7" href="http://www.cnblogs.com/LeftNotEasy/category/273623.html">数学(7)</a> </li>
+
+</ul>
+
+</div>
+
+<div id="sidebar_postarchive" class="catListPostArchive sidebar-block">
+<h3 class="catListTitle">随笔档案</h3>
+
+<ul>
+
+<li><a id="CatList_LinkList_1_Link_0" href="http://www.cnblogs.com/LeftNotEasy/archive/2016/12.html">2016年12月 (2)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_1" href="http://www.cnblogs.com/LeftNotEasy/archive/2016/11.html">2016年11月 (1)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_2" href="http://www.cnblogs.com/LeftNotEasy/archive/2016/08.html">2016年8月 (2)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_3" href="http://www.cnblogs.com/LeftNotEasy/archive/2016/07.html">2016年7月 (2)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_4" href="http://www.cnblogs.com/LeftNotEasy/archive/2012/02.html">2012年2月 (1)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_5" href="http://www.cnblogs.com/LeftNotEasy/archive/2011/08.html">2011年8月 (1)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_6" href="http://www.cnblogs.com/LeftNotEasy/archive/2011/05.html">2011年5月 (5)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_7" href="http://www.cnblogs.com/LeftNotEasy/archive/2011/03.html">2011年3月 (1)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_8" href="http://www.cnblogs.com/LeftNotEasy/archive/2011/02.html">2011年2月 (1)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_9" href="http://www.cnblogs.com/LeftNotEasy/archive/2011/01.html">2011年1月 (3)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_10" href="http://www.cnblogs.com/LeftNotEasy/archive/2010/12.html">2010年12月 (2)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_11" href="http://www.cnblogs.com/LeftNotEasy/archive/2010/11.html">2010年11月 (1)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_12" href="http://www.cnblogs.com/LeftNotEasy/archive/2010/10.html">2010年10月 (1)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_13" href="http://www.cnblogs.com/LeftNotEasy/archive/2010/09.html">2010年9月 (2)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_14" href="http://www.cnblogs.com/LeftNotEasy/archive/2010/08.html">2010年8月 (1)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_15" href="http://www.cnblogs.com/LeftNotEasy/archive/2010/01.html">2010年1月 (12)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_16" href="http://www.cnblogs.com/LeftNotEasy/archive/2009/12.html">2009年12月 (2)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_17" href="http://www.cnblogs.com/LeftNotEasy/archive/2009/11.html">2009年11月 (4)</a> </li>
+
+</ul>
+
+</div>
+
+</div><div id="sidebar_recentcomments" class="sidebar-block"><div id="recent_comments_wrap">
+<div class="catListComment">
+<h3 class="catListTitle">最新评论</h3>
+
+	<div id="RecentCommentsBlock"><ul>
+        <li class="recent_comment_title"><a href="http://www.cnblogs.com/LeftNotEasy/archive/2011/01/08/lda-and-pca-machine-learning.html#3625015">1. Re:机器学习中的数学(4)-线性判别分析（LDA）, 主成分分析(PCA)</a></li>
+        <li class="recent_comment_body">@weiwopinbo那个是 令 wsw=1 然后使用拉格朗日的时候 把1一到左边 就是wsw-1=0 然后 用拉格朗日 构造时候 就是 lamd（wsw-1）没说减一，就是加一个限定条件......</li>
+        <li class="recent_comment_author">--caozehao</li>
+        <li class="recent_comment_title"><a href="http://www.cnblogs.com/LeftNotEasy/archive/2011/01/19/svd-and-applications.html#3617253">2. Re:机器学习中的数学(5)-强大的矩阵奇异值分解(SVD)及其应用</a></li>
+        <li class="recent_comment_body">博主，我自学人工智能，有哪些书推荐一下吧</li>
+        <li class="recent_comment_author">--小工匠</li>
+        <li class="recent_comment_title"><a href="http://www.cnblogs.com/LeftNotEasy/archive/2011/05/02/basic-of-svm.html#3614272">3. Re:机器学习中的算法(2)-支持向量机(SVM)基础</a></li>
+        <li class="recent_comment_body">讲的清楚明了，赞一个~！</li>
+        <li class="recent_comment_author">--whattoshow</li>
+        <li class="recent_comment_title"><a href="http://www.cnblogs.com/LeftNotEasy/p/deep-learning-for-everybody-1-why-we-need-it.html#3600934">4. Re:人人都要学一点深度学习（1）- 为什么我们需要它</a></li>
+        <li class="recent_comment_body">大神！</li>
+        <li class="recent_comment_author">--ziyi93</li>
+        <li class="recent_comment_title"><a href="http://www.cnblogs.com/LeftNotEasy/archive/2011/01/19/svd-and-applications.html#3594475">5. Re:机器学习中的数学(5)-强大的矩阵奇异值分解(SVD)及其应用</a></li>
+        <li class="recent_comment_body">2 奇异值部分假设A是一个N * M的矩阵，那么得到的U是一个N * N的方阵，Σ是一个N * M的矩阵，V’(V的转置)是一个N * N的矩阵 这个地方是错的 应该是 V'=M*M...</li>
+        <li class="recent_comment_author">--泡面小王子</li>
+</ul>
+</div>
+</div>
+</div></div><div id="sidebar_topviewedposts" class="sidebar-block"><div id="topview_posts_wrap">
+<div class="catListView">
+<h3 class="catListTitle">阅读排行榜</h3>
+	<div id="TopViewPostsBlock"><ul><li><a href="http://www.cnblogs.com/LeftNotEasy/archive/2011/01/19/svd-and-applications.html">1. 机器学习中的数学(5)-强大的矩阵奇异值分解(SVD)及其应用(186988)</a></li><li><a href="http://www.cnblogs.com/LeftNotEasy/archive/2011/05/02/basic-of-svm.html">2. 机器学习中的算法(2)-支持向量机(SVM)基础(123184)</a></li><li><a href="http://www.cnblogs.com/LeftNotEasy/archive/2011/03/07/random-forest-and-gbdt.html">3. 机器学习中的算法(1)-决策树模型组合之随机森林与GBDT(115062)</a></li><li><a href="http://www.cnblogs.com/LeftNotEasy/archive/2011/01/08/lda-and-pca-machine-learning.html">4. 机器学习中的数学(4)-线性判别分析（LDA）, 主成分分析(PCA)(104236)</a></li><li><a href="http://www.cnblogs.com/LeftNotEasy/archive/2010/12/05/mathmatic_in_machine_learning_1_regression_and_gradient_descent.html">5. 机器学习中的数学(1)-回归(regression)、梯度下降(gradient descent)(96179)</a></li></ul></div>
+</div>
+</div></div><div id="sidebar_topcommentedposts" class="sidebar-block"><div id="topfeedback_posts_wrap">
+<div class="catListFeedback">
+<h3 class="catListTitle">评论排行榜</h3>
+	<div id="TopFeedbackPostsBlock"><ul><li><a href="http://www.cnblogs.com/LeftNotEasy/archive/2011/01/19/svd-and-applications.html">1. 机器学习中的数学(5)-强大的矩阵奇异值分解(SVD)及其应用(67)</a></li><li><a href="http://www.cnblogs.com/LeftNotEasy/archive/2011/05/02/basic-of-svm.html">2. 机器学习中的算法(2)-支持向量机(SVM)基础(39)</a></li><li><a href="http://www.cnblogs.com/LeftNotEasy/p/choice-of-programmer.html">3. 程序员的选择(36)</a></li><li><a href="http://www.cnblogs.com/LeftNotEasy/archive/2011/01/08/lda-and-pca-machine-learning.html">4. 机器学习中的数学(4)-线性判别分析（LDA）, 主成分分析(PCA)(35)</a></li><li><a href="http://www.cnblogs.com/LeftNotEasy/archive/2010/12/05/mathmatic_in_machine_learning_1_regression_and_gradient_descent.html">5. 机器学习中的数学(1)-回归(regression)、梯度下降(gradient descent)(35)</a></li></ul></div>
+</div>
+</div></div><div id="sidebar_topdiggedposts" class="sidebar-block"><div id="topdigg_posts_wrap">
+<div class="catListView">
+<h3 class="catListTitle">推荐排行榜</h3>
+<div id="TopDiggPostsBlock"><ul><li><a href="http://www.cnblogs.com/LeftNotEasy/archive/2011/01/19/svd-and-applications.html">1. 机器学习中的数学(5)-强大的矩阵奇异值分解(SVD)及其应用(85)</a></li><li><a href="http://www.cnblogs.com/LeftNotEasy/p/choice-of-programmer.html">2. 程序员的选择(62)</a></li><li><a href="http://www.cnblogs.com/LeftNotEasy/archive/2011/05/02/basic-of-svm.html">3. 机器学习中的算法(2)-支持向量机(SVM)基础(40)</a></li><li><a href="http://www.cnblogs.com/LeftNotEasy/archive/2010/12/05/mathmatic_in_machine_learning_1_regression_and_gradient_descent.html">4. 机器学习中的数学(1)-回归(regression)、梯度下降(gradient descent)(32)</a></li><li><a href="http://www.cnblogs.com/LeftNotEasy/p/brief-introduction-of-open-source.html">5. 开源的那些事儿 （一）- 如何看待开源(29)</a></li></ul></div>
+</div></div></div></div><script type="text/javascript">loadBlogSideColumn();</script>
+			</div>
+			
+		</div><!--end: sideBarMain -->
+	</div><!--end: sideBar 侧边栏容器 -->
+	<div class="clear"></div>
+	</div><!--end: main -->
+	<div class="clear"></div>
+	<div id="footer">
+		
+<!--done-->
+Copyright ©2017 LeftNotEasy
+	</div><!--end: footer -->
+</div><!--end: home 自定义的最大容器 -->
+
+
+</body></html>

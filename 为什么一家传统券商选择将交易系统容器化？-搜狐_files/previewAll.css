@@ -1,0 +1,61 @@
+#container .text p{
+	color:#333;
+	word-wrap: break-word;
+	padding: 26px 0 0;
+}
+
+#container .text table {
+    margin-top: 26px;
+    width: 100%;
+    text-align: center
+}
+
+#container .text td,#container .text th {
+    padding: 5px;
+    border: 1px solid #333
+}
+#container .text em,#container .text i {
+    font-style: italic
+}
+
+#container .text blockquote {
+    margin: 26px 0 0 15px;
+    padding: 6px 10px;
+    border-left: 3px solid #dbdbdb
+}
+
+#container .text p a {
+    color: #0070c0
+}
+#container .text p a:hover {
+    color: #0070c0;
+	text-decoration:underline;
+}
+#container .text ul {
+    list-style: disc
+}
+
+#container .text ol {
+    list-style: decimal
+}
+
+#container .text ol,#container .text ul {
+    margin: 26px 0 0 30px
+}
+
+#container .text li p {
+    padding: 0 0 8px 0
+}
+
+#container .text li:last-child p {
+    padding: 0
+}
+
+#container .text blockquote p {
+    padding: 0;
+    margin: 0
+}
+
+#container .text blockquote li p {
+    margin: 0
+}
