@@ -1,4 +1,11 @@
 nginx
+
+
+nginx split_client 可以用来做灰度路由
+
+ngx_stream_core_module模块 模拟反代基于tcp或udp的服务连接，即工作于传输层的反代或调度器； 此模块可以定义非http服务的反代功能
+ 
+nginx-sticky-module 做session stick
  
 nginx  性能测试    2111.22 request/s nginx/1.6.2 静态简单html 
 apache 性能测试    1723.13 request/s Apache/2.4.6 静态简单html 
@@ -68,9 +75,13 @@ group = nginx
  
 
 优化
+net.core.somaxconn=512
+net.core.netdev_max_backlog=1024
+一个连接nginx可能消耗两个file descriptior (一个 client,一个 to upstream server)
+
 
 events {
-    worker_connections  1024;
+     worker_connections  1024;
       use   epoll; 
 }
 /etc/nginx/nginx.conf
@@ -189,8 +200,22 @@ worker_rlimit_nofile 102400;
 use epoll;
 worker_connections 102400;
 keepalive_timeout 60;
+keepalive_request 10240
 open_file_cache max=102400 inactive=20s;
+打开 cache 可以优化性能
 
+enable keepalive 需要设置  
+proxy_http_version 1.1;
+proxy_set_header Connection "";
+
+access log 优化  buffer=size parameter to the access_log   flush=time parameter. 
+打开 zero copy   sendfile directive  如果同时打开了gzip，则 zero copy 失效
+?	limit_conn and limit_conn_zone – Limit the number of client connections NGINX accepts, for example from a single IP address. Setting them can help prevent individual clients from opening too many connections and consuming more than their share of resources.
+?	limit_rate – Limits the rate at which responses are transmitted to a client, per connection (so clients that open multiple connections can consume this amount of bandwidth for each connection). Setting a limit can prevent the system from being overloaded by certain clients, ensuring more even quality of service for all clients.
+?	limit_req and limit_req_zone – Limit the rate of requests being processed by NGINX, which has the same benefits as setting limit_rate. They can also improve security, especially for login pages, by limiting the request rate to a value reasonable for human users but too slow for programs trying to overwhelm your application with requests (such as bots in a DDoS attack).
+?	max_conns parameter to the server directive in an upstream configuration block – Sets the maximum number of simultaneous connections accepted by a server in an upstream group. Imposing a limit can help prevent the upstream servers from being overloaded. Setting the value to 0 (zero, the default) means there is no limit.
+?	queue (NGINX Plus) – Creates a queue in which requests are placed when all the available servers in the upstream group have reached their max_conns limit. This directive sets the maximum number of requests in the queue and, optionally, the maximum time they wait (60 seconds by default) before an error is returned. Requests are not queued if you omit this directive.
+ 
  启用GZip
 
 gzip on;

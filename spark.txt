@@ -1,3 +1,13 @@
+spark 支持如下机器学学模型
+
+分类 ：逻辑回归 决策树 随机森林 朴素贝叶斯 多层感知(神经网络) 迭代决策树 (Gradient Boost Regression Tree)
+回归：线性回归  决策树回归 随机森林回归 
+聚类：K-means  潜在狄利克雷分布（atent Dirichlet allocation (LDA) ）,是文本语义分析中比较重要的一个模型,L  高斯混合模型 Gaussian Mixture Model (GMM) 
+协同过滤： 采用 ALS(Alternating Least Squares) 交替最小二乘法 用来补全数据 
+
+Mahout 还支持 隐藏式马可夫模型 (HMM)  奇异值分解 (SVD) 
+
+DAG directed acyclic graph 有向无环图  ，如果一个有向图无法从某个顶点出发经过若干边回到该点，就是 DAG
 目前hadoop生态中有两大列存储格式，一个是由Hortonworks和Microsoft开发的ORCFile，另一个是由Cloudera和Twitter开发的Parquet。
 多数据源查询：Presto支持从mysql，cassandra，甚至kafka中去读取数据，这就大大减少了数据整合时间，不需要放到HDFS里才能查询。Impala和Hive也支持查询hbase。Spark SQL也在1.2版本开始支持External Datasource。国内也有类似的工作，如秒针改造Impala使之能查询postgres。
 Impala对内存消耗过高，在进行一些大表的Join时
@@ -8,6 +18,31 @@ HAWQ是GreenPlum将查询优化层独立出来，并且以HDFS作为数据载体的OLAP方案。GreenPlum
 presto支持hdfs上和外面的data source, HAWQ只支持HDFS
 presto不存储数据，只是SQL engine  ，不是M/R架构，是MPP架构 全内存保存储  不支持cost based optimization
 
+hbase数据先写到memstore和wal然到hfile    
+支持 DDL(alter,create,describle,drop,enable,disable,exists,is_disabled,is_enabled,list) DML(count,delete,delete_all,get,get_counter,incr,put,scan,truncate)
+create  'Blog' ,{NAME=>'Info'},{NAME=>'address'}   两个column family  Info和 address 
+put 'Blog' 'John-0001','Info:title','Mouse' 
+count 'Blog' ,INTERVAL=>10 ,每10行显示一条记录
+ get 'Blog'   'John-0001'  {column=>['Info:title']} 
+ scan 'Blog' ,{LIMIT=>1}  查第一行
+  scan 'Blog' ,{STARTROW=>'startrow',STOPROW=>'Stoprow'}   range scan start is inclusive ,stop row is exclusive 
+ scan 'Blog' ,{TIMERANGE=>[t1,t2]}  查时间范围
+ put 如果rowid已经存在，就是修改，直接插入一个新version的记录
+ 需要先disable ，然后drop table 
+  
+ 
+ HiVE
+ DDL(show tables,create,alter,drop) 
+ create table foo(id INT,name STRING) delimited fields terminated by ',' lines terminated by '\n'
+  create table foo(id INT,name STRING)  partitioned by (id INT)
+   select *from tab_name where freq>100 sort by freq asc limit 10 ;
+   
+   Spark SQL 
+   sqlCtx.table("people").groupBy("name").agg("name",avg("age")).collect 
+      sqlCtx.table("select name,avg(age) from people group by name ") 
+
+   =select name,avg(age) from people group by name ;
+ 
 从数据上看，Kylin能够在比Hive/SparkSQL在更弱的硬件配置下获得更好的查询性能。  目前，有越来越多的国内外公司将Kylin作为大数据生产环境中的重要组件，如ebay、银联、百度、中国移动等
 Apache Kylin是一个开源的分布式分析引擎，提供Hadoop之上的SQL查询接口及多维分析（OLAP）能力以支持超大规模数据，最初由eBay Inc. 开发并贡献至开源社区，并于2015年11月正式毕业成为Apache顶级项目。
 我们在Apache Kylin集群上跑了多个Cube测试，结果表明它能够有效解决大数据计算分析的3大痛点问题。
@@ -44,7 +79,8 @@ spark
 
 spark速度比hadoopy快10-100倍，使用hdfs作为存储
 RDD=Resilient Distributed Dataset  可以认为是数据库的表 支持transformation(返回一个新的rdd)和 Action 返回一个计算的值 支持partion
-SPARK SQL　DataFrame是一个分布式的，按照命名列的形式组织的数据集合。DataFrame基于R语言中的data frame概念，与关系型数据库中的数据库表类似。Spark SQL提供SQLContext封装Spark中的所有关系型功能。可以用之前的示例中的现有SparkContext创建SQLContext。下述代码片段展示了如何创建一个SQLContext对象。
+SPARK SQL　DataFrame是一个分布式的，按照命名列的形式组织的数据集合。DataFrame基于R语言中的data frame概念，与关系型数据库中的数据库表类似。
+以RDD为基础，带有schema信息。Spark SQL提供SQLContext封装Spark中的所有关系型功能。可以用之前的示例中的现有SparkContext创建SQLContext。下述代码片段展示了如何创建一个SQLContext对象。
   流工作的方式是将数据流按照预先定义的间隔(N秒)划分为批(称微批次)然后将每批数据视为一个弹性分布式数据集(Resilient Distributed Datasets，RDDs)。随后我们就可以使用诸如map、reduce、reduceByKey、join和window这样的操作来处理这些RDDs。这些RDD操作的结果会以批的形式返回。通常我们会将这些结果保存到数据存储中以供未来分析并生成报表与面板，或是发送基于事件的预警。Dstream(离散流，Discretized Stream，的缩写)是Spark流中最基本的抽象，它描述了一个持续的数据流。DStream既可以从诸如Kafka、Flume与Kinesis这样的数据源中创建，也可以对其他DStream实施操作。在内部，一个DStream被描述为一个RDD对象的序列。与Spark中的Spark上下文(SparkContext)相似，流上下文(StreamingContext)是所有流功能的主入口。
 流上下文拥有内置方法可以将流数据接收到Spark流程序中。
 使用该上下文，我们可以创建一个描述基于TCP数据源的流数据的DStream，可以用主机名与端口号指定TCP数据源
