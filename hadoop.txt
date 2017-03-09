@@ -4,6 +4,11 @@ YARN×÷ÎªÒ»¸ö·Ö²¼Ê½Êı¾İ²Ù×÷ÏµÍ³£¬Ö÷Òª×÷ÓÃÊÇ×ÊÔ´¹ÜÀíºÍ×ÊÔ´µ÷¶È¡£ÔÚ¹ıÈ¥Ò»Äê£¬YARNĞÂ
 20150924
 MesosÊÇÒ»¸öË«²ãµ÷¶ÈÆ÷¡£ÔÚµÚÒ»²ãÖĞ£¬Mesos½«Ò»¶¨µÄ×ÊÔ´Ìá¹©£¨ÒÔÈİÆ÷µÄĞÎÊ½£©¸ø¶ÔÓ¦µÄ¿ò¼Ü¡£¿ò¼ÜÔÚµÚ¶ş²ã½ÓÊÕµ½×ÊÔ´ºó£¬»áÔËĞĞ×Ô¼ºµÄµ÷¶ÈËã·¨À´½«ÈÎÎñ·ÖÅäµ½MesosËùÌá¹©µÄÕâĞ©×ÊÔ´ÉÏ¡£ºÍHadoop YARNµÄÕâÖÖÖĞÑëµ÷¶ÈÆ÷Ïà±È£¬»òĞíËüÔÚ¼¯Èº×ÊÔ´Ê¹ÓÃ·½Ãæ²¢²»ÊÇÄÇÃ´¸ßĞ§¡£µ«ÊÇËü´øÀ´ÁËÁé»îĞÔ¡ª¡ª±ÈÈçËµ£¬¶à¸ö¿ò¼ÜÊµÀı¿ÉÒÔÔËĞĞÔÚÒ»¸ö¼¯ÈºÀï¡£ÕâÊÇÏÖÓĞµÄÕâĞ©µ÷¶ÈÆ÷¶¼ÎŞ·¨ÊµÏÖµÄ¡£
 
+  HDFS ÊÊºÏ´óÎÄ¼ş£¬´óÍÌÍÂ£¬²»ºÏÊÊĞ¡ÎÄ¼ş£¬¿ìËÙËæ»ú¶ÁÈ¡
+  HDFS Federation ÊÇÖ¸¶à¸öNN  ×éºÏÌá¹©·şÎñ£¬ÒÔ½â¾öµ¥NNÄÚ´æ²»¹»µÄÎÊÌâ
+  HDFS 3.0Ö§³Ö¶à¸östandby NN ,¿ÉÒÔ²ÉÓÃ NFS¹²Ïí»òÕßQuorum Journal Manager µÄ·½Ê½£¬ÔÚQJM·½Ê½ÏÂ£¬active NN ·¢ËÍedit logµ½ standby ,Í¨¹ıZK×öÖÙ²Ã£¬Í¬Ê±data nodeÏòËùÓĞµÄNN(active/standby)»ã±¨ block ·Ö²¼Çé¿ö
+  
+  
   
 hadoop   CDH install base×î¶à 
 
@@ -189,7 +194,7 @@ SparkÊÇÒ»¸ö¸ßĞ§µÄ»ùÓÚÄÚ´æµÄ·Ö²¼Ê½¼ÆËãÏµÍ³ Ò²ÓĞSpark StreamingÖ§³ÖÁ÷Ê½¼ÆËã,stormÊ
 
 HDFSÖĞ£¬ÈÎºÎblock£¬ÎÄ¼ş»òÕßÄ¿Â¼ÔÚÄÚ´æÖĞ¾ùÒÔ¶ÔÏóµÄĞÎÊ½´æ´¢£¬Ã¿¸ö¶ÔÏóÔ¼Õ¼150byte£¬Èç¹ûÓĞ1000 0000¸öĞ¡ÎÄ¼ş£¬Ã¿¸öÎÄ¼şÕ¼ÓÃÒ»¸öblock£¬Ôònamenode´óÔ¼ĞèÒª2G¿Õ¼ä¡£Èç¹û´æ´¢1ÒÚ¸öÎÄ¼ş£¬ÔònamenodeĞèÒª20G¿Õ¼ä£¨¼û²Î¿¼×ÊÁÏ[1][4][5]£©¡£ÕâÑùnamenodeÄÚ´æÈİÁ¿ÑÏÖØÖÆÔ¼ÁË¼¯ÈºµÄÀ©Õ¹¡£ Æä´Î£¬·ÃÎÊ´óÁ¿Ğ¡ÎÄ¼şËÙ¶ÈÔ¶Ô¶Ğ¡ÓÚ·ÃÎÊ¼¸¸ö´óÎÄ¼ş¡£HDFS×î³õÊÇÎªÁ÷Ê½·ÃÎÊ´óÎÄ¼ş¿ª·¢µÄ£¬Èç¹û·ÃÎÊ´óÁ¿Ğ¡ÎÄ¼ş£¬ĞèÒª²»¶ÏµÄ´ÓÒ»¸ödatanodeÌøµ½ÁíÒ»¸ödatanode£¬ÑÏÖØÓ°ÏìĞÔÄÜ¡£×îºó£¬´¦Àí´óÁ¿Ğ¡ÎÄ¼şËÙ¶ÈÔ¶Ô¶Ğ¡ÓÚ´¦ÀíÍ¬µÈ´óĞ¡µÄ´óÎÄ¼şµÄËÙ¶È¡£Ã¿Ò»¸öĞ¡ÎÄ¼şÒªÕ¼ÓÃÒ»¸öslot£¬¶øtaskÆô¶¯½«ºÄ·Ñ´óÁ¿Ê±¼äÉõÖÁ´ó²¿·ÖÊ±¼ä¶¼ºÄ·ÑÔÚÆô¶¯taskºÍÊÍ·ÅtaskÉÏ¡£
 
-Apache Hadoop°æ±¾·ÖÎªÁ½´ú£¬ÎÒÃÇ½«µÚÒ»´úHadoop³ÆÎªHadoop 1.0£¬µÚ¶ş´úHadoop³ÆÎªHadoop 2.0¡£µÚÒ»´úHadoop°üº¬Èı¸ö´ó°æ±¾£¬·Ö±ğÊÇ0.20.x£¬0.21.xºÍ0.22.x£¬ÆäÖĞ£¬0.20.x×îºóÑİ»¯³É1.0.x£¬±ä³ÉÁËÎÈ¶¨°æ£¬¶ø0.21.xºÍ0.22.xÔòNameNode HAµÈĞÂµÄÖØ´óÌØĞÔ¡£µÚ¶ş´úHadoop°üº¬Á½¸ö°æ±¾£¬·Ö±ğÊÇ0.23.xºÍ2.x£¬ËüÃÇÍêÈ«²»Í¬ÓÚHadoop 1.0£¬ÊÇÒ»Ì×È«ĞÂµÄ¼Ü¹¹£¬¾ù°üº¬HDFS FederationºÍYARNÁ½¸öÏµÍ³£¬Ïà±ÈÓÚ0.23.x£¬2.xÔö¼ÓÁËNameNode HAºÍWire-compatibilityÁ½¸öÖØ´óÌØ
+Apache Hadoop°æ±¾·ÖÎªÁ½´ú£¬ÎÒÃÇ½«µÚÒ»´úHadoop³ÆÎªHadoop 1.0£¬µÚ¶ş´úHadoop³ÆÎªHadoop 2.0¡£µÚÒ»´úHadoop°üº¬Èı¸ö´ó°æ±¾£¬·Ö±ğÊÇ0.20.x£¬0.21.xºÍ0.22.x£¬ÆäÖĞ£¬0.20.x×îºóÑİ»¯³É1.0.x£¬±ä³ÉÁËÎÈ¶¨°æ£¬¶ø0.21.xºÍ0.22.xÔòNameNode HAµÈĞÂµÄÖØ´óÌØĞÔ¡£µÚ¶ş´úHadoop°üº¬Á½¸ö°æ±¾£¬·Ö±ğÊÇ0.23.xºÍ2.x£¬ËüÃÇÍêÈ«²»Í¬ÓÚHadoop 1.0£¬ÊÇÒ»Ì×È«ĞÂµÄ¼Ü¹¹£¬¾ù°üº¬HDFS Federation ºÍYARNÁ½¸öÏµÍ³£¬Ïà±ÈÓÚ0.23.x£¬2.xÔö¼ÓÁËNameNode HAºÍWire-compatibilityÁ½¸öÖØ´óÌØ
 
 gliderÒÔHTTPĞ­Òé¶ÔÍâÌá¹©restful·½Ê½µÄ½Ó¿Ú¡£Êı¾İ²úÆ·¿ÉÒÔÍ¨¹ıÒ»¸öÎ¨Ò»µÄURL»ñÈ¡µ½ËüÏëÒªµÄÊı¾İ¡£
 ÌÔ±¦Êı¾İ²úÆ·Ñ¡ÔñMySQLµÄMyISAMÒıÇæ×÷Îªµ×²ãµÄÊı¾İ´æ´¢ÒıÇæ¡£ÔÚ´Ë»ù´¡ÉÏ£¬ÎªÁËÓ¦¶Ôº£Á¿Êı¾İ£¬ÎÒÃÇÉè¼ÆÁË·Ö²¼Ê½MySQL¼¯ÈºµÄ²éÑ¯´úÀí²ã¡ª¡ªMyFOX£¬Ê¹µÃ·ÖÇø¶ÔÇ°¶ËÓ¦ÓÃÍ¸Ã÷
@@ -210,6 +215,9 @@ HDFS¸´ÖÆµÄÊ±ºò´øÓĞ Rack Awareness £¬È±Ê¡Èı¸öreplicaµÄÇé¿öÏÂ£¬Á½¸ö¶¼ÔÚÍ¬Ò» rack²»
 µ±nameNodeÆğÀ´µÄÊ±ºòÊôÓÚSafemode(Ö»¶Á),Ö»ÓĞµÈdatanode°Ñ×Ô¼ºblockĞÅÏ¢·¢¸øNameNodeÖ®ºó£¬nameNode²ÅÄÜ½øÈëÕı³£¹¤×÷Ä£Ê½(¶ÁĞ´)
 ËùÓĞµÄmetadata²Ù×÷¶¼¼ÇÂ¼ÔÚ Eidtlog(transaction log),file/block map¹ØÏµÔÚ FsImage £¬Æô¶¯µÄÊ±ºò¾Íapply EditLogµ½ÄÚ´æ,ĞŞ¸ÄfsImage£¬È»ºóÇå¿Õeditlog,ËæºóµÄ²Ù×÷»á¼ÌĞøĞ´µ½ editLog£¬µ«ÊÇ²»¸üĞÂfsImage,ËùÒÔÓĞ¿ÉÄÜeditLog»á±äµÃ·Ç³£´ó£¬µ¼ÖÂÏÂ´ÎÖØÆôµÄÊ±ºò»áºÜÂı£¬ËùÒÔ Secondary NameNode¿ÉÒÔÓÃÀ´¶¨ÆÚapply editLogµ½Ò»¸öĞÂµÄfsImage file£¬ÏÂ´Î NameNodeÖØÆô¾Í¿ÉÒÔÊ¹ÓÃÕâ¸öĞÂµÄfsImage£¬
 Checkpoint node  ²»µ«ÓĞ Secondary NameNodeµÄ¹¦ÄÜ£¬»¹ÄÜ°ÑFsImageÖØĞÂ´«»Øµ½nameNode ,Backup Node ¾ÍÊÇÊµÊ±½ÓÊÕmetadata²Ù×÷£¬È»ºóapplyµ½ÄÚ´æ£¬Í¬Ê±saveµ½local file,Ä¿Ç°Ö»Ö§³ÖÒ»¸öbackup node(²»ÄÜºÍ checkpoint nodeÍ¬Ê±Ê¹ÓÃ)
+Ğ´ÎÄ¼şÖ®Ç°£¬ĞèÒªlease (×ölockÓÃ) ,Í¨¹ı namenode×ölease
+Second name node ²»ÊÇÓÃÀ´×öÈİÔÖµÄ(only for checkpoint£¬copy FSimageºÍedit logµ½ SNN£¬È»ºómerge ,¶¨ÆÚ Replace NNÉÏµÄFSImage)£¬»Ö¸´Êı¾İ²»¼°Ê±£¬ËùÒÔ¶Ôname nodeĞèÒª×öHA±ÈÈçDRBD   
+Ò²¿ÉÒÔÊ¹ÓÃ BackupNodeÀ´ÊµÊ±Í¬²½transaction logÓÃ×÷»Ö¸´£¬ÊÇÍ¬²½µÄ£¬×Ô¼ºĞ´³É¹¦ ²Å»Ø¸´ NN
 
 DataNodeÃ¿¸öblock´´½¨Ò»¸öÎÄ¼ş£¬»á×Ô¶¯·Ö²¼ÔÚ²»Í¬Ä¿Â¼»òÕß×ÓÄ¿Â¼£¬Ã¿´ÎÆô¶¯µÄÊ±ºò½øĞĞÉ¨Ãè£¬·¢ËÍblockReportµ½NameNode
 
@@ -231,7 +239,7 @@ HAÄ£Ê½ÏÂ   Quorum  Journal Ä£Ê½ÏÂ meta data²Ù×÷»á·¢ËÍµ½ Quorum  Journal node£¬È»
 
 Short-Circuit Local Reads Ö§³ÖclientÖ±½Ó¶ÁÈ¡hdfs data nodeÊı¾İ£¬Èç¹ûÕıºÃºÍdata nodeÔÚÍ³Ò»½ÚµãµÄ»°£¬ÄÜ¹»ÌáÉıĞÔÄÜ
 HDFS Ö§³Ö Centralized Cache Management ¿ÉÒÔ¿ØÖÆÄÇ¸ödata½Úµã cacheÄÄĞ©block
-HDFSÖ§³ÖÍ¨¹ı NFS gateway  ·½Ê½ nfs mountµ½ ±¾µØ
+HDFSÖ§³ÖÍ¨¹ı NFS gateway  ·½Ê½ nfs mount µ½ ±¾µØ
 
 ¶ÔÓÚÈÎºÎÒ»¸öHDFSÎÄ¼ş£¬Namenode»áÔÚÄÚ´æÖĞÎ¬»¤Á½ÖÖmeta data£º1£© HDFSÎÄ¼şºÍblockµÄ¶ÔÓ¦¹ØÏµ £¬2£©blockÔÚdata nodeÉÏ´æ·ÅµÄÎ»ÖÃ¡£Namenode»áÔÚ´ÅÅÌÉÏ±£´æµÚÒ»ÖÖmeta data £¨Í¨¹ıcheckpoint ÎÄ¼şºÍwrite ahead log£©£¬µÚ¶şÖÖmeta dataÔòÊÇDataNodeÍ¨¹ıblock report ¶¨Ê±·¢ËÍ¸øNameNode¡£
 

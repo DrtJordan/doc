@@ -4,8 +4,11 @@ YARN×÷ÎªÒ»¸ö·Ö²¼Ê½Êý¾Ý²Ù×÷ÏµÍ³£¬Ö÷Òª×÷ÓÃÊÇ×ÊÔ´¹ÜÀíºÍ×ÊÔ´µ÷¶È¡£ÔÚ¹ýÈ¥Ò»Äê£¬YARNÐÂ
 20150924
 MesosÊÇÒ»¸öË«²ãµ÷¶ÈÆ÷¡£ÔÚµÚÒ»²ãÖÐ£¬Mesos½«Ò»¶¨µÄ×ÊÔ´Ìá¹©£¨ÒÔÈÝÆ÷µÄÐÎÊ½£©¸ø¶ÔÓ¦µÄ¿ò¼Ü¡£¿ò¼ÜÔÚµÚ¶þ²ã½ÓÊÕµ½×ÊÔ´ºó£¬»áÔËÐÐ×Ô¼ºµÄµ÷¶ÈËã·¨À´½«ÈÎÎñ·ÖÅäµ½MesosËùÌá¹©µÄÕâÐ©×ÊÔ´ÉÏ¡£ºÍHadoop YARNµÄÕâÖÖÖÐÑëµ÷¶ÈÆ÷Ïà±È£¬»òÐíËüÔÚ¼¯Èº×ÊÔ´Ê¹ÓÃ·½Ãæ²¢²»ÊÇÄÇÃ´¸ßÐ§¡£µ«ÊÇËü´øÀ´ÁËÁé»îÐÔ¡ª¡ª±ÈÈçËµ£¬¶à¸ö¿ò¼ÜÊµÀý¿ÉÒÔÔËÐÐÔÚÒ»¸ö¼¯ÈºÀï¡£ÕâÊÇÏÖÓÐµÄÕâÐ©µ÷¶ÈÆ÷¶¼ÎÞ·¨ÊµÏÖµÄ¡£
 
+  HDFS ÊÊºÏ´óÎÄ¼þ£¬´óÍÌÍÂ£¬²»ºÏÊÊÐ¡ÎÄ¼þ£¬¿ìËÙËæ»ú¶ÁÈ¡
+  HDFS Federation ÊÇÖ¸¶à¸öNN  ×éºÏÌá¹©·þÎñ£¬ÒÔ½â¾öµ¥NNÄÚ´æ²»¹»µÄÎÊÌâ
+  HDFS 3.0Ö§³Ö¶à¸östandby NN
   
-hadoop   CDHÎÊÌâ×îÉÙ
+hadoop   CDH install base×î¶à 
 
 
 20140709
@@ -189,7 +192,7 @@ SparkÊÇÒ»¸ö¸ßÐ§µÄ»ùÓÚÄÚ´æµÄ·Ö²¼Ê½¼ÆËãÏµÍ³ Ò²ÓÐSpark StreamingÖ§³ÖÁ÷Ê½¼ÆËã,stormÊ
 
 HDFSÖÐ£¬ÈÎºÎblock£¬ÎÄ¼þ»òÕßÄ¿Â¼ÔÚÄÚ´æÖÐ¾ùÒÔ¶ÔÏóµÄÐÎÊ½´æ´¢£¬Ã¿¸ö¶ÔÏóÔ¼Õ¼150byte£¬Èç¹ûÓÐ1000 0000¸öÐ¡ÎÄ¼þ£¬Ã¿¸öÎÄ¼þÕ¼ÓÃÒ»¸öblock£¬Ôònamenode´óÔ¼ÐèÒª2G¿Õ¼ä¡£Èç¹û´æ´¢1ÒÚ¸öÎÄ¼þ£¬ÔònamenodeÐèÒª20G¿Õ¼ä£¨¼û²Î¿¼×ÊÁÏ[1][4][5]£©¡£ÕâÑùnamenodeÄÚ´æÈÝÁ¿ÑÏÖØÖÆÔ¼ÁË¼¯ÈºµÄÀ©Õ¹¡£ Æä´Î£¬·ÃÎÊ´óÁ¿Ð¡ÎÄ¼þËÙ¶ÈÔ¶Ô¶Ð¡ÓÚ·ÃÎÊ¼¸¸ö´óÎÄ¼þ¡£HDFS×î³õÊÇÎªÁ÷Ê½·ÃÎÊ´óÎÄ¼þ¿ª·¢µÄ£¬Èç¹û·ÃÎÊ´óÁ¿Ð¡ÎÄ¼þ£¬ÐèÒª²»¶ÏµÄ´ÓÒ»¸ödatanodeÌøµ½ÁíÒ»¸ödatanode£¬ÑÏÖØÓ°ÏìÐÔÄÜ¡£×îºó£¬´¦Àí´óÁ¿Ð¡ÎÄ¼þËÙ¶ÈÔ¶Ô¶Ð¡ÓÚ´¦ÀíÍ¬µÈ´óÐ¡µÄ´óÎÄ¼þµÄËÙ¶È¡£Ã¿Ò»¸öÐ¡ÎÄ¼þÒªÕ¼ÓÃÒ»¸öslot£¬¶øtaskÆô¶¯½«ºÄ·Ñ´óÁ¿Ê±¼äÉõÖÁ´ó²¿·ÖÊ±¼ä¶¼ºÄ·ÑÔÚÆô¶¯taskºÍÊÍ·ÅtaskÉÏ¡£
 
-Apache Hadoop°æ±¾·ÖÎªÁ½´ú£¬ÎÒÃÇ½«µÚÒ»´úHadoop³ÆÎªHadoop 1.0£¬µÚ¶þ´úHadoop³ÆÎªHadoop 2.0¡£µÚÒ»´úHadoop°üº¬Èý¸ö´ó°æ±¾£¬·Ö±ðÊÇ0.20.x£¬0.21.xºÍ0.22.x£¬ÆäÖÐ£¬0.20.x×îºóÑÝ»¯³É1.0.x£¬±ä³ÉÁËÎÈ¶¨°æ£¬¶ø0.21.xºÍ0.22.xÔòNameNode HAµÈÐÂµÄÖØ´óÌØÐÔ¡£µÚ¶þ´úHadoop°üº¬Á½¸ö°æ±¾£¬·Ö±ðÊÇ0.23.xºÍ2.x£¬ËüÃÇÍêÈ«²»Í¬ÓÚHadoop 1.0£¬ÊÇÒ»Ì×È«ÐÂµÄ¼Ü¹¹£¬¾ù°üº¬HDFS FederationºÍYARNÁ½¸öÏµÍ³£¬Ïà±ÈÓÚ0.23.x£¬2.xÔö¼ÓÁËNameNode HAºÍWire-compatibilityÁ½¸öÖØ´óÌØ
+Apache Hadoop°æ±¾·ÖÎªÁ½´ú£¬ÎÒÃÇ½«µÚÒ»´úHadoop³ÆÎªHadoop 1.0£¬µÚ¶þ´úHadoop³ÆÎªHadoop 2.0¡£µÚÒ»´úHadoop°üº¬Èý¸ö´ó°æ±¾£¬·Ö±ðÊÇ0.20.x£¬0.21.xºÍ0.22.x£¬ÆäÖÐ£¬0.20.x×îºóÑÝ»¯³É1.0.x£¬±ä³ÉÁËÎÈ¶¨°æ£¬¶ø0.21.xºÍ0.22.xÔòNameNode HAµÈÐÂµÄÖØ´óÌØÐÔ¡£µÚ¶þ´úHadoop°üº¬Á½¸ö°æ±¾£¬·Ö±ðÊÇ0.23.xºÍ2.x£¬ËüÃÇÍêÈ«²»Í¬ÓÚHadoop 1.0£¬ÊÇÒ»Ì×È«ÐÂµÄ¼Ü¹¹£¬¾ù°üº¬HDFS Federation ºÍYARNÁ½¸öÏµÍ³£¬Ïà±ÈÓÚ0.23.x£¬2.xÔö¼ÓÁËNameNode HAºÍWire-compatibilityÁ½¸öÖØ´óÌØ
 
 gliderÒÔHTTPÐ­Òé¶ÔÍâÌá¹©restful·½Ê½µÄ½Ó¿Ú¡£Êý¾Ý²úÆ·¿ÉÒÔÍ¨¹ýÒ»¸öÎ¨Ò»µÄURL»ñÈ¡µ½ËüÏëÒªµÄÊý¾Ý¡£
 ÌÔ±¦Êý¾Ý²úÆ·Ñ¡ÔñMySQLµÄMyISAMÒýÇæ×÷Îªµ×²ãµÄÊý¾Ý´æ´¢ÒýÇæ¡£ÔÚ´Ë»ù´¡ÉÏ£¬ÎªÁËÓ¦¶Ôº£Á¿Êý¾Ý£¬ÎÒÃÇÉè¼ÆÁË·Ö²¼Ê½MySQL¼¯ÈºµÄ²éÑ¯´úÀí²ã¡ª¡ªMyFOX£¬Ê¹µÃ·ÖÇø¶ÔÇ°¶ËÓ¦ÓÃÍ¸Ã÷
@@ -210,6 +213,9 @@ HDFS¸´ÖÆµÄÊ±ºò´øÓÐ Rack Awareness £¬È±Ê¡Èý¸öreplicaµÄÇé¿öÏÂ£¬Á½¸ö¶¼ÔÚÍ¬Ò» rack²»
 µ±nameNodeÆðÀ´µÄÊ±ºòÊôÓÚSafemode(Ö»¶Á),Ö»ÓÐµÈdatanode°Ñ×Ô¼ºblockÐÅÏ¢·¢¸øNameNodeÖ®ºó£¬nameNode²ÅÄÜ½øÈëÕý³£¹¤×÷Ä£Ê½(¶ÁÐ´)
 ËùÓÐµÄmetadata²Ù×÷¶¼¼ÇÂ¼ÔÚ Eidtlog(transaction log),file/block map¹ØÏµÔÚ FsImage £¬Æô¶¯µÄÊ±ºò¾Íapply EditLogµ½ÄÚ´æ,ÐÞ¸ÄfsImage£¬È»ºóÇå¿Õeditlog,ËæºóµÄ²Ù×÷»á¼ÌÐøÐ´µ½ editLog£¬µ«ÊÇ²»¸üÐÂfsImage,ËùÒÔÓÐ¿ÉÄÜeditLog»á±äµÃ·Ç³£´ó£¬µ¼ÖÂÏÂ´ÎÖØÆôµÄÊ±ºò»áºÜÂý£¬ËùÒÔ Secondary NameNode¿ÉÒÔÓÃÀ´¶¨ÆÚapply editLogµ½Ò»¸öÐÂµÄfsImage file£¬ÏÂ´Î NameNodeÖØÆô¾Í¿ÉÒÔÊ¹ÓÃÕâ¸öÐÂµÄfsImage£¬
 Checkpoint node  ²»µ«ÓÐ Secondary NameNodeµÄ¹¦ÄÜ£¬»¹ÄÜ°ÑFsImageÖØÐÂ´«»Øµ½nameNode ,Backup Node ¾ÍÊÇÊµÊ±½ÓÊÕmetadata²Ù×÷£¬È»ºóapplyµ½ÄÚ´æ£¬Í¬Ê±saveµ½local file,Ä¿Ç°Ö»Ö§³ÖÒ»¸öbackup node(²»ÄÜºÍ checkpoint nodeÍ¬Ê±Ê¹ÓÃ)
+Ð´ÎÄ¼þÖ®Ç°£¬ÐèÒªlease (×ölockÓÃ) ,Í¨¹ý namenode×ölease
+Second name node ²»ÊÇÓÃÀ´×öÈÝÔÖµÄ(only for checkpoint£¬copy FSimageºÍedit logµ½ SNN£¬È»ºómerge ,¶¨ÆÚ Replace NNÉÏµÄFSImage)£¬»Ö¸´Êý¾Ý²»¼°Ê±£¬ËùÒÔ¶Ôname nodeÐèÒª×öHA±ÈÈçDRBD   
+Ò²¿ÉÒÔÊ¹ÓÃ BackupNodeÀ´ÊµÊ±Í¬²½transaction logÓÃ×÷»Ö¸´£¬ÊÇÍ¬²½µÄ£¬×Ô¼ºÐ´³É¹¦ ²Å»Ø¸´ NN
 
 DataNodeÃ¿¸öblock´´½¨Ò»¸öÎÄ¼þ£¬»á×Ô¶¯·Ö²¼ÔÚ²»Í¬Ä¿Â¼»òÕß×ÓÄ¿Â¼£¬Ã¿´ÎÆô¶¯µÄÊ±ºò½øÐÐÉ¨Ãè£¬·¢ËÍblockReportµ½NameNode
 
@@ -231,7 +237,7 @@ HAÄ£Ê½ÏÂ   Quorum  Journal Ä£Ê½ÏÂ meta data²Ù×÷»á·¢ËÍµ½ Quorum  Journal node£¬È»
 
 Short-Circuit Local Reads Ö§³ÖclientÖ±½Ó¶ÁÈ¡hdfs data nodeÊý¾Ý£¬Èç¹ûÕýºÃºÍdata nodeÔÚÍ³Ò»½ÚµãµÄ»°£¬ÄÜ¹»ÌáÉýÐÔÄÜ
 HDFS Ö§³Ö Centralized Cache Management ¿ÉÒÔ¿ØÖÆÄÇ¸ödata½Úµã cacheÄÄÐ©block
-HDFSÖ§³ÖÍ¨¹ý NFS gateway  ·½Ê½ nfs mountµ½ ±¾µØ
+HDFSÖ§³ÖÍ¨¹ý NFS gateway  ·½Ê½ nfs mount µ½ ±¾µØ
 
 ¶ÔÓÚÈÎºÎÒ»¸öHDFSÎÄ¼þ£¬Namenode»áÔÚÄÚ´æÖÐÎ¬»¤Á½ÖÖmeta data£º1£© HDFSÎÄ¼þºÍblockµÄ¶ÔÓ¦¹ØÏµ £¬2£©blockÔÚdata nodeÉÏ´æ·ÅµÄÎ»ÖÃ¡£Namenode»áÔÚ´ÅÅÌÉÏ±£´æµÚÒ»ÖÖmeta data £¨Í¨¹ýcheckpoint ÎÄ¼þºÍwrite ahead log£©£¬µÚ¶þÖÖmeta dataÔòÊÇDataNodeÍ¨¹ýblock report ¶¨Ê±·¢ËÍ¸øNameNode¡£
 
