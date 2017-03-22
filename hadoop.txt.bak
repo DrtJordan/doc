@@ -1,3 +1,17 @@
+20170313 CDH
+Master Hosts -> NameNode  YARN ResourceManager  ZooKeeper
+Utility Hosts  ->  Secondary NameNode
+Worker Hosts  -> DataNode NodeManager    Hive Metastore  HiveServer2
+Small, with High Availability Up to 20 worker hosts  
+Medium  Up to 200 worker hosts 
+
+Hue is a web-based tool in the Hadoop stack that lets you analyze, manipulate, and share your data. 
+
+hbase  
+
+hive缺省内置 embedded Derby  database存储 meta data
+
+
 20161128
 YARN作为一个分布式数据操作系统，主要作用是资源管理和资源调度。在过去一年，YARN新增了包括基于标签的调度、对长服务的支持、对 Docker 的支持等多项重大功能。
 在 2015 年，HBase 迎来了一个里程碑——HBase 1.0 release
@@ -6,9 +20,12 @@ Mesos是一个双层调度器。在第一层中，Mesos将一定的资源提供（以容器的形式）给对应的
 
   HDFS 适合大文件，大吞吐，不合适小文件，快速随机读取
   HDFS Federation 是指多个NN  组合提供服务，以解决单NN内存不够的问题
-  HDFS 3.0支持多个standby NN
+  HDFS 3.0支持多个standby NN ,可以采用 NFS共享或者Quorum Journal Manager 的方式，在QJM方式下，active NN 发送edit log到 standby ,通过ZK做仲裁，同时data node向所有的NN(active/standby)汇报 block 分布情况
+  
+  
   
 hadoop   CDH install base最多 
+
 
 
 20140709

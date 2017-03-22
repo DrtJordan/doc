@@ -1,3 +1,66 @@
+kaggle ¾ºÈü
+±êÇ©ÊôÐÔ£º
+ÐÕÃû£ºº«±¦Áú ÄêÁä£º28 ÐÔ±ð£ºÄÐ ËùÔÚµØ£º±±¾© ³µÁ¾ÀàÐÍ£ºÂõ°ÍºÕ¡¢°ÂµÏ¡¢Â·»¢ Á÷Ê§¼ÇÂ¼£ºÓÐ1´Î ÀúÊ·ÈýÕß±£¶î£º100Íò ¡­¡­ £¨Ò»°ã¶à¸öÒ³Ãæ²ÅÄÜÕ¹Ê¾£©
+»ù´¡±êÇ©£º
+VIP5¡¢¸»¶þ´ú¡¢ÂÃÓÎ/»§Íâ°®ºÃÕß¡¢´¦Å®×ù¡¢·þÎñÃô¸Ð¡¢³¬ËÙÐÐÊ»¡¢·çÏÕ¹æ±Ü¡­¡­
+Ô¤²â±êÇ©£º
+¸ßÁ÷Ê§·çÏÕ¡¢ÈýÕß±£¶î¿ÉÌáÉý¡¢»¥ÁªÍøÆ«ºÃ¡¢ÔçÁªÏµÔçµÃ
+ÍÁºÀ/ÉÌÎñÈËÊ¿/·ÉÐÐ´ïÈË/ÂÃÓÎ´ïÈË/ÈËÂö¹ã/Î¥ÕÂ ¼ÝÊ»
+
+Éî¶ÈÑ§Ï°ÊÇ½â¾öÏßÐÔ²»¿É·ÖµÄÎÊÌâ 
+ÔÚÏÞ¶¨ÁìÓò»úÆ÷ÈË¿ÉÓÃ 1 ÎÊÌâ¿Õ¼ä±äÐ¡2ÈË¶Ô»úÆ÷µÄÆÚÍû»á½µµÍ
+
+GBDT gradient boosting decision tree 
+
+ÔÚÓÃ»§»­Ïñ½¨Ä£·½Ãæ£¬ÎÒÃÇ°Ñ±êÇ©½¨Ä£·ÖÎªËÄ²ã£º
+µÚÒ»²ãÊÇÊÂÊµÀà±êÇ©£¬Æ©ÈçÓÃ»§¹ºÎïÁËÊ²Ã´Æ·Àà£»
+µÚ¶þ²ãÊÇ»úÆ÷Ñ§Ï°Ä£ÐÍµÄÔ¤²â±êÇ©£¬Æ©Èçµ±ÏÂÐèÇó¡¢Ç±ÔÚÐèÇóµÈµÈ£»
+µÚÈý²ãÊÇÓªÏúÄ£ÐÍÀà±êÇ©£¬Æ©ÈçÓÃ»§¼ÛÖµ¡¢»îÔ¾¶ÈºÍÖÒ³Ï¶ÈµÈµÈ£»
+µÚËÄ²ãÊÇÒµÎñÀàµÄ±êÇ©£¬Æ©Èç¸ßÉÝÈËÈº¡¢ÓÐ·¿Ò»×åµÈµÈ£¬ËüÊÇÓÉµ×²ãµÄ±êÇ©×éºÏÉú³ÉµÄ£¬Í¨³£ÓÉÒµÎñÈËÔ±¶¨Òå¡£
+
+
+ÏÖÓÐÓÃ»§->ÎÒµÄÓÃ»§ÊÇË­£¿ÎªÊ²Ã´ÂòÎÒµÄ²úÆ·£¿ËûÃÇÓÐÊ²Ã´Æ«ºÃ£¿ÄÄÐ©ÓÃ»§¼ÛÖµ¸ü¸ß
+Ç±ÔÚ¿Í»§->Ç±ÔÚÓÃ»§ÔÚÄÄÀï£¿ËûÃÇÏ²»¶Ê²Ã´?ÄÄÐ©ÇþµÀÄÜÕÒµ½ËûÃÇ?»ñ¿Í³É±¾ÊÇ¶àÉÙ
+Ä¿µÄÊÇ¶ÔÄÚ£ºÖ¸µ¼²úÆ·ÑÐ·¢(ÔìÊ²Ã´¿Í»§ÂòÊ²Ã´±ä³ÉÓÃ»§ÒªÊ²Ã´ÔìÊ²Ã´)£¬ÍêÉÆ²úÆ·ÔËÓª
+¶ÔÍâ¾«×¼ÏúÊÛ
+Ã¿Ò»´ÎÓÃ»§ÐÐÎª ÖØµãÊÇÓÃ»§Ê²Ã´Ê±ºòÔÚÊ²Ã´µØ·½×öÁËÊ²Ã´ÊÂÇé
+ÓÃ»§½üÆÚ·¢ÉúµÄÐÐÎªÈ¨ÖØÕ¼±È¸ü´ó£¬¹ýÍùÐÐÎªÈ¨ÖØ½µµÍ
+±êÇ©È¨ÖØ=Ê±¼äË¥¼õ£¨ºÎÊ±£©¡ÁÍøÖ·È¨ÖØ£¨ºÎµØ£©¡ÁÐÐÎªÈ¨ÖØ£¨×öÊ²Ã´£©
+If you can¡¯t measure it,  you can¡¯t improve it
+
+¡ñ ÃæÏòÊ²Ã´ÓÃ»§ºÍ³¡¾°
+¡ñ ½â¾öÊ²Ã´ÎÊÌâ / ´øÀ´Ê²Ã´¼ÛÖµ
+¡ñ ÎÊÌâµÄ·ÖÎöË¼Â·ÊÇÊ²Ã´
+¡ñ ÐèÒªÓÃµ½Ê²Ã´ÑùµÄÖ¸±ê
+¡ñ ÕâÐ©Ö¸±ê¸ÃÔõÃ´×éºÏÕ¹ÏÖ
+
+½«¸´ÔÓµÄÉÌÒµÎÊÌâ×ª»¯ÎªÊýÑ§Ä£ÐÍ£¬²¢ÀûÓÃ±à³ÌÄÜÁ¦½øÐÐ·ÖÎö£¬Ô¤²âºÍÆÀ¹À£¬ÔÙ×ª»¯ÎªºÏÊÊµÄBusiness Plan£¬Ö´ÐÐ¡£
+
+report ¸æËßÄã¹ýÈ¥·¢ÉúÊ²Ã´
+BI¸æËßÄãÏÖÔÚ·¢ÉúÊ²Ã´
+modeling ¸æËßÄã½«À´·¢ÉúÊ²Ã´
+
+Êý¾ÝºÍÌØÕ÷¾ö¶¨ÁË»úÆ÷Ñ§Ï°µÄÉÏÏÞ£¬Ä£ÐÍºÍ²ÎÊý¾ö¶¨ÁË±Æ½üÕâ¸öÉÏÏÞµÄ³Ì¶È¡£
+
+ÀíÏëÖÐµÄËã·¨¹¤³ÌÊ¦£ºÌá³ö¼ÙÉè->ÊÕ¼¯Êý¾Ý->ÑµÁ·Ä£ÐÍ->½âÊÍ½á¹û¡£
+Êµ¼ÊÖÐµÄËã·¨¹¤³ÌÊ¦£ºÌá³ö¼ÙÉè->ÊÕ¼¯Êý¾Ý->Ô¤´¦Àí->Ô¤´¦Àí->ÑµÁ·Ä£ÐÍ->µ÷ÊÔ->µ÷ÊÔ->ÖØÐÂÊÕ¼¯Êý¾Ý->Ô¤´¦Àí->ÊÕ¼¯¸ü¶àÊý¾Ý->µ÷ÊÔ->µ÷ÊÔ->µ÷ÊÔ->...->·ÅÆú¡£
+
+
+CLTV£¨Customer Lifetime ValueÓÃ»§ÉúÃü¼ÛÖµ£©£¬CLT£¨ÓÃ»§ÉúÃüÖÜÆÚ£©£¬Retention Rate £¨Áô´æÂÊ£©£¬CAC £¨Cost of Acquisition »ñ¿Í³É±¾£©£¬COR£¨Cost of Retention Áô´æ³É±¾£©£¬CPI £¨Cost per Install °²×°³É±¾£©
+
+RFM·ÖÎö£¨Recency£¬Frequency£¬Monetary£©
+
+ÍæË£±¾À´ÊÇÐ¡º¢µÄÄÚ²¿¶¯»ú£¬²»ÐèÒªÍâ²¿µÄ´Ì¼¤ºÍÇ¿»¯¾ÍÄÜÒ»Ö±³ÖÐøÏÂÈ¥£¬µ«ÓÌÌ«ÀÏÍ·Í¨¹ýÍâ²¿¶¯»ú£¨¸øÇ®£©Ê¹µÃÄÚ²¿¶¯»úµÄ×÷ÓÃÈõ»¯£¬ÐÐÎªµÄ³ÖÐøÒÀÀµÓÚÍâ²¿¶¯»ú¡£¶øºóËû³·ÏúÍâ²¿¶¯»ú£¬Ð¡º¢ÍæË£µÄÐÐÎª¾ÍÏûÊ§ÁË~¶ÔÓÚÓÃ»§Ò²ÊÇÕâÑùµÄ£¬ÓÃ»§´óÖÂ¿ÉÒÔ·Ö³É¿ñÈÈÕß¡¢ÍÆ¼öÕß¡¢Çá¶ÈÊ¹ÓÃÕß¡¢¸úËæÕßºÍÀäÄ®ÕßÕâÃ´¼¸¸ö¼¶±ð£¬ÏÔÈ»Ó¦¸Ã¶ÔËûÃÇÇø±ð¶Ô´ý¡£¶ÔÓÚÄÇÐ©ÄÚ²¿¶¯»úºÜÇ¿µÄÓÃ»§£¬Ö»Òª²»Ê©¼Ó¹ý¶àÍâ²¿¶¯»úÓ°Ïìµ¼ÖÂÆÆ»µËûÃÇµÄÄÚ²¿¶¯»ú¾Í¿ÉÒÔÁË£»¶ø¶ÔÓÚ²»ÔõÃ´¸ÐÐËÈ¤µÄÓÃ»§£¬¿ÉÄÜ¸ü¶àµØ²ÉÓÃÒ»Ð©ÏÊÃ÷µÄÊµÖÊÐÔ´Ì¼¤°É£»¶ÔÓÚÖÐ¼äÒ»²¿·ÖÒ¡°Ú²»¶¨µÄÓÃ»§£¬±È½Ï¾­¼ÃÊµ»Ý¶øÇÒÄÜ³¤ÆÚÎ¬³ÖµÄ·½Ê½£¬»¹ÊÇ¾¡¿ÉÄÜÅàÑøËûÃÇµÄÄÚ²¿¶¯»ú£¬°ÑËûÃÇ×ª±ä³É¿ñÈÈÕß£¬¶ø²»ÊÇÎªÁËÄ³ÖÖÊµÖÊ½±ÀøµÄÊÆÀûÐÍÓÃ»§£¬²»È»ºÜÈÝÒ×Á÷Ê§¡£
+
+ 
+
+
+Í¨¹ýÊý¾Ý½¨Ä££¬ÆóÒµ¿ÉÒÔÓÐÐ§µØÎªÄÜ¸²¸Çµ½µÄÓÃ»§´òÉÏ±êÇ©£¬Ö®ºó½áºÏÇþµÀÐÅÏ¢ºÍÉÌÆ·ÐÅÏ¢£¬ÆóÒµ¿É¸ù¾ÝÐèÇó¶¨ÏòµØÑ¡ÔñÊý¾ÝÍÚ¾òµÄ·½·¨Êä³ö½á¹û£¬ÔÚÓªÏú¾ö²ßÖÐ£¬¿ÉÄÜµÃµ½µÄ½áÂÛÀýÈç¡°¾ßÓÐ±êÇ©aµÄÈË¼¯ÖÐ¹ºÂòÁËÉÌÆ·A¡±¡¢¡°¹ºÂòÉÌÆ·BµÄÓÃ»§Í¬Ñù»á¶ÔÉÌÆ·A¸ÐÐËÈ¤¡±¡¢¡°ÉÌÆ·AµÄ¹ºÂòÈËÈºÖ÷Òª¼¯ÖÐÓÚÇþµÀc¡±µÈµÈ£¬ÕâÐ©ÐÅÏ¢½«Ö±½ÓÖ¸µ¼ÆóÒµÍê³ÉÓªÏú¾ö²ß¡£ÔÚÕâ¸ö¹ý³ÌÖÐ³£ÓÃµÄËã·¨°üÀ¨¾ÛÀàºÍ¹ØÁª¹æÔòµÈ£¬±¾ÎÄ²»ÉîÈëÕ¹¿ª£¬ÕâÐ©Ëã·¨µÄºËÐÄÂß¼­¿ÉÒÔÈÏÎªÊÇÀûÓÃÏÖÓÐÊÂÊµ¶ÔÎ´À´½øÐÐÔ¤²âµÄ¹ý³Ì¡£
+
+
+
+Èý²ãÓÃ»§±êÇ©ÌåÏµÖÐ£¬¹²´æÔÚ50¶à¸öÒ»¼¶±êÇ©£¬1000¶à¸ö¶þ¼¶±êÇ©ºÍ½ü30ÍòµÄÈý¼¶±êÇ©;ÆäÖÐÒ»¼¶±êÇ©ÊÇ´óÀà±êÇ©£¬ÀàËÆÓÚÐÂÎÅ¿Í»§¶ËÖÐ³£¼ûµÄÆµµÀ(ÈçÓÒ°ë²¿·ÖµÄ²Æ¾­¡¢»¥ÁªÍøµÈ)£¬¶þ¼¶±êÇ©ÊÇ´ÓÊôÓÚÒ»¼¶±êÇ©µÄÏ¸·Ö(ÈçÓÒ°ë²¿·ÖÖÐ²Æ¾­ÏÂµÄ¹ÉÆ±£¬»¥ÁªÍøÏÂµÄ»¥ÁªÍø°²È«µÈ)£¬Èý¼¶±êÇ©ÊÇ¶Ô¶þ¼¶±êÇ©µÄ½øÒ»²½Ï¸·Ö£¬ÄÜ¶ÔÓ¦µ½Ò»¼¶±êÇ©ÏÂµÄÊµÌå¶ÔÏó(Èç²Æ¾­ÏÂÄ³Ò»Ö§¾ßÌåµÄ¹ÉÆ±£¬»¥ÁªÍøÏÂµÄÄ³Ò»¼Ò¾ßÌå¹«Ë¾µÈ)¡£
+
 Êý¾Ý²Ö¿â£¨Data Warehouse£©ÊÇÒ»¸öÃæÏòÖ÷ÌâµÄ£¨Subject Oriented£©¡¢¼¯³ÉµÄ£¨Integrated£©¡¢Ïà¶ÔÎÈ¶¨µÄ£¨Non-Volatile£©¡¢·´Ó¦ÀúÊ·±ä»¯£¨Time Variant£©µÄÊý¾Ý¼¯ºÏ£¬ÓÃÓÚÖ§³Ö¹ÜÀí¾ö²ß¡£
 µ±ÓÐÒ»¸ö»ò¶à¸öÎ¬±íÃ»ÓÐÖ±½ÓÁ¬½Óµ½ÊÂÊµ±íÉÏ£¬¶øÊÇÍ¨¹ýÆäËûÎ¬±íÁ¬½Óµ½ÊÂÊµ±íÉÏÊ±£¬ÆäÍ¼½â¾ÍÏñ¶à¸öÑ©»¨Á¬½ÓÔÚÒ»Æð£¬¹Ê³ÆÑ©»¨Ä£ÐÍ¡£Ñ©»¨Ä£ÐÍÊÇ¶ÔÐÇÐÍÄ£ÐÍµÄÀ©Õ¹¡£Ëü¶ÔÐÇÐÍÄ£ÐÍµÄÎ¬±í½øÒ»²½²ã´Î»¯£¬Ô­ÓÐµÄ¸÷Î¬±í¿ÉÄÜ±»À©Õ¹ÎªÐ¡µÄÊÂÊµ±í£¬ÐÎ³ÉÒ»Ð©¾Ö²¿µÄ "?²ã´Î " ÇøÓò£¬ÕâÐ©±»·Ö½âµÄ±í¶¼Á¬½Óµ½Ö÷Î¬¶È±í¶ø²»ÊÇÊÂÊµ±í¡£ÈçÍ¼ 2£¬½«µØÓòÎ¬±íÓÖ·Ö½âÎª¹ú¼Ò£¬Ê¡·Ý£¬³ÇÊÐµÈÎ¬±í¡£ËüµÄÓÅµãÊÇ :?Í¨¹ý×î´óÏÞ¶ÈµØ¼õÉÙÊý¾Ý´æ´¢Á¿ÒÔ¼°ÁªºÏ½ÏÐ¡µÄÎ¬±íÀ´¸ÄÉÆ²éÑ¯ÐÔÄÜ¡£Ñ©»¨ÐÍ½á¹¹È¥³ýÁËÊý¾ÝÈßÓà¡£
 OLAPµÄ»ù±¾¶àÎ¬·ÖÎö²Ù×÷ÓÐ×êÈ¡£¨roll upºÍdrill down£©¡¢ÇÐÆ¬£¨slice£©ºÍÇÐ¿é£¨dice£©¡¢ÒÔ¼°Ðý×ª£¨pivot£©¡¢drill across¡¢drill throughµÈ¡£
@@ -98,7 +161,6 @@ MOLAP±íÊ¾»ùÓÚ¶àÎ¬Êý¾Ý×éÖ¯µÄOLAPÊµÏÖ£¨M?ultidimensional OLAP£©¡£ÒÔ¶àÎ¬Êý¾Ý×éÖ¯·½Ê
 £¨2£©ËùÓÐ·Ç¡°Ìû×Óid¡±µÄ¸öÐÔ»¯¼ìË÷ÐèÇó£¬Í³Ò»×ßÍâÖÃË÷Òý
 
 
-³É¹¦µÄ´óÊý¾Ý¹æ»®¾Û½¹ÓÚËÄ¸öºËÐÄÒªËØ£ºÓ¦ÓÃ³¡¾°¡¢Êý¾Ý²úÆ·¡¢·ÖÎöÄ£ÐÍºÍÊý¾Ý×Ê²ú
 
 
 ³É¹¦µÄ´óÊý¾Ý¹æ»®¾Û½¹ÓÚËÄ¸öºËÐÄÒªËØ£ºÓ¦ÓÃ³¡¾°¡¢Êý¾Ý²úÆ·¡¢·ÖÎöÄ£ÐÍºÍÊý¾Ý×Ê²ú

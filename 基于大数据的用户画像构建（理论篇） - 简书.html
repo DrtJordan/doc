@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<!-- saved from url=(0037)http://www.jianshu.com/p/0d77238771ef -->
+<html><!--<![endif]--><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+<script type="text/javascript" src="./基于大数据的用户画像构建（理论篇） - 简书_files/1255494d3a"></script><script src="./基于大数据的用户画像构建（理论篇） - 简书_files/nr-1026.min.js.下载"></script><script src="./基于大数据的用户画像构建（理论篇） - 简书_files/push.js.下载"></script><script async="" src="./基于大数据的用户画像构建（理论篇） - 简书_files/analytics.js.下载"></script><script type="text/javascript">window.NREUM||(NREUM={});NREUM.info={"beacon":"bam.nr-data.net","errorBeacon":"bam.nr-data.net","licenseKey":"1255494d3a","applicationID":"15702971","transactionName":"e1daR0JWVV9RER9ZWkxdRxxDUVZE","queueTime":2,"applicationTime":106,"agent":""}</script>
+<script type="text/javascript">window.NREUM||(NREUM={}),__nr_require=function(e,n,t){function r(t){if(!n[t]){var o=n[t]={exports:{}};e[t][0].call(o.exports,function(n){var o=e[t][1][n];return r(o||n)},o,o.exports)}return n[t].exports}if("function"==typeof __nr_require)return __nr_require;for(var o=0;o<t.length;o++)r(t[o]);return r}({1:[function(e,n,t){function r(){}function o(e,n,t){return function(){return i(e,[c.now()].concat(u(arguments)),n?null:this,t),n?void 0:this}}var i=e("handle"),a=e(2),u=e(3),f=e("ee").get("tracer"),c=e("loader"),s=NREUM;"undefined"==typeof window.newrelic&&(newrelic=s);var p=["setPageViewName","setCustomAttribute","setErrorHandler","finished","addToTrace","inlineHit","addRelease"],d="api-",l=d+"ixn-";a(p,function(e,n){s[n]=o(d+n,!0,"api")}),s.addPageAction=o(d+"addPageAction",!0),s.setCurrentRouteName=o(d+"routeName",!0),n.exports=newrelic,s.interaction=function(){return(new r).get()};var m=r.prototype={createTracer:function(e,n){var t={},r=this,o="function"==typeof n;return i(l+"tracer",[c.now(),e,t],r),function(){if(f.emit((o?"":"no-")+"fn-start",[c.now(),r,o],t),o)try{return n.apply(this,arguments)}finally{f.emit("fn-end",[c.now()],t)}}}};a("setName,setAttribute,save,ignore,onEnd,getContext,end,get".split(","),function(e,n){m[n]=o(l+n)}),newrelic.noticeError=function(e){"string"==typeof e&&(e=new Error(e)),i("err",[e,c.now()])}},{}],2:[function(e,n,t){function r(e,n){var t=[],r="",i=0;for(r in e)o.call(e,r)&&(t[i]=n(r,e[r]),i+=1);return t}var o=Object.prototype.hasOwnProperty;n.exports=r},{}],3:[function(e,n,t){function r(e,n,t){n||(n=0),"undefined"==typeof t&&(t=e?e.length:0);for(var r=-1,o=t-n||0,i=Array(o<0?0:o);++r<o;)i[r]=e[n+r];return i}n.exports=r},{}],4:[function(e,n,t){n.exports={exists:"undefined"!=typeof window.performance&&window.performance.timing&&"undefined"!=typeof window.performance.timing.navigationStart}},{}],ee:[function(e,n,t){function r(){}function o(e){function n(e){return e&&e instanceof r?e:e?f(e,u,i):i()}function t(t,r,o,i){if(!d.aborted||i){e&&e(t,r,o);for(var a=n(o),u=m(t),f=u.length,c=0;c<f;c++)u[c].apply(a,r);var p=s[y[t]];return p&&p.push([b,t,r,a]),a}}function l(e,n){v[e]=m(e).concat(n)}function m(e){return v[e]||[]}function w(e){return p[e]=p[e]||o(t)}function g(e,n){c(e,function(e,t){n=n||"feature",y[t]=n,n in s||(s[n]=[])})}var v={},y={},b={on:l,emit:t,get:w,listeners:m,context:n,buffer:g,abort:a,aborted:!1};return b}function i(){return new r}function a(){(s.api||s.feature)&&(d.aborted=!0,s=d.backlog={})}var u="nr@context",f=e("gos"),c=e(2),s={},p={},d=n.exports=o();d.backlog=s},{}],gos:[function(e,n,t){function r(e,n,t){if(o.call(e,n))return e[n];var r=t();if(Object.defineProperty&&Object.keys)try{return Object.defineProperty(e,n,{value:r,writable:!0,enumerable:!1}),r}catch(i){}return e[n]=r,r}var o=Object.prototype.hasOwnProperty;n.exports=r},{}],handle:[function(e,n,t){function r(e,n,t,r){o.buffer([e],r),o.emit(e,n,t)}var o=e("ee").get("handle");n.exports=r,r.ee=o},{}],id:[function(e,n,t){function r(e){var n=typeof e;return!e||"object"!==n&&"function"!==n?-1:e===window?0:a(e,i,function(){return o++})}var o=1,i="nr@id",a=e("gos");n.exports=r},{}],loader:[function(e,n,t){function r(){if(!x++){var e=h.info=NREUM.info,n=d.getElementsByTagName("script")[0];if(setTimeout(s.abort,3e4),!(e&&e.licenseKey&&e.applicationID&&n))return s.abort();c(y,function(n,t){e[n]||(e[n]=t)}),f("mark",["onload",a()+h.offset],null,"api");var t=d.createElement("script");t.src="https://"+e.agent,n.parentNode.insertBefore(t,n)}}function o(){"complete"===d.readyState&&i()}function i(){f("mark",["domContent",a()+h.offset],null,"api")}function a(){return E.exists&&performance.now?Math.round(performance.now()):(u=Math.max((new Date).getTime(),u))-h.offset}var u=(new Date).getTime(),f=e("handle"),c=e(2),s=e("ee"),p=window,d=p.document,l="addEventListener",m="attachEvent",w=p.XMLHttpRequest,g=w&&w.prototype;NREUM.o={ST:setTimeout,CT:clearTimeout,XHR:w,REQ:p.Request,EV:p.Event,PR:p.Promise,MO:p.MutationObserver};var v=""+location,y={beacon:"bam.nr-data.net",errorBeacon:"bam.nr-data.net",agent:"js-agent.newrelic.com/nr-1026.min.js"},b=w&&g&&g[l]&&!/CriOS/.test(navigator.userAgent),h=n.exports={offset:u,now:a,origin:v,features:{},xhrWrappable:b};e(1),d[l]?(d[l]("DOMContentLoaded",i,!1),p[l]("load",r,!1)):(d[m]("onreadystatechange",o),p[m]("onload",r)),f("mark",["firstbyte",u],null,"api");var x=0,E=e(4)},{}]},{},["loader"]);</script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0,user-scalable=no">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+    <meta name="description" content="什么是用户画像？ 简而言之，用户画像是根据用户社会属性、生活习惯和消费行为等信息而抽象出的一个标签化的用户模型。构建用户画像的核心工作即是给用户贴“标签”，而标签是通过对用户信息分析而来的高度精炼的特征标识。 举例来说，如果你经常购买一些玩偶玩具，那么电商网站即可根据玩具购买的情况替你打上标签“有孩子”，甚至还可以判断出你孩子大概的年龄，贴上“有 5-10 岁的孩子”这样更为具体的标签，而这...">
+  <meta property="wb:webmaster" content="294ec9de89e7fadb">
+  <meta property="qc:admins" content="104102651453316562112116375">
+  <meta property="qc:admins" content="11635613706305617">
+  <meta property="qc:admins" content="1163561616621163056375">
+  <meta name="google-site-verification" content="cV4-qkUJZR6gmFeajx_UyPe47GW9vY6cnCrYtCHYNh4">
+  <meta name="google-site-verification" content="HF7lfF8YEGs1qtCE-kPml8Z469e2RHhGajy6JPVy5XI">
+  <meta http-equiv="mobile-agent" content="format=html5; url=http://www.jianshu.com/p/0d77238771ef">
+
+  <!-- Apple -->
+  <meta name="apple-mobile-web-app-title" content="简书">
+
+    <!--  Meta for Smart App Banner -->
+  <meta name="apple-itunes-app" content="app-id=888237539, app-argument=jianshu://notes/2801340">
+  <!-- End -->
+
+  <!--  Meta for Twitter Card -->
+  <meta content="summary" property="twitter:card">
+  <meta content="@jianshucom" property="twitter:site">
+  <meta content="基于大数据的用户画像构建（理论篇）" property="twitter:title">
+  <meta content="什么是用户画像？ 简而言之，用户画像是根据用户社会属性、生活习惯和消费行为等信息而抽象出的一个标签化的用户模型。构建用户画像的核心工作即是给用户贴“标签”，而标签是通过对用户信息分析而来的高度精炼的特征标识。 举例来说，如果你经常购买一些玩偶玩具，那么电商网站即可根据玩具购买的情况替你打上标签“有孩子”，甚至还可以判断出你孩子大概的年龄，贴上“有 5-10 岁的孩子”这样更为具体的标签，而这些所有给你贴的标签统在一次，就成了你的用户画像，因此，也可以说用户画像就是判断一个人是什么样的人。 除去“标签化”，用户画像还具有的特点是“低交叉率”，当两组画像除了权重较小的标签外其余标签几乎一致，..." property="twitter:description">
+  <meta content="http://www.jianshu.com/p/0d77238771ef" property="twitter:url">
+  <!-- End -->
+
+  <!--  Meta for OpenGraph -->
+  <meta property="fb:app_id" content="865829053512461">
+  <meta property="og:site_name" content="简书">
+  <meta property="og:title" content="基于大数据的用户画像构建（理论篇）">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="http://www.jianshu.com/p/0d77238771ef">
+  <meta property="og:description" content="什么是用户画像？ 简而言之，用户画像是根据用户社会属性、生活习惯和消费行为等信息而抽象出的一个标签化的用户模型。构建用户画像的核心工作即是给用户贴“标签”，而标签是通过对用户信息分析而来的高度精...">
+  <!-- End -->
+
+  <!--  Meta for Facebook Applinks -->
+  <meta property="al:ios:url" content="jianshu://notes/2801340">
+  <meta property="al:ios:app_store_id" content="888237539">
+  <meta property="al:ios:app_name" content="简书">
+
+  <meta property="al:android:url" content="jianshu://notes/2801340">
+  <meta property="al:android:package" content="com.jianshu.haruki">
+  <meta property="al:android:app_name" content="简书">
+  <!-- End -->
+
+  <title>基于大数据的用户画像构建（理论篇） - 简书</title>
+  <meta name="csrf-param" content="authenticity_token">
+<meta name="csrf-token" content="GEDpWPgWSudvdO/FMnohqYWBxxphM9xo8RvT/Q33uvikucvwp4qyebqAlo+A6b4qZRkzThJI9km5Te8fl5CLYw==">
+  <!--[if lte IE 8]><script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <link rel="stylesheet" media="all" href="./基于大数据的用户画像构建（理论篇） - 简书_files/web-c828028c5de56711ec51.css">
+  
+  <link rel="stylesheet" media="all" href="./基于大数据的用户画像构建（理论篇） - 简书_files/entry-c828028c5de56711ec51.css">
+  <!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
+  <!--[if IE 8]><link rel="stylesheet" media="all" href="http://cdn-qn0.jianshu.io/assets/scaffolding/for_ie-7f1c477ffedc13c11315103e8787dc6c.css" /><![endif]-->
+  <!--[if lt IE 9]><link rel="stylesheet" media="all" href="http://cdn-qn0.jianshu.io/assets/scaffolding/for_ie-7f1c477ffedc13c11315103e8787dc6c.css" /><![endif]-->
+  <link href="http://baijii-common.b0.upaiyun.com/icons/favicon.ico" rel="icon">
+      <link rel="apple-touch-icon-precomposed" href="http://cdn-qn0.jianshu.io/assets/apple-touch-icons/57-102eb808e418f59bfed2fc083b775207.png" sizes="57x57">
+      <link rel="apple-touch-icon-precomposed" href="http://cdn-qn0.jianshu.io/assets/apple-touch-icons/72-9a0e20fa5637c781c5ffcc45e96b000a.png" sizes="72x72">
+      <link rel="apple-touch-icon-precomposed" href="http://cdn-qn0.jianshu.io/assets/apple-touch-icons/76-cd6fe1b7a3ff8db8264e45c210d3e488.png" sizes="76x76">
+      <link rel="apple-touch-icon-precomposed" href="http://cdn-qn0.jianshu.io/assets/apple-touch-icons/114-8cdbbf3a82188ac743551ff40f62ddd7.png" sizes="114x114">
+      <link rel="apple-touch-icon-precomposed" href="http://cdn-qn0.jianshu.io/assets/apple-touch-icons/120-b5864fe9b70ca71f4ea083f6fe54e003.png" sizes="120x120">
+      <link rel="apple-touch-icon-precomposed" href="http://cdn-qn0.jianshu.io/assets/apple-touch-icons/152-d820a88a50af87375962e890c8223134.png" sizes="152x152">
+</head>
+
+  <body lang="zh-CN" class="reader-black-font">
+    <!-- 全局顶部导航栏 -->
+<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+  <div class="width-limit">
+    <!-- 左上方 Logo -->
+    <a class="logo" href="http://www.jianshu.com/"><img src="./基于大数据的用户画像构建（理论篇） - 简书_files/logo-58fd04f6f0de908401aa561cda6a0688.png" alt="Logo"></a>
+
+    <!-- 右上角 -->
+      <!-- 未登录显示登录/注册/写文章 -->
+      <a class="btn write-btn" target="_blank" href="http://www.jianshu.com/writer#/">
+        <i class="iconfont ic-write"></i>写文章
+</a>      <a class="btn sign-up" href="http://www.jianshu.com/sign_up">注册</a>
+      <a class="btn log-in" href="http://www.jianshu.com/sign_in">登录</a>
+
+    <!-- 如果用户登录，显示下拉菜单 -->
+
+    <div class="style-mode"><a class="style-mode-btn"><i class="iconfont ic-navigation-mode"></i></a> <div class="popover-modal" style="left: 0px; display: none;"><div class="meta"><i class="iconfont ic-navigation-night"></i><span>夜间模式</span></div> <div class="switch day-night-group"><a class="switch-btn">开</a> <a class="switch-btn active">关</a></div> <hr> <div class="switch font-family-group"><a class="switch-btn font-song">宋体</a> <a class="switch-btn font-hei active">黑体</a></div> <div class="switch"><a class="switch-btn active">简</a> <a class="switch-btn">繁</a></div></div></div>
+    <div class="container">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#menu" aria-expanded="false">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+      </div>
+      <div class="collapse navbar-collapse" id="menu">
+        <ul class="nav navbar-nav">
+            <li class="">
+              <a href="http://www.jianshu.com/">
+                <span class="menu-text">首页</span><i class="iconfont ic-navigation-discover menu-icon"></i>
+</a>            </li>
+            <li class="">
+              <a class="app-download-btn" href="http://www.jianshu.com/apps"><span class="menu-text">下载App</span><i class="iconfont ic-navigation-download menu-icon"></i></a>
+            </li>
+          <li class="search">
+            <form target="_blank" action="http://www.jianshu.com/search" accept-charset="UTF-8" method="get"><input name="utf8" type="hidden" value="✓">
+              <input type="text" name="q" id="q" value="" placeholder="搜索" class="search-input">
+              <a class="search-btn" href="javascript:void(null)"><i class="iconfont ic-search"></i></a>
+              <!-- <div id="navbar-trending-search"></div> -->
+</form>          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</nav>
+
+    
+<div class="note">
+  <div class="post">
+    <div class="article">
+        <h1 class="title">基于大数据的用户画像构建（理论篇）</h1>
+
+        <!-- 作者区域 -->
+        <div class="author">
+          <a class="avatar" href="http://www.jianshu.com/u/438f70964180">
+            <img src="./基于大数据的用户画像构建（理论篇） - 简书_files/beec25b3496a.jpg" alt="144">
+</a>          <div class="info">
+            <span class="tag">作者</span>
+            <span class="name"><a href="http://www.jianshu.com/u/438f70964180">我勒个矗</a></span>
+            <!-- 关注用户按钮 -->
+            <a class="btn btn-success follow"><i class="iconfont ic-follow"></i><span>关注</span></a>
+            <!-- 文章数据信息 -->
+            <div class="meta">
+              <!-- 如果文章更新时间大于发布时间，那么使用 tooltip 显示更新时间 -->
+                <span class="publish-time" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="最后编辑于 2017.02.23 02:53">2016.01.10 05:58*</span>
+              <span class="wordage">字数 1995</span>
+            <span class="views-count">阅读 6541</span><span class="comments-count">评论 12</span><span class="likes-count">喜欢 178</span></div>
+          </div>
+          <!-- 如果是当前作者，加入编辑按钮 -->
+        </div>
+        <!-- -->
+
+        <!-- 文章内容 -->
+        <div class="show-content">
+          <h2>什么是用户画像？</h2>
+<p>简而言之，用户画像是根据用户社会属性、生活习惯和消费行为等信息而抽象出的一个标签化的用户模型。构建用户画像的核心工作即是给用户贴“标签”，而标签是通过对用户信息分析而来的高度精炼的特征标识。</p>
+<blockquote><p>举例来说，如果你经常购买一些玩偶玩具，那么电商网站即可根据玩具购买的情况替你打上标签“有孩子”，甚至还可以判断出你孩子大概的年龄，贴上“有 5-10 岁的孩子”这样更为具体的标签，而这些所有给你贴的标签统在一次，就成了你的用户画像，因此，也可以说用户画像就是判断一个人是什么样的人。</p></blockquote>
+<p>除去“标签化”，用户画像还具有的特点是“低交叉率”，当两组画像除了权重较小的标签外其余标签几乎一致，那就可以将二者合并，弱化低权重标签的差异。</p>
+<h2>用户画像的作用</h2>
+<p>罗振宇在《时间的朋友》跨年演讲上举了这样一个例子：当一个坏商家掌握了你的购买数据，他就可以根据你平常购买商品的偏好来决定是给你发正品还是假货以提高利润。且不说是否存在这情况，但这也说明了利用用户画像可以做到“精准销售”，当然了，这是极其错误的用法。</p>
+<p>其作用大体不离以下几个方面：</p>
+<ol>
+<li>精准营销，分析产品潜在用户，针对特定群体利用短信邮件等方式进行营销；</li>
+<li>用户统计，比如中国大学购买书籍人数 TOP10，全国分城市奶爸指数；</li>
+<li>数据挖掘，构建智能推荐系统，利用关联规则计算，喜欢红酒的人通常喜欢什么运动品牌，利用聚类算法分析，喜欢红酒的人年龄段分布情况；</li>
+<li>进行效果评估，完善产品运营，提升服务质量，其实这也就相当于市场调研、用户调研，迅速下定位服务群体，提供高水平的服务；</li>
+<li>对服务或产品进行私人定制，即个性化的服务某类群体甚至每一位用户（个人认为这是目前的发展趋势，未来的消费主流）。比如，某公司想推出一款面向 5－10 岁儿童的玩具，通过用户画像进行分析，发现形象＝“喜羊羊”、价格区间＝“中等”的偏好比重最大，那么就给新产品提供类非常客观有效的决策依据。</li>
+<li>业务经营分析以及竞争分析，影响企业发展战略</li>
+</ol>
+<h2>构建流程</h2>
+<div class="image-package">
+<img src="./基于大数据的用户画像构建（理论篇） - 简书_files/1402989-1ecddc2bc10bfd88.png" data-original-src="http://upload-images.jianshu.io/upload_images/1402989-1ecddc2bc10bfd88.png?imageMogr2/auto-orient/strip%7CimageView2/2" style="cursor: zoom-in;"><br><div class="image-caption">Paste_Image.png</div>
+</div>
+<h3>数据收集</h3>
+<p>数据收集大致分为网络行为数据、服务内行为数据、用户内容偏好数据、用户交易数据这四类。</p>
+<ul>
+<li>网络行为数据：活跃人数、页面浏览量、访问时长、激活率、外部触点、社交数据等</li>
+<li>服务内行为数据：浏览路径、页面停留时间、访问深度、唯一页面浏览次数等</li>
+<li>用户内容便好数据：浏览／收藏内容、评论内容、互动内容、生活形态偏好、品牌偏好等</li>
+<li>用户交易数据（交易类服务）：贡献率、客单价、连带率、回头率、流失率等<br>当然，收集到的数据不会是 100% 准确的，都具有不确定性，这就需要在后面的阶段中建模来再判断，比如某用户在性别一栏填的男，但通过其行为偏好可判断其性别为“女”的概率为 80%。</li>
+</ul>
+<p>还得一提的是，储存用户行为数据时最好同时储存下发生该行为的场景，以便更好地进行数据分析。</p>
+<h3>行为建模</h3>
+<p>该阶段是对上阶段收集到数据的处理，进行行为建模，以抽象出用户的标签，这个阶段注重的应是大概率事件，通过数学算法模型尽可能地排除用户的偶然行为。</p>
+<p>这时也要用到机器学习，对用户的行为、偏好进行猜测，好比一个 y＝kx＋b 的算法，X 代表已知信息，Y 是用户偏好，通过不断的精确 k 和 b 来精确 Y。</p>
+<p>在这个阶段，需要用到很多模型来给用户贴标签。</p>
+<ul>
+<li>用户汽车模型<br> 根据用户对“汽车”话题的关注或购买相关产品的情况来判断用户是否有车、是否准备买车</li>
+<li>用户忠诚度模型<br> 通过判断＋聚类算法判断用户的忠诚度</li>
+<li>身高体型模型<br> 根据用户购买服装鞋帽等用品判断</li>
+<li>文艺青年模型<br> 根据用户发言、评论等行为判断用户是否为文艺青年</li>
+<li>用户价值模型<br> 判断用户对于网站的价值，对于提高用户留存率非常有用（电商网站一般使用 RFM 实现）<br>还有消费能力、违约概率、流失概率等等诸多模型。</li>
+</ul>
+<h3>用户画像基本成型</h3>
+<p>该阶段可以说是二阶段的一个深入，要把用户的基本属性（年龄、性别、地域）、购买能力、行为特征、兴趣爱好、心理特征、社交网络大致地标签化。</p>
+<p>为什么说是基本成型？因为用户画像永远也无法 100％ 地描述一个人，只能做到不断地去逼近一个人，因此，用户画像既应根据变化的基础数据不断修正，又要根据已知数据来抽象出新的标签使用户画像越来越立体。</p>
+<p>关于“标签化”，一般采用多级标签、多级分类，比如第一级标签是基本信息（姓名、性别），第二级是消费习惯、用户行为；第一级分类有人口属性，人口属性又有基本信息、地理位置等二级分类，地理位置又分工作地址和家庭地址的三级分类。</p>
+<h3>数据可视化分析</h3>
+<p>这是把用户画像真正利用起来的一步，在此步骤中一般是针对群体的分析，比如可以根据用户价值来细分出核心用户、评估某一群体的潜在价值空间，以作出针对性的运营。<br>如图：<br></p><div class="image-package">
+<img src="./基于大数据的用户画像构建（理论篇） - 简书_files/1402989-d1eb46d6c9841c76.png" data-original-src="http://upload-images.jianshu.io/upload_images/1402989-d1eb46d6c9841c76.png?imageMogr2/auto-orient/strip%7CimageView2/2" style="cursor: zoom-in;"><br><div class="image-caption">Paste_Image.png</div>
+</div>
+<h2>后记</h2>
+<p>这里只写了用户画像的构建流程和一些原理，下次有时间我会写篇关于大数据平台的实践文章，并说一下一些行为模型的算法原理，有兴趣的朋友可以关注下。</p>
+<p>参考阅读：<br>［1］<a href="http://news.yesky.com/prnews/280/85552280.shtml" target="_blank">永洪BI:手把手教您搞定用户画像</a><br>［2］易观智库：大数据下的用户分析（PPT）<br>［3］杨步涛：基于用户画像的大数据挖掘实践<br>［4］<a href="http://www.imooc.com/learn/460" target="_blank">慕课网：电商大数据应用之用户画像</a><br>［5］<a href="http://www.zhihu.com/question/19853605/answer/73136157" target="_blank">知乎：Alex Chu 关于用户画像的回答</a></p>
+
+        </div>
+        <!--  -->
+
+        <div class="show-foot">
+          <a class="notebook" href="http://www.jianshu.com/nb/2862129">
+            <i class="iconfont ic-search-notebook"></i> <span>杂七杂八</span>
+</a>          <div class="copyright" data-toggle="tooltip" data-html="true" data-original-title="转载请联系作者获得授权，并标注“简书作者”。">
+            © 著作权归作者所有
+          </div>
+          <div class="modal-wrap" data-report-note="">
+            <a id="report-modal">举报文章</a>
+          </div>
+        </div>
+    </div>
+
+    <!-- 文章底部作者信息 -->
+        <div class="follow-detail">
+          <div class="info">
+            <a class="avatar" href="http://www.jianshu.com/u/438f70964180">
+              <img src="./基于大数据的用户画像构建（理论篇） - 简书_files/beec25b3496a.jpg" alt="144">
+</a>            <a class="btn btn-success follow"><i class="iconfont ic-follow"></i><span>关注</span></a>
+            <a class="title" href="http://www.jianshu.com/u/438f70964180">我勒个矗</a>
+          <p>写了 3089 字，被 96 人关注，获得了 262 个喜欢</p></div>
+        </div>
+
+      <div class="support-author"><p>觉得有用可以请我喝杯咖啡～</p> <div class="btn btn-pay">赞赏支持</div> <div class="supporter"><ul class="support-list"><li><a target="_blank" href="http://www.jianshu.com/u/82416d068582" class="avatar"><img src="./基于大数据的用户画像构建（理论篇） - 简书_files/5-33d2da32c552b8be9a0548c7a4576607.jpg"></a></li><li><a target="_blank" href="javascript:void(0)" class="avatar"><img src="./基于大数据的用户画像构建（理论篇） - 简书_files/0"></a></li><li><a target="_blank" href="javascript:void(0)" class="avatar"><img src="./基于大数据的用户画像构建（理论篇） - 简书_files/wechat-771371d5741b0c32cd805caeb48ad6c0.png"></a></li></ul> <!----></div> <!----> <!----></div>
+
+    <div class="meta-bottom">
+      <div class="like"><div class="btn like-group"><div class="btn-like"><a href="http://www.jianshu.com/sign_in"><i class="iconfont ic-like"></i>喜欢</a></div> <div class="modal-wrap"><a>178</a></div></div> <!----></div>
+      <div class="share-group">
+        <a class="share-circle" data-action="weixin-share" data-toggle="tooltip" data-original-title="分享到微信">
+          <i class="iconfont ic-wechat"></i>
+        </a>
+        <a class="share-circle" data-toggle="tooltip" href="javascript:void((function(s,d,e,r,l,p,t,z,c){var%20f=&#39;http://v.t.sina.com.cn/share/share.php?appkey=1881139527&#39;,u=z||d.location,p=[&#39;&amp;url=&#39;,e(u),&#39;&amp;title=&#39;,e(t||d.title),&#39;&amp;source=&#39;,e(r),&#39;&amp;sourceUrl=&#39;,e(l),&#39;&amp;content=&#39;,c||&#39;gb2312&#39;,&#39;&amp;pic=&#39;,e(p||&#39;&#39;)].join(&#39;&#39;);function%20a(){if(!window.open([f,p].join(&#39;&#39;),&#39;mb&#39;,[&#39;toolbar=0,status=0,resizable=1,width=440,height=430,left=&#39;,(s.width-440)/2,&#39;,top=&#39;,(s.height-430)/2].join(&#39;&#39;)))u.href=[f,p].join(&#39;&#39;);};if(/Firefox/.test(navigator.userAgent))setTimeout(a,0);else%20a();})(screen,document,encodeURIComponent,&#39;&#39;,&#39;&#39;,&#39;&#39;, &#39;推荐 我勒个矗 的文章《基于大数据的用户画像构建（理论篇）》（ 分享自 @简书 ）&#39;,&#39;http://www.jianshu.com/p/0d77238771ef?utm_campaign=maleskine&amp;utm_content=note&amp;utm_medium=reader_share&amp;utm_source=weibo&#39;,&#39;页面编码gb2312|utf-8默认gb2312&#39;));" data-original-title="分享到微博">
+          <i class="iconfont ic-weibo"></i>
+        </a>
+          <a class="share-circle" data-toggle="tooltip" href="http://cwb.assets.jianshu.io/notes/images/2801340/weibo/image_a71747ee8be6.jpg" target="_blank" data-original-title="下载长微博图片">
+            <i class="iconfont ic-picture"></i>
+          </a>
+        <a class="share-circle more-share" tabindex="0" data-toggle="popover" data-placement="top" data-html="true" data-trigger="focus" href="javascript:void(0);" data-content="
+          &lt;ul class=&quot;share-list&quot;&gt;
+            &lt;li&gt;&lt;a href=&quot;javascript:void(function(){var d=document,e=encodeURIComponent,r=&#39;http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=&#39;+e(&#39;http://www.jianshu.com/p/0d77238771ef?utm_campaign=maleskine&amp;utm_content=note&amp;utm_medium=reader_share&amp;utm_source=qzone&#39;)+&#39;&amp;title=&#39;+e(&#39;推荐 我勒个矗 的文章《基于大数据的用户画像构建（理论篇）》&#39;),x=function(){if(!window.open(r,&#39;qzone&#39;,&#39;toolbar=0,resizable=1,scrollbars=yes,status=1,width=600,height=600&#39;))location.href=r};if(/Firefox/.test(navigator.userAgent)){setTimeout(x,0)}else{x()}})();&quot;&gt;&lt;i class=&quot;social-icon-sprite social-icon-zone&quot;&gt;&lt;/i&gt;&lt;span&gt;分享到QQ空间&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
+            &lt;li&gt;&lt;a href=&quot;javascript:void(function(){var d=document,e=encodeURIComponent,r=&#39;https://twitter.com/share?url=&#39;+e(&#39;http://www.jianshu.com/p/0d77238771ef?utm_campaign=maleskine&amp;utm_content=note&amp;utm_medium=reader_share&amp;utm_source=twitter&#39;)+&#39;&amp;text=&#39;+e(&#39;推荐 我勒个矗 的文章《基于大数据的用户画像构建（理论篇）》（ 分享自 @jianshucom ）&#39;)+&#39;&amp;related=&#39;+e(&#39;jianshucom&#39;),x=function(){if(!window.open(r,&#39;twitter&#39;,&#39;toolbar=0,resizable=1,scrollbars=yes,status=1,width=600,height=600&#39;))location.href=r};if(/Firefox/.test(navigator.userAgent)){setTimeout(x,0)}else{x()}})();&quot;&gt;&lt;i class=&quot;social-icon-sprite social-icon-twitter&quot;&gt;&lt;/i&gt;&lt;span&gt;分享到Twitter&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
+            &lt;li&gt;&lt;a href=&quot;javascript:void(function(){var d=document,e=encodeURIComponent,r=&#39;https://www.facebook.com/dialog/share?app_id=483126645039390&amp;display=popup&amp;href=http://www.jianshu.com/p/0d77238771ef?utm_campaign=maleskine&amp;utm_content=note&amp;utm_medium=reader_share&amp;utm_source=facebook&#39;,x=function(){if(!window.open(r,&#39;facebook&#39;,&#39;toolbar=0,resizable=1,scrollbars=yes,status=1,width=450,height=330&#39;))location.href=r};if(/Firefox/.test(navigator.userAgent)){setTimeout(x,0)}else{x()}})();&quot;&gt;&lt;i class=&quot;social-icon-sprite social-icon-facebook&quot;&gt;&lt;/i&gt;&lt;span&gt;分享到Facebook&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
+            &lt;li&gt;&lt;a href=&quot;javascript:void(function(){var d=document,e=encodeURIComponent,r=&#39;https://plus.google.com/share?url=&#39;+e(&#39;http://www.jianshu.com/p/0d77238771ef?utm_campaign=maleskine&amp;utm_content=note&amp;utm_medium=reader_share&amp;utm_source=google_plus&#39;),x=function(){if(!window.open(r,&#39;google_plus&#39;,&#39;toolbar=0,resizable=1,scrollbars=yes,status=1,width=450,height=330&#39;))location.href=r};if(/Firefox/.test(navigator.userAgent)){setTimeout(x,0)}else{x()}})();&quot;&gt;&lt;i class=&quot;social-icon-sprite social-icon-google&quot;&gt;&lt;/i&gt;&lt;span&gt;分享到Google+&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
+            &lt;li&gt;&lt;a href=&quot;javascript:void(function(){var d=document,e=encodeURIComponent,s1=window.getSelection,s2=d.getSelection,s3=d.selection,s=s1?s1():s2?s2():s3?s3.createRange().text:&#39;&#39;,r=&#39;http://www.douban.com/recommend/?url=&#39;+e(&#39;http://www.jianshu.com/p/0d77238771ef?utm_campaign=maleskine&amp;utm_content=note&amp;utm_medium=reader_share&amp;utm_source=douban&#39;)+&#39;&amp;title=&#39;+e(&#39;基于大数据的用户画像构建（理论篇）&#39;)+&#39;&amp;sel=&#39;+e(s)+&#39;&amp;v=1&#39;,x=function(){if(!window.open(r,&#39;douban&#39;,&#39;toolbar=0,resizable=1,scrollbars=yes,status=1,width=450,height=330&#39;))location.href=r+&#39;&amp;r=1&#39;};if(/Firefox/.test(navigator.userAgent)){setTimeout(x,0)}else{x()}})()&quot;&gt;&lt;i class=&quot;social-icon-sprite social-icon-douban&quot;&gt;&lt;/i&gt;&lt;span&gt;分享到豆瓣&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
+          &lt;/ul&gt;
+        " data-original-title="" title="">更多分享</a>
+      </div>
+    </div>
+    <div><div id="comment-list" class="comment-list"><div><form class="new-comment"><a class="avatar"><img src="./基于大数据的用户画像构建（理论篇） - 简书_files/avatar_default-78d4d1f68984cd6d4379508dd94b4210.png"></a> <div class="sign-container"><a href="http://www.jianshu.com/sign_in" class="btn btn-sign">登录</a> <span>后发表评论</span></div></form></div> <div id="normal-comment-list" class="normal-comment-list"><div><div><div class="top"><span>12条评论</span> <a class="author-only">只看作者</a> <a class="close-btn" style="display: none;">关闭评论</a> <div class="pull-right"><a class="active">按喜欢排序</a><a class="">按时间正序</a><a class="">按时间倒序</a></div></div></div> <!----> <!----> <div id="comment-1227100" class="comment"><div><div class="author"><a href="http://www.jianshu.com/u/bdb06afb4826" target="_blank" class="avatar"><img src="./基于大数据的用户画像构建（理论篇） - 简书_files/855679024927"></a> <div class="info"><a href="http://www.jianshu.com/u/bdb06afb4826" target="_blank" class="name">bdb06afb4826</a> <!----> <div class="meta"><span>8楼 · 2016.01.13 23:24</span></div></div></div> <div class="comment-wrap"><p>不错收了</p> <div class="tool-group"><a><i class="iconfont ic-zan"></i> <span>1人赞</span></a> <a><i class="iconfont ic-comment"></i> <span>回复</span></a> <!----> <!----></div></div></div> <div class="sub-comment-list hide"><!----> <!----></div></div><div id="comment-1198014" class="comment"><div><div class="author"><a href="http://www.jianshu.com/u/e1fcce9bdf77" target="_blank" class="avatar"><img src="./基于大数据的用户画像构建（理论篇） - 简书_files/49393491d0db.jpeg"></a> <div class="info"><a href="http://www.jianshu.com/u/e1fcce9bdf77" target="_blank" class="name">曾樑</a> <!----> <div class="meta"><span>2楼 · 2016.01.10 08:22</span></div></div></div> <div class="comment-wrap"><p>用户画像往往被忽略，其实特别重要</p> <div class="tool-group"><a><i class="iconfont ic-zan"></i> <span>赞</span></a> <a><i class="iconfont ic-comment"></i> <span>回复</span></a> <!----> <!----></div></div></div> <div class="sub-comment-list"><div id="comment-1199353" class="sub-comment"><p><a href="http://www.jianshu.com/u/438f70964180" target="_blank">我勒个矗</a>：
+          <span><a href="http://www.jianshu.com/users/e1fcce9bdf77" class="maleskine-author" target="_blank" data-user-slug="e1fcce9bdf77">@曾樑</a> 对啊，但现在来看还是越来越受到重视。</span></p> <div class="sub-tool-group"><span>2016.01.10 12:10</span> <a><i class="iconfont ic-comment"></i> <span>回复</span></a> <!----> <!----></div></div> <div class="sub-comment more-comment"><a class="add-comment-btn"><i class="iconfont ic-subcomment"></i> <span>添加新评论</span></a> <!----> <!----> <!----></div> <!----></div></div><div id="comment-1201911" class="comment"><div><div class="author"><a href="http://www.jianshu.com/u/032bec3d7f0a" target="_blank" class="avatar"><img src="./基于大数据的用户画像构建（理论篇） - 简书_files/9e097190edd3.jpg"></a> <div class="info"><a href="http://www.jianshu.com/u/032bec3d7f0a" target="_blank" class="name">lala汪</a> <!----> <div class="meta"><span>3楼 · 2016.01.10 18:50</span></div></div></div> <div class="comment-wrap"><p>很系统全面，赞个 <img src="./基于大数据的用户画像构建（理论篇） - 简书_files/+1.png" alt=":+1:" title=":+1:" class="emoji" width="20" height="20">  <img src="./基于大数据的用户画像构建（理论篇） - 简书_files/+1.png" alt=":+1:" title=":+1:" class="emoji" width="20" height="20">  期待关于实践的文章</p> <div class="tool-group"><a><i class="iconfont ic-zan"></i> <span>赞</span></a> <a><i class="iconfont ic-comment"></i> <span>回复</span></a> <!----> <!----></div></div></div> <div class="sub-comment-list hide"><!----> <!----></div></div><div id="comment-1204143" class="comment"><div><div class="author"><a href="http://www.jianshu.com/u/6a3409c2346b" target="_blank" class="avatar"><img src="./基于大数据的用户画像构建（理论篇） - 简书_files/a15113c2ad8c"></a> <div class="info"><a href="http://www.jianshu.com/u/6a3409c2346b" target="_blank" class="name">yuandeliang</a> <!----> <div class="meta"><span>5楼 · 2016.01.10 23:18</span></div></div></div> <div class="comment-wrap"><p>mark</p> <div class="tool-group"><a><i class="iconfont ic-zan"></i> <span>赞</span></a> <a><i class="iconfont ic-comment"></i> <span>回复</span></a> <!----> <!----></div></div></div> <div class="sub-comment-list hide"><!----> <!----></div></div><div id="comment-1217973" class="comment"><div><div class="author"><a href="http://www.jianshu.com/u/9f359947fb5b" target="_blank" class="avatar"><img src="./基于大数据的用户画像构建（理论篇） - 简书_files/13-394c31a9cb492fcb39c27422ca7d2815.jpg"></a> <div class="info"><a href="http://www.jianshu.com/u/9f359947fb5b" target="_blank" class="name">snowolfe</a> <!----> <div class="meta"><span>6楼 · 2016.01.12 21:59</span></div></div></div> <div class="comment-wrap"><p>写的不错，适合初级建立者使用</p> <div class="tool-group"><a><i class="iconfont ic-zan"></i> <span>赞</span></a> <a><i class="iconfont ic-comment"></i> <span>回复</span></a> <!----> <!----></div></div></div> <div class="sub-comment-list hide"><!----> <!----></div></div><div id="comment-1219237" class="comment"><div><div class="author"><a href="http://www.jianshu.com/u/4473b5adb922" target="_blank" class="avatar"><img src="./基于大数据的用户画像构建（理论篇） - 简书_files/55b20779a06b.jpg"></a> <div class="info"><a href="http://www.jianshu.com/u/4473b5adb922" target="_blank" class="name">萧子然</a> <!----> <div class="meta"><span>7楼 · 2016.01.13 00:10</span></div></div></div> <div class="comment-wrap"><p>和一号店的那位讲的一样一样的</p> <div class="tool-group"><a><i class="iconfont ic-zan"></i> <span>赞</span></a> <a><i class="iconfont ic-comment"></i> <span>回复</span></a> <!----> <!----></div></div></div> <div class="sub-comment-list"><div id="comment-1219348" class="sub-comment"><p><a href="http://www.jianshu.com/u/438f70964180" target="_blank">我勒个矗</a>：
+          <span><a href="http://www.jianshu.com/users/4473b5adb922" class="maleskine-author" target="_blank" data-user-slug="4473b5adb922">@萧子然</a> 哪位？</span></p> <div class="sub-tool-group"><span>2016.01.13 00:27</span> <a><i class="iconfont ic-comment"></i> <span>回复</span></a> <!----> <!----></div></div><div id="comment-1221228" class="sub-comment"><p><a href="http://www.jianshu.com/u/4473b5adb922" target="_blank">萧子然</a>：
+          <span><a href="http://www.jianshu.com/users/438f70964180" class="maleskine-author" target="_blank" data-user-slug="438f70964180">@我勒个矗</a> 上周六的七牛分享会，一号店的架构师和你谈的是同一个主题。</span></p> <div class="sub-tool-group"><span>2016.01.13 10:55</span> <a><i class="iconfont ic-comment"></i> <span>回复</span></a> <!----> <!----></div></div> <div class="sub-comment more-comment"><a class="add-comment-btn"><i class="iconfont ic-subcomment"></i> <span>添加新评论</span></a> <!----> <!----> <!----></div> <!----></div></div><div id="comment-1262579" class="comment"><div><div class="author"><a href="http://www.jianshu.com/u/3ebf18562f2a" target="_blank" class="avatar"><img src="./基于大数据的用户画像构建（理论篇） - 简书_files/564630f186f0.gif"></a> <div class="info"><a href="http://www.jianshu.com/u/3ebf18562f2a" target="_blank" class="name">欧克</a> <!----> <div class="meta"><span>9楼 · 2016.01.18 14:12</span></div></div></div> <div class="comment-wrap"><p>用户画像系统在任何类型的公司都是必要的,无论处于哪个发展阶段. </p> <div class="tool-group"><a><i class="iconfont ic-zan"></i> <span>赞</span></a> <a><i class="iconfont ic-comment"></i> <span>回复</span></a> <!----> <!----></div></div></div> <div class="sub-comment-list hide"><!----> <!----></div></div><div id="comment-1649341" class="comment"><div><div class="author"><a href="http://www.jianshu.com/u/c280af8dc873" target="_blank" class="avatar"><img src="./基于大数据的用户画像构建（理论篇） - 简书_files/2667e45c2689"></a> <div class="info"><a href="http://www.jianshu.com/u/c280af8dc873" target="_blank" class="name">败家</a> <!----> <div class="meta"><span>10楼 · 2016.03.07 23:16</span></div></div></div> <div class="comment-wrap"><p>不错啊</p> <div class="tool-group"><a><i class="iconfont ic-zan"></i> <span>赞</span></a> <a><i class="iconfont ic-comment"></i> <span>回复</span></a> <!----> <!----></div></div></div> <div class="sub-comment-list hide"><!----> <!----></div></div><div id="comment-1681155" class="comment"><div><div class="author"><a href="http://www.jianshu.com/u/f4455a44f272" target="_blank" class="avatar"><img src="./基于大数据的用户画像构建（理论篇） - 简书_files/034ab107d3e0.jpg"></a> <div class="info"><a href="http://www.jianshu.com/u/f4455a44f272" target="_blank" class="name">贫民窟里的百元富翁</a> <!----> <div class="meta"><span>11楼 · 2016.03.10 23:46</span></div></div></div> <div class="comment-wrap"><p>找了很久</p> <div class="tool-group"><a><i class="iconfont ic-zan"></i> <span>赞</span></a> <a><i class="iconfont ic-comment"></i> <span>回复</span></a> <!----> <!----></div></div></div> <div class="sub-comment-list hide"><!----> <!----></div></div> <div class="comments-placeholder" style="display: none;"><div class="author"><div class="avatar"></div> <div class="info"><div class="name"></div> <div class="meta"></div></div></div> <div class="text"></div> <div class="text animation-delay"></div> <div class="tool-group"><i class="iconfont ic-zan-active"></i><div class="zan"></div> <i class="iconfont ic-list-comments"></i><div class="zan"></div></div></div></div></div> <!----> <!----></div></div>
+  </div>
+
+  <div class="side-tool"><ul><li data-placement="left" data-toggle="tooltip" data-container="body" data-original-title="回到顶部"><a href="http://www.jianshu.com/p/0d77238771ef#" class="function-button"><i class="iconfont ic-backtop"></i></a></li> <!----> <!----> <li data-placement="left" data-toggle="tooltip" data-container="body" data-original-title="分享文章"><a tabindex="0" role="button" data-toggle="popover" data-placement="left" data-html="true" data-trigger="focus" href="javascript:void(0);" data-content="&lt;ul class=&#39;share-list&#39;&gt;
+                &lt;li&gt;&lt;a class=&quot;weixin-share&quot;&gt;&lt;i class=&quot;social-icon-sprite social-icon-weixin&quot;&gt;&lt;/i&gt;&lt;span&gt;分享到微信&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
+                &lt;li&gt;&lt;a href=&quot;javascript:void((function(s,d,e,r,l,p,t,z,c){var%20f=&#39;http://v.t.sina.com.cn/share/share.php?appkey=1881139527&#39;,u=z||d.location,p=[&#39;&amp;url=&#39;,e(u),&#39;&amp;title=&#39;,e(t||d.title),&#39;&amp;source=&#39;,e(r),&#39;&amp;sourceUrl=&#39;,e(l),&#39;&amp;content=&#39;,c||&#39;gb2312&#39;,&#39;&amp;pic=&#39;,e(p||&#39;&#39;)].join(&#39;&#39;);function%20a(){if(!window.open([f,p].join(&#39;&#39;),&#39;mb&#39;,[&#39;toolbar=0,status=0,resizable=1,width=440,height=430,left=&#39;,(s.width-440)/2,&#39;,top=&#39;,(s.height-430)/2].join(&#39;&#39;)))u.href=[f,p].join(&#39;&#39;);};if(/Firefox/.test(navigator.userAgent))setTimeout(a,0);else%20a();})(screen,document,encodeURIComponent,&#39;&#39;,&#39;&#39;,&#39;&#39;, &#39;推荐 我勒个矗 的文章《基于大数据的用户画像构建（理论篇）》（ 分享自 @简书 ）&#39;,&#39;http://www.jianshu.com/p/0d77238771ef?utm_campaign=maleskine&amp;utm_content=note&amp;utm_medium=reader_share&amp;utm_source=weibo&#39;,&#39;页面编码gb2312|utf-8默认gb2312&#39;));&quot;&gt;&lt;i class=&#39;social-icon-sprite social-icon-weibo&#39;&gt;&lt;/i&gt;&lt;span&gt;分享到微博&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
+                
+                &lt;li&gt;&lt;a href=&quot;javascript:void(function(){var d=document,e=encodeURIComponent,r=&#39;http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=&#39;+e(&#39;http://www.jianshu.com/p/0d77238771ef?utm_campaign=maleskine&amp;utm_content=note&amp;utm_medium=reader_share&amp;utm_source=qzone&#39;)+&#39;&amp;title=&#39;+e(&#39;推荐 我勒个矗 的文章《基于大数据的用户画像构建（理论篇）》&#39;),x=function(){if(!window.open(r,&#39;qzone&#39;,&#39;toolbar=0,resizable=1,scrollbars=yes,status=1,width=600,height=600&#39;))location.href=r};if(/Firefox/.test(navigator.userAgent)){setTimeout(x,0)}else{x()}})();&quot;&gt;&lt;i class=&#39;social-icon-sprite social-icon-zone&#39;&gt;&lt;/i&gt;&lt;span&gt;分享到QQ空间&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
+                &lt;li&gt;&lt;a href=&quot;javascript:void(function(){var d=document,e=encodeURIComponent,r=&#39;https://twitter.com/share?url=&#39;+e(&#39;http://www.jianshu.com/p/0d77238771ef?utm_campaign=maleskine&amp;utm_content=note&amp;utm_medium=reader_share&amp;utm_source=twitter&#39;)+&#39;&amp;text=&#39;+e(&#39;推荐 我勒个矗 的文章《基于大数据的用户画像构建（理论篇）》（ 分享自 @jianshucom ）&#39;)+&#39;&amp;related=&#39;+e(&#39;jianshucom&#39;),x=function(){if(!window.open(r,&#39;twitter&#39;,&#39;toolbar=0,resizable=1,scrollbars=yes,status=1,width=600,height=600&#39;))location.href=r};if(/Firefox/.test(navigator.userAgent)){setTimeout(x,0)}else{x()}})();&quot;&gt;&lt;i class=&#39;social-icon-sprite social-icon-twitter&#39;&gt;&lt;/i&gt;&lt;span&gt;分享到Twitter&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
+                &lt;li&gt;&lt;a href=&quot;javascript:void(function(){var d=document,e=encodeURIComponent,r=&#39;https://www.facebook.com/dialog/share?app_id=483126645039390&amp;display=popup&amp;href=http://www.jianshu.com/p/0d77238771ef?utm_campaign=maleskine&amp;utm_content=note&amp;utm_medium=reader_share&amp;utm_source=facebook&#39;,x=function(){if(!window.open(r,&#39;facebook&#39;,&#39;toolbar=0,resizable=1,scrollbars=yes,status=1,width=450,height=330&#39;))location.href=r};if(/Firefox/.test(navigator.userAgent)){setTimeout(x,0)}else{x()}})();&quot;&gt;&lt;i class=&#39;social-icon-sprite social-icon-facebook&#39;&gt;&lt;/i&gt;&lt;span&gt;分享到Facebook&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
+                &lt;li&gt;&lt;a href=&quot;javascript:void(function(){var d=document,e=encodeURIComponent,r=&#39;https://plus.google.com/share?url=&#39;+e(&#39;http://www.jianshu.com/p/0d77238771ef?utm_campaign=maleskine&amp;utm_content=note&amp;utm_medium=reader_share&amp;utm_source=google_plus&#39;),x=function(){if(!window.open(r,&#39;google_plus&#39;,&#39;toolbar=0,resizable=1,scrollbars=yes,status=1,width=450,height=330&#39;))location.href=r};if(/Firefox/.test(navigator.userAgent)){setTimeout(x,0)}else{x()}})();&quot;&gt;&lt;i class=&#39;social-icon-sprite social-icon-google&#39;&gt;&lt;/i&gt;&lt;span&gt;分享到Google+&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
+                &lt;li&gt;&lt;a href=&quot;javascript:void(function(){var d=document,e=encodeURIComponent,s1=window.getSelection,s2=d.getSelection,s3=d.selection,s=s1?s1():s2?s2():s3?s3.createRange().text:&#39;&#39;,r=&#39;http://www.douban.com/recommend/?url=&#39;+e(&#39;http://www.jianshu.com/p/0d77238771ef?utm_campaign=maleskine&amp;utm_content=note&amp;utm_medium=reader_share&amp;utm_source=douban&#39;)+&#39;&amp;title=&#39;+e(&#39;基于大数据的用户画像构建（理论篇）&#39;)+&#39;&amp;sel=&#39;+e(s)+&#39;&amp;v=1&#39;,x=function(){if(!window.open(r,&#39;douban&#39;,&#39;toolbar=0,resizable=1,scrollbars=yes,status=1,width=450,height=330&#39;))location.href=r+&#39;&amp;r=1&#39;};if(/Firefox/.test(navigator.userAgent)){setTimeout(x,0)}else{x()}})()&quot;&gt;&lt;i class=&#39;social-icon-sprite social-icon-douban&#39;&gt;&lt;/i&gt;&lt;span&gt;分享到豆瓣&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
+              &lt;/ul&gt;" data-original-title="" title="" class="function-button"><i class="iconfont ic-share"></i></a> <!----></li></ul></div>
+</div>
+<div class="note-bottom"><div class="main"><div class="title">被以下专题收入，发现更多相似内容</div> <!----> <div class="include-collection"><!----> <a href="http://www.jianshu.com/c/V2CqjW?utm_source=desktop&amp;utm_medium=notes-included-collection" target="_blank" class="item"><img src="./基于大数据的用户画像构建（理论篇） - 简书_files/6249340_194140034135_2.jpg"><div class="name">@IT·互联网</div></a><a href="http://www.jianshu.com/c/NEt52a?utm_source=desktop&amp;utm_medium=notes-included-collection" target="_blank" class="item"><img src="./基于大数据的用户画像构建（理论篇） - 简书_files/computer_guy.jpg"><div class="name">程序员</div></a><a href="http://www.jianshu.com/c/1113b792c0dc?utm_source=desktop&amp;utm_medium=notes-included-collection" target="_blank" class="item"><img src="./基于大数据的用户画像构建（理论篇） - 简书_files/android.graphics.Bitmap_af4755c.jpeg"><div class="name">IT共论</div></a><a href="http://www.jianshu.com/c/bDHhpK?utm_source=desktop&amp;utm_medium=notes-included-collection" target="_blank" class="item"><img src="./基于大数据的用户画像构建（理论篇） - 简书_files/首页投稿.png"><div class="name">首页投稿</div></a><a href="http://www.jianshu.com/c/f9545e78abce?utm_source=desktop&amp;utm_medium=notes-included-collection" target="_blank" class="item"><img src="./基于大数据的用户画像构建（理论篇） - 简书_files/android.graphics.Bitmap_2a7a0251.jpeg"><div class="name">天下互联</div></a><a href="http://www.jianshu.com/c/0bbdabad9f44?utm_source=desktop&amp;utm_medium=notes-included-collection" target="_blank" class="item"><img src="./基于大数据的用户画像构建（理论篇） - 简书_files/1445611545.jpg"><div class="name">产品经理PM</div></a><a href="http://www.jianshu.com/c/a6d3bc9776c0?utm_source=desktop&amp;utm_medium=notes-included-collection" target="_blank" class="item"><img src="./基于大数据的用户画像构建（理论篇） - 简书_files/android.graphics.Bitmap_1edea12a.jpeg"><div class="name">IT</div></a><a href="http://www.jianshu.com/c/dae2d3b4d44b?utm_source=desktop&amp;utm_medium=notes-included-collection" target="_blank" class="item"><img src="./基于大数据的用户画像构建（理论篇） - 简书_files/google.png"><div class="name">产品大学</div></a><a href="http://www.jianshu.com/c/78790c773c42?utm_source=desktop&amp;utm_medium=notes-included-collection" target="_blank" class="item"><img src="./基于大数据的用户画像构建（理论篇） - 简书_files/1444788140.jpg"><div class="name">学习</div></a><a href="http://www.jianshu.com/c/997ad6934f0c?utm_source=desktop&amp;utm_medium=notes-included-collection" target="_blank" class="item"><img src="./基于大数据的用户画像构建（理论篇） - 简书_files/1426611024.jpg"><div class="name">学习</div></a><a href="http://www.jianshu.com/c/c44435f9ad56?utm_source=desktop&amp;utm_medium=notes-included-collection" target="_blank" class="item"><img src="./基于大数据的用户画像构建（理论篇） - 简书_files/100.png"><div class="name">我是产品狗</div></a><a href="http://www.jianshu.com/c/bd08b5306eb6?utm_source=desktop&amp;utm_medium=notes-included-collection" target="_blank" class="item"><img src="./基于大数据的用户画像构建（理论篇） - 简书_files/知了.png"><div class="name">知了·IT</div></a><a href="http://www.jianshu.com/c/6bc90d4942ff?utm_source=desktop&amp;utm_medium=notes-included-collection" target="_blank" class="item"><img src="./基于大数据的用户画像构建（理论篇） - 简书_files/程序员.jpg"><div class="name">伪程序员</div></a><a href="http://www.jianshu.com/c/d109943b4ef3?utm_source=desktop&amp;utm_medium=notes-included-collection" target="_blank" class="item"><img src="./基于大数据的用户画像构建（理论篇） - 简书_files/android.graphics.Bitmap_4336ac78.jpeg"><div class="name">电商后台数据产品笔记</div></a><a href="http://www.jianshu.com/c/e915a0cb872d?utm_source=desktop&amp;utm_medium=notes-included-collection" target="_blank" class="item"><img src="./基于大数据的用户画像构建（理论篇） - 简书_files/PM.png"><div class="name">产品经理</div></a></div> <a class="load-more">加载更多...</a></div> <!----> <!----></div>
+
+    <script type="application/json" data-name="page-data">{"user_signed_in":false,"locale":"zh-CN","os":"windows","read_mode":"day","read_font":"font2","note_show":{"is_author":false,"is_following_author":false,"is_liked_note":false,"uuid":"ac3baec1-556d-4e75-8902-21a60bc7232a"},"note":{"id":2801340,"slug":"0d77238771ef","user_id":1402989,"notebook_id":2862129,"commentable":true,"likes_count":178,"views_count":6541,"public_wordage":1995,"comments_count":12,"author":{"total_wordage":3089,"followers_count":96,"total_likes_count":262}}}</script>
+    
+    <script src="./基于大数据的用户画像构建（理论篇） - 简书_files/babel-polyfill-c828028c5de56711ec51.js.下载"></script>
+    <script src="./基于大数据的用户画像构建（理论篇） - 简书_files/web-base-c828028c5de56711ec51.js.下载"></script>
+<script src="./基于大数据的用户画像构建（理论篇） - 简书_files/web-c828028c5de56711ec51.js.下载"></script>
+    
+    <script src="./基于大数据的用户画像构建（理论篇） - 简书_files/entry-c828028c5de56711ec51.js.下载"></script>
+    <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-35169517-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+<div style="display:none">
+  <script src="./基于大数据的用户画像构建（理论篇） - 简书_files/z_stat.php" language="JavaScript"></script><script src="./基于大数据的用户画像构建（理论篇） - 简书_files/core.php" charset="utf-8" type="text/javascript"></script><a href="http://www.cnzz.com/stat/website.php?web_id=1258679142" target="_blank" title="站长统计">站长统计</a>
+</div>
+
+<script>
+  (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      if (curProtocol === 'https') {
+          bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+      }
+      else {
+          bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+      }
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+  })();
+</script>
+
+  
+
+<!----><!----></body></html>

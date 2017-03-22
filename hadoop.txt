@@ -1,3 +1,17 @@
+20170313 CDH
+Master Hosts -> NameNode  YARN ResourceManager  ZooKeeper
+Utility Hosts  ->  Secondary NameNode
+Worker Hosts  -> DataNode NodeManager    Hive Metastore  HiveServer2
+Small, with High Availability Up to 20 worker hosts  
+Medium  Up to 200 worker hosts 
+
+Hue is a web-based tool in the Hadoop stack that lets you analyze, manipulate, and share your data. 
+
+hbase  
+
+hive缺省内置 embedded Derby  database存储 meta data
+
+
 20161128
 YARN作为一个分布式数据操作系统，主要作用是资源管理和资源调度。在过去一年，YARN新增了包括基于标签的调度、对长服务的支持、对 Docker 的支持等多项重大功能。
 在 2015 年，HBase 迎来了一个里程碑——HBase 1.0 release
@@ -11,6 +25,7 @@ Mesos是一个双层调度器。在第一层中，Mesos将一定的资源提供（以容器的形式）给对应的
   
   
 hadoop   CDH install base最多 
+
 
 
 20140709
@@ -118,7 +133,7 @@ SymmetricDS支持事物级别的复制，支持双向复制
 还有个rubyrep支持mysql/postgresql 基于trigger 
     
     
-    storm海量实时数据处理，spark 快速的内存迭代计算，hadoop 分布式存储 分布式计算的绝佳利器。
+storm海量实时数据处理，spark 快速的内存迭代计算，hadoop 分布式存储 分布式计算的绝佳利器。
     
 kafaka 分发消息 hbase存储 ,hadoop 分布式存储文件批处理 storm实时处理
 
