@@ -1,4 +1,21 @@
+
 机器学习
+
+机箱
+直接选跟 Nvidia DevBox 同款的机箱，即 Corsair Carbide Air 540，工作站需要足够的空间，材质稳定，大多深度学习工作站都选取此款机箱。
+硬性要求：
+X99平台
+四个 PCI-E Gen3 x16 接口
+众所周知单机多卡进行训练时，总线带宽是瓶颈，所以主板有越多的PCI-e 3.0 接口越好，可以尽可能把显卡的性能发挥出来。计划上四块 GTX 1080，那么至少需要四路 PCI-e 3.0 的 x16 接口。
+Nvidia DevBox 用的是 Asus X99-E WS 
+华硕 X99-E WS/USB 3.1 是 Asus X99-E WS 的新版
+众所周知单机多卡进行训练时，总线带宽是瓶颈，所以 CPU 的 PCI-e lane 越多越好，一般消费级的CPU，PCI-e总线根数是 16, 28 或 40，最大就是40，再大就需要上服务器CPU或者双路CPU了。选40， 这个条件下，有两款 CPU 入围，I7-5930K和 I7-5960X, 5860X太贵了，一般机器学习训练中CPU不是瓶颈，所以选 5930K就可以了，这也是 Nvidia 官方推出的 DevBox 工作站所使用的CPU。
+再大就没必要了，李沐的这篇博客GPU集群折腾手记 末尾有说到过，单机4卡的机器，64G内存绰绰有余了。
+一般 Nvidia 的旗舰显卡，功耗都是压着 300W的线的，四卡就 1200W了，加上主板，CPU等耗电，选一个 1600W的电源吧。
+
+Nvidia DevBox 用的是 EVGA 1600W 80+ Gold 120-G2-1600-X1 ，那我也用它吧。
+
+
 
 如果要做事，想赶快入门，速度出活，请先死记住：
  深度学习=多层的神经网络
@@ -29,6 +46,14 @@
 非监督学习：给定的采样数据没有结果，需要通过模型来判断分类  聚类模型  （k-means)
 半监督：少量标注样本和大量未标注样本
 强化学习：输入数据作为对模型的反馈
+
+分类：LR，SVM，朴素贝叶斯，决策树，HMM NN
+聚类：k-means，Dirichlet Process，Minhash，Canopy，Spectral
+回归：Linear Regression
+特征选择：SVD，PCA，ICA
+关联规则：FP growth
+推荐算法：ItemCF
+时间序列：exponential smoothing
 
 
  PLA，全称 Perceptron Learning Algorithm。其中 Perceptron 译作感知机，它是人工神经网络中最基础的两层神经网络模型
