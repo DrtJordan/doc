@@ -1,0 +1,590 @@
+pip 是一个Python包管理工具，主要是用于安装 PyPI 上的软件包
+
+pip 支持 git/svn/hg 等流行的 VCS 系统，可以直接从 gz 或者 zip 压缩包安装，支持搜索包，以及指定服务器安装等等功能
+wheel 本质上是一个 zip 包格式，它使用 .whl 扩展名，用于 python 模块的安装，它的出现是为了替代 Eggs。
+setup.py 就是利用 distutils 的功能写成， 安装方式  python setup.py install
+下载pip
+wget  https://bootstrap.pypa.io/get-pip.py
+安装  python get-pip.py
+
+pip install ipython 
+
+
+常在文件开头写上这两行： #!/usr/bin/env python3 # -*- coding: utf-8 -*- 第一行注释是为了告诉Linux/OS X系统，这是一个Python可执行程序，Windows系统会忽略这个注释； 第二行注释是为了告诉Python解释器，按照UTF-8编码读取源代码，否则，你在源代码中写的中文输出可能会有乱码。
+
+当你输入name = input('please enter your name: ') 
+并按下回车后，Python交互式命令行就在等待你的输入了。这时，你可以输入任意字符，然后按回车后完成输入。
+当语句以冒号:结尾时，缩进的语句视为代码块。
+Python程序是大小写敏感的，如果写错了大小写，程序会报错。
+这种变量本身类型不固定的语言称之为动态语言，
+可以得到两个整数相除的余数： >>> 10 % 3
+Python提供了ord()函数获取字符的整数表示，chr()函数把编码转换为对应的字符：
+以Unicode表示的str通过encode()方法可以编码为指定的bytes，
+ '中文'.encode('utf-8') 
+ b'\xe4\xb8\xad\xe6\x96\x87'
+把bytes变为str，就需要用decode()方法： >>> b'ABC'.decode('ascii')
+
+在Python中，字符串、整数等都是不可变的，因此，可以放心地作为key。而list是可变的，就不能作为key：
+ set和dict类似，也是一组key的集合，但不存储value。由于key不能重复，所以，在set中，没有重复的key。
+ set可以看成数学意义上的无序和无重复元素的集合，因此，两个set可以做数学意义上的交集、并集等
+ set和dict的唯一区别仅在于没有存储对应的value，但是，set的原理和dict一样，所以，同样不可以放入可变对象，因为无法判断两个可变对象是否相等，
+ 要始终牢记的是，a是变量，而'abc'才是字符串对象！有些时候，我们经常说，对象a的内容是'abc'，但其实是指，a本身是一个变量，它指向的对象的内容才是'abc'：
+ 所以，对于不变对象来说，调用对象自身的任意方法，也不会改变该对象自身的内容。相反，这些方法会创建新的对象并返回，这样，就保证了不可变对象本身永远是不可变的。
+ 为什么要设计str、None这样的不变对象呢？因为不变对象一旦创建，对象内部的数据就不能修改，这样就减少了由于修改数据导致的错误。
+ 
+ 所以，我们把函数的参数改为可变参数： def calc(*numbers):
+ def mycal(*var):
+    v_c=0
+    for k in var:
+        v_c=v_c+1
+    print("you input %d vars " %v_c)
+    
+  In [125]: mycal(1,2,3)
+you input 3 vars
+
+In [129]: mylist=[1,3,6,4]
+In [130]: mycal(*mylist)
+you input 4 vars
+
+而关键字参数允许你传入0个或任意个含参数名的参数，这些关键字参数在函数内部自动组装为一个dict。请看示例： def person(name, age, **kw):
+person('Adam', 45, gender='M', job='Engineer')
+**extra表示把extra这个dict的所有key-value用关键字参数传入到函数的**kw参数
+如果要限制关键字参数的名字，就可以用命名关键字参数，例如，只接收city和job作为关键字参数。这种方式定义的函数如下： def person(name, age, *, city, job): print(name, age, city, job) 和关键字参数**kw不同，命名关键字参数需要一个特殊分隔符*，*后面的参数被视为命名关键字参数。
+要注意定义可变参数和关键字参数的语法： *args是可变参数，args接收的是一个tuple；
+**kw是关键字参数，kw接收的是一个dict。
+尾递归是指，在函数返回的时候，调用自身本身，并且，return语句不能包含表达式。这样，编译器或者解释器就可以把尾递归做优化，使递归本身无论调用多少次，都只占用一个栈帧，不会出现栈溢出的情况。 上面的fact(n)函数由于return n * fact(n - 1)引入了乘法表达式，所以就不是尾递归了。
+python不支持尾递归
+ dict迭代的是key。如果要迭代value，可以用for value in d.values()，如果要同时迭代key，value，可以用for k, v in d.items()。
+ 如果要对list实现类似Java那样的下标循环怎么办？Python内置的enumerate函数可以把一个list变成索引-元素对，这样就可以在for循环中同时迭代索引和元素本身： >>> for i, value in enumerate(['A', 'B', 'C']):
+ 要创建一个generator，有很多种方法。第一种方法很简单，只要把一个列表生成式的[]改成()，就创建了一个generator：
+ g = (x * x for x in range(10))
+这就是定义generator的另一种方法。如果一个函数定义中包含yield关键字，那么这个函数就不再是一个普通函数，而是一个generator：
+ 函数是顺序执行，遇到return语句或者最后一行函数语句就返回。而变成generator的函数，在每次调用next()的时候执行，遇到yield语句返回，再次执行时从上次返回的yield语句处继续执行。
+ 可以被next()函数调用并不断返回下一个值的对象称为迭代器：Iterator。
+ 这些可以直接作用于for循环的对象统称为可迭代对象：Iterable。
+ 把list、dict、str等Iterable变成Iterator可以使用iter()函数： >>> isinstance(iter([]), Iterator) True >>> isinstance(iter('abc'), Iterator) True
+ 
+  凡是可作用于for循环的对象都是Iterable类型； 凡是可作用于next()函数的对象都是Iterator类型，它们表示一个惰性计算的序列； 集合数据类型如list、dict、str等是Iterable但不是Iterator，不过可以通过iter()函数获得一个Iterator对象。
+  
+  那么一个函数就可以接收另一个函数作为参数，这种函数就称之为高阶函数。
+    . 把函数作为参数传入，这样的函数称为高阶函数，函数式编程就是指这种高度抽象的编程范式。
+  map()函数接收两个参数，一个是函数，一个是Iterable，map将传入的函数依次作用到序列的每个元素，并把结果作为新的Iterator返回。
+  reduce把一个函数作用在一个序列[x1, x2, x3, ...]上，这个函数必须接收两个参数，reduce把结果继续和序列的下一个元素做累积计算，其效果就是： reduce(f, [x1, x2, x3, x4]) = f(f(f(x1, x2), x3), x4) 比方说对一个序列求和，就可以用reduce实现： >>> from functools import reduce >>> def add(x, y): ... return x + y ... >>> reduce(add, [1, 3, 5, 7, 9]) 25 当然求和运算可以直接用Python内建函数sum()，没必要动用reduce。
+    filter()也接收一个函数和一个序列。和map()不同的是，filter()把传入的函数依次作用于每个元素，然后根据返回值是True还是False决定保留还是丢弃该元素。
+ 
+ 然后sorted()函数按照keys进行排序，并按照对应关系返回list相应的元素：
+  当lazy_sum返回函数sum时，相关参数和变量都保存在返回的函数中，这种称为“闭包（Closure）”的程序结构拥有极大的威力。
+  当我们调用lazy_sum()时，每次调用都会返回一个新的函数，即使传入相同的参数： >>> f1 = lazy_sum(1, 3, 5, 7, 9) >>> f2 = lazy_sum(1, 3, 5, 7, 9) >>> f1==f2 False f1()和f2()的调用结果互不影响。
+   原因就在于返回的函数引用了变量i，但它并非立刻执行。等到3个函数都返回时，它们所引用的变量i已经变成了3，因此最终结果为9。 返回闭包时牢记的一点就是：返回函数不要引用任何循环变量，或者后续会发生变化的变量。
+	 方法是再创建一个函数，用该函数的参数绑定循环变量当前的值，无论该循环变量后续如何更改，已绑定到函数参数的值不变：
+	返回一个函数时，牢记该函数并未执行，返回函数中不要引用任何可能会变化的变量。
+	函数对象有一个__name__属性，可以拿到函数的名字： >>> now.__name__ 'now' >>> f.__name__
+	
+	这种在代码运行期间动态增加功能的方式，称之为“装饰器”（Decorator）。
+	我们要借助Python的@语法，把decorator置于函数的定义处： @log def now(): print('2015-3-25') 调用now()函数，不仅会运行now()函数本身，还会在运行now()函数前打印一行日志：
+	把@log放到now()函数的定义处，相当于执行了语句： now = log(now) 由于log()是一个decorator，返回一个函数，所以，原来的now()函数仍然存在，只是现在同名的now变量指向了新的函数，于是调用now()将执行新函数，即在log()函数中返回的wrapper()函数。 wrapper()函数的参数定义是(*args, **kw)，因此，wrapper()函数可以接受任意参数的调用。在wrapper()函数内，首先打印日志，再紧接着调用原始函数。
+	
+请注意，每一个包目录下面都会有一个__init__.py的文件，这个文件是必须存在的，否则，Python就把这个目录当成普通目录，而不是一个包。__init__.py可以是空文件，也可以有Python代码，
+
+ 当我们在命令行运行hello模块文件时，Python解释器把一个特殊变量__name__置为__main__，而如果在其他地方导入该hello模块时，if判断将失败，因此，这种if测试可以让一个模块通过命令行运行时执行一些额外的代码，最常见的就是运行测试。
+ if __name__=='__main__':
+    test()
+类似_xxx和__xxx这样的函数或变量就是非公开的（private），不应该被直接引用，比如_abc，__abc等；
+
+默认情况下，Python解释器会搜索当前目录、所有已安装的内置模块和第三方模块，搜索路径存放在sys模块的path变量中： >>> import sys >>> sys.path
+如果我们要添加自己的搜索目录，有两种方法： 一是直接修改sys.path，添加要搜索的目录： >>> import sys >>> sys.path.append('/Users/michael/my_py_scripts')
+
+
+类名通常是大写开头的单词，紧接着是(object)，表示该类是从哪个类继承下来的，继承的概念我们后面再讲，通常，如果没有合适的继承类，就使用object类，
+class
+通过定义一个特殊的__init__方法，在创建实例的时候，就把name，score等属性绑上去：
+
+class Student(object):
+
+    def __init__(self, name, score):
+        self.name = name
+        self.score = score
+
+bart = Student('Bart Simpson', 59)
+和静态语言不同，Python允许对实例变量绑定任何数据，也就是说，对于两个实例变量，虽然它们都是同一个类的不同实例，但拥有的变量名称都可能不同：
+如果要让内部属性不被外部访问，可以把属性的名称前加上两个下划线__，在Python中，实例的变量名如果以__开头，就变成了一个私有变量（private），
+双下划线开头的实例变量是不是一定不能从外部访问呢？其实也不是。不能直接访问__name是因为Python解释器对外把__name变量改成了_Student__name，
+对于class的继承关系来说，使用type()就很不方便。我们要判断class的类型，可以使用isinstance()函数。
+仅仅把属性和方法列出来是不够的，配合getattr()、setattr()以及hasattr()，我们可以直接操作一个对象的状态：
+但是，如果Student类本身需要绑定一个属性呢？可以直接在class中定义属性，这种属性是类属性，归Student类所有： class Student(object): name = 'Student' 当我们定义了一个类属性后，这个属性虽然归类所有，但类的所有实例都可以访问到。
+
+但是，如果我们想要限制实例的属性怎么办？比如，只允许对Student实例添加name和age属性。 为了达到限制的目的，Python允许在定义class的时候，定义一个特殊的__slots__变量，来限制该class实例能添加的属性：
+
+class Student(object): __slots__ = ('name', 'age') #用tuple定义允许绑定的属性名称
+通过多重继承，一个子类就可以同时获得多个父类的所有功能。
+当调用不存在的属性时，比如score，Python解释器会试图调用__getattr__(self, 'score')来尝试获得属性，这样，我们就有机会返回score的值：
+任何类，只需要定义一个__call__()方法，就可以直接对实例进行调用。请看
+s = Student('Michael') >>> s() # self参数不要传入
+from enum import Enum
+Month = Enum('Month', ('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec')) 这样我们就获得了Month类型的枚举类，可以直接使用Month.Jan来引用一个常量，或者枚举它的所有成员：	
+直接使用Month.Jan来引用一个常量	 或者 mon['Jan']
+
+
+ value属性则是自动赋给成员的int常量，默认从1开始计数。
+如果需要更精确地控制枚举类型，可以从Enum派生出自定义类：
+
+
+
+@unique
+class Weekday(Enum):
+    Sun = 0 # Sun的value被设定为0
+    Mon = 1
+    Tue = 2
+    Wed = 3
+    Thu = 4
+    Fri = 5
+
+
+我们说class的定义是运行时动态创建的，而创建class的方法就是使用type()函数。
+type()函数既可以返回一个对象的类型，又可以创建出新的类型，比如，我们可以通过type()函数创建出Hello类，而无需通过class Hello(object)...的定义：
+>>> def fn(self, name='world'): # 先定义函数
+...     print('Hello, %s.' % name)
+...
+>>> Hello = type('Hello', (object,), dict(hello=fn)) # 创建Hello class
+>>> h = Hello()
+>>> h.hello()
+Hello, world.
+>>> print(type(Hello))
+<class 'type'>
+>>> print(type(h))
+<class '__main__.Hello'>
+要创建一个class对象，type()函数依次传入3个参数：
+class的名称；
+继承的父类集合，注意Python支持多重继承，如果只有一个父类，别忘了tuple的单元素写法；
+class的方法名称与函数绑定，这里我们把函数fn绑定到方法名hello上。
+通过type()函数创建的类和直接写class是完全一样的，因为Python解释器遇到class定义时，仅仅是扫描一下class定义的语法，然后调用type()函数创建出class。
+正常情况下，我们都用class Xxx...来定义类，但是，type()函数也允许我们动态创建出类来，也就是说，动态语言本身支持运行期动态创建类，这和静态语言有非常大的不同，要在静态语言运行期创建类，必须构造源代码字符串再调用编译器，或者借助一些工具生成字节码实现，本质上都是动态编译，会非常复杂。
+
+
+
+
+if condi :
+	pass
+elif:
+	pass
+else:
+	pass
+
+break 跳出循环 ，continue 继续新的循环
+for  var in collection ：
+	print(var)
+
+while x>con :
+	pass
+	
+def myfun(x):
+	try:
+		statem1 
+		statme2
+	exception(ex1,ex2):
+		st1
+		st2
+	else:
+		pass
+	finally:
+		stfinally
+		
+三元表达式
+
+value=true-expr if condition else false-expr	
+
+
+
+python里面参数都是传递引用的
+一个语句块一定以对齐
+可以通过getattr(obj,"function name")来获得方法应用
+
+a_list=[1,2,['a','b'],'c']
+a_list[2]='c'
+a_list.extend(b_list) 这样效率高
+a_list.sort() 排序
+a_list[1:2] 不包含stop，包含start
+a_tuple=(1,2,'c') 不能修改
+a,b,c=a_tuple 元组拆包
+a_tuple[1]  
+d1={'name':'wzy','age':25,'sex':'F'}
+d1['name']
+d1.keys()  d1.values()
+d1.get('a1','no value')  有default 值的情况，不会报错，如果用pop，没有就会报错
+set([1,2,3,3])=[1,2,3]        或者 x={2,2,3,4}  会去掉重复的值
+
+列表推导式
+[expr for val in collection if condition]
+字典推导式
+[expr for val in collection if condition]
+
+传递函数
+def myfun(func):
+    func()
+    return a,b,c
+    
+myfun(wzy.mytestfun) 
+
+或者  
+  def myfun(func):
+    func
+    return a,b,c
+myfun(wzy.mytestfun())     
+    
+    lambda x: x*2   匿名函数
+    
+ 闭包 返回一个内部函数
+ def my_closure(a):
+ 	def closure():
+ 		print("closure %d length"%(a))
+ 	return closure
+ 	
+调用 
+testclosure=my_closure(5) 		
+    
+    
+通过 isintance(a,int)来判断类型
+字符串是不可修改的，修改就只能创建一个新的
+字符串带换号 
+"""
+ a 
+ b
+ c
+ """
+ 字符串带转义符
+ a_str=r'abc\t'
+
+强制类型转换 
+s='56';
+int(s)=56
+
+print("a=%i digit"%(5))
+
+zip(序列1,序列2) 配对形成新的列表
+
+
+
+#enumerate 支持返回下标 
+for idx ,value in enumerate(a_list):  
+    print("index is %d,value is %d"%(idx,value))
+
+在ipython里面执行os命令  
+!cmd 
+运行脚本
+%run script_file 
+上下箭头可以回溯命令历史
+ctrl+l 清除屏幕
+运行时间评估
+%timeit np.dot(a,a)
+%pdb 发生异常后自动进入调试器
+%paste 从剪贴板执行代码
+%cpaste 有控制的从剪贴板执行代码
+%prun 通过cprofiler运行，并且打印分析器结果 ，分析到函数级别     %prun -l 7  -s cumulative call_function()
+%lprun 分析到函数的语句级别
+查看某个历史命令的输入 _i27,输出 _27 ，%reset 删除保存的信息
+%logstart可以记录日志
+
+ipython 自动reload 脚本
+%load_ext autoreload 
+%autoreload 2
+
+缩进要使用4个空格（这不是必须的，但你最好这么做），缩进表示一个代码块的开始，非缩进表示一个代码的结束。没有明确的大括号、中括号、或者关键字。这意味着空白很重要，而且必须要是一致的。第一个没有缩进的行标记了代码块，意思是指函数，if 语句、 for 循环、 while 循环等等的结束。
+
+
+Numpy：
+来存储和处理大型矩阵，比Python自身的嵌套列表（nested list structure)结构要高效的多，本身是由C语言开发。这个是很基础的扩展，其余的扩展都是以此为基础。数据结构为ndarray,一般有三种方式来创建。
+
+from numpy.random import randn
+import numpy as np
+data2 = [[1, 2, 3, 4], [5, 6, 7, 8]]
+arr2 = np.array(data2)
+np.array([(1.5,2,3), (4,5,6)])
+np.zeros((3, 6))  创建zero 阵列
+np.arange(15) 序列的数组
+arr = np.arange(10)  arr[5]   arr[5:8] 也不包含stop位置 数组切片是原始数据的视图，不会复制，除非使用copy命令
+arr.T 转置
+np.dot(arr.T, arr) 矩阵乘法
+np.multiply(arr1,arr2)  矩阵对应元素乘
+cond = np.array([True, False, True, True, False])
+ x.sum(axis=1) 行汇总
+ x.sum(axis=0） 列汇总
+ x.sum() 全部汇总
+  x.shape 矩阵维度
+np.save('some_array', arr)  存放数组到 file
+np.load('some_array.npy')
+from numpy.linalg import inv, qr 
+inv(x) 矩阵的逆          np.linalg.inv(a) 也是矩阵的逆
+samples = np.random.normal(size=(4, 4))  随机数生成
+
+ randmat=mat(random.rand(4,4)) 矩阵 
+ 矩阵逆  randmat.I
+ 矩阵乘法 mat1*mat2 
+ mat.A 返回 ndarray版本
+ ndarray1.dot(ndarray2)也是矩阵乘法
+ multiply(ndarray1,ndarray2)点乘 
+ 
+ 
+ 
+ array([[ 8.,  8.],
+       [ 0.,  0.]])
+>>> b = np.floor(10*np.random.random((2,2)))
+>>> b
+array([[ 1.,  8.],
+       [ 0.,  4.]])
+>>> np.vstack((a,b))
+array([[ 8.,  8.],
+       [ 0.,  0.],
+       [ 1.,  8.],
+       [ 0.,  4.]])
+>>> np.hstack((a,b))
+array([[ 8.,  8.,  1.,  8.],
+       [ 0.,  0.,  0.,  4.]])
+       np.hsplit(a,3)   # Split a into 3
+       
+       a.view() 创建新对象
+       a.copy()                          # a new array object with new data
+
+
+Pandas:基于NumPy 的一种工具，该工具是为了解决数据分析任务而创建的。Pandas 纳入了大量库和一些标准的数据模型，提供了高效地操作大型数据集所需的工具。最具有统计意味的工具包，某些方面优于R软件。数据结构有一维的Series，二维的DataFrame(类似于Excel或者SQL中的表，如果深入学习，会发现Pandas和SQL相似的地方很多，例如merge函数)，三维的Panel（Pan（el) + da(ta) + s，知道名字的由来了吧）。
+
+from pandas import Series, DataFrame
+import pandas as pd
+ ob=Series([4,57,7])
+ 
+obj2 = Series([4, 7, -5, 3], index=['d', 'b', 'a', 'c'])
+obj2['d'] obj[2]
+obj2['ef']='abc' 可以直接扩容
+
+data = {'state': ['Ohio', 'Ohio', 'Ohio', 'Nevada', 'Nevada'],
+        'year': [2000, 2001, 2002, 2001, 2002],
+        'pop': [1.5, 1.7, 3.6, 2.4, 2.9]}
+frame = DataFrame(data)
+frame2 = DataFrame(data, columns=['year', 'state', 'pop', 'debt'],
+                   index=['one', 'two', 'three', 'four', 'five'])
+                   
+del frame2['debt']  删除列
+frame2.columns
+frame2.index 
+frame2.year
+frame2.ix['three']  按行查询数据
+data[:2]      按行查询数据
+frame2.year 按列查
+data.ix['Colorado', ['two', 'three']]   行列查询
+data.ix[['Colorado', 'Utah'], [3, 0, 1]]
+frame3.T
+obj = Series([4.5, 7.2, -5.3, 3.6], index=['d', 'b', 'a', 'c'])
+obj2 = obj.reindex(['a', 'b', 'c', 'd', 'e'])  重新排序
+frame2 = frame.reindex(['a', 'b', 'c', 'd'])  按行重新排序
+states = ['Texas', 'Utah', 'California']
+frame.reindex(columns=states)   按列重新排序
+frame.ix[['a', 'b', 'c', 'd'], states]  同时调整列行 
+obj.drop('c')丢弃指定列
+ 
+ df.groupby('A').sum()    
+ df.groupby(['A','B']).sum()
+ 
+ df.loc[dates[0]] 获取指定位置值
+ df.loc[:,['A','B']]  Selecting on a multi-axis by label
+data = DataFrame(np.arange(16).reshape((4, 4)),
+                 index=['Ohio', 'Colorado', 'Utah', 'New York'],
+                 columns=['one', 'two', 'three', 'four'])
+data.drop(['Colorado', 'Ohio'])              drop 行
+data.drop('two', axis=1)         drop 列
+obj[obj < 2]   筛选
+obj['b':'c']  利用标签的切片是包含末端的，利用数字的切片是不包含末端的
+
+arr = np.arange(12.).reshape((3, 4))
+arr - arr[0]   自动传播，方便处理，不用tile函数补全到同样的维度在处理
+默认情况下，dataframe-series 会把series变成列匹配，然后沿着行广播
+series3 = frame['d'] 
+frame.sub(series3, axis=0)  匹配在行，按列传播
+f = lambda x: x.max() - x.min()
+ frame.apply(f)   应用到列
+frame.apply(f, axis=1)  应用到行
+frame.sort_values(by=['a','b'])  排序
+
+obj.index.is_unique  判断索引是否unique 
+df.sum 按列汇总
+df.sum(axis=1)  按行汇总
+
+df.cumsum() 按列累加
+df.describe() 显示汇总的各种统计信息
+
+from pandas_datareader import data, wb    引入抓取web数据的包
+import pandas_datareader as web
+pdata = pd.Panel(dict((stk, web.get_data_yahoo(stk))
+                       for stk in ['AAPL', 'GOOG', 'MSFT', 'DELL']))  抓取数据
+
+stacked=pdata.ix[:, '5/30/2012':, :].to_frame()  分层级显示
+
+
+ pd.read_table('ex1.csv')  tab分割
+  pd.read_csv('ex1.csv')    csv分割
+  parsed = pd.read_csv('ch06/csv_mindex.csv', index_col=['key1', 'key2'])  复合索引
+  result = pd.read_table('ch06/ex3.txt', sep='\s+')   正则表达式分割
+  pd.read_csv('ch06/ex4.csv', skiprows=[0, 2, 3])
+pd.read_csv('ch06/ex6.csv', nrows=5)  只读取5行
+data.to_csv('ch06/out.csv')  写入到文件
+读取json 对象
+import json
+result = json.loads(obj)
+
+from lxml.html import parse
+
+import requests
+python3.X 有这些库名可用: urllib, urllib3, httplib2, requests
+urllib3 提供线程安全连接池和文件post支持,与urllib及urllib2的关系不大. requests 自称HTTP for Humans, 使用更简洁方便
+
+pip install beautifulsoup4  
+from bs4 import BeautifulSoup  需要使用  lxml  或者 html5lib  做解析
+
+import requests ##导入requests
+from bs4 import BeautifulSoup ##导入bs4中的BeautifulSoup
+import os
+
+headers = {'User-Agent':"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/22.0.1207.1 Safari/537.1"}##浏览器请求头（大部分网站没有这个请求头会报错、请务必加上哦）
+all_url = 'http://www.mzitu.com/all'  ##开始的URL地址
+start_html = requests.get(all_url,  headers=headers)  ##使用requests中的get方法来获取all_url(就是：http://www.mzitu.com/all这个地址)的内容 headers为上面设置的请求头、请务必参考requests官方文档解释
+print(start_html.text) ##打印出start_html (请注意，concent是二进制的数据，一般用于下载图片、视频、音频、等多媒体内容是才使用concent, 对于打印网页内容请使用text)
+Soup = BeautifulSoup(start_html.text, 'lxml') 
+all_a = Soup.find('div', class_='all').find_all('a') ##意思是先查找 class为 all 的div标签，然后查找所有的<a>标签。
+for a in all_a:
+    title = a.get_text() #取出a标签的文本
+    href = a['href'] #取出a标签的href 属性
+    print(title, href)
+
+
+
+
+分块读取处理
+chunker = pd.read_csv('ch06/ex6.csv', chunksize=1000)
+tot = Series([])
+for piece in chunker:
+    tot = tot.add(piece['key'].value_counts(), fill_value=0)
+
+
+
+
+
+
+Matplotlib:Python中最著名的绘图系统，很多其他的绘图例如seaborn（针对pandas绘图而来）也是由其封装而成。创世人John Hunter于2012年离世。这个绘图系统操作起来很复杂，和R的ggplot,lattice绘图相比显得望而却步，这也是为什么我个人不丢弃R的原因
+
+import matplotlib.pyplot as plt
+plt.hist(v, bins=50, normed=1)   
+plt.show()
+
+plt.plot([1, 2, 3, 4], [1, 4, 9, 16])
+plt.ylabel('some numbers')
+plt.axis([0, 6, 0, 20])    xmin, xmax, ymin, ymax
+plt.show()
+lines=plt.plot(x,y)
+plt.setp(lines, color='r', linewidth=2.0)   设置画图属性
+
+plt.xlabel('Smarts')
+plt.ylabel('Probability')
+plt.title('Histogram of IQ')
+plt.text(60, .025, r'$\mu=100,\ \sigma=15$')
+plt.axis([40, 160, 0, 0.03])
+plt.grid(True)
+plt.show()
+
+
+Scipy ：  window安装不方便，建议直接下载 anaconda  打包好的环境
+方便、易于使用、专为科学和工程设计的Python工具包.它包括统计,优化,整合,线性代数模块,傅里叶变换,信号和图像处理,常微分方程求解器等等。
+基本可以代替Matlab，但是使用的话和数据处理的关系不大，数学系，或者工程系相对用的多一些。
+Scikit-learn：
+关注机器学习的同学可以关注一下，很火的开源机器学习工具
+pip install -U scikit-learn
+
+np.nan 表示null
+
+SVD 奇异值分解 是把矩阵分解成三个矩阵  原始矩阵MT m*n,分解成 U m*m sigma m*n  V.t n*n  sigma只有对角矩阵  sigma奇异值等于 MT.MT.t特征值的平方根
+
+
+
+
+把算好的模型存放，读取
+
+def storeTree(inputTree,filename):
+    import pickle
+    fw = open(filename,'w')
+    pickle.dump(inputTree,fw)
+    fw.close()
+    
+def grabTree(filename):
+    import pickle
+    fr = open(filename)
+    return pickle.load(fr)
+    
+    
+ cikit-learn（重点推荐）
+www.github.com/scikit-learn/scikit-learn
+Scikit-learn 是基于Scipy为机器学习建造的的一个Python模块，他的特色就是多样化的分类，回归和聚类的算法包括支持向量机，逻辑回归，朴素贝叶斯分类器，随机森林，Gradient Boosting，聚类算法和DBSCAN。而且也设计出了Python numerical和scientific libraries Numpy and Scipy
+
+2、Keras（深度学习）
+https://github.com/fchollet/keras
+Keras是基于Theano的一个深度学习框架，它的设计参考了Torch，用Python语言编写，是一个高度模块化的神经网络库，支持GPU和CPU。
+
+这两个之间推荐使用TensorFlow，因为都是基于Python的符号运算库，TensorFlow显然支持更好，Google也比高校有更多的人力投入。Theano的主要开发者现在都在Google，可以想见将来的工程资源上也会更偏向于TF一些。
+另外吐槽一下，TensorFlow的分布式计算不是最快的，单机使用CPU作reduction，多机用基于socket的RPC而不是更快的RDMA，主要的原因是TF现有框架的抽象对于跨设备的通讯不是很友好
+
+caffe ->c++,python
+torch->lua
+theano->python
+tensorflow->python,go
+
+正则表达式
+代码	说明
+.	匹配除换行符以外的任意字符
+\w	匹配字母或数字或下划线或汉字
+\s	匹配任意的空白符
+\d	匹配数字
+\b	匹配单词的开始或结束
+^	匹配字符串的开始
+$	匹配字符串的结束
+
+表2.常用的限定符
+代码/语法	说明
+*	重复零次或更多次
++	重复一次或更多次
+?	重复零次或一次
+{n}	重复n次
+{n,}	重复n次或更多次
+{n,m}	重复n到m次
+
+在python的原始解释器CPython中存在着GIL（Global Interpreter Lock，全局解释器锁），因此在解释执行python代码时，会产生互斥锁来限制线程对共享资源的访问，直到解释器遇到I/O操作或者操作次数达到一定数目时才会释放GIL。
+可见，某个线程想要执行，必须先拿到GIL，我们可以把GIL看作是“通行证”，并且在一个python进程中，GIL只有一个。拿不到通行证的线程，就不允许进入CPU执行。每个进程有各自独立的GIL，互不干扰，这样就可以真正意义上的并行执行，所以在python中，多进程的执行效率优于多线程(仅仅针对多核CPU而言)。
+因为pypy有jit，而CPython标准版是不带的（就是你从官网下载的版本）
+   1. 正确率 = 提取出的正确信息条数 /  提取出的信息条数     
+    2. 召回率 = 提取出的正确信息条数 /  样本中的信息条数    
+两者取值在0和1之间，数值越接近1，查准率或查全率就越高。   
+    3. F值  = 正确率 * 召回率 * 2 / (正确率 + 召回率) （F 值即为正确率和召回率的调和平均值）
+不妨举这样一个例子：某池塘有1400条鲤鱼，300只虾，300只鳖。现在以捕鲤鱼为目的。撒一大网，逮着了700条鲤鱼，200只虾，100只鳖。那么，这些指标分别如下：
+正确率 = 700 / (700 + 200 + 100) = 70%
+召回率 = 700 / 1400 = 50%
+F值 = 70% * 50% * 2 / (70% + 50%) = 58.3%
+不妨看看如果把池子里的所有的鲤鱼、虾和鳖都一网打尽，这些指标又有何变化：
+正确率 = 1400 / (1400 + 300 + 300) = 70%
+召回率 = 1400 / 1400 = 100%
+F值 = 70% * 100% * 2 / (70% + 100%) = 82.35%        
+由此可见，正确率是评估捕获的成果中目标成果所占得比例；召回率，顾名思义，就是从关注领域中，召回目标类别的比例；而F值，则是综合这二者指标的评估指标，用于综合反映整体的指标。
+
+当然希望检索结果Precision越高越好，同时Recall也越高越好，但事实上这两者在某些情况下有矛盾的。比如极端情况下，我们只搜索出了一个结果，且是准确的，那么Precision就是100%，但是Recall就很低；而如果我们把所有结果都返回，那么比如Recall是100%，但是Precision就会很低。因此在不同的场合中需要自己判断希望Precision比较高或是Recall比较高。如果是做实验研究，可以绘制Precision-Recall曲线来帮助分析。
+
+CPython就是在一个死循环中一个个依次解释字节码执行，而jit可以在运行时将一些代码段优化为更快的版本，或尽可能地直接编译为机器码来加速执行
+CPython是标准Python，也是其他Python编译器的参考实现。通常提到“Python”一词，都是指CPython。CPython由C编写，将Python源码编译成CPython字节码，由虚拟机解释执行。没有用到JIT等技术，垃圾回收方面采用的是引用计数。
+所以当有人问道Python是解释执行还是编译执行，可以这样回答：Python（CPython）将Python源码编译成CPython字节码，再由虚拟机解释执行这些字节码。
+Jython
+Jython在JVM上实现的Python，由Java编写。Jython将Python源码编译成JVM字节码，由JVM执行对应的字节码。因此能很好的与JVM集成，比如利用JVM的垃圾回收和JIT，直接导入并调用JVM上其他语言编写的库和函数。
+ IronPython和Jython类似，只不过IronPython是运行在微软.Net平台上的Python解释器，可以直接把Python代码编译成.Net的字节码。
+ 
+现在的E5 CPU每路处理器都带40 lane的PCI-e接口，也就是说单路CPU最多支持 16x+16x+8x的配置，如算上板载的一些扩展接口的需要，往往会低于这个数量的扩展口。对于游戏来说使用16x的PCI-e可以获得不显著的FPS提升，但对于机器学习的场景而言，8X的通道就远足够了。PCI-e 4x和8x的数量直接决定你能扩展的显卡数量。获得额外的PCI-e接口的渠道有三类：1.多个CPU，每个CPU都有独立的PCI-e Lane x40,CPU越多，主板可能扩展的PCI-e也越多。这也是为何推荐双路的原因。
+类似于TenseFlow一类的框架，通常都泡在Ubuntu的机器上。此时CUDA环境和驱动安装后，如果GUI跑在NV卡上，TenseFlow会无法使用此卡作为计算单元。如不想动手改造框架用一张专门的显卡来跑GUI才是最简便的办法。专门用来跑GUI的显卡，就是点亮卡，.它不需要CUDA或其他特别的计算能力，最低配即可，好在服务器主板上都自带一个显卡，
+目前 Titan 1080ti性价比最高 11Gram
+电源是需要注意的，后期你可能会插很多GTX显卡，每片极限功耗都在150w上下，平时的功耗都只在100W左右，所以整机配备一个1000W或是1400W的电源是必要的,如果只需要3块以内的显卡，750W的电源足矣。预算紧张的情况，没必要花特别多的钱在电源上。性价比来说也是服务器电源比较合适，通常200左右可以就可以买到
+显卡数决定了CPU数，<=4个时没必要双CPU。单CPU 5930K足矣
+
+硬盘方面：PM961或是960EVO是不错的选择，务必直接选配512G以上的，SSD的性能和容量是同步的，容量小速度就慢，这点和机械硬盘是不一样的。另外LOG和Data的存放再配个3T的盘就可以了。实际训练时，把数据从硬盘复制到SSD再开始，这能省掉你不少时间。但对刚开始的新人来说PM961显得价格有些不友好，此时可考虑Intel的600P,价格喜人保修也还算有保障。SSD切勿买SATA接口的，直接上M2的盘，用下面这种转接设备可以获得超过6Gbps以上的传输速度，缺点就是占用PCI-e.
+CPU x1 e5-2670 650RMBRAM 32G 125*4 = 500RMB主板:关键字“2011 C602” 如：S2600CP2 （支出控制在1500以内）。 电源 ：200RMB组合下来 = 650+500+1500+200 = 2850 ，3500RMB略有余量可以适当调整。这种四件套主要是用上一代的CPU和内存来省钱。淘宝上有人卖整套，找卖主板的帮你配好即可。只是需要注意：挑个好壳子。 ssd ：入门省省，256 intel 600P - 700RMB /如果对io要求高可以搞 PM961-512大概1300RMB显卡 ：gtx-1060 1700RMB其他杂碎：500RMBHDD: 3T -600RMB
+
+ 

@@ -1,0 +1,252 @@
+/**
+ * Created by wukezhan on 14-12-10.
+ */
+
+(function(){
+    'use strict';
+    var template = {};
+    template['single']  = '<div class="rong-zc">';
+    template['single'] += '  <div class="zan">';
+    template['single'] += '    <a href="javascript:void(0);"></a>';
+    template['single'] += '    <p>(<span class="total">0</span>)</p>';
+    template['single'] += '    <p>赞一下</p>';
+    template['single'] += '  </div>';
+    template['single'] += '  <div class="fake-line"></div>';
+    template['single'] += '  <div class="cai">';
+    template['single'] += '    <a href="javascript:void(0);"></a>';
+    template['single'] += '    <p>(<span class="total">0</span>)</p>';
+    template['single'] += '    <p>踩一下</p>';
+    template['single'] += '  </div>';
+    template['single'] += '</div>';
+
+    template['discuss'] = '  <span class="discuss-zc">';
+    template['discuss'] += '    <span class="zan"><a href="javascript:;" class="p_zan"><img src="/static/discuss/img/zan.png"/>(<span class="zan_num total">0</span>)</a></span>';
+    template['discuss'] += '    <span class="cai"><a href="javascript:;" class="p_cai"><img src="/static/discuss/img/cai.png"/>(<span class="zan_num total">0</span>)</a></span>';
+    template['discuss'] += '  </span>';
+
+    template['webapp'] = '<div class="vote">';
+    template['webapp'] += '     <span class="zan"><a class="up"><b class="zan_num total">0</b></a></span>';
+    template['webapp'] += '     <span class="cai"><a class="down"><b class="zan_num total">0</b></a></span>';
+    template['webapp'] += '</div>';
+
+    template['ask'] = '<span class="ttt">';
+    template['ask'] += '<span class="zan">';
+    template['ask'] += '    <a href="javascript:void(0);" class="ding-l clearfix"><span class="total"></span></a>';
+    template['ask'] += '</span>';
+    template['ask'] += '<span class="cai">';
+    template['ask'] += '    <a href="javascript:void(0);" class="ding-r clearfix"><span class="total"></span></a>';
+    template['ask'] += '</span>';
+    template['ask'] += '</span>';
+
+    function makeCookie(objId, objType){
+        objId = parseInt(objId);
+        objId = objId.toString(16);
+        return objType+"-"+objId+"_";
+    }
+    function checkCookie(objId, objType){
+        var cookie = document.cookie.match(/(?:^|; )zc=([^;]*)/);
+        if(cookie){
+            cookie = cookie[1].match(new RegExp('(\\d)' + makeCookie(objId, objType)));
+            if(cookie){
+                var a = cookie?parseInt(cookie[1]).toString(2).split(''): [];
+                if(a.length==2){
+                    a.unshift("0");
+                }
+                return a;
+            }else{
+                return 0;
+            }
+        }
+        return 0;
+    }
+    function setCookie(objId, objType, action){
+        var cookie = document.cookie.match(/(?:^|; )zc=([^;]*)/);
+        cookie = cookie?cookie[1]: '';
+        var objCookie = makeCookie(objId, objType);
+        //bitmap下标含义，0:赞，1：踩，2:记录最后点击的按钮下标
+        var a = [0, 0, 0];
+        //记录当前动作
+        a[2] = action;
+        a[a[2]] = 1;
+        if(cookie){
+            var c = checkCookie(objId, objType);
+            //console.log(cookie, objCookie, c);
+            if(c){
+                c[2] = action;
+                c[a[2]] = 1;
+                cookie = cookie.replace(cookie, parseInt(c.join(''), 2)+objCookie);
+            }else{
+                cookie += parseInt(a.join(''), 2)+objCookie;
+            }
+        }else{
+            cookie = parseInt(a.join(''), 2)+objCookie;
+        }
+
+        var date = new Date();
+        date.setTime(date.getTime()+86400*365*1000);
+        document.cookie = 'zc='+cookie+';path=/;domain=.rong360.com;expires='+date.toUTCString();
+    }
+    $.fn.zc = function(setting){
+        return this.each(function(){
+            var opt = $.extend({
+                zan_selector: '.zan a',
+                cai_selector: '.cai a',
+                obj_id: 0,
+                obj_type: 0
+            }, setting||{});
+
+            if(!opt.obj_id||!opt.obj_type){
+                throw Error('wrong obj info');
+            }
+
+            var $this = $(this);
+            $this.find(opt.zan_total_selector).text(opt.zan);
+            $this.find(opt.cai_total_selector).text(opt.cai);
+            var zc = function(){
+                var self = this;
+                var action = $(this).attr('data-zc-action');
+                var act = action=='zan'?0: 1;
+                var $btn = $(this);
+                var cc = checkCookie(opt.obj_id, opt.obj_type);
+                if((!cc/**||false==cc[act]**/) && !$this.attr('data-zc-run')){
+                    $this.attr('data-zc-run', '1');
+                    $.ajax({
+                        url: opt.url,
+                        data: {
+                            obj_id: opt.obj_id,
+                            obj_type: opt.obj_type,
+                            action: act
+                        },
+                        type: 'post',
+                        dataType: 'json',
+                        success: function(data){
+                            if(!data.status){
+                                var $btnReset = $this.find('.pressed').removeClass('pressed');
+                                var $totalReset = $btnReset.parent().find('.total');
+                                if(parseInt($totalReset.text())){
+                                    $totalReset.html(parseInt($totalReset.text())-1);
+                                }
+
+                                setCookie(opt.obj_id, opt.obj_type, act);
+
+                                var $total = $btn.parent().find('.total');
+                                $total.html(parseInt($total.text())+1);
+
+                                $btn.addClass('pressed')
+                                var afterClick = opt.after_click||function(){
+                                    $btn.css('position', 'relative');
+                                    var $b = $('<b>+1</b>').css({'position': 'absolute'});
+                                    $btn.append($b);
+                                    $b.onePlus({
+                                        distance: 80,
+                                        speed: 800,
+                                        callback: function(){
+                                            $b.remove();
+                                            $btn.css('position', '');
+                                        }
+                                    });
+                                };
+                                afterClick.call(self, opt);
+                            }else{
+                                //操作失败，提不提示?pig in a sty说：不提示
+                            }
+                            $this.removeAttr('data-zc-run');
+                        }
+                    });
+                }else{
+                    if(!cc[act]){
+                        $btn.addClass('pressed');
+                    }
+                }
+            };
+            var cc = checkCookie(opt.obj_id, opt.obj_type);
+            //console.log('cc',cc);
+            if(cc){
+                $this.find(cc[2]==0?opt.zan_selector: opt.cai_selector).addClass('pressed');
+            }
+            $this.find(opt.zan_selector).attr('data-zc-action', 'zan').on('click', zc);
+            $this.find(opt.cai_selector).attr('data-zc-action', 'cai').on('click', zc);
+            if(opt.after_show){
+                opt.after_show.call(this, opt);
+            }
+        });
+    };
+    $.fn.onePlus = function(options, callback){
+        var settings = $.extend({
+            distance: 20,
+            speed: "slow",
+            callback: callback
+        }, options);
+
+        return this.each(function(){
+            $(this).show().animate({
+                top:"-=" + settings.distance + "px",
+                opacity:"toggle"
+            }, settings.speed, function(){
+                $(this).css({top: ""}).hide( settings.callback );
+            });
+        });
+    };
+    $.ZC = function(setting){
+        if(!setting){
+            return false;
+        }
+        var opt = $.extend({
+            zan: 0,
+            cai: 0,
+            template_name: 'single',
+            zan_total_selector: '.zan .total',
+            cai_total_selector: '.cai .total'
+        }, setting||{});
+        var $zc = $(template[opt.template_name]);
+        $(opt.container).append($zc.zc(opt)).show();
+
+    };
+    /**
+     *
+     * @param opt {
+     *  url: 'the like-request url',
+     *  list_url: 'the like-list-request url',
+     *  objs: {
+     *      container-id: {
+     *          obj_id: 1,
+     *          obj_type: 2
+     *      }
+     *  },
+     *  after_show: function(opt){
+     *      //this 
+     *  }
+     * }
+     */
+    $.loadZC = function(opt){
+        var map = {};
+        var data = {};
+        var n = 1;
+        for(var k in opt.objs){
+            if(opt.objs[k].obj_id){
+                map[opt.objs[k].obj_type+'-'+opt.objs[k].obj_id] = k;
+                data[n++] = opt.objs[k];
+            }
+        }
+        $.ajax({
+            type:'post',
+            url: opt.list_url,
+            data: {objs: data},
+            dataType: opt.type||'json',
+            success: function(data){
+                if(data){
+                    var objs = data.data;
+                    delete opt.objs;
+                    for(var i=0; i<objs.length; i++){
+                    //for(var i in objs){   //Uncaught Error: wrong obj info
+                        var obj = objs[i];
+                        obj['container'] = map[obj.obj_type+'-'+obj.obj_id];
+                        var opts = $.extend({}, opt, obj);
+                        $.ZC(opts);
+                    }
+                }
+            }
+        });
+    };
+
+})();
