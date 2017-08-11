@@ -1,0 +1,70 @@
+Kudu表包含了一系列逻辑数据子集(Tablets)，跟如同传统数据库系统的分区(Partition)。
+存储于Kudu的数据是可修改的(利用log-structured变种算法)。更新、插入、删除都是临时先缓冲于内存，随后合并进永久性列式存储中。Kudu为了保证查询延迟不出现大的波动，也会周期性地进行小型维护操作，比如compaction。 Kudu提供了C++、Java API支持点操作
+Kudu 主要面向 OLAP 应用，支持大规模数据存储，支持快速查询，并且支持实时数据更新。相比Hive 之类的SQL on Hadoop，性能会好不少.
+目前团队使用的 Hive，Hive 能够查询大规模数据，但痛点也很明显：一来占用资源很多，经常一个 MapReduce 的Job 就能跑半个小时几十分钟，对集群资源的占用是相当大的；二来，查询延迟相当高，如果只是跑一些报表还没有太大问题，但是如果着急需要一些数据，等上半个小时可能就是想当麻烦的；三来，Hive 不支持实时数据更新，虽然 ORC 看起来能实现数据更新，但延迟、吞吐量都想当捉急，略显鸡肋。
+目前看来，基于 HDFS的方案通常都能提供不错的查询性能，但对于 实时更新的要求来说就有点捉襟见肘了；基于HBase、Cassandra的方案能够支持实时数据更新，但 scan 的吞吐量不能满足。
+Kudu 使用 C++ 开发，相比于 Hadoop 生态众多使用 java 开发的程序来说，性能会有一定优势，并且在 GC上，算是解决了 HBase GC停顿的痛点
+首先查询引擎使用 Impala，如果一开始就使用 Impala 的话使用成本会降低很多；与 Spark 集成时，也有相应的接口，可以把 Kudu 的数据 load 到一个 RDD中进行操作，或者一个 DataFrame，用SparkSQL 进行查询。
+Kudu 的存储引擎没有像 HBase 一样基于 HDFS，而是基于单机的文件系统。（貌似现在的另一个流行趋势，就是不再基于分布式文件系统来搞分布式数据库了，可能是基于 immutable 存储来搞 mutable 确实比较累。）
+单机的存储引擎整合了 LSM、B tree等经典的结构，可以看到 LevelDB、Parquet的影子。存储还是分为 memory 和 disk，数据先写入 memory和 write ahead log，再刷到 disk。整个存储抽象成 RowSet，细化为 MemRowSet 和 DiskRowSet。
+MemRowSet，就是一个 B+ tree，树叶节点的大小是 1K，刚好是4块 cache-line（！！！）；使用 SSE2 指令进行 scan，据说性能非常高。 对于 DiskRowSet，分为 base 和 delta，更新的数据写到 delta，定时 compact 到 base，没有像 LevelDB那样使用多级的 LSM。base 是一个经典的列式存储实现，针对
+在数据存储的基础上，使用了B+ tree 对primary key 进行索引，也用了 BloomFilter 加速查找。值得一提的是，BloomFilter 的大小是4KB，刚好又是filesystem pagecache 的大小。DiskRowSet 的设计借鉴了很多 Parquet 的思想，值得深入学习。
+
+1. Any　replica　can　service　reads,　and　writes　require　consensus　among　the　set　of　tablet　servers　serving　the　tablet.
+2. For　a　given　tablet,　one　tablet　server　acts　as　a　leader,　and　the　others　act　as　follower　replicas　of　that　tablet.
+3. For　a　given　tablet,　one　tablet　server　acts　as　a　leader,　and　the　others　act　as　follower　replicas　of　that　tablet.　Only　leaders　service　write　requests,　while　leaders　or　followers　each　service　read　requests.
+4. All　the　master’s　data　is　stored　in　a　tablet,　which　can　be　replicated　to　all　the　other　candidate　masters.
+5. Once　a　write　is　persisted　in　a　majority　of　replicas　it　is　acknowledged　to　the　client.
+6. Kudu　replicates　operations,　not　on-disk　data.　This　is　referred　to　as logical　replication,　as　opposed　to physical　replication.
+7. An　external　table　(created　by CREATE　EXTERNAL　TABLE)　is　not　managed　by　Impala,　and　dropping　such　a　table　does　not　drop　the　table　from　its　source　location　(here,　Kudu).　Instead,
+8. Kudu　currently　has　no　mechanism　for　automatically　(or　manually)　splitting　a　pre-existing　tablet.　Until　this　feature　has　been　implemented, you　must　specify　your　partitioning　when　creating　a　table.　When　designing　your
+9. Kudu　currently　has　no　mechanism　for　automatically　(or　manually)　splitting　a　pre-existing　tablet.　Until　this　feature　has　been　implemented, you　must　specify　your　partitioning　when　creating　a　table.　When　designing　your
+10. Kudu　currently　has　no　mechanism　for　automatically　(or　manually)　splitting　a　pre-existing　tablet.　Until　this　feature　has　been　implemented, you　must　specify　your　partitioning　when　creating　a　table.　When　designing　your
+11. If　the WHERE clause　of　your　query　includes　comparisons　with　the　operators =, <=,　'\<',　'\>', >=, BETWEEN,　or IN,　Kudu　evaluates　the　condition　directly　and　only　returns　the　relevant　results.
+12. Tables　are　partitioned　into　tablets　according　to　a　partition　schema　on　the　primary　key　columns.
+13. Ideally,　a　table　should　be　split　into　tablets　that　are　distributed　across　a　number　of　tablet　servers　to　maximize　parallel　operations.　The　details　of　the　partitioning　schema
+14. Kudu　currently　has　no　mechanism　for　splitting　or　merging
+15. You　can　partition　your　table　using　Impala’s PARTITION　BY keyword,　which　supports　distribution　by RANGE or HASH.　The　partition　scheme　can　contain　zero　or　more HASH definitions,　followed　by　an　optional RANGE definition.
+16. You　can　combine HASH and RANGE partitioning　to　create　more　complex　partition　schemas.
+17. The　following　example　still　creates　16　tablets,　by　first　hashing　the id column　into　4　buckets,　and　then　applying　range　partitioning　to　split　each　bucket　into　four　tablets,　based　upon　the　value　of　the sku string.　Writes　are　spread　across　at　least　four　tablets　(and　possibly　up　to　16).　When　you　query　for　a　contiguous　range　of sku values,　you　have　a　good　chance　of　only　needing　to　read　from　a　quarter　of　the　tablets　to　fulfill　the　query.
+18. For　large　tables,　such　as　fact　tables,　aim　for　as　many　tablets　as　you　have　cores　in　the　cluster.
+19. For　small　tables,　such　as　dimension　tables,　aim　for　a　large　enough　number　of　tablets　that　each　tablet　is　at　least　1　GB　in　size.
+20. In　many　cases,　the　appropriate　ingest　path　is　to　use　the　C++　or　Java　API　to　insert　directly　into　Kudu　tables.
+21. Impala,　however,　will　not　fail　the　query.　Instead,　it　will　generate　a　warning,　but　continue　to　execute　the　remainder　of　the　insert　statement.
+22. because　the　primary　key　would　be　duplicated.　See Failures　During INSERT, UPDATE,　and DELETE Operations.　Impala,　however,　will　not　fail　the　query.　Instead,　it　will　generate　a　warning,　but　continue　to　execute　the　remainder　of　the　insert　statement.
+23. INSERT, UPDATE,　and DELETE statements　cannot　be　considered　transactional　as　a　whole.　If　one　of　these　operations　fails　part　of　the　way　through,　the　keys　may　have　already　been　created
+24. Kudu　tables　with　a　name　containing　upper　case　or　non-ascii　characters　must　be　assigned　an　alternate　name　when　used　as　an　external　table　in　Impala.
+25. Impala　can　not　create　Kudu　tables　with TIMESTAMP, DECIMAL, VARCHAR,　or　nested-typed　columns.
+26. NULL, NOT　NULL, !=,　and LIKE predicates　are　not　pushed　to　Kudu,　and　instead　will　be　evaluated　by　the　Impala　scan　node.
+27. Updates,　inserts,　and　deletes　via　Impala　are　non-transactional.
+28. For　good　analytic　performance,　aim　for　10　or　more　tablets　per　host　or　use　large　tables.
+29. Updating　a　large　set　of　data　stored　in　files　in　HDFS　is　resource-intensive,　as　each　file　needs　to　be　completely　rewritten.
+30. In　Kudu,　updates　happen　in　near　real　time.
+31. For　instance,　some　of　your　data　may　be　stored　in　Kudu,　some　in　a　traditional　RDBMS,　and　some　in　files　in　HDFS.　You　can　access　and　query　all　of　these　sources　and　formats　using　Impala,　without　the　need　to　change　your　legacy　systems.
+32. If　solid　state　storage　is　available,　storing　Kudu　WALs　on　such　high-performance　media　may　significantly　improve　latency　when　Kudu　is　configured　for　its　highest　durability　levels.
+33. Kudu　tablet　servers　are　not　resilient　to　disk　failure.　When　a　disk　containing　a　data　directory　or　the　write-ahead　log　(WAL)　dies,　the　entire　tablet　server　must　be　rebuilt.　Kudu　will　automatically　re-replicate　tablets　on　other　servers　after　a　tablet　server　fails,　but　manual　intervention　is　needed　in　order　to　restore　the　failed　tablet　server
+34. Kudu’s　data　model　is　more　traditionally　relational,　while　HBase　is　schemaless. Kudu’s　on-disk
+35. Kudu’s　data　model　is　more　traditionally　relational,　while　HBase　is　schemaless. Kudu’s　on-disk　representation　is　truly　columnar　and　follows　an　entirely　different　storage　design　than　HBase/BigTable.
+36. Kudu　accesses　storage　devices　through　the　local　filesystem,　and　works　best　with　Ext4　or　XFS.
+37. Kudu　handles　striping　across JBOD mount　points,　and　does　not　require RAID.
+38. Kudu’s　write-ahead　logs　(WALs)　can　be　stored　on　separate　locations　from　the　data　files,　which　means　that　WALs　can　be　stored　on SSDs to　enable　lower-latency　writes　on　systems　with　both　SSDs　and　magnetic　disks.
+39. Kudu　is　not　an in-memory　database since　it　primarily　relies　on　disk　storage.
+40. Kudu’s　on-disk　data　format　closely　resembles　Parquet,　with　a　few　differences　to　support　efficient　random　access　as　well　as　updates.
+41. Since　compactions　are　so　predictable,　the　only　tuning　knob　available　is　the　number　of　threads　dedicated　to　flushes　and　compactions　in　the maintenance　manager.
+42. HBase　uses　range　based　distribution.　Range　based　partitioning　stores　ordered　values　that　fit　within　a　specified　range　of　a　provided　key　contiguously　on　disk.
+43. Kudu　is　a CP type　of　storage　engine.　Writing　to　a　tablet　will　be　delayed　if　the　server　that　hosts　that　tablet’s　leader　replica　fails　until　a　quorum　of　servers　is　able　to　elect　a　new　leader
+44. Follower　replicas　don’t　allow　writes,　but　they　do　allow　reads　when　fully　up-to-date　data　is　not　required.
+45. Scans　have　“Read　Committed”　consistency　by　default.
+46. You　can　also　use　Kudu’s　MapReduce　OutputFormat　to　load　data　from　HDFS,　HBase,　or　any　other　data　store　that　has　an　InputFormat.
+47. Semi-structured　data　can　be　stored　in　a　STRING　or　BINARY　column,　but　large　values　(10s　of　KB　or　more)　are　likely　to　cause　performance　or　stability　problems　in　current　versions.
+48. Kudu　is　not　a　SQL　engine.　The　availability　of　JDBC　and　ODBC　drivers　will　be　dictated　by　the　SQL　engine　used　in　combination　with　Kudu.
+49. Kudu　can　be　colocated　with　HDFS　on　the　same　data　disk　mount　points.
+50. If　you　want　to　use　Impala,　note　that　Impala　depends　on　Hive’s　metadata　server,　which　has　its　own　dependencies　on　Hadoop.　It　is　not
+51. We　don’t　recommend　geo-distributing　tablet　servers　this　time　because　of　the　possibility　of　higher　write　latencies.
+52. Kudu　doesn’t　yet　have　a　command-line　shell.　If　the　Kudu-compatible　version　of　Impala　is　installed　on　your　cluster　then　you　can　use　it　as　a　replacement　for　a　shell.
+53. Kudu　doesn’t　yet　have　a　built-in　backup　mechanism.　Similar　to　bulk　loading　data,　Impala　can　help　if　you　have　it　available.　You　can　use　it　to　copy　your　data　into　Parquet　format　using　a　statement　like: INSERT　INTO　TABLE　some_parquet_table　SELECT　*　FROM　kudu_table then　use distcp to　copy　the　Parquet　data　to　another　cluster.
+54. Kudu　is　inspired　by　Spanner　in　that　it　uses　a　consensus-based　replication　design　and　timestamps　for　consistency　control,　but　the　on-disk　layout　is　pretty　different.
+55. Kudu　was　designed　and　optimized　for　OLAP　workloads　and　lacks　features　such　as　multi-row　transactions　and　secondary　indexing　typically　needed　to　support　OLTP.
+56. No,　Kudu　does　not　support　multi-row　transactions　at　this　time.
+
+

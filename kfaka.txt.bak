@@ -31,7 +31,7 @@ kafka采用procedure push,consumer pull的方式提升性能，都是批操作 ，客户端自己记录
 每个partition只能被一个consumer消费，支持rebalance(添加或者删除节点，或者consumer),但是历史数据不会迁移
 复制的时候支持 rack awareness 
 支持在不同cluster间做mirror (跨数据中心)
-0.11版本支持用户登录验证，支持SSL加密通讯 支持 ACL控制 ，支持Kerberos 
+0.11版本支持用户登录验证，支持SSL加密通讯
 
 
 20160113

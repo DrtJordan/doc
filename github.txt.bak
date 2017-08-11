@@ -6,7 +6,9 @@ it prevents anyone from deleting the branch
 fork出来的项目，可以通过 pull request要求合并到原来的source
 
  For example, you could set "Allowed to push" to "No one", and "Allowed to merge" to "Developers + Masters", to require everyone to submit a merge request for changes going into the protected branch.
- 
+ However, there are workflows where that is not needed, and only protecting from force pushes and branch removal is useful. For those workflows, you can allow everyone with write access to push to a protected branch by setting "Allowed to push" to "Developers + Masters".
+
+You can set the "Allowed to push" and "Allowed to merge" options while creating a protected branch or afterwards by selecting the option you want from the dropdown list in the "Already protected" area.
 
 Git flow
 

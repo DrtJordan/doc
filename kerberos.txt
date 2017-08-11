@@ -1,0 +1,28 @@
+Princal(安全个体)：被认证的个体，有一个名字和口令
+KDC(key distribution center ) : 是一个网络服务，提供ticket 和临时会话密钥
+Ticket：一个记录，客户用它来向服务器证明自己的身份，包括客户标识、会话密钥、时间戳。
+AS (Authentication Server)： 认证服务器
+TGS(Ticket Granting Server)： 许可证服务器
+
+高效 Kerberos使用对称钥匙操作，比SSL的公共密钥快
+流程   tgs不保留 session key ，由客户端请求时带上，所以安全
+用户输入用户名/密码 ，password被hash
+用户登录的机器发送用户id(明文)到AS ，请求服务，不发送密码
+as检查用户id是否存在，如果存在，用 用户密码hash成为 security key ,发送下列信息回去  
+	Message A: Client/TGS Session Key encrypted using the secret key of the client/user
+	Message B: Ticket-Granting-Ticket (TGT, which includes the client ID, client network address, ticket validity period, and the client/TGS session key) encrypted using the secret key of the TGS.
+用户收到后用输入的密码hash后去解密message A得到 Session Key，可以用来后记通信，如果密码两边不一致，就无法解密
+当请求服务时 发送下列信息给TGS 
+ 	Message C: Composed of the TGT from message B and the ID of the requested service.
+ 	Message D: Authenticator (which is composed of the client ID and the timestamp), encrypted using the Client/TGS Session Key.
+ 	TGS收到后，用TGS secret key解密 Message B 得到 Session Key  用Session Key解密 Message D ,比较 client ID from message C and D ，如果匹配回下列消息
+ 	Message E: Client-to-server ticket (which includes the client ID, client network address, validity period and Client/Server Session Key) encrypted using the service's secret key
+ 	Message F: Client/Server Session Key encrypted with the Client/TGS Session Key.
+ 	客户端收到后 发送 下面消息到 提供服务的 server
+ 	Message E from the previous step (the client-to-server ticket, encrypted using service's secret key).
+	Message G: a new Authenticator, which includes the client ID, timestamp and is encrypted using Client/Server Session Key.
+	提供服务的server使用自己的security key 解密消息E,得到 Client/Server Session Key. 然后用 Client/Server Session Key. 解密 Message G,如果 Message E/G 客户id如果匹配回下列消息
+	Message H: the timestamp found in client's Authenticator (plus 1 in version 4, but not necessary in version 5[4][5]), encrypted using the Client/Server Session Key.
+	客户收到后解密message H，检查timestamp是否正确，如果正确，说明server是可信任的，可以正常开始服务请求
+	
+

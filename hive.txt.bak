@@ -4,7 +4,52 @@
  支持  user defined functions (UDFs), user defined aggregates (UDAFs), and user defined table functions (UDTFs).
  支持文件格式为 Apache Parquet?, Apache ORC  CSV/TSV
  HCatalog is a component of Hive.  metadata database
- 
+
+Hive provides standard SQL functionality, including many of the later SQL:2003 and SQL:2011 features for analytics.
+Hive uses Log4j2's asynchronous logger by default.
+
+分区表的key是虚拟的，当load data的时候指定到那个分区
+Metadata is in an embedded Derby database whose disk storage location is determined by the Hive configuration variable
+load数据的时候，hive不会校验数据是否符合schema定义
+
+
+
+
+优化：
+尽量采用时间分区
+尽量colocate data
+使用orcfiles ，不要压缩
+采用buckets排序
+检查执行计划
+ORCFile只是临时过滤方案， Parquet是最终存储格式， 
+
+hive中table可以拆分成partition，table和partition可以通过‘CLUSTERED BY ’进一步分bucket，bucket中的数据可以通过‘SORT BY’排序。
+bucket主要作用：
+1. 数据sampling
+2. 提升某些查询操作效率，例如mapside join
+建student表：
+hive>create table student(id INT, age INT, name STRING)
+       >partitioned by(stat_date STRING) 
+       >clustered by(id) sorted by(age) into 2 bucket
+       >row format delimited fields terminated by ',';
+       
+       
+       1. 创建一个分区表，以 ds 为分区列： 
+create table invites (id int, name string) partitioned by (ds string) row format delimited fields terminated by 't' stored as textfile; 
+2. 将数据添加到时间为 2013-08-16 这个分区中： 
+load data local inpath '/home/hadoop/Desktop/data.txt' overwrite into table invites partition (ds='2013-08-16'); 
+3. 将数据添加到时间为 2013-08-20 这个分区中： 
+load data local inpath '/home/hadoop/Desktop/data.txt' overwrite into table invites partition (ds='2013-08-20'); 
+4. 从一个分区中查询数据： 
+select * from invites where ds ='2013-08-12'; 
+5.  往一个分区表的某一个分区中添加数据： 
+insert overwrite table invites partition (ds='2013-08-12') select id,max(name) from test group by id; 
+可以查看分区的具体情况，使用命令： 
+hadoop fs -ls /home/hadoop.hive/warehouse/invites 
+
+
+支持简单的数据类型 int/char/date/timestamp 也支持复杂的 array ,map,struct 
+sqoop可以直接load到hdfs也能到hive   
  安装 CDH
  添加yum
  [cloudera-cdh5]
@@ -16,5 +61,5 @@ gpgcheck = 1
 
 
 
-  rpm --import https://archive.cloudera.com/cdh5/redhat/7/x86_64/cdh/RPM-GPG-KEY-cloudera
+ rpm --import https://archive.cloudera.com/cdh5/redhat/7/x86_64/cdh/RPM-GPG-KEY-cloudera
   

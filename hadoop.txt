@@ -1,3 +1,187 @@
+1£¬Èç¹ûÄãÊÇÏëÓĞĞ©ÈË²»ÄÜ¿´µ½Ò»Ğ©Ãô¸Ğ×Ö¶Î£¬¿ÉÒÔÍ¨¹ısentry¿ØÖÆcolumnµÄ¸³È¨¾ÍĞĞÁË£¬Ã»ÓĞÈ¨ÏŞµÄÈË¿´²»µ½ÕâĞ©×Ö¶Î¡£2.Èç¹ûÊÇ±ØĞëÒª×öµ¥¸ö×Ö¶ÎµÄ¼ÓÃÜ£¬±ÈÈçÓĞÏÂ·¢ÎÄ¼şµÄĞèÇó£¬¿ÉÒÔÍ¨¹ıUDFÀ´×ö£¬hive/IMPALA¶¼¿ÉÒÔÖ±½ÓÊ¹ÓÃudf
+
+  DatanodeµÄÄÚ´æÔ¤¹À£º
+                Èç¹ûÊÇI/OÀàĞÍµÄjob£¬Ã¿¸öcore·ÖÅä2~4GB RAM
+                Èç¹ûÊÇCPUÀàĞÍµÄjob£¬Ã¿¸öcore·ÖÅä6~8GB RAM
+DNÊÇÒ»¸öÎïÀí»úÒ»¸ö¡£
+                HBA¿¨ÊÇ pcie 3.0 *8  µ¥Ïò8GB
+                
+
+Cloudera¡¡Search¡ªProvides¡¡near¡¡real-time¡¡access¡¡to¡¡data¡¡stored¡¡in¡¡or¡¡ingested¡¡into¡¡Hadoop¡¡and¡¡HBase.¡¡
+Cloudera¡¡Navigator¡ªAn¡¡end-to-end¡¡data¡¡management¡¡and¡¡security¡¡tool¡¡for¡¡the¡¡CDH¡¡platform.¡¡Cloudera¡¡Navigator¡¡enables¡¡administrators,¡¡data¡¡managers,¡¡and¡¡analysts¡¡to¡¡explore¡¡the¡¡large¡¡amounts¡¡
+Impala¡¡provides¡¡fast,¡¡interactive¡¡SQL¡¡queries¡¡directly¡¡on¡¡your¡¡Apache¡¡Hadoop¡¡data¡¡stored¡¡in¡¡HDFS,¡¡HBase
+Impala¡¡also¡¡uses¡¡the¡¡same¡¡metadata,¡¡SQL¡¡syntax¡¡(Hive¡¡SQL),¡¡ODBC¡¡driver,¡¡and¡¡user¡¡interface¡¡(Impala¡¡query¡¡UI¡¡in¡¡Hue)¡¡as¡¡Apache¡¡Hive.¡¡
+Lucene¡¡indexes¡¡the¡¡incoming¡¡events¡¡and¡¡the¡¡index¡¡is¡¡written¡¡and¡¡stored¡¡in¡¡standard¡¡Lucene¡¡index¡¡files¡¡in¡¡HDFS.
+Apache¡¡Sentry¡¡is¡¡a¡¡granular,¡¡role-based¡¡authorization¡¡module¡¡for¡¡Hadoop,Ö§³Ö Apache¡¡Hive,¡¡Hive¡¡Metastore/HCatalog,¡¡Apache¡¡Solr,¡¡Impala,¡¡and¡¡HDFS¡¡
+
+
+Ö÷µ¼¹«Ë¾   Twitter/Cloudera Parquet
+Hortonworks orcfile 
+£¬Ïà±ÈÓÚORC, Parquet Ã»ÓĞÌ«¶àÆäËû¿ÉÈ¦¿ÉµãµÄµØ·½£¬±ÈÈçËü²»Ö§³Öupdate²Ù×÷£¨Êı¾İĞ´³Éºó²»¿ÉĞŞ¸Ä£©£¬²»Ö§³ÖACIDµÈ¡£ 
+ORC·¢Õ¹µ½½ñÌì£¬ÒÑ¾­¾ß±¸Ò»Ğ©·Ç³£¸ß¼¶µÄfeature£¬±ÈÈçÖ§³Öupdate²Ù×÷£¬Ö§³ÖACID£¬Ö§³Östruct£¬array¸´ÔÓÀàĞÍ¡£Äã¿ÉÒÔÊ¹ÓÃ¸´ÔÓÀàĞÍ¹¹½¨Ò»¸öÀàËÆÓÚparquetµÄÇ¶Ì×Ê½Êı¾İ¼Ü¹¹£¬µ«µ±²ãÊı·Ç³£¶àÊ±£¬Ğ´ÆğÀ´·Ç³£Âé·³ºÍ¸´ÔÓ£¬¶øparquetÌá¹©µÄschema±í´ï·½Ê½¸üÈİÒ×±íÊ¾³ö¶à¼¶Ç¶Ì×µÄÊı¾İÀàĞÍ¡£
+
+1GB¡¡of¡¡NameNode¡¡memory¡¡for¡¡every¡¡1¡¡million¡¡blocks¡¡
+
+
+
+HDFS ÓÅ»¯£º
+dfs.datanode.synclose=true
+dfs.datanode.sync.behind.writes=true
+zookeeper.session.timeout¾¡Á¿Ğ¡Ò»µã
+´ò¿ª short circuit readÈç¹û region serverºÍdata nodeÔÚÍ¬Ò»Ì¨·şÎñÆ÷ÉÏ
+ÓÃxfsÎÄ¼şÏµÍ³
+hbase ¶ÁµÄÊ±ºò£¬HFile ÉÙÁ¿´óÎÄ¼şºÃ Ğ´µÄÊ±ºò ¶à¸öĞ¡µÄHFileĞÔÄÜºÃ
+ÆôÓÃhbaseÑ¹Ëõ(snappy) hbase block size È±Ê¡64K£¬ĞèÒªlarge scan,Ôö¼Óblock size ,¾«×¼get ¼õÉÙ block size 
+hbase heap size ºÍ ´ÅÅÌÈİÁ¿¹ØÏµ ´ÅÅÌÈİÁ¿/200 ,±ÈÈç14*4*1024/200=286G ram¶Ô 56TÈİÁ¿
+hbaseĞèÒª±È½Ï¶àµÄcpu ,cpu intenstive
+hbase client chunk size 2Mb ±È½ÏºÏÊÊ £¬ĞèÒª´ò¿ª hbase.zookeeper.useMulti=true(ZK 3.4+)
+linuxĞèÒª¹Øµô THP(transparent huge page)  swappines=0 vm.min_free_kbytes=8GB 
+hbaseÊÇÒ»¸öÏ¡Êè£¬Ò»ÖÂĞÔ£¬·Ö²¼Ê½£¬¶àÎ¬¶ÈµÄÅÅĞò map   row ÊÇ lexicographical order 
+hbaseµÄcolumn familyÒ»°ã×î¶àÁ½¸ö£¬½¨ÒéÒ»¸ö£¬¾¡Á¿Ê¹ÓÃ¶Ìkey £¬colume value¿ÉÒÔ±È½Ï´ó£¬kudo²»ĞĞ
+Ö§³Öbulk load from hdfs into hbase 
+hbase²»ÒªÉè¼Æ³ÉË³ĞòµÄkey£¬ÈİÒ×Ğ´µ½Ò»¸önode ,´´½¨µÄÊ±ºò¾¡Á¿°Ñsplit(±ÜÃâ¶¯Ì¬split)²ßÂÔÉèÖÃºÃ ¾¡Á¿°Ñ¶àµÄvalueĞ´µ½Ò»¸öcell 
+hbaseĞ´²Ù×÷ clientĞ´µ½ HTable(buffer)->WAL+memstore(per CF ,then  flush to Hfile per CF) ¼Ó´óclient buffer,¹Ø±Õ walÄÜ¹»ÌáÉıĞÔÄÜ£¬µ«ÊÇ´øÀ´ data loss risk 
+HFile¶¨ÆÚ»ácompact³É¸ü´óµÄHfile£¬Ìá¸ß¶ÁĞÔÄÜ
+ÎªÁËÌá¸ßĞÔÄÜ£¬¿ÉÒÔÏÈĞ´µ½hdfs,È»ºóbulk load into hbase
+hbase µÄcoprocessor ÓĞÏñ´æ´¢¹ı³ÌµÄ£¬ÄÜ¹»ÔÚserver sideĞ´Âß¼­£¬ÓĞÖ´ĞĞÉó¼ÆµÄÏñtrigger,ÓĞ°²È«¿ØÖÆµÄ
+hbaseÖ§³Öget/put/append(append columns to existing row)/increment/scan/delete/checkandput/checkandmutate/checkanddelete
+¾¡Á¿denormalizeÄãµÄÉè¼Æ
+PhonexÊÇÒ»¸öhbaseµÄsql¹¤¾ß£¬Ö§³Ö¶ş¼¶Ë÷Òı£¬Ö§³Öjoin ,Ö§³Öcount,group
+phoenixÊÇÒ»¸ösql over hbase,ÆÁ±ÎÁËÏ¸½Ú£¬¼òµ¥ impala on hbaseÊÇhive+hbase+impala Æğ²½¸´ÔÓµã
+ÏÖÔÚµÄÏµÍ³ÇãÏò Ê±ºò compact-merge,ÒÔÔö¼ÓĞ´ÈëËÙ¶È
+hbaseÖ§³Ösnapshot×öµ¼³ö±¸·İ	 ²»ÄÜÖ±½ÓÓÃhdfsµÄsnapshotÀ´±¸·İhbase
+È¨ÏŞ namespace(schema) create_namespace 'foo' 
+grant 'user1' ,'RWXCA','@foo' 
+create 'foo:table1' 'f1'
+Ò»°ãÒ»¸öRegsion server host 200¸öregion  Ò»°ãhost 1TBÊı
+Éú²úÖĞ²»½¨ÒéÊ¹ÓÃ phoniexµÄ¶ş¼¶Ë÷Òı£¬ÒòÎª´óÁ¿loadÊı¾İ»áµ¼ÖÂ hbase crash 
+hbaseÃ¿¸öcell(column+version)¶¼ÊÇ°üº¬rowkey+cf+colµÄ
+²»Ö§³Öjoin£¬ËùÒÔ²ÉÓÃdenormalizeÉè¼Æ£¬Ê¹ÓÃnested entity À´°üº¬ÒıÓÃ
+Ò»ĞĞµÄÊı¾İÊÇÊÂÎïµÄ£¬ËùÒÔĞ´Ò»ĞĞ°üº¬nested entityÊÇÊÂÎïµÄ
+data block  index block bloom filter block¶¼»ácache µ½ block cache 	
+WAL Ã¿¸öregion serverÒ»¸öÎïÀíµÄ£¬Ã¿¸öregionÒ»¸öÂß¼­µÄ
+Ğ´Êı¾İÁ÷³Ì
+»ñµÃËø 
+»ñµÃ next mvcc number
+ ¸øcell´òÉÏ mvcc number 
+  Ìí¼Ó cell µ½memstore  
+  Ğ´WAL log 
+ÊÍ·ÅËø 
+sync wal
+ÆäËûÓÃ»§ÄÜ¿´¼û
+
+ Log-Structured Merge-Trees
+ ²ÉÓÃDDIÉè¼Æ·½Ê½  Denormalization, Duplication and  Intelligent Keys
+ Denormalization -> Replacement for JOINs
+ Duplication -> Design for reads 
+ Intelligent Keys -> Implement indexing and sorting, optimize reads 
+Ë³Ğòkey £¬Ğ´ÆğÀ´×îÂı£¬¶ÁÆğÀ´×î¿ì
+Ëæ»úkey £¬Ğ´ÆğÀ´¿ì£¬¶ÁÆğÀ´×îÂı
+¿ÉÒÔÊ¹ÓÃ md5 À´hash key ´ïµ½Ëæ»úĞ§¹û
+Java Xmx heap at 10GB
+? Memstore share at 40% (default)
+? 10GB Heap x 0.4 = 4GB
+? Desired flush size at 128MB
+? 4GB / 128MB = 32 regions max!
+? For WAL size of 128MB x 0.95%
+? 4GB / (128MB x 0.95) = ~33 partially uncommitted logs to
+keep around
+? Region size at 20GB
+? 20GB x 32 regions = 640GB raw storage used 
+
+ 
+HBaseÔòÊÇ°ÑÃ¿Ò»ÁĞ¶¼¿´×öÊÇÒ»Ìõ¼ÇÂ¼£¬row+ÁĞÃû×÷Îªkey£¬data×÷Îªvalue£¬ÒÀ´Î´æ·Å¡£
+HBase½«¸üĞÂºÍÉ¾³ıÒ²È«²¿¿´×ö²åÈë²Ù×÷£¬ÓÃtimestampºÍdelete markerÀ´Çø·Ö¸Ã¼ÇÂ¼ÊÇ·ñÊÇ×îĞÂ¼ÇÂ¼¡¢ÊÇ·ñĞèÒªÉ¾³ı¡£Ò²ÕıÊÇÒòÎªÕâÑù£¬³ıÁË²éÑ¯£¬ÆäËûµÄ²Ù×÷Í³Ò»×ª»»³ÉÁËË³ĞòĞ´£¬±£Ö¤ÁËHBase¸ßĞ§µÄĞ´ĞÔÄÜ
+ESµÄ¸üĞÂºÍÉ¾³ıºÍHBaseÀàËÆ£¬Ò²ÊÇÈ«²¿¿´×öÊÇ²åÈë²Ù×÷£¬Í¨¹ıtimestampºÍdelete markerÀ´Çø·Ö¡£
+
+ÕâÀï¾ÍÊÇÎªNameNode£¯JobTracker£¯Standby NameNode½ÚµãÈºÍÆ¼öµÄ¼¼ÊõÏ¸½Ú¡£Çı¶¯Æ÷µÄÊıÁ¿»ò¶à»òÉÙ£¬½«È¡¾öÓÚÈßÓàÊıÁ¿µÄĞèÒª¡£
+
+4¨C6 1TB Ó²ÅÌÇı¶¯Æ÷ ²ÉÓÃ Ò»¸ö  JBOD ÅäÖÃ (1¸öÓÃÓÚOS, 2¸öÓÃÓÚÎÄ¼şÏµÍ³Ó³Ïñ[RAID 1], 1¸öÓÃÓÚApache ZooKeeper, 1¸öÓÃÓÚJournal½Úµã)
+2 4-/16-/8-ºËĞÄ CPUs, ÖÁÉÙÔËĞĞÓÚ 2-2.5GHz
+64-128GB Ëæ»ú´æ´¢Æ÷
+Bonded Gigabit ÒÔÌ«Íø¿¨ or 10Gigabit ÒÔÌ«Íø¿¨
+
+ÒòÎªlogstashÄÚ²¿ÊÇÃ»ÓĞÒ»¸öpersist queueµÄ£¬ËùÒÔÔÚÒì³£Çé¿öÏÂ£¬ÊÇ¿ÉÄÜ³öÏÖÊı¾İ¶ªÊ§µÄÎÊÌâµÄ¡£Ö»ÊÇÔÚÔËÎ¬ÈÕÖ¾³¡¾°ÏÂ£¬Ò»°ãÈÏÎªÕâ¸ö¿ÉÄÜ²»ÖØÒª¡£¶øflumeÊÇÓĞ×Ô¼ºÄÚ²¿»úÖÆÈ·±£Õâ¸öÎÊÌâ£¬ËùÒÔ¿ÉÒÔÓÃÓÚÒ»Ğ©¸üÖØÒªµÄÒµÎñÈÕÖ¾³¡¾°ÏÂ¡£³ıÁËÕâ¸öÒÔÍâ£¬Çø±ğ¾ÍÊÇlogstashÓĞ±Èflume·á¸»µÄ¶àµÄ²å¼ş¿ÉÑ¡¡£ËùÒÔÔÚÀ©Õ¹¹¦ÄÜÉÏ±ÈflumeÈ«Ãæ¡£
+Flume×îÔçÊÇClouderaÌá¹©µÄÈÕÖ¾ÊÕ¼¯ÏµÍ³£¬Ä¿Ç°ÊÇApacheÏÂµÄÒ»¸ö·õ»¯ÏîÄ¿£¬FlumeÖ§³ÖÔÚÈÕÖ¾ÏµÍ³ÖĞ¶¨ÖÆ¸÷ÀàÊı¾İ·¢ËÍ·½£¬ÓÃÓÚÊÕ¼¯Êı¾İ¡£
+FlumeÌá¹©¶ÔÊı¾İ½øĞĞ¼òµ¥´¦Àí£¬²¢Ğ´µ½¸÷ÖÖÊı¾İ½ÓÊÜ·½£¨¿É¶¨ÖÆ£©µÄÄÜÁ¦ FlumeÌá¹©ÁË´Óconsole£¨¿ØÖÆÌ¨£©¡¢RPC£¨Thrift-RPC£©¡¢text£¨ÎÄ¼ş£©¡¢tail£¨UNIX tail£©¡¢syslog£¨syslogÈÕÖ¾ÏµÍ³£¬Ö§³ÖTCPºÍUDPµÈ2ÖÖÄ£Ê½£©£¬exec£¨ÃüÁîÖ´ĞĞ£©µÈÊı¾İÔ´ÉÏÊÕ¼¯Êı¾İµÄÄÜÁ¦¡£
+Flume±¾Éí×î³õÉè¼ÆµÄÄ¿µÄÊÇÎªÁË°ÑÊı¾İ´«ÈëHDFSÖĞ£¨²¢²»ÊÇÎªÁË²É¼¯ÈÕÖ¾¶øÉè¼Æ£¬ÕâºÍLogstashÓĞ¸ù±¾µÄÇø±ğ£©£¬ËùÒÔÀíËùÓ¦µ±²àÖØÓÚÊı¾İµÄ´«Êä£¬³ÌĞòÔ±Òª·Ç³£Çå³şÕû¸öÊı¾İµÄÂ·ÓÉ£¬²¢ÇÒ±ÈLogstash»¹¶àÁËÒ»¸ö¿É¿¿ĞÔ²ßÂÔ£¬ÉÏÎÄÖĞµÄchannel¾ÍÊÇÓÃÓÚ³Ö¾Ã»¯Ä¿µÄ£¬Êı¾İ³ı·ÇÈ·ÈÏ´«Êäµ½ÏÂÒ»Î»ÖÃÁË£¬·ñÔò²»»áÉ¾³ı£¬ÕâÒ»²½ÊÇÍ¨¹ıÊÂÎñÀ´¿ØÖÆµÄ£¬ÕâÑùµÄÉè¼ÆÊ¹µÃ¿É¿¿ĞÔ·Ç³£ºÃ¡£Ïà·´£¬LogstashÔòÃ÷ÏÔ²àÖØ¶ÔÊı¾İµÄÔ¤´¦Àí£¬ÒòÎªÈÕÖ¾µÄ×Ö¶ÎĞèÒª´óÁ¿µÄÔ¤´¦Àí£¬Îª½âÎö×öÆÌµæ¡£
+Ïà·´Flume×é¼ş¾ÍĞèÒªºÍÆäËûºÜ¶à¹¤¾ßÅäºÏÊ¹ÓÃ£¬³¡¾°µÄÕë¶ÔĞÔ»á±È½ÏÇ¿£¬¸ü²»ÓÃÌáFlumeµÄÅäÖÃ¹ıÓÚ·±Ëö¸´ÔÓÁË¡£
+
+hbaseÊ¹ÓÃ³¡¾°
+´æ´¢´óÁ¿µÄÊı¾İ£¨TB¼¶Êı¾İ£©£»
+ĞèÒªºÜ¸ßµÄĞ´ÍÌÍÂÁ¿
+²¶»ñÔöÁ¿Êı¾İ Êı¾İÍ¨³£ÊÇÏ¸Ë®³¤Á÷£¬ÀÛ¼Óµ½ÒÑÓĞÊı¾İ¿âÒÔ±¸½«À´Ê¹ÓÃ£¬ÀıÈç·ÖÎö£¬´¦ÀíºÍ·şÎñ¡£Ğí¶àHBaseÊ¹ÓÃ³¡¾°ÊôÓÚÕâ¸öÀà±ğ¡ª¡ªÊ¹ÓÃHBase×÷ÎªÊı¾İ´æ´¢£¬²¶»ñÀ´×ÔÓÚ¸÷ÖÖÊı¾İÔ´µÄÔöÁ¿Êı¾İ¡£ÀıÈç£¬ÕâÖÖÊı¾İÔ´¿ÉÄÜÊÇÍøÒ³ÅÀ³æ£¨ÎÒÃÇÌÖÂÛ¹ıµÄBigTableµäĞÍÎÊÌâ£©£¬¿ÉÄÜÊÇ¼ÇÂ¼ÓÃ»§¿´ÁËÊ²Ã´¹ã¸æºÍ¶à³¤Ê±¼äµÄ¹ã¸æĞ§¹ûÊı¾İ£¬Ò²¿ÉÄÜÊÇ¼ÇÂ¼¸÷ÖÖ²ÎÊıµÄÊ±¼äĞòÁĞÊı¾İ
+ÔÚ´ó¹æÄ£Êı¾İ¼¯ÖĞ½øĞĞºÜºÃĞÔÄÜµÄËæ»ú·ÃÎÊ£¨»ùÓÚRowKey£©£»
+ĞèÒª½øĞĞÊı¾İÀ©Õ¹£»
+½á¹¹»¯ºÍ°ë½á¹¹»¯µÄÊı¾İ£»
+HBase·Ç³£ÊÊºÏÊÕ¼¯ÕâÖÖÓÃ»§½»»¥Êı¾İ£¬HBaseÒÑ¾­³É¹¦µØÓ¦ÓÃÔÚÕâÖÖ³¡ºÏ£¬Ëü¿ÉÒÔÔöÁ¿²¶»ñµÚÒ»ÊÖµã»÷Á÷ºÍÓÃ»§½»»¥Êı¾İ£¬È»ºóÓÃ²»Í¬´¦Àí·½Ê½£¨MapReduceÊÇÆäÖĞÒ»ÖÖ£©À´´¦ÀíÊı¾İ£¨ÇåÀí¡¢×°ÊÎ¡¢Ê¹ÓÃÊı¾İ£©
+
+
+Facebook¶ÌĞÅÏµÍ³¾­³£±»¹«¿ªÌÖÂÛ£¬ËûÒ²¿ÉÄÜ¼«´óµØÇı¶¯ÁËHBaseµÄ·¢Õ¹¡£µ±ÄãÊ¹ÓÃFacebookÊ±£¬Ä³¸öÊ±ºòÄã¿ÉÄÜ»áÊÕµ½»òÕß·¢ËÍ¶ÌĞÅ¸øÄãµÄÅóÓÑ¡£
+FacebookµÄÕâ¸öÌØĞÔÍêÈ«ÒÀÀµÓÚHBase¡£ÓÃ»§¶ÁĞ´µÄËùÓĞ¶ÌĞÅ¶¼´æ´¢ÔÚHBaseÀï¡£Ö§³ÖFacebook¶ÌĞÅµÄÏµÍ³ĞèÒª¾ß±¸£º¸ßµÄĞ´ÍÌÍÂÁ¿£¬¼«´óµÄ±í£¬Êı¾İÖĞĞÄÄÚµÄÇ¿Ò»ÖÂĞÔ¡£
+³ıÁË¶ÌĞÅÏµÍ³Ö®Íâ£¬Ê¹ÓÃHBaseµÄÆäËûÓ¦ÓÃÏµÍ³ÁíÍâÒªÇó£º¸ßµÄ¶ÁÍÌÍÂÁ¿£¬¼ÆÊıÆ÷ÍÌÍÂÁ¿£¬×Ô¶¯·Ö¿â¡£
+HiveÖĞµÄ±íÊÇ´¿Âß¼­±í£¬¾ÍÖ»ÊÇ±íµÄ¶¨ÒåµÈ£¬¼´±íµÄÔªÊı¾İ¡£Hive±¾Éí²»´æ´¢Êı¾İ£¬ËüÍêÈ«ÒÀÀµHDFSºÍMapReduce¡£
+ÕâÑù¾Í¿ÉÒÔ½«½á¹¹»¯µÄÊı¾İÎÄ¼şÓ³ÉäÎªÎªÒ»ÕÅÊı¾İ¿â±í£¬²¢Ìá¹©ÍêÕûµÄSQL²éÑ¯¹¦ÄÜ£¬²¢½«SQLÓï¾ä×îÖÕ×ª»»ÎªMapReduceÈÎÎñ½øĞĞÔËĞĞ¡£
+¶øHBase±íÊÇÎïÀí±í£¬ÊÊºÏ´æ·Å·Ç½á¹¹»¯µÄÊı¾İ¡£
+HiveÊÇ»ùÓÚMapReduceÀ´´¦ÀíÊı¾İ,¶øMapReduce´¦ÀíÊı¾İÊÇ»ùÓÚĞĞµÄÄ£Ê½£»HBase´¦ÀíÊı¾İÊÇ»ùÓÚÁĞµÄ¶ø²»ÊÇ»ùÓÚĞĞµÄÄ£Ê½£¬
+ÊÊºÏº£Á¿Êı¾İµÄËæ»ú·ÃÎÊ¡£3.      HBaseµÄ±íÊÇÊèËÉµÄ´æ´¢µÄ£¬Òò´ËÓÃ»§¿ÉÒÔ¸øĞĞ¶¨Òå¸÷ÖÖ²»Í¬µÄÁĞ£»¶øHive±íÊÇ³íÃÜĞÍ£¬¼´¶¨Òå¶àÉÙÁĞ£¬Ã¿Ò»ĞĞÓĞ´æ´¢¹Ì¶¨ÁĞÊıµÄÊı¾İ¡£
+4.      HiveÊ¹ÓÃHadoopÀ´·ÖÎö´¦ÀíÊı¾İ£¬¶øHadoopÏµÍ³ÊÇÅú´¦ÀíÏµÍ³£¬Òò´Ë²»ÄÜ±£Ö¤´¦ÀíµÄµÍ³ÙÑÓÎÊÌâ£»¶øHBaseÊÇ½üÊµÊ±ÏµÍ³£¬Ö§³ÖÊµÊ±²éÑ¯¡£
+5.      Hive²»Ìá¹©row-levelµÄ¸üĞÂ£¬ËüÊÊÓÃÓÚ´óÁ¿append-onlyÊı¾İ¼¯£¨ÈçÈÕÖ¾£©µÄÅúÈÎÎñ´¦Àí¡£¶ø»ùÓÚHBaseµÄ²éÑ¯£¬Ö§³ÖºÍrow-levelµÄ¸üĞÂ¡£
+°´ÕÕCAPÀíÂÛ£¬HBaseÊôÓÚC+PÀàĞÍµÄÏµÍ³¡£HBaseÊÇÇ¿Ò»ÖÂĞÔµÄ£¨½öÖ§³Öµ¥ĞĞÊÂÎñ£©
+¡£Ã¿Ò»ĞĞÓÉµ¥¸öÇøÓò·şÎñÆ÷£¨region server£©host£¬ĞĞËø£¨row locks£©ºÍ¶à°æ±¾²¢·¢¿ØÖÆ(multiversion concurrency control)µÄ×éºÏ±»ÓÃÀ´±£Ö¤ĞĞµÄÒ»ÖÂĞÔ¡£
+
+Hive + HBaseReasons to use Hive on HBase:A lot of data sitting in HBase due to its usage in a real-time environment, 
+but never used for analysisGive access to data in HBase usually
+only queried through MapReduce to people that don¡¯t code (business analysts)When needing a more flexible storage solution, 
+so that rows can be updated live by either a Hive job or an application and can be seen immediately to the other
+
+ÔÚ´óÊı¾İ¼Ü¹¹ÖĞ£¬HiveºÍHBaseÊÇĞ­×÷¹ØÏµ£¬Êı¾İÁ÷Ò»°ãÈçÏÂÍ¼£º
+
+Í¨¹ıETL¹¤¾ß½«Êı¾İÔ´³éÈ¡µ½HDFS´æ´¢£»
+Í¨¹ıHiveÇåÏ´¡¢´¦ÀíºÍ¼ÆËãÔ­Ê¼Êı¾İ£»
+HIveÇåÏ´´¦ÀíºóµÄ½á¹û£¬Èç¹ûÊÇÃæÏòº£Á¿Êı¾İËæ»ú²éÑ¯³¡¾°µÄ¿É´æÈëHbase
+Êı¾İÓ¦ÓÃ´ÓHBase²éÑ¯Êı¾İ£»
+
+
+redisÊÊºÏ³¡¾°£ºĞÔÄÜÒªÇó¸ß£¬´æ´¢ÈİÁ¿²»ÊÇºÜ´ó£¬¿ÉÒÔ½ÓÊÜÄÚ´æ³É±¾¸ßµÄ
+hbaseÊÊºÏ³¡¾°£ºĞÔÄÜÒªÇó²»ÊÇÌØ±ğ¸ß£¬¿ÉÒÔÈİÈÌÒ»Ğ©ÇëÇóÊÇÊ§°ÜµÄ»òÕß³¬Ê±µÄ
+
+Hive ÊÊºÏÓÃÀ´¶ÔÒ»¶ÎÊ±¼äÄÚµÄÊı¾İ½øĞĞ·ÖÎö²éÑ¯£¬ÀıÈç£¬ÓÃÀ´¼ÆËãÇ÷ÊÆ»òÕßÍøÕ¾µÄÈÕÖ¾¡£Hive ²»Ó¦¸ÃÓÃÀ´½øĞĞÊµÊ±µÄ²éÑ¯£¨Hive µÄÉè¼ÆÄ¿µÄ£¬Ò²²»ÊÇÖ§³ÖÊµÊ±µÄ²éÑ¯£©
+¡£ÒòÎªËüĞèÒªºÜ³¤Ê±¼ä²Å¿ÉÒÔ·µ»Ø½á¹û£»HBase Ôò·Ç³£ÊÊºÏÓÃÀ´½øĞĞ´óÊı¾İµÄÊµÊ±²éÑ¯£¬ÀıÈç Facebook ÓÃ HBase ½øĞĞÏûÏ¢ºÍÊµÊ±µÄ·ÖÎö¡£
+¶ÔÓÚ Hive ºÍ HBase µÄ²¿ÊğÀ´Ëµ£¬Ò²ÓĞÒ»Ğ©Çø±ğ£¬Hive Ò»°ãÖ»ÒªÓĞ Hadoop ±ã¿ÉÒÔ¹¤×÷¡£
+¶ø HBase Ôò»¹ĞèÒª Zookeeper µÄ°ïÖú£¨Zookeeper£¬ÊÇÒ»¸öÓÃÀ´½øĞĞ·Ö²¼Ê½Ğ­µ÷µÄ·şÎñ£¬ÕâĞ©·şÎñ°üÀ¨ÅäÖÃ·şÎñ£¬Î¬»¤ÔªĞÅÏ¢ºÍÃüÃû¿Õ¼ä·şÎñ£©¡£
+ÔÙ¶ø£¬HBase ±¾ÉíÖ»Ìá¹©ÁË Java µÄ API ½Ó¿Ú£¬²¢²»Ö±½ÓÖ§³Ö SQL µÄÓï¾ä²éÑ¯£¬¶ø Hive Ôò¿ÉÒÔÖ±½ÓÊ¹ÓÃ HQL£¨Ò»ÖÖÀà SQL ÓïÑÔ£©¡£
+Èç¹ûÏëÒªÔÚ HBase ÉÏÊ¹ÓÃ SQL£¬ÔòĞèÒªÁªºÏÊ¹ÓÃ Apache Phonenix£¬»òÕßÁªºÏÊ¹ÓÃ Hive ºÍ HBase¡£
+µ«ÊÇºÍÉÏÃæÌáµ½µÄÒ»Ñù£¬Èç¹û¼¯³ÉÊ¹ÓÃ Hive ²éÑ¯ HBase µÄÊı¾İ£¬ÔòÎŞ·¨ÈÆ¹ı MapReduce£¬ÄÇÃ´ÊµÊ±ĞÔ»¹ÊÇÓĞÒ»¶¨µÄËğÊ§¡£
+Phoenix ¼Ó HBase µÄ×éºÏÔò²»¾­¹ı MapReduce µÄ¿ò¼Ü£¬Òò´Ëµ±Ê¹ÓÃ Phoneix ¼Ó HBase µÄ×é³É£¬ÊµÊ±ĞÔÉÏ»áÓÅÓÚ Hive ¼Ó HBase µÄ×éºÏ£¬
+ÎÒÃÇºóĞøÒ²»áÊ¾ÀıĞÔ½éÉÜÈçºÎÊ¹ÓÃÁ½Õß¡£×îºóÎÒÃÇÔÙÌáÏÂ Hive ºÍ HBase ËùÊ¹ÓÃµÄ´æ´¢²ã£¬Ä¬ÈÏÇé¿öÏÂ Hive ºÍ HBase µÄ´æ´¢²ã¶¼ÊÇ HDFS¡£
+µ«ÊÇ HBase ÔÚÒ»Ğ©ÌØÊâµÄÇé¿öÏÂÒ²¿ÉÒÔÖ±½ÓÊ¹ÓÃ±¾»úµÄÎÄ¼şÏµÍ³¡£ÀıÈç Ambari ÖĞµÄ AMS ·şÎñÖ±½ÓÔÚ±¾µØÎÄ¼şÏµÍ³ÉÏÔËĞĞ HBase¡£
+
+PhoenixÖ»¿´³ÉÒ»ÖÖ´úÌæHBaseµÄÓï·¨µÄÒ»¸ö¹¤¾ß¡£ËäÈ»¿ÉÒÔÓÃjava¿ÉÒÔÓÃjdbcÀ´Á¬½Óphoenix£¬È»ºó²Ù×÷HBase£¬µ«ÊÇÔÚÉú²ú»·¾³ÖĞ£¬²»¿ÉÒÔÓÃÔÚOLTPÖĞ
+PhoenixÊÇ¹¹½¨ÔÚHBaseÉÏµÄÒ»¸öSQL²ã£¬ÄÜÈÃÎÒÃÇÓÃ±ê×¼µÄJDBC APIs¶ø²»ÊÇHBase¿Í»§¶ËAPIsÀ´´´½¨±í£¬²åÈëÊı¾İºÍ¶ÔHBaseÊı¾İ½øĞĞ²éÑ¯¡£
+Phoenix²éÑ¯ÒıÇæ»á½«SQL²éÑ¯×ª»»ÎªÒ»¸ö»ò¶à¸öHBaseÉ¨Ãè£¬²¢±àÅÅÖ´ĞĞÒÔÉú³É±ê×¼µÄJDBC½á¹û¼¯¡£Ö±½ÓÊ¹ÓÃHBase API¡¢Ğ­Í¬´¦ÀíÆ÷Óë×Ô¶¨Òå¹ıÂËÆ÷£¬¶ÔÓÚ¼òµ¥²éÑ¯À´Ëµ£¬ÆäĞÔÄÜÁ¿¼¶ÊÇºÁÃë£¬¶ÔÓÚ°ÙÍò¼¶±ğµÄĞĞÊıÀ´Ëµ£¬ÆäĞÔÄÜÁ¿¼¶ÊÇÃë¡£
+
+sparksql/impala/prestoĞ¡Êı¾İ±íÏÖ¸üºÃ £¬hive llap ĞÔÄÜÌáÉıºÜÃ÷ÏÔ
+presto/impala²¢·¢ĞÔÄÜ¸üºÃ
+impala  ÏìÓ¦Ê±¼ä¸ü¶Ì  ²»Ö§³ÖÈİ´í Ö§³Ö´ó²¿·Öhive Óï·¨ ÒªÓÃµ½ hive metastoreºÍhbase Ö±½Ó´Ó´ÅÅÌ¶Á£¬ÈÆ¹ıhdfs,ËùÒÔ¿ì£¬mppÈ«ÄÚ´æ²Ù×÷
+spark sqlÊÊºÏÓÃSQLĞ´pipeline £¬²»Ì«ÊÊºÏ½»»¥Ê½³¡¾°
+
+
+hiveÖ§³Örange ºÍ hash partition 
+
+Í¨¹ıÒÔÏÂÁ½ÖÖ·½Ê½»ñµÃHBaseÊı¾İ£º
+Í¨¹ıËûÃÇµÄĞĞ¼ü£¬»òÕßÒ»ÏµÁĞĞĞ¼üµÄ±íÉ¨Ãè¡£
+Ê¹ÓÃmap-reduce½øĞĞÅú²Ù×÷
+
+ÓĞÁ½¸öÔ­ÒòÁîĞĞ¼üµÄÉè¼ÆÊ®·ÖÖØÒª£º±íÉ¨ÃèÊÇ¶ÔĞĞ¼üµÄ²Ù×÷£¬ËùÒÔ£¬ĞĞ¼üµÄÉè¼Æ¿ØÖÆ×ÅÄãÄÜ¹»Í¨¹ıHBaseÖ´ĞĞµÄÊµÊ±/Ö±½Ó»ñÈ¡Á¿¡£
+µ±ÔÚÉú²ú»·¾³ÖĞÔËĞĞHBaseÊ±£¬ËüÔÚHDFSÉÏ²¿ÔËĞĞ£¬Êı¾İ»ùÓÚĞĞ¼üÍ¨¹ıHDFS£¬
+Èç¹ûÄãËùÓĞµÄĞĞ¼ü¶¼ÊÇÒÔuser-¿ªÍ·£¬ÄÇÃ´ºÜÓĞ¿ÉÄÜÄã´ó²¿·ÖÊı¾İ¶¼±»·ÖÅäÒ»¸ö½ÚµãÉÏ£¨Î¥±³ÁË·Ö²¼Ê½Êı¾İµÄ³õÖÔ£©£¬
+Òò´Ë£¬ÄãµÄĞĞ¼üÓ¦¸ÃÊÇÓĞ×ã¹»µÄ²îÒìĞÔÒÔ±ã·Ö²¼Ê½µØÍ¨¹ıÕû¸ö²¿Êğ¡£Äã¶¨ÒåĞĞ¼üµÄ·½Ê½È¡¾öÓÚÄãÏëÔõÑù´æÈ¡ÄÇĞ©ĞĞ¡£
+Èç¹ûÄãÏëÒÔÓÃ»§Îª»ù´¡´æ´¢Êı¾İ£¬ÄÇÃ´Ò»¸ö²ßÂÔÊÇÀûÓÃ×Ö½Ú¶ÓÁĞÔÚHBaseÖĞ´æ´¢ĞĞ¼ü£¬ËùÒÔÎÒÃÇ¿ÉÒÔ´´½¨Ò»¸öÓÃ»§IDµÄ¹şÏ££¨ÀıÈçMD5»òSHA-1£©£¬
+È»ºóÔÚ¹şÏ£ºóÃæ¸½ÉÏÊ±¼ä£¨longÀàĞÍ£©¡£Ê¹ÓÃ¹şÏ£ÓĞÁ½¸öÖØµã£º£¨1£©ÊÇËüÄÜ¹»½«value·ÖÉ¢¿ª£¬Êı¾İÄÜ¹»·Ö²¼Ê½µØÍ¨¹ı´Ø£¬
+£¨2£©ÊÇËüÈ·±£keyµÄ³¤¶ÈÊÇÒ»ÖÂµÄ£¬ÒÔ¸ü¼ÓÈİÒ×ÔÚ±íÉ¨ÃèÖĞÊ¹ÓÃ¡£
+
+
 20170313 CDH
 Master Hosts -> NameNode  YARN ResourceManager  ZooKeeper
 Utility Hosts  ->  Secondary NameNode
@@ -19,10 +203,13 @@ YARN×÷ÎªÒ»¸ö·Ö²¼Ê½Êı¾İ²Ù×÷ÏµÍ³£¬Ö÷Òª×÷ÓÃÊÇ×ÊÔ´¹ÜÀíºÍ×ÊÔ´µ÷¶È¡£ÔÚ¹ıÈ¥Ò»Äê£¬YARNĞÂ
 MesosÊÇÒ»¸öË«²ãµ÷¶ÈÆ÷¡£ÔÚµÚÒ»²ãÖĞ£¬Mesos½«Ò»¶¨µÄ×ÊÔ´Ìá¹©£¨ÒÔÈİÆ÷µÄĞÎÊ½£©¸ø¶ÔÓ¦µÄ¿ò¼Ü¡£¿ò¼ÜÔÚµÚ¶ş²ã½ÓÊÕµ½×ÊÔ´ºó£¬»áÔËĞĞ×Ô¼ºµÄµ÷¶ÈËã·¨À´½«ÈÎÎñ·ÖÅäµ½MesosËùÌá¹©µÄÕâĞ©×ÊÔ´ÉÏ¡£ºÍHadoop YARNµÄÕâÖÖÖĞÑëµ÷¶ÈÆ÷Ïà±È£¬»òĞíËüÔÚ¼¯Èº×ÊÔ´Ê¹ÓÃ·½Ãæ²¢²»ÊÇÄÇÃ´¸ßĞ§¡£µ«ÊÇËü´øÀ´ÁËÁé»îĞÔ¡ª¡ª±ÈÈçËµ£¬¶à¸ö¿ò¼ÜÊµÀı¿ÉÒÔÔËĞĞÔÚÒ»¸ö¼¯ÈºÀï¡£ÕâÊÇÏÖÓĞµÄÕâĞ©µ÷¶ÈÆ÷¶¼ÎŞ·¨ÊµÏÖµÄ¡£
 
   HDFS ÊÊºÏ´óÎÄ¼ş£¬´óÍÌÍÂ£¬²»ºÏÊÊĞ¡ÎÄ¼ş£¬¿ìËÙËæ»ú¶ÁÈ¡
-  HDFS Federation ÊÇÖ¸¶à¸öNN  ×éºÏÌá¹©·şÎñ£¬ÒÔ½â¾öµ¥NNÄÚ´æ²»¹»µÄÎÊÌâ
-  HDFS 3.0Ö§³Ö¶à¸östandby NN ,¿ÉÒÔ²ÉÓÃ NFS¹²Ïí»òÕßQuorum Journal Manager µÄ·½Ê½£¬ÔÚQJM·½Ê½ÏÂ£¬active NN ·¢ËÍedit logµ½ standby ,Í¨¹ıZK×öÖÙ²Ã£¬Í¬Ê±data nodeÏòËùÓĞµÄNN(active/standby)»ã±¨ block ·Ö²¼Çé¿ö
-  
-  
+  HDFS Federation ÊÇÖ¸¶à¸öNN  ×éºÏÌá¹©·şÎñ£¬ÒÔ½â¾öµ¥NNÄÚ´æ²»¹»µÄÎÊÌâ,¶à¸öNNÏà»¥²»½»»¥£¬datanodeºÍËùÓĞNN½»»¥
+  HDFS 3.0Ö§³Ö¶à¸östandby NN ,¿ÉÒÔ²ÉÓÃ NFS¹²Ïí»òÕßQuorum Journal Manager µÄ·½Ê½£¬ÔÚQJM·½Ê½ÏÂ£¬active NN ·¢ËÍedit logµ½´ó¶àÊı ¡°JournalNodes¡± (JNsÇáÁ¿¼¶java³ÌĞò).,È»ºó standby NN´ÓJN»ñÈ¡¸üĞÂĞÅÏ¢ÒÔ±£³ÖÍ¬²½   Í¨¹ıZK×öÖÙ²Ã£¬Í¬Ê±data nodeÏòËùÓĞµÄNN(active/standby)»ã±¨ block ·Ö²¼Çé¿ö
+  Ö»ÓĞActive NN²ÅÄÜÍùJNĞ´edit log
+  NN¶ÁĞÔÄÜ120K/s,Ğ´ĞÔÄÜ6k/S
+    HDFS supports user quotas and access permissions  HDFS does not support hard links or soft links.
+    quotaÖ§³Ö°´ÎÄ¼şÃûÊıÁ¿£¬°´Ã¿Ä¿Â¼µÄÈİÁ¿¿ØÖÆ
+    hdfsµÄreplicaµÄ²ßÂÔÊÇÏÈ·ÅÍ¬Ò»»ú¹ñ²»Í¬·şÎñÆ÷£¬È»ºóÊÇ²»Í¬»ú¹ñµÄ·şÎñÆ÷£¬´ïµ½ĞÔÄÜºÍ°²È«²¢ÖØµÄÄ¿µÄ£¬¶ÁÈ¡µÄÊ±ºò£¬Ò²ÊÇÏÈ¶ÁclientÍ¬»ú¹ñµÄ·şÎñÇøµÄ¸´ÖÆ
   
 hadoop   CDH install base×î¶à 
 
@@ -107,7 +294,7 @@ HBase¼Ì³ĞÓÚBigtableµÄÉè¼Æ£¬²àÖØÓÚCA¡£¶øCassandraÔò¼Ì³ĞÓÚDynamoµÄÉè¼Æ£¬²àÖØÓÚAP
     HBase±£Ö¤Ğ´ÈëµÄÒ»ÖÂĞÔ¡£µ±Ò»·İÊı¾İ±»ÒªÇó¸´ÖÆN·İµÄÊ±ºò£¬Ö»ÓĞN·İÊı¾İ¶¼±»ÕæÕı¸´ÖÆµ½NÌ¨·şÎñÆ÷ÉÏÖ®ºó£¬¿Í»§¶Ë²Å»á³É¹¦·µ»Ø¡£Èç¹ûÔÚ¸´ÖÆ¹ı³ÌÖĞ³öÏÖÊ§°Ü£¬ËùÓĞµÄ¸´ÖÆ¶¼½«Ê§°Ü¡£Á¬½ÓÉÏÈÎºÎÒ»Ì¨·şÎñÆ÷µÄ¿Í»§¶Ë¶¼ÎŞ·¨¿´µ½±»¸´ÖÆµÄÊı¾İ¡£
     HBaseÌá¹©ĞĞËø£¬µ«ÊÇ²»Ìá¹©¶àĞĞËøºÍÊÂÎñ¡£
     HBase»ùÓÚHDFS£¬Òò´ËÊı¾İµÄ¶à·İ¸´ÖÆ¹¦ÄÜºÍ¿É¿¿ĞÔ½«ÓÉHDFSÌá¹©¡£
-    HBaseºÍMapReduceÌìÈ»¼¯³É¡£
+ ¡£
     hbaseÊÇbigtableµÄ¿ªÔ´É½Õ¯°æ±¾¡£ÊÇ½¨Á¢µÄhdfsÖ®ÉÏ£¬Ìá¹©¸ß¿É¿¿ĞÔ¡¢¸ßĞÔÄÜ¡¢ÁĞ´æ´¢¡¢¿ÉÉìËõ¡¢ÊµÊ±¶ÁĞ´µÄÊı¾İ¿âÏµÍ³¡£
 		Ëü½éÓÚnosqlºÍRDBMSÖ®¼ä£¬½öÄÜÍ¨¹ıÖ÷¼ü(row key)ºÍÖ÷¼üµÄrangeÀ´¼ìË÷Êı¾İ»òÕßÈ«±íÉ¨Ãè£¬
 		½öÖ§³Öµ¥ĞĞÊÂÎñ(¿ÉÍ¨¹ıhiveÖ§³ÖÀ´ÊµÏÖ¶à±íjoinµÈ¸´ÔÓ²Ù×÷)¡£Ö÷ÒªÓÃÀ´´æ´¢·Ç½á¹¹»¯ºÍ°ë½á¹¹»¯µÄËÉÉ¢Êı¾İ¡£
@@ -235,6 +422,7 @@ Second name node ²»ÊÇÓÃÀ´×öÈİÔÖµÄ(only for checkpoint£¬copy FSimageºÍedit logµ½ 
 Ò²¿ÉÒÔÊ¹ÓÃ BackupNodeÀ´ÊµÊ±Í¬²½transaction logÓÃ×÷»Ö¸´£¬ÊÇÍ¬²½µÄ£¬×Ô¼ºĞ´³É¹¦ ²Å»Ø¸´ NN
 
 DataNodeÃ¿¸öblock´´½¨Ò»¸öÎÄ¼ş£¬»á×Ô¶¯·Ö²¼ÔÚ²»Í¬Ä¿Â¼»òÕß×ÓÄ¿Â¼£¬Ã¿´ÎÆô¶¯µÄÊ±ºò½øĞĞÉ¨Ãè£¬·¢ËÍblockReportµ½NameNode
+namenode²»Ö÷¶¯·¢rpcµ½datanode,Ö»±»¶¯»ØÓ¦datanodeµÄrpc, datanode¶¨ÆÚheartbeatµ½namenode 
 
 NameNode²»×Ô¶¯·¢ÆğÇëÇóµÀDataNode,¶¼ÊÇdatanode×Ô¶¯·¢ÆğÍ¨ĞÅÇëÇó
 clientÔÚ´æ·ÅÎÄ¼şµÄÊ±ºò£¬»á×Ô¶¯¶ÔÃ¿¸öblockËãÒ»¸öchecksum£¬¶ÁÈ¡Êı¾İµÄÊ±ºò»áĞ£ÑéÕâ¸öchecksum£¬Èç¹û²»¶Ô£¬»áÖØĞÂ´ÓÁíÍâÒ»¸ö½ÚµãÄÃ
@@ -242,24 +430,38 @@ clientÔÚ´æ·ÅÎÄ¼şµÄÊ±ºò£¬»á×Ô¶¯¶ÔÃ¿¸öblockËãÒ»¸öchecksum£¬¶ÁÈ¡Êı¾İµÄÊ±ºò»áĞ£ÑéÕâ¸
 
 Eidtlog(transaction log)ºÍFsImage¿ÉÒÔĞ´¶à·İÒÔ±£Ö¤°²È«
 
-clientĞ´Êı¾İµÄÊ±ºò£¬ÊÇÏÈĞ´µ½×Ô¼ºµÄlocal tempfile,µ± localÀÛ¼ÆµÄÁ¿´óÓÚµÈÓÚÒ»¸öchunkµÄÊ±ºò£¬·¢ËÍÇëÇóµÀnameNode£¬nameNode·ÖÅädataNode,È»ºóclientÖ±½ÓºÍdata nodeÍ¨ĞÅ£¬Ğ´localÖ÷ÒªÊÇÎªÁËĞÔÄÜ¿¼ÂÇ
+clientĞ´Êı¾İµÄÊ±ºòĞèÒªlease lock 
+clientĞ´Êı¾İµÄÊ±ºò£¬ÊÇÏÈĞ´µ½×Ô¼ºµÄlocal file(»º´æµ½buffer),µ± local fileÀÛ¼ÆµÄÁ¿´óÓÚµÈÓÚÒ»¸öchunkµÄÊ±ºò£¬·¢ËÍÇëÇóµÀnameNode£¬nameNode·ÖÅädataNode,È»ºóclientÖ±½ÓºÍdata nodeÍ¨ĞÅ£¬Ğ´localÖ÷ÒªÊÇÎªÁËĞÔÄÜ¿¼ÂÇ¡£µ± client close fileµÄÊ±ºò£¬»¹Ã»´«ÊäµÄbufferÀïµÄdataÒ²Ë¢ĞÂµ½datanode,È»ºóclient Í¨Öªµ½nodename,NNĞ´ÈÕÖ¾µ½editlog
 ¸´ÖÆµÄÊ±ºòÊÇclientÏÈ´«Êädataµ½µÚÒ»¸ödata node,µ±µÚÒ»¸ödata node½ÓÊÕµ½4kbµÄÊı¾İ£¬¾ÍÍù±¾µØĞ´£¬È»ºó¸´ÖÆµ½µÚ¶ş¸ödata½Úµã,È»ºóµÚ¶şdata node¸´ÖÆµ½µÚÈı¸ödata node
 É¾³ıµÄÎÄ¼şÏÈÒÆµ½/trashÄ¿Â¼Ò»¶¨Ê±¼äºó²ÅÕæÕıÉ¾³ı
 
 Ö§³Ö Secondary NameNode /Backup node/Checkpoint node
-HDFSÖ§³Ö rebalacne data /snapshot
-HDFSÒ»¸örecover mode£¬µ± fsImageºÍEditLog¶¼Ã»ÓĞµÄÊ±ºò¿ÉÒÔ»Ö¸´Êı¾İ
+HDFSÖ§³Ö rebalacne data /snapshot(²»Êµ¼Êcopy,Ö»ÊÇÒ»¸öµ±Ç°meta data 	µÄlink)£¬ËùÓĞ²»Ó°ÏìÕı³£hdfs²Ù×÷
+HDFSÓĞÒ»¸örecover mode£¬Õâ¸öÊ±ºòÌáÊ¾ÈË¹¤»Ö¸´Êı¾İ 
+Ö§³Ö hot swappableµÄÓ²ÅÌ£¬²»ÓÃshutdown datanode 
+datanode²»»á°ÑËùÓĞÎÄ¼ş¶¼·Åµ½Ò»¸öÄ¿Â¼ÏÂ£¬»á²ÉÓÃÌ½Ë÷Ê½µÄ·½Ê½°ÑÎÄ¼ş·Åµ½²»Í¬µÄÄ¿Â¼ÏÂÒÔÊ¹ÓÃµ½ËùÓĞµÄdisk
+hdfsÖ§³ÖnfsµÄÍø¹Ø½Ó¿Ú·ÃÎÊ
+Ò²Ö¸³ökerberosÈÏÖ¤ £¬Èç¹û²»Ê¹ÓÃkerberos£¬¾ÍÊÇÍ¨¹ı²Ù×÷ÏµÍ³µÄÃû×ÖÀ´È·¶¨ whoami 
+³¬¼¶ÓÃ»§ÊÇÖ¸Æô¶¯hdfsµÄosÓÃ»§
 
-HAÄ£Ê½ÏÂ   Quorum  Journal Ä£Ê½ÏÂ meta data²Ù×÷»á·¢ËÍµ½ Quorum  Journal node£¬È»ºó standby´Ó Quorum  Journal nodeÄÃµ½ÕâĞ©Êı¾İ£¬applyµ½×Ô¼ºµÄÄÚ´æ£¬±£³ÖÍ¬²½£¬Í¬Ê± datanode»á·¢ËÍĞÄÌøºÍblock reportµ½Á½¸önamenode  Quorum  Journal node ±£Ö¤ÈÎÒâÊ±µãÖ»ÄÜÓĞÒ»¸ö namenodeĞ´Èë meta data log ÒÔ±£Ö¤ÈÎÒâÊ±µãÖ»ÓĞÒ»¸önameNodeÊÇmaster
 
-Short-Circuit Local Reads Ö§³ÖclientÖ±½Ó¶ÁÈ¡hdfs data nodeÊı¾İ£¬Èç¹ûÕıºÃºÍdata nodeÔÚÍ³Ò»½ÚµãµÄ»°£¬ÄÜ¹»ÌáÉıĞÔÄÜ
-HDFS Ö§³Ö Centralized Cache Management ¿ÉÒÔ¿ØÖÆÄÇ¸ödata½Úµã cacheÄÄĞ©block
+HAÄ£Ê½ÏÂ   Quorum  Journal Ä£Ê½ÏÂ meta data²Ù×÷»á·¢ËÍµ½ Quorum  Journal node£¬È»ºó standby´Ó Quorum  Journal nodeÄÃµ½ÕâĞ©Êı¾İ£¬applyµ½×Ô¼ºµÄÄÚ´æ£¬±£³ÖÍ¬²½£¬Í¬Ê± datanode»á·¢ËÍĞÄÌøºÍblock reportµ½Á½¸önamenode  Quorum  Journal node ±£Ö¤ÈÎÒâÊ±µãÖ»ÄÜÓĞÒ»¸ö namenodeĞ´Èë meta data log ÒÔ±£Ö¤ÈÎÒâÊ±µãÖ»ÓĞÒ»¸önameNodeÊÇmaster ,Ö»ÓĞÓĞÒ»¸östandby node .
+ÕâÖÖÄ£Ê½ÏÂ£¬Í¨¹ıZKºÍ ZKFailoverController process Ö§³Ö×Ô¶¯ÇĞ»» 
+
+Short-Circuit Local Reads Ö§³ÖclientÖ±½Ó¶ÁÈ¡hdfs data nodeÊı¾İ£¬Èç¹ûÕıºÃºÍdata nodeÔÚÍ³Ò»½ÚµãµÄ»°£¬ÄÜ¹»ÌáÉıĞÔÄÜ ,Í¨¹ı unix-domain-socket¶ÁÈ¡£¬Í¨¹ı shared memory ½»»»ĞÅÏ¢
+ÏÖÔÚÖ§³Ö zero copy read ¸ü¿ì
+HDFS Ö§³Ö Centralized Cache Management ¿ÉÒÔ¿ØÖÆÄÄ¸ödata½Úµã cacheÄÄĞ©block£¬È«¾Ö½øĞĞ¹ÜÀí£¬ÌØ±ğÊÊºÏÄÄÖÖĞèÒª¶à´Î¶ÁÈ¡µÄÎÄ¼ş £¬µ±ÎÄ¼şcacheºó£¬¿ÉÒÔÖ±½Ózero copy¶Á £¬Ö§³ÖÎÄ¼ş»òÕßÄ¿Â¼¼¶±ğ(Ö»ÊÇ»º´æÄ¿Â¼ÏÂÃæµÄµÚÒ»¼¶±ğÎÄ¼ş£¬²»µİ¹é)µÄcache 
 HDFSÖ§³ÖÍ¨¹ı NFS gateway  ·½Ê½ nfs mount µ½ ±¾µØ
+fsck ¿ÉÒÔµÃµ½ blockµÄÎ»ÖÃºÍlocation  Ò²ÄÜ¼ì²éÎÄ¼şºÍĞŞ²¹
+datanodeÖ§³Öoff-heap memory £¬×Ô¼º¾ö¶¨Ê²Ã´Ê±ºòflushµ½disk,½ĞLazy Persist writes£¬ĞÔÄÜºÃÒ»Ğ©
 
 ¶ÔÓÚÈÎºÎÒ»¸öHDFSÎÄ¼ş£¬Namenode»áÔÚÄÚ´æÖĞÎ¬»¤Á½ÖÖmeta data£º1£© HDFSÎÄ¼şºÍblockµÄ¶ÔÓ¦¹ØÏµ £¬2£©blockÔÚdata nodeÉÏ´æ·ÅµÄÎ»ÖÃ¡£Namenode»áÔÚ´ÅÅÌÉÏ±£´æµÚÒ»ÖÖmeta data £¨Í¨¹ıcheckpoint ÎÄ¼şºÍwrite ahead log£©£¬µÚ¶şÖÖmeta dataÔòÊÇDataNodeÍ¨¹ıblock report ¶¨Ê±·¢ËÍ¸øNameNode¡£
 
+ 
+
 YARN ·ÖÎª resource managerºÍnode manager,»¹ÓĞper-application ApplicationMaster(Ğ­µ÷¹µÍ¨RM/NM execute and monitor the tasks£©
 ResourceManagerÖ÷ÒªÓÉ Scheduler(·Ö·¢job,²»¹Ü¼à¿Ø) ºÍ ApplicationsManager(½ÓÊÜÈÎÎñ²¢ÇÒ¼à¿ØºÍÖØÆôÈÎÎñ) ×é³É
+RMÒÑ¾­Ö§³ÖÄÚÇ¶ZK¿Í»§¶Ë×ö×Ô¶¯failover 
 CapacityScheduler Í¨¹ı Hierarchical QueuesÀ´´ïµ½ACL¿ØÖÆºÍ×ÊÔ´Ê¹ÓÃ±ÈÀıµÄ¿ØÖÆ
 Fair scheduling Í¨¹ı hierarchical  queue À´´ïµ½ÈÎÎñ¼äÏûºÄµÄ×ÊÔ´(ram/cpu)Æ½¾ùµÄÄ¿±ê Ò²Ö§³ÖÄ³¸öqueueÏûºÄµÄ×ÊÔ´´óÓÚµÈÓÚÄ³¸ö·§Öµ
 

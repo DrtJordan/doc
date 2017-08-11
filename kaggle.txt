@@ -1,0 +1,93 @@
+Question or problem definition.
+Acquire training and testing data.
+Wrangle, prepare, cleanse the data.
+Analyze, identify patterns, and explore the data.
+Model, predict and solve the problem.
+Visualize, report, and present the problem solving steps and final solution.
+Supply or submit the results.
+
+
+通过 train_df.info() 简单看数据情况，是否有null等 
+如
+Age            714 non-null float64
+
+In [25]: train_df.describe()   看数据分布情况
+Out[25]:
+       PassengerId    Survived      Pclass         Age       SibSp  \
+count   891.000000  891.000000  891.000000  714.000000  891.000000
+mean    446.000000    0.383838    2.308642   29.699118    0.523008
+std     257.353842    0.486592    0.836071   14.526497    1.102743
+min       1.000000    0.000000    1.000000    0.420000    0.000000
+25%     223.500000    0.000000    2.000000   20.125000    0.000000
+50%     446.000000    0.000000    3.000000   28.000000    0.000000
+75%     668.500000    1.000000    3.000000   38.000000    1.000000
+max     891.000000    1.000000    3.000000   80.000000    8.000000
+
+            Parch        Fare
+count  891.000000  891.000000
+mean     0.381594   32.204208
+std      0.806057   49.693429
+min      0.000000    0.000000
+25%      0.000000    7.910400
+50%      0.000000   14.454200
+75%      0.000000   31.000000
+max      6.000000  512.329200
+
+train_df.describe(percentiles=[0.25,0.5,0.75])
+
+对数据排序
+train_df[['Pclass', 'Survived']].groupby(['Pclass'], as_index=False).mean().sort_values(by='Survived', ascending=False)
+丢掉某列数据
+train_df = train_df.drop(['Ticket', 'Cabin'], axis=1)
+从原数据中分解出新的数据
+for dataset in combine:
+    dataset['Title'] = dataset.Name.str.extract(' ([A-Za-z]+)\.', expand=False)
+    
+替换
+
+title_mapping = {"Mr": 1, "Miss": 2, "Mrs": 3, "Master": 4, "Rare": 5}
+for dataset in combine:
+    dataset['Title'] = dataset['Title'].map(title_mapping)
+    dataset['Title'] = dataset['Title'].fillna(0)
+    
+    for dataset in combine:
+    dataset['Sex'] = dataset['Sex'].map( {'female': 1, 'male': 0} ).astype(int)
+    
+ 挑选出特定的数据   
+guess_df = dataset[(dataset['Sex'] == i) & \
+                                  (dataset['Pclass'] == j+1)]['Age'].dropna()
+                                  
+ 数据分段
+ train_df['AgeBand'] = pd.cut(train_df['Age'], 5)                              
+  数据转换成整形
+  test_df['Fare']    = test_df['Fare'].astype(int)
+
+查看模型的相关系数
+logreg.coef_[0]
+
+
+ for dataset in combine:
+    for i in range(0, 2):
+        for j in range(0, 3):
+            guess_df = dataset[(dataset['Sex'] == i) & \
+                                  (dataset['Pclass'] == j+1)]['Age'].dropna()
+
+            # age_mean = guess_df.mean()
+            # age_std = guess_df.std()
+            # age_guess = rnd.uniform(age_mean - age_std, age_mean + age_std)
+
+            age_guess = guess_df.median()
+            print(age_guess)
+
+            # Convert random age float to nearest .5 age
+            guess_ages[i,j] = int( age_guess/0.5 + 0.5 ) * 0.5
+            
+    for i in range(0, 2):
+        for j in range(0, 3):
+            dataset.loc[ (dataset.Age.isnull()) & (dataset.Sex == i) & (dataset.Pclass == j+1),\
+                    'Age'] = guess_ages[i,j]
+
+    dataset['Age'] = dataset['Age'].astype(int)
+    
+    
+            guess_df = dataset[(dataset['Sex'] == i) &    (dataset['Pclass'] == j+1)]['Age'].dropna()

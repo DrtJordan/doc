@@ -22,7 +22,7 @@ Oracle Restart。
 有了ASM diskgroup之后，可以通过图形界面工具[ASMCA、OEM]或者命令行工具[ASMCMD、SQL*PLUS]在磁盘组上创建出一个或多个ASM Dynamic Volume 。ADVM上的卷设备文件对于操作系统而言被作为块设备来识别，其位于/dev/asm/<volume name>-nnn。
 使用mkfs命令就可以在ADVM上创建ACFS类型的文件系统了[命令如：mkfs -t acfs -n advm-volume-name /dev/asm/<volume name>-nnn]，最后类似于在操作系统上挂载其它设备一样，可以将/dev/asm/<volume name>-nnn直接挂在到操作系统上使用了。
 
-11g 支持版本升级，新的事物用新的结构，未提交事物用旧的结构  通过crossedition trigger来同步新旧版本数据
+11g 支持版本升级，新的事物用新的结构，未提交事物用旧的结构
 
 oracle 12 支持从rman里面恢复某张表
 支持自增长列  (id NUMBER GENERATED AS IDENTITY

@@ -1,3 +1,433 @@
+¡¢ ÍøÕ¾ 
+ http://neuralnetworksanddeeplearning.com
+ 
+ scipy.sparse ´¦ÀíÏ¡Êè¾ØÕó
+hyperplane   [Êý] ³¬Æ½Ãæ
+Sepal   [Ö²] ÝàÆ¬£»»¨Ýà
+polynomial   [Êý] ¶àÏîÊ½
+sigmoid    SÐÎ×´
+Stochastic Gradient Descent (SGD) Ëæ»ú
+permute   ±ä»»£¬ÅÅÁÐ½»»»
+Ensemble  n. È«Ìå£»×ÜÐ§¹û
+heuristic    Æô·¢Ê½µÄ£»Ì½Ë÷µÄ
+  Univariate   µ¥±äÁ¿µÄ
+  hyperbolic  adj. Ë«ÇúÏßµÄ£»¿äÕÅµÄ
+  diabetes  n. ÌÇÄò²¡£»¶àÄòÖ¢
+
+ Ê¹ÓÃ O ¼ÇºÅ·¨£¨Big O Notation£©±íÊ¾×î»µÔËÐÐÇé¿öµÄÉÏ½ç¡£ÀýÈç£¬
+ÏßÐÔ¸´ÔÓ¶È O(n) ±íÊ¾Ã¿¸öÔªËØ¶¼Òª±»´¦ÀíÒ»´Î¡£
+Æ½·½¸´ÔÓ¶È O(n2) ±íÊ¾Ã¿¸öÔªËØ¶¼Òª±»´¦Àí n ´Î¡£ 
+O(1)  ²Ù×÷µÄÊýÁ¿Îª³£Êý£¬ÓëÊäÈëµÄÊý¾ÝµÄ¹æÄ£ÎÞ¹Ø¡£
+O(log2 n)   ²Ù×÷µÄÊýÁ¿ÓëÊäÈëÊý¾ÝµÄ¹æÄ£ n µÄ±ÈÀýÊÇ log2 (n)¡£
+ O(2n) Ö¸Êý¼¶µÄ²Ù×÷£¬¿ìËÙµÄÔö³¤¡£
+  
+  
+  °ÑÎÄµµÏòÁ¿»¯  
+  
+  
+from sklearn.feature_extraction.text import TfidfTransformer
+from sklearn.feature_extraction.text import CountVectorizer
+count_vect = CountVectorizer()
+train_data=['I love you','fuck','I like it','this is bad ','I am angry','you love me']
+train_label=['good','bad','good','bad','bad','good']
+ #ÏÈÏòÁ¿»¯Êý¾Ý
+X_train_counts = count_vect.fit_transform(train_data)
+ #tfidf ´¦Àí
+tfidf_transformer = TfidfTransformer()
+X_train_tfidf = tfidf_transformer.fit_transform(X_train_counts)
+X_train_tfidf.shape
+#ÑµÁ··ÖÀàÆ÷ linear support vector machine (SVM) Ò²ÊÇ±È½ÏºÃµÄÎÄ±¾·ÖÀàÆ÷
+from sklearn.naive_bayes import MultinomialNB
+clf = MultinomialNB().fit(X_train_tfidf, train_label)
+#Ô¤²â
+docs_new = ['God is love', 'Fuck,I am angry']
+X_new_counts = count_vect.transform(docs_new)
+X_new_tfidf = tfidf_transformer.transform(X_new_counts)
+predicted = clf.predict(X_new_tfidf)
+
+Á÷Ë®Ïß×÷Òµ
+from sklearn.pipeline import Pipeline
+text_clf = Pipeline([('vect', CountVectorizer()),
+                      ('tfidf', TfidfTransformer()),
+                      ('clf', MultinomialNB()), ])
+ÕâÑùÒ»ÌõÃüÁî¾ÍÄÜ×öÍê
+text_clf = text_clf.fit(train_data,train_label)
+text_clf.predict(docs_new)
+               
+from sklearn.linear_model import SGDClassifier
+text_clf = Pipeline([('vect', CountVectorizer()),
+                   ('tfidf', TfidfTransformer()),
+                   ('clf', SGDClassifier(loss='hinge', penalty='l2', alpha=1e-3, n_iter=5, random_state=42))])
+                   
+ ÆÀ¹ÀÍ³¼ÆÐÅÏ¢
+ from sklearn import metrics
+ print(metrics.classification_report(twenty_test.target, predicted,target_names=twenty_test.target_names))
+ 
+metrics.confusion_matrix(twenty_test.target, predicted)
+ ²ÎÊý×î¼ÑÆÀ¶¨
+ 
+ from sklearn.model_selection import GridSearchCV
+ parameters = {'vect__ngram_range': [(1, 1), (1, 2)],
+             'tfidf__use_idf': (True, False),
+               'clf__alpha': (1e-2, 1e-3)
+ }              
+ gs_clf = GridSearchCV(text_clf, parameters, n_jobs=-1)  # job=-1²¢ÐÐÔËÐÐ
+#ÑµÁ·
+gs_clf = gs_clf.fit(twenty_train.data[:400], twenty_train.target[:400])
+#Ô¤²â
+twenty_train.target_names[gs_clf.predict(['God is love'])[0]]
+#²é¿´µÃ·Ö
+gs_clf.best_score_  
+for param_name in sorted(parameters.keys()):
+     print("%s: %r" % (param_name, gs_clf.best_params_[param_name]))
+
+clf__alpha: 0.01
+tfidf__use_idf: True
+vect__ngram_range: (1, 2)
+
+²é¿´¸ü¶à²ÎÊý
+gs_clf.cv_results_
+
+ÖÐÎÄ·Ö´Ê  (ÖÐ¿ÆÈíºÍ½á°Í¶¼²»´í) ²»¹âÊÇËã·¨£¬»¹ÓÐ´Ê¿â¸üÖØÒª
+import jieba
+seg_list = jieba.cut("ÎÒÀ´µ½±±¾©Çå»ª´óÑ§")
+
+
+TF-IDF£¨Term Frequency¨CInverse Document Frequency£©ÊÇÒ»ÖÖÓÃÓÚ×ÊÑ¶¼ìË÷ÓëÎÄ±¾ÍÚ¾òµÄ³£ÓÃ¼ÓÈ¨¼¼Êõ¡£TF-IDFÊÇÒ»ÖÖÍ³¼Æ·½·¨£¬ÓÃÒÔÆÀ¹ÀÒ»¸ö×Ö´Ê¶ÔÓÚÒ»¸öÎÄ¼þ¼¯»òÒ»¸öÓïÁÏ¿âÖÐµÄÆäÖÐÒ»·ÝÎÄ¼þµÄÖØÒª³Ì¶È¡£×Ö´ÊµÄÖØÒªÐÔËæ×ÅËüÔÚÎÄ¼þÖÐ³öÏÖµÄ´ÎÊý³ÉÕý±ÈÔö¼Ó£¬µ«Í¬Ê±»áËæ×ÅËüÔÚÓïÁÏ¿âÖÐ³öÏÖµÄÆµÂÊ³É·´±ÈÏÂ½µ¡£TF-IDF¼ÓÈ¨µÄ¸÷ÖÖÐÎÊ½³£±»ËÑË÷ÒýÇæÓ¦ÓÃ£¬×÷ÎªÎÄ¼þÓëÓÃ»§²éÑ¯Ö®¼äÏà¹Ø³Ì¶ÈµÄ¶ÈÁ¿»òÆÀ¼¶¡£
+TF-IDFµÄÖ÷ÒªË¼ÏëÊÇ£ºÈç¹ûÄ³¸ö´Ê»ò¶ÌÓïÔÚÒ»ÆªÎÄÕÂÖÐ³öÏÖµÄÆµÂÊTF¸ß£¬²¢ÇÒÔÚÆäËûÎÄÕÂÖÐºÜÉÙ³öÏÖ£¬ÔòÈÏÎª´Ë´Ê»òÕß¶ÌÓï¾ßÓÐºÜºÃµÄÀà±ðÇø·ÖÄÜÁ¦£¬ÊÊºÏÓÃÀ´·ÖÀà¡£TF-IDFÊµ¼ÊÉÏÊÇ£ºTF * IDF¡£
+´ÊÆµ£¨Term Frequency£¬TF£©Ö¸µÄÊÇÄ³Ò»¸ö¸ø¶¨µÄ´ÊÓïÔÚ¸ÃÎÄ¼þÖÐ³öÏÖµÄÆµÂÊ¡£¼´´ÊwÔÚÎÄµµdÖÐ³öÏÖµÄ´ÎÊýcount(w, d)ºÍÎÄµµdÖÐ×Ü´ÊÊýsize(d)µÄ±ÈÖµ¡£
+ÄæÏòÎÄ¼þÆµÂÊ£¨Inverse Document Frequency£¬IDF£©ÊÇÒ»¸ö´ÊÓïÆÕ±éÖØÒªÐÔµÄ¶ÈÁ¿¡£Ä³Ò»ÌØ¶¨´ÊÓïµÄIDF£¬¿ÉÒÔÓÉ×ÜÎÄ¼þÊýÄ¿³ýÒÔ°üº¬¸Ã´ÊÓïÖ®ÎÄ¼þµÄÊýÄ¿£¬ÔÙ½«µÃµ½µÄÉÌÈ¡¶ÔÊýµÃµ½¡£¼´ÎÄµµ×ÜÊýnÓë´ÊwËù³öÏÖÎÄ¼þÊýdocs(w, D)±ÈÖµµÄ¶ÔÊý¡£¡¡
+
+SVMÒ²¿ÉÒÔÓÃÀ´×ö»Ø¹é £¬Ö§³Ö¶à class ·ÖÀà 
+ Stochastic Gradient Descent (SGD) Ò²¿ÉÒÔÓÃÀ´×ö·ÖÀà
+ 
+>>> from sklearn import datasets
+>>> iris = datasets.load_iris()
+>>> digits = datasets.load_digits()
+>>> from sklearn import svm
+>>> clf = svm.SVC(gamma=0.001, C=100.)
+>>> clf.fit(digits.data[:-1], digits.target[:-1])  
+SVC(C=100.0, cache_size=200, class_weight=None, coef0=0.0,
+  decision_function_shape=None, degree=3, gamma=0.001, kernel='rbf',
+  max_iter=-1, probability=False, random_state=None, shrinking=True,
+  tol=0.001, verbose=False)
+  >>> clf.predict(digits.data[-1:])
+array([8])
+³Ö¾Ã»¯Ä£ÐÍ
+>>> from sklearn.externals import joblib
+>>> joblib.dump(clf, 'filename.pkl') 
+clf = joblib.load('filename.pkl') 
+
+ÊäÈëÊý¾ÝÔÙsciÀïÃæ¶¼×ª³É float64
+ÉèÖÃ²ÎÊý
+>>> clf.set_params(kernel='linear').fit(X, y)  
+ÖØÖÃ²ÎÊý
+clf.set_params(kernel='rbf').fit(X, y)  
+  
+  
+  np.random.seed(0)
+  indices = np.random.permutation(len(iris_X))  Éú³ÉËæ»ú×ø±ê
+  
+  ÒËÈË´ûÓÃ Ëã·¨£ºLR¡¢RF¡¢Kmeans¡¢LDA  Go×öÎª¸ßÐ£¿ª·¢ºÍÔËÐÐ»ù´¡   PythonÁ¬½Óµ½ºóÌ¨ 
+SKLearn¡¢GBDT¡¢ÊÂ¼þÊ¶±ð  CypherÍ¼Æ×¹ØÏµÍÚ¾ò   Neo4j ÓÃÀ´±£´æÍ¼ÏñÊý¾Ý 
+  
+  Ëæ»úÉ­ÁÖºÍSVMÐ§¹ûºÃ  »¹ÓÐ GBDT  gradient boosting decision tree
+  ¾ö²ßÊ÷ºÃ½âÊÍ  »ùÓÚÊ÷µÄËã·¨Í¨³£¿¹ÔëÄÜÁ¦¸üÇ¿   kaggle ±ÈÈüÖÐ gbdt ºÍ random forest
+  neuron network ¼òµ¥´Ö±©Ð§¹ûºÃ£¬ÓÈÆäÊÇÍ¼ÐÎÊ¶±ð£¬NLP
+  SVM ÄÜ¹»ÑµÁ·´óÁ¿£¨ÉÏÍòµÄ´Ê£©ÌØÕ÷£¬²»ÓÃ¿¼ÂÇÌØÕ÷ÀëÉ¢»¯»òÕß·Ö¶Î£¬·ÇÏßÐÔÓ³Éä¿ÉÒÔºÜºÃµÄ·ÖÀà¡£ GBDT ÔÚÌØÕ÷½ÏÉÙµÄÊ±ºò£¨200ÒÔÄÚ£©£¬ÄÜ¹»¸ßÐ§bootstrap ³éÈ¡Ñù±¾ºÍÌØÕ÷£¬ÑµÁ·¶à¿ÅÊ÷¡£ÄÜ¹»×Ô¶¯×öÌØÕ÷ÖØÒªÐÔÅÅÐò£¬Í¨¹ýginiÏµÊýµÈÖ¸±êÅÐ¶Ï·Ö¸îµã¡£ÄÜ¹»±í´ï·Ç³£¸´ÔÓµÄ¹æÔò¡£
+svm ¸üÊÊºÏÈ¥´¦Àí ¡°Í¬ÐÔÖÊ¡±µÄÌØÕ÷£¬ÀýÈçÍ¼ÏñÌØÕ÷ÌáÈ¡ÖÐµÄ lbp ¡£¶ø´Ó²»Í¬ channel ÖÐÀ´µÄ feature Ôò¸üÊÊºÏ tree-based model, ÕâÐ©Ä£ÐÍ¶ÔÊý¾ÝµÄ distributation Í¨³£²¢²»Ãô¸Ð¡£
+xgboostºÅ³Æscalable tree boosting system   xgboost Ö»ÊÇGBDTÆäÖÐÒ»ÖÖÊµÏÖ £¬ÄÜ²¢ÐÐ£¬ÄÜ·Ö²¼Ê½
+ÕûÌå¼ÓËÙËã·¨ ÓÐÁ½Àà 1.Æ½¾ù£¬¸ù¾Ý²»Í¬¶ÀÁ¢µÄ»ù´¡Ëã·¨»ã×ÜµÃ³ö½á¹û £¬±ÈÈç bagging,Ëæ»úÉ­ÁÖ 2.boosting ¸ù¾ÝÈõµÄ»ù´¡Ëã·¨£¬Ò»ÂÖÂÖµÄµü´ú£¬²»Í£ÓÅ»¯µÃ³ö½á¹û ±ÈÈç adabooost,GBRT
+Í¨³£baggingÊÊºÏ¸´ÔÓµÄÄ£ÐÍ£¬boostingÊÊºÏ¼òµ¥µÄÄ£ÐÍ
+
+
+
+import xgboost as xgb
+
+ 
+  Ridge regression  Áë»Ø¹é
+  import LogisticRegression
+ logistic = linear_model.LogisticRegression(C=1e5)
+logistic.fit(digits.data[:-10],digits.target[:-10])
+svc = svm.SVC(kernel='linear')   svc = svm.SVC(kernel='rbf')   svc = svm.SVC(kernel='poly')   
+k_means = cluster.KMeans(n_clusters=3)
+pca = decomposition.PCA()
+
+regr = linear_model.LinearRegression()   ÏßÐÔ»Ø¹é
+regr.fit(diabetes_X_train, diabetes_y_train)
+
+knn = KNeighborsClassifier() 
+Ã¿¸öÔ¤²âº¯Êý¶¼ÓÐÒ»¸öscoreº¯Êý£¬ÓÃÀ´ÆÀ¼ÛÆÀ¹À½á¹û
+svc.fit(X_digits[:-100], y_digits[:-100]).score(X_digits[-100:], y_digits[-100:])
+ÓÃk-fold·½Ê½²âÊÔ
+ X_folds = np.array_split(X_digits, 3)  
+ y_folds = np.array_split(y_digits, 3)
+ scores = list()
+for k in range(3):
+    # We use 'list' to copy, in order to 'pop' later on
+    X_train = list(X_folds)
+    X_test  = X_train.pop(k)
+    X_train = np.concatenate(X_train)
+    y_train = list(y_folds)
+    y_test  = y_train.pop(k)
+    y_train = np.concatenate(y_train)
+    scores.append(svc.fit(X_train, y_train).score(X_test, y_test))
+print(scores)
+»òÕßÓÃsciÏÖ³ÉµÄ·½·¨
+from sklearn.model_selection import KFold, cross_val_score
+X = ["a", "a", "b", "c", "c", "c"]
+Y=[1,2,3,3,2,1]
+k_fold = KFold(n_splits=3)
+for train_indices, test_indices in k_fold.split(X):
+     print('Train: %s | test: %s' % (train_indices, test_indices))
+ 
+ for train_indices, test_indices in k_fold.split(X):
+     print('Train: %s | test: %s' % (train_indices, test_indices))    
+  
+[svc.fit(X_digits[train], y_digits[train]).score(X_digits[test], y_digits[test])
+   for train, test in k_fold.split(X_digits)]  
+ Ò²¿ÉÒÔÖ±½ÓÓÃÏÂÃæ·½·¨¼ÆËã 
+ cross_val_score(svc, X_digits, y_digits, cv=k_fold, n_jobs=-1)   n_jobs=-1 means that the computation will be dispatched on all the CPUs of the computer.
+»òÕß  scores = cross_val_score(svc, iris.data, iris.target, cv=5, n_jobs=-1)
+
+Ò²¿ÉÒÔÓÃÏÂÃæµÄ·½·¨½øÐÐ½»²æÑéÖ¤
+>>> from sklearn.model_selection import StratifiedShuffleSplit
+>>> X = np.array([[1, 2], [3, 4], [1, 2], [3, 4]])
+>>> y = np.array([0, 0, 1, 1])
+>>> sss = StratifiedShuffleSplit(n_splits=3, test_size=0.5, random_state=0)
+>>> sss.get_n_splits(X, y)
+3
+>>> print(sss)       # doctest: +ELLIPSIS
+StratifiedShuffleSplit(n_splits=3, random_state=0, ...)
+>>> for train_index, test_index in sss.split(X, y):
+...    print("TRAIN:", train_index, "TEST:", test_index)
+...    X_train, X_test = X[train_index], X[test_index]
+...    y_train, y_test = y[train_index], y[test_index]
+TRAIN: [1 2] TEST: [3 0]
+TRAIN: [0 2] TEST: [1 3]
+TRAIN: [0 2] TEST: [3 1]
+
+Êý¾Ý±ê×¼»¯  »¹ÓÐ Çø¼äËõ·Å£¬·µ»ØÖµÎªËõ·Åµ½[0, 1]Çø¼äµÄÊý¾Ý  MinMaxScaler().fit_transform(iris.data)
+>>> from sklearn import preprocessing
+>>> X_train, X_test, y_train, y_test = train_test_split(
+...     iris.data, iris.target, test_size=0.4, random_state=0)
+>>> scaler = preprocessing.StandardScaler().fit(X_train)       # (x-mean(x))/stand(s)
+>>> X_train_transformed = scaler.transform(X_train)
+>>> clf = svm.SVC(C=1).fit(X_train_transformed, y_train)
+>>> X_test_transformed = scaler.transform(X_test)
+>>> clf.score(X_test_transformed, y_test)  
+ÓÃf1µÃ·Ö¸üºÃ
+sklearn.metrics.f1_score(y_true, y_pred, labels=None, pos_label=1, average='binary', sample_weight=None)
+
+ Ëæ»ú»®·ÖÊý¾Ý¼¯
+ from sklearn.model_selection import train_test_split
+     X_train, X_test, y_train, y_test = train_test_split(
+    iris.data, iris.target, test_size=0.4, random_state=0)
+    
+    
+     
+×Ô¶¯Ìæ»»¶à²ÎÊý£¬½øÐÐÇó½â   GridSearchCV uses a 3-fold cross-validation
+>>> from sklearn.model_selection import GridSearchCV, cross_val_score
+>>> Cs = np.logspace(-6, -1, 10)
+>>> clf = GridSearchCV(estimator=svc, param_grid=dict(C=Cs),
+...                    n_jobs=-1)
+>>> clf.fit(X_digits[:1000], y_digits[:1000])        
+GridSearchCV(cv=None,...
+>>> clf.best_score_                                  
+0.925...
+>>> clf.best_estimator_.C                            
+0.0077...
+
+>>> # Prediction performance on test set is not as good as on train set
+>>> clf.score(X_digits[1000:], y_digits[1000:])      
+>>> cross_val_score(clf, X_digits, y_digits)
+ÏßÐÔ»Ø¹é
+x=array([[1],[2],[3],[4]])
+y=array([6.5,11,15.5,20])
+from sklearn import linear_model
+reg = linear_model.LinearRegression()
+reg.fit (x,y)
+reg.coef_  ,reg.intercept_
+Áë»Ø¹é
+reg = linear_model.Ridge (alpha = .5)  alpha=0µÄÊ±ºòºÍÔ¤²âÏà¶Ô×¼
+
+from sklearn.neighbors import NearestNeighbors
+nbrs = NearestNeighbors(n_neighbors=2, algorithm='ball_tree').fit(X) 
+KNeighborsClassifier ÓÃµÄ¸ü¶à
+RadiusNeighborsClassifier ÊÊºÏÊý¾ÝÃ»ÓÐ¾ùÔÈ²ÉÑù  Êý¾ÝÁ¿/ÌØÕ÷Á¿Ì«´óµÄÊ±ºò£¬ÓÃ KD tree »òÕß Ball Tree£¨ÊÊºÏ¶àÌØÕ÷)
+ÆÓËØ±´Ò¶Ë¹
+>>> from sklearn.naive_bayes import GaussianNB
+>>> gnb = GaussianNB()
+>>> y_pred = gnb.fit(iris.data, iris.target).predict(iris.data)
+>>> print("Number of mislabeled points out of a total %d points : %d"
+...       % (iris.data.shape[0],(iris.target != y_pred).sum()))
+
+from sklearn import tree
+clf = tree.DecisionTreeClassifier()
+clf.fit(x,y)
+¾ö²ßÊ÷ÈÝÒ×³öÏÖ¹ýÄâºÏ£¬µ±ÌØÕ÷±È½Ï¶àµÄÊ±ºò 
+
+export_graphviz  ÄÜ¹»µ¼³ö¾ö²ßÊ÷µÄÍ¼³öÀ´
+
+Ëæ»úÉ­ÁÖ
+from sklearn.ensemble import RandomForestClassifier
+clf = RandomForestClassifier(n_estimators=10)
+Adaboosting   È±Ê¡ÓÃ decision stumps ×÷Îª base weak algorithm 
+
+from sklearn.ensemble import AdaBoostClassifier
+
+AdaBoostÊÇadaptive boosting£¨×ÔÊÊÓ¦boosting£©µÄËõÐ´£¬ÔËÐÐ¹ý³ÌÈçÏÂ£º¸³ÓèÑµÁ·¼¯ÖÐµÄÃ¿¸öÑù±¾Ò»¸öÈ¨ÖµD£¬Ò»¿ªÊ¼È¨Öµ¶¼ÊÇÏàµÈµÄ£¬
+È»ºóÑµÁ·Ò»¸öÈõ·ÖÀàÆ÷²¢¼ÆËã´íÎóÂÊ£¬·ÖÀàÕýÈ·µÄÑù±¾»á½µµÍÈ¨ÖØ£¬¶ø·ÖÀà´íÎóµÄÑù±¾»áÌá¸ßÈ¨ÖØ£¬½Ó×ÅÔÙ´Î¸ù¾ÝÈ¨ÖØÑµÁ·Ò»¸öÈõ·ÖÀàÆ÷£¬
+ÕâÃ´×öÊÇÎªÁËÈÃÐÂµÄÈõ·ÖÀàÆ÷ÔÚÑµÁ·ÖÐ¸ü¼Ó¹Ø×¢Î´±»·ÖÀàÕýÈ·µÄÑù±¾¡£
+
+clf=AdaBoostClassifier(DecisionTreeClassifier(max_depth=1),
+                         algorithm="SAMME",
+                         n_estimators=200)
+                         
+from sklearn.ensemble import GradientBoostingClassifier   
+clf = GradientBoostingClassifier(n_estimators=100, learning_rate=1.0,     max_depth=1, random_state=0)
+     
+     
+ÐÔÄÜ±È½Ï   clf.fit(digits.data[:-100], digits.target[:-100]).score(digits.data[-100:], digits.target[-100:])   iris data clf.fit(iris.data[:-20], iris.target[:-20]).score(iris.data[-20:], iris.target[-20:])
+SVM   98%              90%      
+KNN  97.9%            100%
+Ëæ»úÉ­ÁÖ 96%          90%
+Âß¼­»Ø¹é 94%           90%
+SGDC 91%               100%
+±´Ò¶Ë¹ 87%              90%
+¾ö²ßÊ÷ 85%              95%
+adaboost   84%             95%
+Éñ¾­ÍøÂç  99%       100%
+GBRT        93%            85%
+from sklearn.feature_selection import VarianceThreshold  ¼õÉÙ²»ºÏÊÊµÄÌØÕ÷
+sel = VarianceThreshold(threshold=(.8 * (1 - .8)))
+sel.fit_transform(X)
+
+°ë¼à¶½Ñ§Ï°Ëã·¨
+from sklearn.semi_supervised import label_propagation
+
+bagging·¨£º×Ô¾Ù»ã¾Û·¨£¬´ÓÔ­Ê¼Êý¾Ý¼¯Ñ¡ÔñS´ÎºóµÃµ½S¸öÊý¾Ý¼¯µÄÒ»ÖÖ¼¼Êõ£¬ÐÂµÄÊý¾Ý¼¯ºÍÔ­Ê¼Êý¾Ý¼¯´óÐ¡ÏàµÈ¡£Ã¿¸öÊý¾Ý¼°¶¼ÊÇÍ¨¹ýÔÚÔ­Ê¼Êý¾Ý¼¯ÖÐËæ»úÑ¡ÔñÒ»¸öÑù±¾½øÐÐÌæ»»µÃµ½£¨ÓÖ·Å»Ø£©¡£ÕâÒ»ÐÔÖÊÔÊÐíÐÂµÄÊý¾Ý¼¯ÖÐ¿ÉÒÔÓÐÖØ¸´µÄÖµ£¬¶øÄ³Ð©ÖµÔÚÐÂ¼¯ºÏÖÐ½«²»³öÏÖ¡£½«Ä³¸öÑ§Ï°Ëã·¨·Ö±ð×÷ÓÃÓÚÃ¿¸öÊý¾Ý¼¯¾ÍµÃµ½ÁËS¸ö·ÖÀàÆ÷£¨S¸ö²âÊÔÊý¾Ý¼¯Õë¶ÔÍ¬Ò»Ëã·¨ÑµÁ·³öS¸ö·ÖÀàÆ÷£©£¬µ±Òª¶ÔÐÂÊý¾Ý½øÐÐ·ÖÀàÊ±£¬Ó¦ÓÃÕâS¸ö·ÖÀàÆ÷½øÐÐ·ÖÀà¡£µÃµ½½á¹û²ÉÈ¡Í¶Æ±µÄ·½Ê½£¬Ñ¡È¡×î¶àÀà±ð×÷Îª×îºóµÄ½á¹û
+
+
+MLPClassifier  Ê¹ÓÃBackpropagation
+from sklearn.neural_network import MLPClassifier 
+¼¤»îº¯ÊýÓÐ    'identity', 'logistic', 'tanh', 'relu'}   Êµ¼ÊÓ¦ÓÃÖÐ£¬tanh »á±È sigmoid ¸üºÃ  ½üÄêÀ´£¬ReLU ±äµÄÔ½À´Ô½ÊÜ»¶Ó­¡£
+¼¤»îº¯Êý¿ÉÒÔÒýÈë·ÇÏßÐÔÒòËØ£¬½â¾öÏßÐÔÄ£ÐÍËù²»ÄÜ½â¾öµÄÎÊÌâ
+
+ clf = MLPClassifier(solver='lbfgs', alpha=1e-10, hidden_layer_sizes=(60), random_state=1,activation='logistic')
+ clf.fit(digits.data[:-100], digits.target[:-100]).score(digits.data[-100:], digits.target[-100:])
+0.98999999999999999
+
+Restricted Boltzmann machines (RBM)  ÊÇ·Ç¼à¶½·ÇÏßÐÔËã·¨
+
+Principal Component Analysis (PCA), Independent Component Analysis, Linear Discriminant Analysis, 
+¶¼ÊÇ½µÎ¬µÄËã·¨ £¬µ«ÊÇÉÏÃæÕâÐ©Ëã·¨ÈÝÒ×¶ªÊ§Êý¾ÝÀïÃæ·ÇÏßÐÔÌØÐÔ£¬
+Linear Discriminant Analysis ÊÇ¼à¶½Ñ§Ï°£¬PCAÊÇ·Ç¼à¶½Ñ§Ï°
+Manifold Learning   ¿ÉÒÔ±ÜÃâ ÉÏÃæÕâÐ©Ä£ÐÍµÄÎÊÌâ£¬ÊôÓÚ·Ç¼à¶½Ñ§Ï°
+ 
+ 
+ from sklearn.cluster import KMeans
+ n_samples = 1500
+random_state = 170
+X, y = make_blobs(n_samples=n_samples, random_state=random_state)
+
+# Incorrect number of clusters
+y_pred = KMeans(n_clusters=2, random_state=random_state).fit_predict(X)
+
+
+Incremental PCA ¿ÉÒÔÔöÁ¿batch´¦Àí Êý¾Ý£¬PCAÖ»ÄÜÒ»´ÎÐÔ´¦ÀíËùÓÐÊý¾Ý
+from sklearn.decomposition import PCA
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
+from sklearn.decomposition import PCA, IncrementalPCA
+pca = PCA(n_components=2)
+X_r = pca.fit(X).transform(X)
+
+pca.explained_variance_ratio_
+array([ 0.92461621,  0.05301557])
+
+lda = LinearDiscriminantAnalysis(n_components=2)
+X_r2 = lda.fit(X, y).transform(X)
+
+In [560]: lda.explained_variance_ratio_
+Out[560]: array([ 0.99147248,  0.00852752])
+
+ipca = IncrementalPCA(n_components=n_components, batch_size=10)
+X_ipca = ipca.fit_transform(X)
+pca = PCA(n_components=n_components)
+X_pca = pca.fit_transform(X)
+
+Ô¤´¦ÀíÊý¾Ý 
+±ê×¼»¯Êý¾Ý¿â
+from sklearn import preprocessing
+X_scaled = preprocessing.scale(X)     ¼õÈ¥¾ùÖµ£¬³ýÓÚ±ê×¼²î
+
+min_max_scaler = preprocessing.MinMaxScaler() 
+>>> X_train_minmax = min_max_scaler.fit_transform(X_train)
+È»ºó¿ÉÒÔ°ÑÕâ¸öÓ¦ÓÃµ½²âÊÔ¼¯ÉÏ
+X_test_minmax = min_max_scaler.transform(X_test)
+
+ robust_scale and RobustScaler  ¿ÉÒÔ·ÀÖ¹ÓÐÀëÈºÊý¾ÝÇé¿ö
+ Normalization    ÕýÌ¬»¯Êý¾Ý¼¯
+X_normalized = preprocessing.normalize(X, norm='l2')
+ÓÃÀ´´¦ÀíÀëÉ¢±äÁ¿
+preprocessing.OneHotEncoder()
+ÓÃÀ´×Ô¶¯²¹È«È±Ê§Êý¾Ý   mean, the median or the most frequent value of the row or column
+from sklearn.preprocessing import Imputer
+
+
+·ÖÀàÎÊÌâÓÃ StrtifiedKFold
+»Ø¹éÎÊÌâÓÃ KFold
+Ó¦ÓÃËã·¨½â¾ö Kaggle ÎÊÌâ£¬Ò»°ãÓÐÒÔÏÂ¼¸¸ö²½Öè£º
+Èç¹ûÊÇÏ¡ÊèµÄ£¬¾ÍÓÃ sparse µÄ hstack£º
+SVD£ºSingular Value Decomposition£¬ÆæÒìÖµ·Ö½â£¬ÊÇÏßÐÔ´úÊýÖÐÒ»ÖÖÖØÒªµÄ¾ØÕó·Ö½â£¬Ëü×ÜÄÜÕÒµ½±ê×¼»¯Õý½»»ùºó·½²î×î´óµÄÎ¬¶È£¬Òò´ËÓÃËü½øÐÐ½µÎ¬È¥Ôë¡£
+
+µÚÒ»²½£ºÊ¶±ðÎÊÌâ
+µÚ¶þ²½£º·ÖÀëÊý¾Ý
+µÚÈý²½£º¹¹ÔìÌáÈ¡ÌØÕ÷
+µÚËÄ²½£º×éºÏÊý¾Ý
+µÚÎå²½£º·Ö½â
+µÚÁù²½£ºÑ¡ÔñÌØÕ÷
+µÚÆß²½£ºÑ¡ÔñËã·¨½øÐÐÑµÁ·
+
+   
+   Êý¾ÝÔ¤´¦Àí
+¡¡¡¡Í¨¹ýÌØÕ÷ÌáÈ¡£¬ÎÒÃÇÄÜµÃµ½Î´¾­´¦ÀíµÄÌØÕ÷£¬ÕâÊ±µÄÌØÕ÷¿ÉÄÜÓÐÒÔÏÂÎÊÌâ£º
+
+²»ÊôÓÚÍ¬Ò»Á¿¸Ù£º¼´ÌØÕ÷µÄ¹æ¸ñ²»Ò»Ñù£¬²»ÄÜ¹»·ÅÔÚÒ»Æð±È½Ï¡£ÎÞÁ¿¸Ù»¯¿ÉÒÔ½â¾öÕâÒ»ÎÊÌâ¡£
+ÐÅÏ¢ÈßÓà£º¶ÔÓÚÄ³Ð©¶¨Á¿ÌØÕ÷£¬Æä°üº¬µÄÓÐÐ§ÐÅÏ¢ÎªÇø¼ä»®·Ö£¬ÀýÈçÑ§Ï°³É¼¨£¬¼ÙÈôÖ»¹ØÐÄ¡°¼°¸ñ¡±»ò²»¡°¼°¸ñ¡±£¬ÄÇÃ´ÐèÒª½«¶¨Á¿µÄ¿¼·Ö£¬×ª»»³É¡°1¡±ºÍ¡°0¡±±íÊ¾¼°¸ñºÍÎ´¼°¸ñ¡£¶þÖµ»¯¿ÉÒÔ½â¾öÕâÒ»ÎÊÌâ¡£
+¶¨ÐÔÌØÕ÷²»ÄÜÖ±½ÓÊ¹ÓÃ£ºÄ³Ð©»úÆ÷Ñ§Ï°Ëã·¨ºÍÄ£ÐÍÖ»ÄÜ½ÓÊÜ¶¨Á¿ÌØÕ÷µÄÊäÈë£¬ÄÇÃ´ÐèÒª½«¶¨ÐÔÌØÕ÷×ª»»Îª¶¨Á¿ÌØÕ÷¡£×î¼òµ¥µÄ·½Ê½ÊÇÎªÃ¿Ò»ÖÖ¶¨ÐÔÖµÖ¸¶¨Ò»¸ö¶¨Á¿Öµ£¬µ«ÊÇÕâÖÖ·½Ê½¹ýÓÚÁé»î£¬Ôö¼ÓÁËµ÷²ÎµÄ¹¤×÷¡£Í¨³£Ê¹ÓÃÑÆ±àÂëµÄ·½Ê½½«¶¨ÐÔÌØÕ÷×ª»»Îª¶¨Á¿ÌØÕ÷£º¼ÙÉèÓÐNÖÖ¶¨ÐÔÖµ£¬Ôò½«ÕâÒ»¸öÌØÕ÷À©Õ¹ÎªNÖÖÌØÕ÷£¬µ±Ô­Ê¼ÌØÕ÷ÖµÎªµÚiÖÖ¶¨ÐÔÖµÊ±£¬µÚi¸öÀ©Õ¹ÌØÕ÷¸³ÖµÎª1£¬ÆäËûÀ©Õ¹ÌØÕ÷¸³ÖµÎª0¡£ÑÆ±àÂëµÄ·½Ê½Ïà±ÈÖ±½ÓÖ¸¶¨µÄ·½Ê½£¬²»ÓÃÔö¼Óµ÷²ÎµÄ¹¤×÷£¬¶ÔÓÚÏßÐÔÄ£ÐÍÀ´Ëµ£¬Ê¹ÓÃÑÆ±àÂëºóµÄÌØÕ÷¿É´ïµ½·ÇÏßÐÔµÄÐ§¹û¡£
+´æÔÚÈ±Ê§Öµ£ºÈ±Ê§ÖµÐèÒª²¹³ä¡£
+ÐÅÏ¢ÀûÓÃÂÊµÍ£º²»Í¬µÄ»úÆ÷Ñ§Ï°Ëã·¨ºÍÄ£ÐÍ¶ÔÊý¾ÝÖÐÐÅÏ¢µÄÀûÓÃÊÇ²»Í¬µÄ£¬Ö®Ç°Ìáµ½ÔÚÏßÐÔÄ£ÐÍÖÐ£¬Ê¹ÓÃ¶Ô¶¨ÐÔÌØÕ÷ÑÆ±àÂë¿ÉÒÔ´ïµ½·ÇÏßÐÔµÄÐ§¹û¡£ÀàËÆµØ£¬¶Ô¶¨Á¿±äÁ¿¶àÏîÊ½»¯£¬»òÕß½øÐÐÆäËûµÄ×ª»»£¬¶¼ÄÜ´ïµ½·ÇÏßÐÔµÄÐ§¹û¡£
+¡¡¡¡ÎÒÃÇÊ¹ÓÃsklearnÖÐµÄpreproccessing¿âÀ´½øÐÐÊý¾ÝÔ¤´¦Àí£¬¿ÉÒÔ¸²¸ÇÒÔÉÏÎÊÌâµÄ½â¾ö·½°¸¡£
+
+ÎÞÁ¿¸Ù»¯Ê¹²»Í¬¹æ¸ñµÄÊý¾Ý×ª»»µ½Í¬Ò»¹æ¸ñ¡£³£¼ûµÄÎÞÁ¿¸Ù»¯·½·¨ÓÐ±ê×¼»¯ºÍÇø¼äËõ·Å·¨¡£±ê×¼»¯µÄÇ°ÌáÊÇÌØÕ÷Öµ·þ´ÓÕýÌ¬·Ö²¼£¬±ê×¼»¯ºó£¬Æä×ª»»³É±ê×¼ÕýÌ¬·Ö²¼¡£
+Çø¼äËõ·Å·¨ÀûÓÃÁË±ß½çÖµÐÅÏ¢£¬½«ÌØÕ÷µÄÈ¡ÖµÇø¼äËõ·Åµ½Ä³¸öÌØµãµÄ·¶Î§£¬ÀýÈç[0, 1]µÈ¡£
+¼òµ¥À´Ëµ£¬ÎÞÁ¿¸Ù»¯ÊÇÒÀÕÕÌØÕ÷¾ØÕóµÄÁÐ´¦ÀíÊý¾Ý£¬ÕýÔò»¯ÊÇÒÀÕÕÌØÕ÷¾ØÕóµÄÐÐ´¦ÀíÊý¾Ý¡£ÕýÔò»¯µÄÇ°ÌáÊÇÑù±¾¸÷ÌØÕ÷Öµ·þ´ÓÕýÌ¬·Ö²¼£¬ÕýÔò»¯ºó½«Æä×ª»»³É±ê×¼ÕýÌ¬·Ö²¼¡£ÕýÔò»¯µÄ¹«Ê½ÀàËÆÓÚ±ê×¼»¯£¬²»Í¬µÄÊÇÑù±¾¾ùÖµºÍÑù±¾±ê×¼²î¸ÄÎªÌØÕ÷Öµ¾ùÖµºÍÌØÕ÷Öµ±ê×¼²î¡£
+¡¡¶¨Á¿ÌØÕ÷¶þÖµ»¯µÄºËÐÄÔÚÓÚÉè¶¨Ò»¸öãÐÖµ£¬´óÓÚãÐÖµµÄ¸³ÖµÎª1£¬Ð¡ÓÚµÈÓÚãÐÖµµÄ¸³ÖµÎª0£¬¹«Ê½±í´ïÈçÏÂ
+3 #¶þÖµ»¯£¬ãÐÖµÉèÖÃÎª3£¬·µ»ØÖµÎª¶þÖµ»¯ºóµÄÊý¾Ý
+4 Binarizer(threshold=3).fit_transform(iris.data)
+
+bagging£º´ÓÑµÁ·¼¯´Ó½øÐÐ×Ó³éÑù×é³ÉÃ¿¸ö»ùÄ£ÐÍËùÐèÒªµÄ×ÓÑµÁ·¼¯£¬¶ÔËùÓÐ»ùÄ£ÐÍÔ¤²âµÄ½á¹û½øÐÐ×ÛºÏ²úÉú×îÖÕµÄÔ¤²â½á¹û
+boosting£ºÑµÁ·¹ý³ÌÎª½×ÌÝ×´£¬»ùÄ£ÐÍ°´´ÎÐòÒ»Ò»½øÐÐÑµÁ·£¨ÊµÏÖÉÏ¿ÉÒÔ×öµ½²¢ÐÐ£©£¬»ùÄ£ÐÍµÄÑµÁ·¼¯°´ÕÕÄ³ÖÖ²ßÂÔÃ¿´Î¶¼½øÐÐÒ»¶¨µÄ×ª»¯¡£¶ÔËùÓÐ»ùÄ£ÐÍÔ¤²âµÄ½á¹û½øÐÐÏßÐÔ×ÛºÏ²úÉú×îÖÕµÄÔ¤²â½á¹û£º
+stacking£º½«ÑµÁ·ºÃµÄËùÓÐ»ùÄ£ÐÍ¶ÔÑµÁ·»ù½øÐÐÔ¤²â£¬µÚj¸ö»ùÄ£ÐÍ¶ÔµÚi¸öÑµÁ·Ñù±¾µÄÔ¤²âÖµ½«×÷ÎªÐÂµÄÑµÁ·¼¯ÖÐµÚi¸öÑù±¾µÄµÚj¸öÌØÕ÷Öµ£¬×îºó»ùÓÚÐÂµÄÑµÁ·¼¯½øÐÐÑµÁ·¡£Í¬Àí£¬Ô¤²âµÄ¹ý³ÌÒ²ÒªÏÈ¾­¹ýËùÓÐ»ùÄ£ÐÍµÄÔ¤²âÐÎ³ÉÐÂµÄ²âÊÔ¼¯£¬×îºóÔÙ¶Ô²âÊÔ¼¯½øÐÐÔ¤²â
+   
+   1. ÕýÈ·ÂÊ = ÌáÈ¡³öµÄÕýÈ·ÐÅÏ¢ÌõÊý /  ÌáÈ¡³öµÄÐÅÏ¢ÌõÊý     
+   
+    2. ÕÙ»ØÂÊ = ÌáÈ¡³öµÄÕýÈ·ÐÅÏ¢ÌõÊý /  Ñù±¾ÖÐµÄÕýÈ·ÐÅÏ¢ÌõÊý    
+Á½ÕßÈ¡ÖµÔÚ0ºÍ1Ö®¼ä£¬ÊýÖµÔ½½Ó½ü1£¬²é×¼ÂÊ»ò²éÈ«ÂÊ¾ÍÔ½¸ß¡£   
+    3. F1Öµ  = ÕýÈ·ÂÊ * ÕÙ»ØÂÊ * 2 / (ÕýÈ·ÂÊ + ÕÙ»ØÂÊ) £¨F Öµ¼´ÎªÕýÈ·ÂÊºÍÕÙ»ØÂÊµÄµ÷ºÍÆ½¾ùÖµ£© Ô½´óÔ½ºÃ£¬1ÎªÀíÏë×´Ì¬£¬´ËÊ±precisionÎª1£¬recallÎª1
+²»·Á¾ÙÕâÑùÒ»¸öÀý×Ó£ºÄ³³ØÌÁÓÐ1400ÌõÀðÓã£¬300Ö»Ïº£¬300Ö»±î¡£ÏÖÔÚÒÔ²¶ÀðÓãÎªÄ¿µÄ¡£ÈöÒ»´óÍø£¬´þ×ÅÁË700ÌõÀðÓã£¬200Ö»Ïº£¬100Ö»±î¡£ÄÇÃ´£¬ÕâÐ©Ö¸±ê·Ö±ðÈçÏÂ£º
+ÕýÈ·ÂÊ = 700 / (700 + 200 + 100) = 70%
+ÕÙ»ØÂÊ = 700 / 1400 = 50%
+FÖµ = 70% * 50% * 2 / (70% + 50%) = 58.3%
+²»·Á¿´¿´Èç¹û°Ñ³Ø×ÓÀïµÄËùÓÐµÄÀðÓã¡¢ÏººÍ±î¶¼Ò»Íø´ò¾¡£¬ÕâÐ©Ö¸±êÓÖÓÐºÎ±ä»¯£º
+ÕýÈ·ÂÊ = 1400 / (1400 + 300 + 300) = 70%
+ÕÙ»ØÂÊ = 1400 / 1400 = 100%
+FÖµ = 70% * 100% * 2 / (70% + 100%) = 82.35%        
+ÓÉ´Ë¿É¼û£¬ÕýÈ·ÂÊÊÇÆÀ¹À²¶»ñµÄ³É¹ûÖÐÄ¿±ê³É¹ûËùÕ¼µÃ±ÈÀý£»ÕÙ»ØÂÊ£¬¹ËÃûË¼Òå£¬¾ÍÊÇ´Ó¹Ø×¢ÁìÓòÖÐ£¬ÕÙ»ØÄ¿±êÀà±ðµÄ±ÈÀý£»¶øFÖµ£¬ÔòÊÇ×ÛºÏÕâ¶þÕßÖ¸±êµÄÆÀ¹ÀÖ¸±ê£¬ÓÃÓÚ×ÛºÏ·´Ó³ÕûÌåµÄÖ¸±ê¡£
+
+µ±È»Ï£Íû¼ìË÷½á¹ûPrecisionÔ½¸ßÔ½ºÃ£¬Í¬Ê±RecallÒ²Ô½¸ßÔ½ºÃ£¬µ«ÊÂÊµÉÏÕâÁ½ÕßÔÚÄ³Ð©Çé¿öÏÂÓÐÃ¬¶ÜµÄ¡£±ÈÈç¼«¶ËÇé¿öÏÂ£¬ÎÒÃÇÖ»ËÑË÷³öÁËÒ»¸ö½á¹û£¬ÇÒÊÇ×¼È·µÄ£¬ÄÇÃ´Precision¾ÍÊÇ100%£¬µ«ÊÇRecall¾ÍºÜµÍ£»¶øÈç¹ûÎÒÃÇ°ÑËùÓÐ½á¹û¶¼·µ»Ø£¬ÄÇÃ´±ÈÈçRecallÊÇ100%£¬µ«ÊÇPrecision¾Í»áºÜµÍ¡£Òò´ËÔÚ²»Í¬µÄ³¡ºÏÖÐÐèÒª×Ô¼ºÅÐ¶ÏÏ£ÍûPrecision±È½Ï¸ß»òÊÇRecall±È½Ï¸ß¡£Èç¹ûÊÇ×öÊµÑéÑÐ¾¿£¬¿ÉÒÔ»æÖÆPrecision-RecallÇúÏßÀ´°ïÖú·ÖÎö¡£
+
 
 »úÆ÷Ñ§Ï°
 
@@ -12,7 +442,8 @@ Nvidia DevBox ÓÃµÄÊÇ Asus X99-E WS
 ÖÚËùÖÜÖªµ¥»ú¶à¿¨½øÐÐÑµÁ·Ê±£¬×ÜÏß´ø¿íÊÇÆ¿¾±£¬ËùÒÔ CPU µÄ PCI-e lane Ô½¶àÔ½ºÃ£¬Ò»°ãÏû·Ñ¼¶µÄCPU£¬PCI-e×ÜÏß¸ùÊýÊÇ 16, 28 »ò 40£¬×î´ó¾ÍÊÇ40£¬ÔÙ´ó¾ÍÐèÒªÉÏ·þÎñÆ÷CPU»òÕßË«Â·CPUÁË¡£Ñ¡40£¬ Õâ¸öÌõ¼þÏÂ£¬ÓÐÁ½¿î CPU ÈëÎ§£¬I7-5930KºÍ I7-5960X, 5860XÌ«¹óÁË£¬Ò»°ã»úÆ÷Ñ§Ï°ÑµÁ·ÖÐCPU²»ÊÇÆ¿¾±£¬ËùÒÔÑ¡ 5930K¾Í¿ÉÒÔÁË£¬ÕâÒ²ÊÇ Nvidia ¹Ù·½ÍÆ³öµÄ DevBox ¹¤×÷Õ¾ËùÊ¹ÓÃµÄCPU¡£
 ÔÙ´ó¾ÍÃ»±ØÒªÁË£¬ÀîãåµÄÕâÆª²©¿ÍGPU¼¯ÈºÕÛÌÚÊÖ¼Ç Ä©Î²ÓÐËµµ½¹ý£¬µ¥»ú4¿¨µÄ»úÆ÷£¬64GÄÚ´æ´Â´ÂÓÐÓàÁË¡£
 Ò»°ã Nvidia µÄÆì½¢ÏÔ¿¨£¬¹¦ºÄ¶¼ÊÇÑ¹×Å 300WµÄÏßµÄ£¬ËÄ¿¨¾Í 1200WÁË£¬¼ÓÉÏÖ÷°å£¬CPUµÈºÄµç£¬Ñ¡Ò»¸ö 1600WµÄµçÔ´°É¡£
-
+À¨PCI-E 3.0¡¢2.0¡¢1.1ÈýÖÖ±ê×¼°æ±¾¡£ÈýÕßµÄx1µ¥Ïò´ø¿í·Ö±ðÎª1GB/s¡¢512MB/s¡¢256MB/s£¬x16Ë«Ïò´ø¿í¾ÍÊÇ32GB/s¡¢16GB/s¡¢8GB/s¡£
+HBA¿¨ÊÇ pcie 3.0 *8  µ¥Ïò8GB
 Nvidia DevBox ÓÃµÄÊÇ EVGA 1600W 80+ Gold 120-G2-1600-X1 £¬ÄÇÎÒÒ²ÓÃËü°É¡£
 
 
@@ -110,7 +541,9 @@ K-Means++Ëã·¨²½Öè£º
 4.	ÖØ¸´µÚ£¨2£©ºÍµÚ£¨3£©²½Ö±µ½ËùÓÐµÄK¸öÖÖ×Óµã¶¼±»Ñ¡³öÀ´¡£
 5.	½øÐÐK-MeansËã·¨¡£
 
-KNNËã·¨ºÍK-MeansËã·¨²»Í¬µÄÊÇ£¬K-MeansËã·¨ÓÃÀ´¾ÛÀà£¬ÓÃÀ´ÅÐ¶ÏÄÄÐ©¶«Î÷ÊÇÒ»¸ö±È½ÏÏà½üµÄÀàÐÍ£¬¶øKNNËã·¨ÊÇÓÃÀ´×ö¹éÀàµÄ£¬Ò²¾ÍÊÇËµ£¬ÓÐÒ»¸öÑù±¾¿Õ¼äÀïµÄÑù±¾·Ö³ÉºÜ¼¸¸öÀàÐÍ£¬È»ºó£¬¸ø¶¨Ò»¸ö´ý·ÖÀàµÄÊý¾Ý£¬Í¨¹ý¼ÆËã½Ó½ü×Ô¼º×î½üµÄK¸öÑù±¾À´ÅÐ¶ÏÕâ¸ö´ý·ÖÀàÊý¾ÝÊôÓÚÄÄ¸ö·ÖÀà¡£Äã¿ÉÒÔ¼òµ¥µÄÀí½âÎªÓÉÄÇÀë×Ô¼º×î½üµÄK¸öµãÀ´Í¶Æ±¾ö¶¨´ý·ÖÀàÊý¾Ý¹éÎªÄÄÒ»Àà¡£
+KNNËã·¨ºÍK-MeansËã·¨²»Í¬µÄÊÇ£¬K-MeansËã·¨ÓÃÀ´¾ÛÀà£¬ÓÃÀ´ÅÐ¶ÏÄÄÐ©¶«Î÷ÊÇÒ»¸ö±È½ÏÏà½üµÄÀàÐÍ£¬
+¶øKNNËã·¨ÊÇÓÃÀ´×ö¹éÀàµÄ£¬Ò²¾ÍÊÇËµ£¬ÓÐÒ»¸öÑù±¾¿Õ¼äÀïµÄÑù±¾·Ö³ÉºÜ¼¸¸öÀàÐÍ£¬È»ºó£¬¸ø¶¨Ò»¸ö´ý·ÖÀàµÄÊý¾Ý£¬
+Í¨¹ý¼ÆËã½Ó½ü×Ô¼º×î½üµÄK¸öÑù±¾À´ÅÐ¶ÏÕâ¸ö´ý·ÖÀàÊý¾ÝÊôÓÚÄÄ¸ö·ÖÀà¡£Äã¿ÉÒÔ¼òµ¥µÄÀí½âÎªÓÉÄÇÀë×Ô¼º×î½üµÄK¸öµãÀ´Í¶Æ±¾ö¶¨´ý·ÖÀàÊý¾Ý¹éÎªÄÄÒ»Àà¡£
 
  
 
@@ -128,5 +561,4 @@ KNNËã·¨ºÍK-MeansËã·¨²»Í¬µÄÊÇ£¬K-MeansËã·¨ÓÃÀ´¾ÛÀà£¬ÓÃÀ´ÅÐ¶ÏÄÄÐ©¶«Î÷ÊÇÒ»¸ö±È½ÏÏà½
 »ùÓÚÄÚÈÝµÄ×ö·¨£ºÒª·ÖÎöFµÄÌØÕ÷ºÍu1ËùÏ²»¶µÄA¡¢B¡¢CµÄÌØÕ÷£¬ÐèÒªÖªµÀµÄÐÅÏ¢ÊÇA£¨Õ½ÕùÆ¬£©£¬B£¨Õ½ÕùÆ¬£©£¬C£¨¾çÇéÆ¬£©£¬Èç¹ûF£¨Õ½ÕùÆ¬£©£¬ÄÇÃ´FºÜ´ó³Ì¶ÈÉÏ¿ÉÒÔÍÆ¼ö¸øu1£¬ÕâÊÇ»ùÓÚÄÚÈÝµÄ×ö·¨£¬ÄãÐèÒª¶Ôitem½øÐÐÌØÕ÷½¨Á¢ºÍ½¨Ä£¡£
 Ð­Í¬¹ýÂËµÄ°ì·¨£ºÄÇÃ´ÄãÍêÈ«¿ÉÒÔºöÂÔitemµÄ½¨Ä££¬ÒòÎªÕâÖÖ°ì·¨µÄ¾ö²ßÊÇÒÀÀµuserºÍitemÖ®¼äµÄ¹ØÏµ£¬Ò²¾ÍÊÇÕâÀïµÄÓÃ»§ºÍµçÓ°Ö®¼äµÄ¹ØÏµ¡£ÎÒÃÇ²»ÔÙÐèÒªÖªµÀABCFÄÄÐ©ÊÇÕ½ÕùÆ¬£¬ÄÄÐ©ÊÇ¾çÇéÆ¬£¬ÎÒÃÇÖ»ÐèÒªÖªµÀÓÃ»§u1ºÍu2°´ÕÕitemÏòÁ¿±íÊ¾£¬ËûÃÇµÄÏàËÆ¶È±È½Ï¸ß£¬ÄÇÃ´ÎÒÃÇ¿ÉÒÔ°Ñu2ËùÏ²»¶µÄFÕâ²¿Ó°Æ¬ÍÆ¼ö¸øu1¡£
  
- Àµ½ÜÃ÷  13825261947  laijm@dcits.com
  

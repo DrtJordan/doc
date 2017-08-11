@@ -1,0 +1,242 @@
+k8s
+
+
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    name: whoami
+  name: whoami
+spec:
+  ports:
+    - port: 3000
+      targetPort: 3000
+      protocol: TCP
+  selector:
+    app: whoami
+    env: dev
+    其中 selector 告诉 kubernetes 这个 service 和后端哪些 pod 绑定在一起，这里包含的键值对会对所有 pod 的 labels 进行匹配，只要完全匹配，service 就会把 pod 作为后端。也就是说，service 和 rc 并不是对应的关系，一个 service 可能会使用多个 rc 管理的 pod 作为后端应用。
+    ports 字段指定服务的端口信息：
+	port：虚拟 ip 要绑定的 port，每个 service 会创建出来一个虚拟 ip，通过访问 vip:port 就能获取服务的内容。这个 port 可以用户随机选取，因为每个服务都有自己的 vip，也不用担心冲突的情况
+	targetPort：pod 中暴露出来的 port，这是运行的容器中具体暴露出来的端口，一定不能写错
+	protocol：提供服务的协议类型，可以是 TCP 或者 UDP
+
+
+kubectl get svc
+NAME         CLUSTER-IP    EXTERNAL-IP   PORT(S)    AGE
+kubernetes   10.10.10.1    <none>        443/TCP    19d
+whoami       10.10.10.28   <none>        3000/TCP   1d
+
+ kubectl describe svc whoami
+Name:                   whoami
+Namespace:              default
+Labels:                 name=whoami
+Selector:               app=whoami
+Type:                   ClusterIP
+IP:                     10.10.10.28
+Port:                   <unset> 3000/TCP
+Endpoints:              10.11.32.6:3000,10.13.192.4:3000,10.16.192.3:3000
+Session Affinity:       None
+No events.
+
+默认的 service 类型是 ClusterIP，这个也可以从上面输出看出来。在这种情况下，只能从集群内部访问这个 IP，不能直接从集群外部访问服务。
+默认情况下，服务会随机转发到可用的后端。如果希望保持会话（同一个 client 永远都转发到相同的 pod），可以把 service.spec.sessionAffinity 设置为 ClientIP。
+需要注意的是，服务分配的 cluster IP 是一个虚拟 ip，如果你尝试 ping 这个 IP 会发现它没有任何响应，这也是刚接触 kubernetes service 的人经常会犯的错误。实际上，这个虚拟 IP 只有和它的 port 一起的时候才有作用，直接访问它，或者想访问该 IP 的其他端口都是徒劳。
+
+上面创建的服务只能在集群内部访问，这在生产环境中还不能直接使用。如果希望有一个能直接对外使用的服务，
+可以使用 NodePort 或者 LoadBalancer 类型的 Service。我们先说说 NodePort ，它的意思是在所有 worker 节点上暴露一个端口，这样外部可以直接通过访问 nodeIP:Port 来访问应用
+
+
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    name: whoami
+  name: whoami
+spec:
+  ports:
+    - port: 3000
+      protocol: TCP
+      # nodePort: 31000
+  selector:
+    app: whoami
+  type: NodePort    --使用nodeport, nodePort 类型的服务会在所有的 worker 节点（运行了 kube-proxy）上统一暴露出端口对外提供服务，也就是说外部可以任意选择一个节点进行访问。比如我本地集群有三个节点：172.17.8.100、172.17.8.101 和 172.17.8.102：
+  有了 nodePort，用户可以通过外部的 Load Balance 或者路由器把流量转发到任意的节点，对外提供服务的同时，也可以做到负载均衡的效果。
+ nodePort 类型的服务并不影响原来虚拟 IP 的访问方式，内部节点依然可以通过 vip:port 的方式进行访问。
+ 
+ 目前 kube-proxy 默认使用 iptables 模式，上述展现的 service 功能都是通过修改 iptables 实现的
+ 
+ 所有发送出去的报文会进入 KUBE-SERVICES 进行处理
+*nat
+-A OUTPUT -m comment --comment "kubernetes service portals" -j KUBE-SERVICES
+KUBE-SERVICES 每条规则对应了一个 service，它告诉继续进入到某个具体的 service chain 进行处理，比如这里的 KUBE-SVC-OQCLJJ5GLLNFY3XB
+-A KUBE-SERVICES -d 10.10.10.28/32 -p tcp -m comment --comment "default/whoami: cluster IP" -m tcp --dport 3000 -j KUBE-SVC-OQCLJJ5GLLNFY3XB
+
+更具体的 chain 中定义了怎么转发到对应 endpoint 的规则，比如我们的 rc 有三个 pods，这里也就会生成三个规则。这里利用了 iptables 随机和概率转发的功能
+
+-A KUBE-SVC-OQCLJJ5GLLNFY3XB -m comment --comment "default/whoami:" -m statistic --mode random --probability 0.33332999982 -j KUBE-SEP-VN72UHNM6XOXLRPW
+-A KUBE-SVC-OQCLJJ5GLLNFY3XB -m comment --comment "default/whoami:" -m statistic --mode random --probability 0.50000000000 -j KUBE-SEP-YXCSPWPTUFI5WI5Y
+-A KUBE-SVC-OQCLJJ5GLLNFY3XB -m comment --comment "default/whoami:" -j KUBE-SEP-FN74S3YUBFMWHBLF
+我们来看第一个 chain，这个 chain 有两个规则，第一个表示给报文打上 mark；第二个是进行 DNAT（修改报文的目的地址），转发到某个 pod 地址和端口。
+-A KUBE-SEP-VN72UHNM6XOXLRPW -s 10.11.32.6/32 -m comment --comment "default/whoami:" -j KUBE-MARK-MASQ
+-A KUBE-SEP-VN72UHNM6XOXLRPW -p tcp -m comment --comment "default/whoami:" -m tcp -j DNAT --to-destination 10.11.32.6:3000
+因为地址是发送出去的，报文会根据路由规则进行处理，后续的报文就是通过 flannel 的网络路径发送出去的
+
+nodePort 类型的 service 原理也是类似的，在 KUBE-SERVICES chain 的最后，如果目标地址不是 VIP 则会通过 KUBE-NODEPORTS 
+    0     0 KUBE-NODEPORTS  all  --  *      *       0.0.0.0/0            0.0.0.0/0            /* kubernetes service nodeports; NOTE: this must be the last rule in this chain */ ADDRTYPE match dst-type LOCAL
+而 KUBE-NODEPORTS chain 和 KUBE-SERVICES chain 其他规则一样，都是转发到更具体的 service chain，然后转发到某个 pod 上面。
+A KUBE-NODEPORTS -p tcp -m comment --comment "default/whoami:" -m tcp --dport 31647 -j KUBE-MARK-MASQ
+-A KUBE-NODEPORTS -p tcp -m comment --comment "default/whoami:" -m tcp --dport 31647 -j KUBE-SVC-OQCLJJ5GLLNFY3XB
+看起来 service 是个完美的方案，可以解决服务访问的所有问题，但是 service 这个方案（iptables 模式）也有自己的缺点。
+首先，如果转发的 pod 不能正常提供服务，它不会自动尝试另一个 pod，当然这个可以通过 readiness probes 来解决。每个 pod 都有一个健康检查的机制，当有 pod 健康状况有问题时，kube-proxy 会删除对应的转发规则。
+另外，nodePort 类型的服务也无法添加 TLS 或者更复杂的报文路由机制。
+Service提供的负载均衡功能，但在使用上有以下限制：
+
+只提供4层负载均衡功能，而没有7层功能，但有时我们可能需要更多的匹配规则来转发请求，这点上4层负载均衡是不支持的。
+使用NodePort类型的Service，需要在集群外部部署外部的负载均衡器
+使用LoadBalancer类型的Service，Kubernetes必须运行在特定的云服务上。
+
+Ingress支持将Service暴露到Kubernetes集群外边，同时可以自定义Service的访问策略。 Ingress能够把Service配置成外网能够访问的URL，也支持提供按域名访问的虚拟主机功能。例如，通过负载均衡器实现不同的二级域名到不同Service的访问。
+需要一个 ingress controller(Google Compute Engine HTTP负载平衡控制器和Nginx) 来配置一系列的规则，能够从外面方面cluster里面的service
+ingress 分为两个部分
+1.Ingress resource  定义转发访问规则 
+Ingress Controller  反向代理LB，配合ingress resource做 load banancer ，目前只有google和nginx支持
+
+          
+
+
+
+   
+
+1. The name Kubernetes originates from Greek, meaning “helmsman” or “pilot”, and
+2. controller manager负责维护集群的状态，比如故障检测、自动扩展、滚动更新等；
+3. kubelet负责维护容器的生命周期，同时也负责Volume（CVI）和网络（CNI）的管理；
+4. Container runtime负责镜像管理以及Pod和容器的真正运行（CRI）；
+5. kube-proxy负责为Service提供cluster内部的服务发现和负载均衡    kube-proxy 运行在每个节点上，监听 API Server 中服务对象的变化，通过管理 iptables 来实现网络的转发
+6. Pod是一组紧密关联的容器集合，它们共享IPC、Network和UTC namespace，是Kubernetes调度的基本单位。Pod的设计理念是支持多个容器在一个Pod中共享网络和文件系统，可以通过进程间通信和文件共享这种简单高效的方式组合完成服务。
+7. Namespace是对一组资源和对象的抽象集合，比如可以用来将系统内部的对象划分为不同的项目组或用户组。常见的pods, services, replication controllers和deployments等都是属于某一个namespace的（默认是default），而node, persistentVolumes等则不属于任何namespace。
+8. Service是应用服务的抽象，通过labels为应用提供负载均衡和服务发现。匹配labels的Pod IP和端口列表组成endpoints，由kube-proxy负责将服务IP负载均衡到这些endpoints
+9. 每个Service都会自动分配一个cluster IP（仅在集群内部可访问的虚拟地址）和DNS名，其他容器可以通过该地址或DNS来访问服务，而不需要了解后端容器的运行。
+10. Label是识别Kubernetes对象的标签，以key/value的方式附加到对象上（key最长不能超过63字节，value可以为空，也可以是不超过253字节的字符串）。
+11. Label定义好后其他对象可以使用Label Selector来选择一组相同label的对象（比如ReplicaSet和Service用label来选择一组Pod）。Label Selector支持以下几种方式： 等式，如app=nginx和env!=production 集合，如env in (production, qa) 多个label（它们之间是AND关系），如app=nginx,env=test
+12. Annotations是key/value形式附加于对象的注解。不同于Labels用于标志和选择对象，Annotations则是用来记录一些附加信息，用来辅助应用部署、安全策略以及调度策略等。比如deployment使用annotations来记录rolling update的状态。
+13. kubectl run --image=nginx nginx-app --port=80
+14. kubectl get - 类似于docker ps，查询资源列表 kubectl describe - 类似于docker inspect，获取资源的详细信息 kubectl logs - 类似于docker logs，获取容器的日志 kubectl exec - 类似于docker exec，在容器内执行一个命令
+15. Volume就是为了持久化容器数据而生，比如可以为redis容器指定一个hostPath来存储redis数据：
+16. Service为一组Pod（通过labels来选择）提供一个统一的入口，并为它们提供负载均衡和自动服务发现。比如，可以为前面的nginx-app创建一个service：
+17. rolling-update只针对ReplicationController，不能用在策略不是RollingUpdate的Deployment上（Deployment可以在spec中设置更新策略为RollingUpdate，默认就是RollingUpdate）：
+18. 滚动升级的过程可以用rollout命令查看: $ kubectl
+19. Kubernetes通过cgroups提供容器资源管理的功能，可以限制每个容器的CPU和内存使用，比如对于刚才创建的deployment，可以通过下面的命令限制nginx容器最多只用50%的CPU和128MB的内存： $ kubectl set resources deployment nginx-app -c=nginx --limits=cpu=500m,memory=128Mi
+20. 这等同于在每个Pod中设置resources limits：
+23. Kubernetes提供了两种探针（Probe，支持exec、tcp和http方式）来探测容器的状态： LivenessProbe：探测应用是否处于健康状态，如果不健康则删除重建改容器 ReadinessProbe：探测应用是否启动完成并且处于正常服务状态，如果不正常则更新容器的状态 对于已经部署的deployment，可以通过kubectl edit deployment/nginx-app
+24. Kubernetes 具备完善的集群管理能力，包括多层次的安全防护和准入机制、多租户应用支撑能力、透明的服务注册和服务发现机制、内建负载均衡器、故障发现和自我修复能力、服务滚动升级和在线扩容、可扩展的资源自动调度机制、多粒度的资源配额管理能力。 Kubernetes 还提供完善的管理工具，涵盖开发、部署测试、运维监控等各个环节。
+25. kube-dns负责为整个集群提供DNS服务 Ingress Controller为服务提供外网入口 Heapster提供资源监控 Dashboard提供GUI Federation提供跨可用区的集群 Fluentd-elasticsearch提供集群日志采集、存储与查询
+26. K8s中所有的配置都是通过API对象的spec去设置的，也就是用户通过配置系统的理想状态来改变系统，这是k8s重要设计理念之一，即所有的操作都是声明式（Declarative）的而不是命令式（Imperative）的。声明式操作在分布式系统中的好处是稳定，不怕丢操作或运行多次，例如设置副本数为3的操作运行多次也还是一个结果，而给副本数加1的操作就不是声明式的，运行多次结果就错了。
+27. 目前K8s中的业务主要可以分为长期伺服型（long-running）、批处理型（batch）、节点后台支撑型（node-daemon）和有状态应用型（stateful application）；分别对应的小机器人控制器为Deployment、Job、DaemonSet和PetSet，本文后面会一一介绍。
+28. RS是新一代RC，提供同样的高可用能力，区别主要在于RS后来居上，能支持更多种类的匹配模式。副本集对象一般不单独使用，而是作为Deployment的理想状态参数使用。
+30. 部署表示用户对K8s集群的一次更新操作。部署是一个比RS应用模式更广的API对象，可以是创建一个新的服务，更新一个新的服务，也可以是滚动升级一个服务。滚动升级一个服务，实际是创建一个新的RS，然后逐渐将新RS中副本数增加到理想状态，将旧RS中的副本数减小到0的复合操作；这样一个复合操作用一个RS是不太好描述的，所以用一个更通用的Deployment来描述。以K8s的发展方向，未来对所有长期伺服型的的业务的管理，都会通过Deployment来管理。
+31. Kube-proxy是K8s集群内部的负载均衡器。它是一个分布式代理服务器，在K8s的每个节点上都有一个；这一设计体现了它的伸缩性优势，需要访问服务的节点越多，提供负载均衡能力的Kube-proxy就越多，高可用节点也随之增多。
+32. 而后台支撑型服务的核心关注点在K8s集群中的节点（物理机或虚拟机），要保证每个节点上都有一个此类Pod运行。
+33. 对于PetSet中的Pod，每个Pod挂载自己独立的存储，如果一个Pod出现故障，从其他节点启动一个同样名字的Pod，要挂载上原来Pod的存储继续以它的状态提供服务。
+34. 适合于PetSet的业务包括数据库服务MySQL和PostgreSQL，集群化管理服务Zookeeper、etcd等有状态服务。PetSet的另一种典型应用场景是作为一种比普通容器更稳定可靠的模拟虚拟机的机制。
+37. K8s集群中的存储卷跟Docker的存储卷有些类似，只不过Docker的存储卷作用范围为一个容器，而K8s的存储卷的生命周期和作用范围是一个Pod。每个Pod中声明的存储卷由Pod中的所有容器共享。K8s支持非常多的存储卷类型，特别的，支持多种公有云平台的存储，包括AWS，Google和Azure云；支持多种分布式存储包括GlusterFS和Ceph；也支持较容易使用的主机本地目录hostPath和NFS。
+38. 最初Node称为服务节点Minion，后来改名为Node。
+39. 在K8s集群中配置和使用服务不可避免的要用到各种敏感信息实现登录、认证等功能，例如访问AWS存储的用户名密码。为了避免将类似的敏感信息明文写在所有需要使用的配置文件中，可以将这些信息存入一个Secret对象，而在配置文件中通过Secret对象引用这些敏感信息。这种方式的好处包括：意图明确，避免重复，减少暴漏
+
+41. 用户帐户为人提供账户标识，而服务账户为计算机进程和K8s集群中运行的Pod提供账户标识。用户帐户和服务帐户的一个区别是作用范围；用户帐户对应的是人的身份，人的身份与服务的namespace无关，所以用户账户是跨namespace的；而服务帐户对应的是一个运行中程序的身份，与特定namespace是相关的。
+42. 名字空间为K8s集群提供虚拟的隔离作用，K8s集群初始有两个名字空间，分别是默认名字空间default和系统名字空间kube-system，除此以外，管理员可以可以创建新的名字空间满足需要。
+43. 默认为IfNotPresent，但:latest标签的镜像默认为Always。
+44. 生产环境中应该尽量避免使用:latest标签，而开发环境中可以借助:latest标签自动拉取最新的镜像。
+45. CPU的单位是milicpu，500mcpu=0.5cpu；而内存的单位则包括E, P, T, G, M, K, Ei, Pi, Ti, Gi, Mi, Ki等。 健康检查 为了确保容器在部署后确实处在正常运行状态，Kubernetes提供了两种探针（Probe，支持exec、tcp和httpGet方式）来探测容器的状态： LivenessProbe：探测应用是否处于健康状态，如果不健康则删除重建改容器 ReadinessProbe：探测应用是否启动完成并且处于正常服务状态，如果不正常则更新容器的状态 apiVersion: v1 kind: Pod metadata: labels: app: nginx
+47. Init Container在所有容器运行之前执行（run-to-completion），常用来初始化配置。
+48. 容器生命周期钩子（Container Lifecycle Hooks）监听容器生命周期的特定事件，并在事件发生时执行已注册的回调函数。支持两种钩子： postStart： 容器启动后执行，注意由于是异步执行，它无法保证一定在ENTRYPOINT之后运行。如果失败，容器会被杀死，并根据RestartPolicy决定是否重启 preStop：容器停止前执行，常用于资源清理。如果失败，容器同样也会被杀死
+	 
+9. 而钩子的回调函数支持两种方式： exec：在容器内执行命令 httpGet：向指定URL发起GET请求
+50. 默认情况下，容器都是以非特权容器的方式运行。比如，不能在容器中创建虚拟网卡、配置虚拟网络。 Kubernetes提供了修改Capabilities的机制，可以按需要给给容器增加或删除。比如下面的配置给容器增加了CAP_NET_ADMIN并删除了CAP_KILL。
+51. 可以通过给Pod增加kubernetes.io/ingress-bandwidth和kubernetes.io/egress-bandwidth这两个annotation来限制Pod的网络带宽
+52. 可以通过nodeSelector、nodeAffinity、podAffinity以及Taints和tolerations等来将Pod调度到需要的Node上。
+53. 比如，使用nodeSelector，首先给Node加上标签： kubectl label nodes <your-node-name> disktype=ssd 接着，指定该Pod只想运行在带有disktype=ssd标签的Node上：
+
+54. 默认情况下，kubelet在启动时会向master注册自己，并创建Node资源。
+55. Taints和tolerations用于保证Pod不被调度到不合适的Node上，Taint应用于Node上，而toleration则应用于Pod上（Toleration是可选的）。
+56. 标志Node不可调度但不影响其上正在运行的Pod，这种维护Node时是非常有用的 kubectl cordon $NODENAME
+57. 在ClusterIP基础上为Service在每台机器上绑定一个端口，这样就可以通过<NodeIP>:NodePort来访问该服务
+58. Service虽然解决了服务发现和负载均衡的问题，但它在使用上还是有一些限制，比如 － 只支持4层负载均衡，没有7层功能 － 对外访问的时候，NodePort类型需要在外部搭建额外的负载均衡，而LoadBalancer要求kubernetes必须跑在支持的cloud provider上面
+59. Ingress就是为了解决这些限制而引入的新资源，主要用来将服务暴露到cluster外面，并且可以自定义服务的访问策略。比如想要通过负载均衡器实现不同子域名到不同服务的访问：
+60. 注意Ingress本身并不会自动创建负载均衡器，cluster中需要运行一个ingress controller来根据Ingress的定义来管理负载均衡器。目前社区提供了nginx和gce的参考实现。
+61. 在Ingress出现以前，Service Load Balancer是推荐的解决Service局限性的方式。Service Load Balancer将haproxy跑在容器中，并监控service和endpoint的变化，通过容器IP对外提供4层和7层负载均衡服务。
+62. 与Docker不同，Kubernetes Volume的生命周期与Pod绑定 容器挂掉后Kubelet再次重启容器时，Volume的数据依然还在 而Pod删除时，Volume才会清理。数据是否丢失取决于具体的Volume类型，比如emptyDir的数据会丢失，而PV的数据则不会丢
+63. PersistentVolume（PV）是集群之中的一块网络存储。跟 Node 一样，也是集群的资源。PV 跟 Volume (卷) 类似，不过会有独立于 Pod 的生命周期。比如一个NFS的PV可以定义为
+4. PV是存储资源，而PersistentVolumeClaim (PVC) 是对PV的请求。PVC跟Pod类似：Pod消费Node的源，而PVC消费PV资源；Pod能够请求CPU和内存资源，而PVC请求特定大小和访问模式的数据卷。
+65. 你只需要在Deployment中描述你想要的目标状态是什么，Deployment controller就会帮你将Pod和Replica Set的实际状态改变到你的目标状态。你可以定义一个全新的Deployment，也可以创建一个新的替换旧的Deployment。
+66. Secret有三种类型： Service Account：用来访问Kubernetes API，由Kubernetes自动创建，并且会自动挂载到Pod的/run/secrets/kubernetes.io/serviceaccount目录中； Opaque：base64编码格式的Secret，用来存储密码、密钥等； kubernetes.io/dockerconfigjson：用来存储私有docker registry的认证信息。
+67. ReplicaSet跟ReplicationController没有本质的不同，只是名字不一样，并且ReplicaSet支持集合式的selector（ReplicationController仅支持等式）。 虽然也ReplicaSet可以独立使用，但建议使用 Deployment 来自动管理ReplicaSet，这样就无需担心跟其他机制的不兼容问题（比如ReplicaSet不支持rolling-update但Deployment支持），并且还支持版本记录、回滚、暂停升级等高级特性。
+68. Job Controller负责根据Job Spec创建Pod，并持续监控Pod的状态，直至其成功结束。如果失败，则根据restartPolicy（只支持OnFailure和Never，不支持Always）决定是否创建新的Pod再次重试任务。
+69. CronJob即定时任务，就类似于Linux系统的crontab，在指定的时间周期运行指定的任务。在Kubernetes 1.5，使用CronJob需要开启batch/v2alpha1 API，即--runtime-config=batch/v2alpha1。
+70. 资源配额（Resource Quotas）是用来限制用户资源用量的一种机制。 它的工作原理为 资源配额应用在Namespace上，并且每个Namespace最多只能有一个ResourceQuota对象 开启计算资源配额后，创建容器时必须配置计算资源请求或限制（也可以用LimitRange设置默认值） 用户超额后禁止创建新的资源
+71. Horizontal Pod Autoscaling可以根据CPU使用率或应用自定义metrics自动扩展Pod数量（支持replication controller、deployment和replica set）。
+72. 默认情况下，所有Pod之间是全通的。每个Namespace可以配置独立的网络策略，来隔离Pod之间的流量。
+73. 通常情况下，service和pod的IP仅可在集群内部访问。集群外部的请求需要通过负载均衡转发到service在Node上暴露的NodePort上，然后再由kube-proxy将其转发给相关的Pod。 而Ingress就是为进入集群的请求提供路由规则的集合，
+74. Ingress可以给service提供集群外部访问的URL、负载均衡、SSL终止、HTTP路由等。
+75. ConfigMap用于保存配置数据的键值对，可以用来保存单个属性，也可以用来保存配置文件。ConfigMap跟secret很类似，但它可以更方便地处理不包含敏感信息的字符串。
+76. 用户通过REST API创建一个Pod apiserver将其写入etcd scheduluer检测到未绑定Node的Pod，开始调度并更新Pod的Node绑定 kubelet检测到有新的Pod调度过来，通过container runtime运行该Pod kubelet通过container runtime取到Pod状态，并更新到apiserver中
+77. Etcd是CoreOS基于Raft开发的分布式key-value存储，可用于服务发现、共享配置以及一致性保障（如数据库选主、分布式锁等）。
+78. Etcd主要功能 基本的key-value存储 监听机制 key的过期及续约机制，用于监控和服务发现 原子CAS和CAD，用于分布式锁和leader选举
+79. Etcd基于RAFT的一致性 选举方法 1) 初始启动时，节点处于follower状态并被设定一个election timeout，如果在这一时间周期内没有收到来自 leader 的 heartbeat，节点将发起选举：将自己切换为 candidate 之后，向集群中其它 follower 节点发送请求，询问其是否选举自己成为 leader。 2) 当收到来自集群中过半数节点的接受投票后，节点即成为 leader，开始接收保存 client 的数据并向其它的 follower 节点同步日志。如果没有达成一致，则candidate随机选择一个等待间隔（150ms ~ 300ms）再次发起投票，得到集群中半数以上follower接受的candidate将成为leader 3) leader节点依靠定时向 follower 发送heartbeat来保持其地位。 4) 任何时候如果其它 follower 在 election timeout 期间都没有收到来自 leader 的 heartbeat，同样会将自己的状态切换为 candidate 并发起选举。每成功选举一次，新 leader 的任期（Term）都会比之前 leader 的任期大1。
+80. 当接Leader收到客户端的日志（事务请求）后先把该日志追加到本地的Log中，然后通过heartbeat把该Entry同步给其他Follower，Follower接收到日志后记录日志然后向Leader发送ACK，当Leader收到大多数（n/2+1）Follower的ACK信息后将该日志设置为已提交并追加到本地磁盘中，通知客户端并在下个heartbeat中Leader将通知所有的Follower将该日志存储在自己的本地磁盘中。
+81. 当Log在任期Term1被Commit后，那么以后任期Term2、Term3…等的Leader必须包含该Log；Raft在选举阶段就使用Term的判断用于保证完整性：当请求投票的该Candidate的Term较大或Term相同Index更大则投票，否则拒绝该请求。
+	82. boltdb是一个单机的支持事务的kv存储，Etcd 的事务是基于boltdb的事务实现的。Etcd 在boltdb中存储的key是reversion，value是 Etcd 自己的key-value组合，也就是说 Etcd 会在boltdb中把每个版本都保存下，从而实现了多版本机制。
+83. 相比Etcd v2, Etcd v3的一些主要变化： 接口通过grpc提供rpc接口，放弃了v2的http接口。优势是长连接效率提升明显，缺点是使用不如以前方便，尤其对不方便维护长连接的场景。
+84. 而Consul 的目标则更为具体一些，Etcd 和 Zookeeper 提供的是分布式一致性存储能力，具体的业务场景需要用户自己实现，比如服务发现，比如配置变更。而Consul 则以服务发现和配置变更为主要目标，同时附带了kv存储。
+86. 的。Etcd 自己的定位是通用的kv存储，所以并没有像 Consul 那样提供实现配置变更的机制和工具，而 Confd 就是用来实现这个目标的工具。 Confd 通过watch机制监听 Etcd 的变更，然后将数据同步到自己的一个本地存储。用户可以通过配置定义自己关注那些key的变更，同时提供一个配置文件模板。Confd 一旦发现数据变更就使用最新数据渲染模板生成配置文件，如果新旧配置文件有变化，则进行替换，同时触发用户提供的reload脚本，让应用程序重新加载配置。
+87. 调度器需要充分考虑诸多的因素： 公平调度 资源高效利用 QoS affinity 和 anti-affinity 数据本地化（data locality） 内部负载干扰（inter-workload interference） deadlines
+88. 每台机器上都运行一个kube-proxy服务，它监听API server中service和endpoint的变化情况，并通过iptables等来为服务配置负载均衡（仅支持TCP和UDP）。
+89. Flannel是一个为Kubernetes提供overlay network的网络插件，它基于Linux TUN/TAP，使用UDP封装IP包来创建overlay网络，并借助etcd维护网络的分配情况。
+90. Weave Net是一个多主机容器网络方案，支持去中心化的控制平面，各个host上的wRouter间通过建立Full Mesh的TCP链接，并通过Gossip来同步控制信息。这种方式省去了集中式的K/V Store，能够在一定程度上减低部署的复杂性，Weave将其称为“data centric”，而非RAFT或者Paxos的“algorithm centric”。
+91. 数据平面上，Weave通过UDP封装实现L2 Overlay，封装支持两种模式，
+93. Calico 是一个基于BGP的纯三层的数据中心网络方案（不需要Overlay），并且与OpenStack、Kubernetes、AWS、GCE等IaaS和容器平台都有良好的集成。
+94. Prometheus是另外一个监控和时间序列数据库，并且还提供了告警的功能。它提供了强大的查询语言和HTTP接口，也支持将数据导出到Grafana中展示。
+95. 但是在测试过程中发现，Logstash是基于JDK的，在没有产生日志的情况单纯启动Logstash就大概要消耗500M内存，在每个Pod中都启动一个日志收集组件的情况下，使用logstash有点浪费系统资源，经人推荐我们选择使用Filebeat替代，经测试单独启动Filebeat容器大约会消耗12M内存，
+96. 新建一个容器调试webserver 用一个包含调试工具或者方便安装调试工具的镜像（如alpine）创建一个新的container，为了便于获取webserver进程的状态，新的容器共享webserver容器的pid namespace和net namespace，并增加必要的capability：
+97. AppArmor(Application Armor)是Linux内核的一个安全模块，允许系统管理员将每个程序与一个安全配置文件关联，从而限制程序的功能。通过它你可以指定程序可以读、写或运行哪些文件，是否可以打开网络端口等。作为对传统Unix的自主访问控制模块的补充，AppArmor提供了强制访问控制机制。 在使用AppArmor之前需要注意 Kubernetes版本>=v1.4 apiserver和kubelet已开启AppArmor特性，--
+	 
+
+
+
+
+
+pod a group of containers  ，共享存储，代表run在同一个node的一个或者多个docker ，共享ip,ipc 
+一个node包含多个pod ，pod 不能跨节点
+labels lable for identify pods
+kubelet  每个节点运行一个
+proxy load balancer for pods
+etcd 分布式存储
+cadvisor 监控
+replication controller 管理pod的复制  保证指定数量的pod复制在节点上，crash的Node会自动在其他节点启动新的，通过label来管理
+scheduler schedules pods in worker nodes
+daemonsets自动跑在所有Node上
+有 kubernetes master /minion (worker node)
+状态信息存在 etcd,通过 master管理，所有client通过master申请服务(nodes,pods,services..)
+
+有ingress网络 
+网络支持路由或者overlay，缺省所有节点可以内部通讯
+master包含如下组件
+		API Server
+		Scheduler
+		Registers
+			minion registry
+			pod registry
+			service registry
+			binding registry
+		storage 
+		
+一个或者多个container组成 pod ,一个或者多个pod 通过proxy 组成 service
+service有Udp/tcp服务端口
+service包含如下信息
+	name
+	port of proxy 
+	labels of a service 
+	selector
+	uses loadbalancer
+	container port  
+通过 kubectl 管理 

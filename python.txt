@@ -10,6 +10,171 @@ wget  https://bootstrap.pypa.io/get-pip.py
 pip install ipython 
 
 
+ delta=datetime(2017,5,8)-datetime(2015,5,1)
+ delta可以做运算，比如 */
+ 格式化日期
+ now.strftime('%Y-%m-%d')
+ 灵活的格式化工具
+ from dateutil.parser import parse
+ parse('2015-1-3 15:31:25')
+时间序列  pd.date_range('2015/1/1','2015/3/1')
+s1=Series(np.random.randn(60),index=pd.date_range('1/1/2015',periods=60))
+选取
+s1['2015/01']
+s1[datetime(2015,1,31):datetime(2015,2,15)]
+
+s2=pd.date_range('2015/1/1','2015/3/1',freq='BM')
+s2=pd.date_range('2015/1/1','2015/3/1',freq='4H')
+重新采样
+>> index = pd.date_range('1/1/2000', periods=9, freq='T')
+>> series = pd.Series(range(9), index=index)
+>> series
+000-01-01 00:00:00    0
+000-01-01 00:01:00    1
+000-01-01 00:02:00    2
+000-01-01 00:03:00    3
+000-01-01 00:04:00    4
+000-01-01 00:05:00    5
+000-01-01 00:06:00    6
+000-01-01 00:07:00    7
+000-01-01 00:08:00    8
+req: T, dtype: int64
+
+重新采样数据  ts.resample('5min').mean()
+ownsample the series into 3 minute bins and sum the values
+f the timestamps falling into a bin.
+>> series.resample('3T').sum()
+2000-01-01 00:00:00     3
+2000-01-01 00:03:00    12
+2000-01-01 00:06:00    21
+
+s1.resample('5T').ohlc()
+                       				  open      high       low     close
+2015-01-01 00:00:00 -0.016526  1.342130 -1.958966  0.119481
+2015-01-01 00:05:00  0.213527  0.213527 -0.936084 -0.606785
+2015-01-01 00:10:00 -0.809243  1.127107 -0.881131 -0.881131
+2015-01-01 00:15:00 -2.264752  1.005139 -2.264752  1.005139
+2015-01-01 00:20:00  0.459305  1.397364 -0.876157  1.077889
+2015-01-01 00:25:00 -1.383811  0.823196 -1.394396  0.672070
+2015-01-01 00:30:00  0.898467  1.284131 -0.489025  0.839378
+2015-01-01 00:35:00  0.341317  0.341317 -0.622713 -0.057851
+2015-01-01 00:40:00 -0.527045  2.283350 -0.527045 -0.247362
+2015-01-01 00:45:00  0.172540  0.515175 -1.258490  0.064230
+
+时间差
+from pandas.tseries.offsets import *
+datetime.now()+Day(2)
+移动序列数据
+s1.shift(1)
+s1/s1.shift(1)-1 计算变化率
+
+时区转换
+s2=s1.tz_localize('UTC')
+s2.index.tz  
+然后才可以继续转换到其他时区
+s2.tz_convert('US/Eastern')
+
+pd.Timestamp('2011-09-03 23:00:00+0000', tz='UTC') 也可以自带时区功能 可以通过 tz_localize 和 tz_convert 进行时区转换
+
+pd里面也自带range函数
+rng=pd.period_range('2015/1/1','2016/1/1',freq='M')
+rng+2就是都+2个月
+pd也自带 asfreq函数能进行时期频率转换
+
+dataframe自带移动平均和移动平均相关系数计算功能
+ pd.rolling_corr
+ pd.rolling_mean
+ 
+ 还有 asof 功能，能获得时间点或者之前最近的有效值
+ pd.ols  最小二乘回归提供了两个变量直接动态关系的建模功能
+ 
+ndarry 里面存储顺序有 C(行优先存) Fortan(列优先存)
+arr=array(range(1,2))
+arr.repeat(3) 每个元素重复3次
+array([1, 1, 2, 2])
+np.tile(arr,2)
+array([1, 2, 1, 2])
+
+数组运算的时候广播传递原理
+如果两个数组的后缘唯独一直或者其中一个为1，则认为是可以广播的
+比如  4*3+1*3 沿着行传播  4*3 +4*1 沿着列传播
+
+数组里面可以包含结构化类型
+In [119]: dtype=[('x',np.float64),('y',np.int32)]
+In [120]: sarr=np.array([(1.5,6),(np.pi,-2)],dtype=dtype)
+
+In [121]: sarr
+Out[121]:
+array([(1.5, 6), (3.141592653589793, -2)],
+      dtype=[('x', '<f8'), ('y', '<i4')])
+
+list可以reverse 反序 ，sort排序(x.sort(reverse=True))   这两方法都是对原列表进行操作  sorted返回一个新的序列，原列表不变
+array坐标排序
+np.argsort(ar) 升序
+np.argsort(-ar) 降序
+
+np.memmap 内存影像文件，可以处理大规模的数据
+
+优化建议：
+尽量使用数组运算和布尔数组运算，少使用循环
+尽量使用广播
+避免复制，尽量使用数组视图
+利用ufunc
+使用连续内存保存数据
+考虑使用 cython   先将代码翻译成C，然后编译C创建一个python扩展 语法是python语言语法和C语言语法的混血 Cython 是包含 C 数据类型的 Python 
+cython可以很容易调用c/c++函数，使用c/c++数据结构来提速
+
+使用join合并迭代器中的字符串 有大约5倍的提升。
+使用json做序列化 json比cPickle快近3倍，比eval快20多倍。
+
+CPython原生API: 通过引入Python.h头文件，对应的C程序中可以直接使用Python的数据结构。实现过程相对繁琐，但是有比较大的适用范围。
+ctypes: 通常用于封装(wrap)C程序，让纯Python程序调用动态链接库（Windows中的dll或Unix中的so文件）中的函数。如果想要在python中使用已经有C类库，使用ctypes是很好的选择，有一些基准测试下，python2+ctypes是性能最好的方式。
+Cython: Cython是CPython的超集，用于简化编写C扩展的过程。Cython的优点是语法简洁，可以很好地兼容numpy等包含大量C扩展的库。Cython的使得场景一般是针对项目中某个算法或过程的优化。在某些测试中，可以有几百倍的性能提升。
+cffi: cffi的就是ctypes在pypy（详见下文）中的实现，同进也兼容CPython。cffi提供了在python使用C类库的方式，可以直接在python代码中编写C代码，同时支持链接到已有的C类库。
+
+
+因为GIL的存在，Python很难充分利用多核CPU的优势。但是，可以通过内置的模块 multiprocessing 实现下面几种并行模式：
+多进程：对于CPU密集型的程序，可以使用multiprocessing的Process,Pool等封装好的类，通过多进程的方式实现并行计算。但是因为进程中的通信成本比较大，对于进程之间需要大量数据交互的程序效率未必有大的提高。
+多线程：对于IO密集型的程序，multiprocessing.dummy模块使用multiprocessing的接口封装threading，使得多线程编程也变得非常轻松(比如可以使用Pool的map接口，简洁高效)。
+分布式：multiprocessing中的Managers类提供了可以在不同进程之共享数据的方式，可以在此基础上开发出分布式的程序。
+
+除了上面在ipython使用到的timeit模块，还有cProfile。cProfile的使用方式也非常简单： python -m cProfile filename.py，filename.py 是要运行程序的文件名，可以在标准输出中看到每一个函数被调用的次数和运行的时间，从而找到程序的性能瓶颈，然后可以有针对性地优化。
+
+
+Cython + NumPy 可解决部分计算问题和内存问题，但GIL无法避免
+multiprocessing能解决SMP/GIL问题，但内存问题解决不了，也许共享内存+ctypes是个办法，没尝试过
+
+Cython可以pass掉，手动写并行，不如直接换C++，用那边的并行库。
+科学运算不一定需要混合编程，numpy+scipy 配合MKL (intel 数学编译优化器 Math Kernel Library
+
+Anaconda公司推出的Numba。Numba允许用户使用基于LLVM的JIT技术，对程序内想要提高性能的部分（函数）进行局部优化。同时Numba在设计理念上更加务实：可以直接在CPython中使用，和其他常用的Python模块的兼容性良好
+
+只需增加一句代码（@numba.jit） ，提升26倍 就能实现加速的Numba无疑是性价比最高的优化方案，值得优先尝试，不过需要注意numba的JIT技术局限性比较大（主要针对数值计算相关的逻辑）；
+学习如何降低算法复杂度和编写更高效的算法，可以在潜移默化中提高自己的编程水平，在长期而言是对Quant或者程序员最有价值的优化方法；
+如果其他优化方法都无法达到令你满意的性能水平，试试Cython（记得一定要加静态声明）;
+)
+
+调用C++函数库
+import ctypes
+so = ctypes.CDLL("./libtest.so")
+so.display()
+
+ 
+
+In [182]: arr_c=np.ones((1000,1000),order='C')
+In [183]: arr_c.flags
+Out[183]:
+  C_CONTIGUOUS : True                C格式连续(行优先存储)
+  F_CONTIGUOUS : False
+  OWNDATA : True
+  WRITEABLE : True
+  ALIGNED : True
+  UPDATEIFCOPY : False
+
+
+ t1[::2] 间隔一个取数
+ 
+ 
 常在文件开头写上这两行： #!/usr/bin/env python3 # -*- coding: utf-8 -*- 第一行注释是为了告诉Linux/OS X系统，这是一个Python可执行程序，Windows系统会忽略这个注释； 第二行注释是为了告诉Python解释器，按照UTF-8编码读取源代码，否则，你在源代码中写的中文输出可能会有乱码。
 
 当你输入name = input('please enter your name: ') 
@@ -45,6 +210,24 @@ you input 3 vars
 In [129]: mylist=[1,3,6,4]
 In [130]: mycal(*mylist)
 you input 4 vars
+
+计算协方差
+cov(data, bias=1)   参数bias=1表示结果需要除以N，否则只计算了分子部分
+corrcoef(data)  相关系数计算
+
+包	方法	说明
+numpy	array	创造一组数
+numpy.random	normal	创造一组服从正态分布的定量数
+numpy.random	randint	创造一组服从均匀分布的定性数
+numpy	mean	计算均值
+numpy	median	计算中位数
+scipy.stats	mode	计算众数
+numpy	ptp	计算极差
+numpy	var	计算方差
+numpy	std	计算标准差
+numpy	cov	计算协方差
+numpy	corrcoef	计算相关系数
+
 
 而关键字参数允许你传入0个或任意个含参数名的参数，这些关键字参数在函数内部自动组装为一个dict。请看示例： def person(name, age, **kw):
 person('Adam', 45, gender='M', job='Engineer')
@@ -160,11 +343,126 @@ class的方法名称与函数绑定，这里我们把函数fn绑定到方法名hello上。
 通过type()函数创建的类和直接写class是完全一样的，因为Python解释器遇到class定义时，仅仅是扫描一下class定义的语法，然后调用type()函数创建出class。
 正常情况下，我们都用class Xxx...来定义类，但是，type()函数也允许我们动态创建出类来，也就是说，动态语言本身支持运行期动态创建类，这和静态语言有非常大的不同，要在静态语言运行期创建类，必须构造源代码字符串再调用编译器，或者借助一些工具生成字节码实现，本质上都是动态编译，会非常复杂。
 
+Python内置的logging模块可以非常容易地记录错误信息：
+
+ import logging
+except Exception as e: logging.exception(e)
+ 通过配置，logging还可以把错误记录到日志文件里，方便事后排查。
+把print()替换为logging是第3种方式，和assert比，logging不会抛出错误，而且可以输出到文件：
+ import logging logging.basicConfig(level=logging.INFO)
+ 这就是logging的好处，它允许你指定记录信息的级别，有debug，info，warning，error等几个级别，
+
+
+ 首先根据需要，可以定义一个错误的class，选择好继承关系，然后，用raise语句抛出一个错误的实例：
+ raise FooError('invalid value: %s' % s)
+raise语句如果不带参数，就会把当前错误原样抛出。此外，在except中raise一个Error，还可以把一种类型的错误转化成另一种类型：
+raise ValueError('input error!')
+
+
+凡是用print()来辅助查看的地方，都可以用断言（assert）来替代： def foo(s): n = int(s) assert n != 0, 'n is zero!' return 10 / n
+assert的意思是，表达式n != 0应该是True，否则，根据程序运行的逻辑，后面的代码肯定会出错。 如果断言失败，assert语句本身就会抛出AssertionError：
+程序中如果到处充斥着assert，和print()相比也好不到哪去。不过，启动Python解释器时可以用-O参数来关闭assert： $ python3 -O err.py
+
+
+调试
+ python3 -m pdb err.py
+ 任何时候都可以输入命令p变量名来查看变量： (Pdb) p s '0' (Pdb) p n 0 输入命令q结束调试，退出程序： (Pdb) q
+pdb.set_trace() #运行到这里会自动暂停 print(10 / n) 运行代码，程序会自动在pdb.set_trace()暂停并进入pdb调试环境，可以用命令p查看变量，或者用命令c继续运行：
+
+ 为了编写单元测试，我们需要引入Python自带的unittest模块，编写mydict_test.py如下： import unittest
+编写单元测试时，我们需要编写一个测试类，从unittest.TestCase继承。 以test开头的方法就是测试方法，
+ 另一种重要的断言就是期待抛出指定类型的Error，比如通过d['empty']访问不存在的key时，断言会抛出KeyError： with self.assertRaises(KeyError):
+ 我们就可以运行单元测试。最简单的运行方式是在mydict_test.py的最后加上两行代码： if __name__ == '__main__': unittest.main()
+ 另一种方法是在命令行通过参数-m unittest直接运行单元测试： $ python3 -m unittest mydict_test
+ setUp与tearDown 可以在单元测试中编写两个特殊的setUp()和tearDown()方法。这两个方法会分别在每调用一个测试方法的前后分别被执行。
+并且，Python内置的“文档测试”（doctest）模块可以直接提取注释中的代码并执行测试。 doctest严格按照Python交互式命令行的输入和输出来判断测试结果是否正确。
+
+ 如果是服务员跑过来找到你，这是回调模式，如果服务员发短信通知你，你就得不停地检查手机，这是轮询模式。
+ 
+ 但是每次都这么写实在太繁琐，所以，Python引入了with语句来自动帮我们调用close()方法： 
+ with open('/path/to/file', 'r') as f: print(f.read()) 这和前面的try ... finally是一样的，但是代码更佳简洁，并且不必调用f.close()方法。
+ 可以反复调用read(size)方法，每次最多读取size个字节的内容。另外，调用readline()可以每次读取一行内容，调用readlines()一次读取所有内容并按行返回list。
+ 要读取二进制文件，比如图片、视频等等，用'rb'模式打开文件即可： >>> f = open('/Users/michael/test.jpg', 'rb')
+ 要读取非UTF-8编码的文本文件，需要给open()函数传入encoding参数，例如，读取GBK编码的文件： >>> f = open('/Users/michael/gbk.txt', 'r', encoding='gbk')
+open()函数还接收一个errors参数，表示如果遇到编码错误后如何处理。最简单的方式是直接忽略： >>> f = open('/Users/michael/gbk.txt', 'r', encoding='gbk', errors='ignore')
+所以，还是用with语句来得保险： with open('/Users/michael/test.txt', 'w') as f: f.write('Hello, world!')
+ 要写入特定编码的文本文件，请给open()函数传入encoding参数，将字符串自动转换成指定编码。 小结
+StringIO操作的只能是str，如果要操作二进制数据，就需要使用BytesIO。 BytesIO实现了在内存中读写bytes，
+ 把两个路径合成一个时，不要直接拼字符串，而要通过os.path.join()函数，这样可以正确处理不同操作系统的路径分隔符。
+
+ 我们把变量从内存中变成可存储或传输的过程称之为序列化，在Python中叫pickling，在其他语言中也被称之为serialization，marshalling，
+ import pickle >>> d = dict(name='Bob', age=20, score=88) >>> pickle.dumps(d)
+pickle.dumps()方法把任意对象序列化成一个bytes，然后，就可以把这个bytes写入文件。或者用另一个方法pickle.dump()直接把对象序列化后写入一个file-like Object：
+ 何把Python对象变成一个JSON： >>> import json >>> d = dict(name='Bob', age=20, score=88) >>> json.dumps(d) '{"age": 20, "score": 88, "name": "Bob"}' dumps()方法返回一个str，内容就是标准的JSON。类似的，dump()方法可以直接把JSON写入一个file-like Object。
+我们可以偷个懒，把任意class的实例变为dict： print(json.dumps(s, default=lambda obj: obj.__dict__)) 因为通常class的实例都有一个__dict__属性，它就是一个dict，用来存储实例变量。
+
+ multiprocessing模块提供了一个Process类来代表一个进程对象，下面的例子演示了启动一个子进程并等待其结束： from multiprocessing import Process import os #子进程要执行的代码 def run_proc(name): print('Run child process %s (%s)...' % (name, os.getpid())) if __name__=='__main__': print('Parent process %s.' % os.getpid()) p = Process(target=run_proc, args=('test',)) print('Child process will start.') p.start() p.join() print('Child process end.') 执行结果如下： Parent process 928. Process will start. Run child process test (929)...
+ 对Pool对象调用join()方法会等待所有子进程执行完毕，调用join()之前必须先调用close()，
+ subprocess模块可以让我们非常方便地启动一个子进程，然后控制其输入和输出。
+很多时候，子进程并不是自身，而是一个外部进程。我们创建了子进程后，还需要控制子进程的输入和输出。 subprocess模块可以让我们非常方便地启动一个子进程，
+然后控制其输入和输出。
+ Python的multiprocessing模块包装了底层的机制，提供了Queue、Pipes等多种方式来交换数据。 
+ 我们以Queue为例，在父进程中创建两个子进程，一个往Queue里写数据，一个从Queue里读数据：
+t = threading.Thread(target=loop, name='LoopThread') t.start() t.join()
+ 多线程和多进程最大的不同在于，多进程中，同一个变量，各自有一份拷贝存在于每个进程中，互不影响，而多线程中，所有变量都由所有线程共享，
+ 所以，任何一个变量都可以被任何一个线程修改，因此，线程之间共享数据最大的危险在于多个线程同时改一个变量，把内容给改乱了。
+
+ 创建一个锁就是通过threading.Lock()来实现： balance = 0 lock = threading.Lock()
+ #先要获取锁: lock.acquire()
+ #改完了一定要释放锁: lock.release()
+
+ 因为Python的线程虽然是真正的线程，但解释器执行代码时，有一个GIL锁：Global Interpreter Lock，
+ 任何Python线程执行前，必须先获得GIL锁，然后，每执行100条字节码，解释器就自动释放GIL锁，让别的线程有机会执行。这个GIL全局锁实际上把所有线程的执行代码都给上了锁，所以，多线程在Python中只能交替执行，即使100个线程跑在100核CPU上，也只能用到1个核。 GIL是Python解释器设计的历史遗留问题，通常我们用的解释器是官方实现的CPython，要真正利用多核，除非重写一个不带GIL的解释器。 所以，在Python中，可以使用多线程，但不要指望能有效利用多核。如果一定要通过多线程利用多核，那只能通过C扩展来实现，不过这样就失去了Python简单易用的特点。
+ Python虽然不能利用多线程实现多核任务，但可以通过多进程实现多核任务。多个Python进程有各自独立的GIL锁，互不影响。
+
+ local_school = threading.local()
+#获取当前线程关联的student: std = local_school.student
+ #绑定ThreadLocal的student: local_school.student = name
+
+Python这样的脚本语言运行效率很低，完全不适合计算密集型任务。对于计算密集型任务，最好用C语言编写。
+对应到Python语言，单进程的异步编程模型称为协程，有了协程的支持，就可以基于事件驱动编写高效的多任务程序。
+Python的multiprocessing模块不但支持多进程，其中managers子模块还支持把多进程分布到多台机器上。一个服务进程可以作为调度者，将任务分布到其他多个进程中，依靠网络通信。由于managers模块封装很好，不必了解网络通信的细节，就可以很容易地编写分布式多进程程序。
+. 但协程的特点在于是一个线程执行，那和多线程比，协程有何优势？ 最大的优势就是协程极高的执行效率。因为子程序切换不是线程切换，而是由程序自身控制，因此，没有线程切换的开销，和多线程比，线程数量越多，协程的性能优势就越明显。 第二大优势就是不需要多线程的锁机制，因为只有一个线程，也不存在同时写变量冲突，在协程中控制共享资源不加锁，只需要判断状态就好了，所以执行效率比多线程高很多。 因为协程是一个线程执行，那怎么利用多核CPU呢？最简单的方法是多进程+协程，既充分利用多核，又充分发挥协程的高效率，可获得极高的性能。
+ 如果改用协程，生产者生产消息后，直接通过yield跳转到消费者开始执行，待消费者执行完毕后，切换回生产者继续生产，效率极高：
+首先调用c.send(None)启动生成器； 然后，一旦生产了东西，通过c.send(n)切换到consumer执行； consumer通过yield拿到消息，处理，又通过yield把结果传回； produce拿到consumer处理的结果，继续生产下一条消息；
+ asyncio是Python 3.4版本引入的标准库，直接内置了对异步IO的支持。 asyncio的编程模型就是一个消息循环。我们从asyncio模块中直接获取一个EventLoop的引用，然后把需要执行的协程扔到EventLoop中执行，就实现了异步IO。
+为了简化并更好地标识异步IO，从Python 3.5开始引入了新的语法async和await，可以让coroutine的代码更简洁易读。 请注意，async和 await 是针对coroutine的新语法，
+
+让我们对比一下上一节的代码：
+@asyncio.coroutine
+def hello():
+    print("Hello world!")
+    r = yield from asyncio.sleep(1)
+    print("Hello again!")
+用新语法重新编写如下：
+async def hello():
+    print("Hello world!")
+    r = await asyncio.sleep(1)
+    print("Hello again!")
+剩下的代码保持不变。
+
+
+正则表达式
+ 用\d可以匹配一个数字，\w可以匹配一个字母或数字，所以： '00\d'可以匹配'007'，但无法匹配'00A'； '\d\d\d'可以匹配'010'； '\w\w\d'可以匹配'py3'； .可以匹配任意字符，所以： 'py.'可以匹配'pyc'、'pyo'、'py!'等等。 要匹配变长的字符，在正则表达式中，用*表示任意个字符（包括0个），用+表示至少一个字符，用?表示0个或1个字符，用{n}表示n个字符，用{n,m}表示n-m个字符： 来看一个复杂的例子：\d{3}\s+\d{3,8}。
+ 我们来从左到右解读一下： \d{3}表示匹配3个数字，例如'010'； \s可以匹配一个空格（也包括Tab等空白符），所以\s+表示至少有一个空格，例如匹配' '，' '等； \d{3,8}表示3-8个数字，例如'1234567'。
+ 要做更精确地匹配，可以用[]表示范围，比如： [0-9a-zA-Z\_]可以匹配一个数字、字母或者下划线； [0-9a-zA-Z\_]+可以匹配至少由一个数字、字母或者下划线组成的字符串，比如'a100'，'0_Z'，'Py3000'等等； [a-zA-Z\_][0-9a-zA-Z\_]*可以匹配由字母或下划线开头，后接任意个由一个数字、字母或者下划线组成的字符串，也就是Python合法的变量； [a-zA-Z\_][0-9a-zA-Z\_]{0, 19}更精确地限制了变量的长度是1-20个字符（前面1个字符+后面最多19个字符）。
+A|B可以匹配A或B，所以(P|p)ython可以匹配'Python'或者'python'。 ^表示行的开头，^\d表示必须以数字开头。 $表示行的结束，\d$表示必须以数字结束。
+ s = 'ABC\\-001' # Python的字符串 #对应的正则表达式字符串变成： # 'ABC\-001' 因此我们强烈建议使用Python的r前缀，就不用考虑转义的问题了： s = r'ABC\-001' # Python的字符串 #对应的正则表达式字符串不变： # 'ABC\-001'
+正则表达式还有提取子串的强大功能。用()表示的就是要提取的分组（Group）。比如： ^(\d{3})-(\d{3,8})$分别定义了两个组，可以直接从匹配的字符串中提取出区号和本地号码：
+
+
+注意MySQL的占位符是%s: >>> cursor.execute('insert into user (id, name) values (%s, %s)', ['1', 'Michael'])
+
+在sklearn包中，数据要求为数组，而不是pandas的dataframe。因此最后我们要做两件事：1）决定我们需要留下那些列，2）将pandas.DataFrame转化回numpy.array。 在pandas中你可以用.info()方法查看列的类型。或者直接
+a[:6:2] = -1000 # equivalent to a[0:6:2] = -1000; from start to position 6, exclusive, set every 2nd element to -1000
+NumPy also allows you to write this using dots as b[i,...]. The dots (...) represent as many colons as needed to produce a complete indexing tuple. For example, if x is a rank 5 array (i.e., it has 5 axes), then x[1,2,...] is equivalent to x[1,2,:,:,:], x[...,3] to x[:,:,:,:,3] and x[4,...,5,:] to x[4,:,:,5,:].
+whereas thendarray.resize method modifies the array itself:
 
 
 
 
-if condi :
+
+if condi :               != == >= > < <= 
 	pass
 elif:
 	pass
@@ -177,6 +475,9 @@ for  var in collection ：
 
 while x>con :
 	pass
+	
+	
+	所有的错误类型都继承自BaseException，
 	
 def myfun(x):
 	try:
@@ -293,7 +594,7 @@ ipython 自动reload 脚本
 
 
 Numpy：
-来存储和处理大型矩阵，比Python自身的嵌套列表（nested list structure)结构要高效的多，本身是由C语言开发。这个是很基础的扩展，其余的扩展都是以此为基础。数据结构为ndarray,一般有三种方式来创建。
+来存储和处理大型矩阵，比Python自身的嵌套列表（nested list structure)结构要高效的多，本身是由C语言开发。这个是很基础的扩展，其余的扩展都是以此为基础。数据结构为 ndarray,一般有三种方式来创建。
 
 from numpy.random import randn
 import numpy as np
@@ -317,6 +618,7 @@ from numpy.linalg import inv, qr
 inv(x) 矩阵的逆          np.linalg.inv(a) 也是矩阵的逆
 samples = np.random.normal(size=(4, 4))  随机数生成
 
+np.where(array>5)返回np里面元素大于等于5的位置
  randmat=mat(random.rand(4,4)) 矩阵 
  矩阵逆  randmat.I
  矩阵乘法 mat1*mat2 
@@ -381,11 +683,26 @@ frame.reindex(columns=states)   按列重新排序
 frame.ix[['a', 'b', 'c', 'd'], states]  同时调整列行 
 obj.drop('c')丢弃指定列
  
- df.groupby('A').sum()    
+ df.groupby('A').sum()      标准的 拆分-应用-合并 流程
  df.groupby(['A','B']).sum()
+ df.pivot_table(rows=['sex','smoker'])  其实就是分组应用，缺省是求平均
+ 
+ 
+df=  DataFrame({'key1':['a', 'a', 'b', 'b', 'a'],
+     'key2':['one', 'two', 'one', 'two', 'one'],
+     'data1':np.arange(1,6),
+     'data2':np.arange(11,16)})
+分组求和
+
+df['data1'].groupby(df['key1']).sum()
+df.groupby('key1').sum()['data1']
+grouped=df['data1'].groupby(df['key1'])  返回分组对象，可以在上面应用函数
+
  
  df.loc[dates[0]] 获取指定位置值
  df.loc[:,['A','B']]  Selecting on a multi-axis by label
+ s={'s1':s1,'s2':s2,'s3':s3}
+ df=DataFrame(s)
 data = DataFrame(np.arange(16).reshape((4, 4)),
                  index=['Ohio', 'Colorado', 'Utah', 'New York'],
                  columns=['one', 'two', 'three', 'four'])
@@ -469,17 +786,154 @@ for piece in chunker:
 
 
 Matplotlib:Python中最著名的绘图系统，很多其他的绘图例如seaborn（针对pandas绘图而来）也是由其封装而成。创世人John Hunter于2012年离世。这个绘图系统操作起来很复杂，和R的ggplot,lattice绘图相比显得望而却步，这也是为什么我个人不丢弃R的原因
+Matplotlib则比较强：Matlab的语法、python语言、latex的画图质量（还可以使用内嵌的latex引擎绘制的数学公式）。
+
+pylab 是类似于 matlab 这样一个综合性的平台， pylab 把 Python, NumPy, SciPy, Matplotlib都集合起来了，用的是 IPython 作为界面，把 namespace 都给合到一块儿了
+iPython 的 pylab 模式？这个应该就是你装过 pylab 了。这个模式下面就不用手动的 import matplotlib，numpy，sympy等这些东西了，可以直接用。比如直接 plot(....) 就行。
+
+ipython --pylab  启动画图和 shell分开
 
 import matplotlib.pyplot as plt
-plt.hist(v, bins=50, normed=1)   
+
+一般先创建一个  figure 
+fig=plt.figure()
+然后创建子图形
+ax1=fig.add_subplot(2,2,1) 分为四个区域，返回第一个
+plt.show()
+ax1.plot(range(1,10))
+ax2=fig.add_subplot(2,2,2)
+plt.plot(randn(50).cumsum(),'k--')   在ax2上绘制   k--黑色虚线  g-- 绿色虚线
+ax3=fig.add_subplot(2,2,3) 
+ax3.hist(randn(100),bins=20,color='k',alpha=0.3)
+ax2.scatter(range(1,10),range(2,11))
+也可以用 ax.plot(x,y,linestyle='--',color='g')   linewidth=2.5
+ axes[1,1].plot(x,y,linestyle=':',color='m',marker='o')
+ 
+linestyle 
+'-' or 'solid'	solid line
+'--' or 'dashed'	dashed line
+'-.' or 'dashdot'	dash-dotted line
+':' or 'dotted'	dotted line
+'None'	draw nothing
+' '	draw nothing
+''	draw nothing
+
+color 
+b: blue
+g: green
+r: red
+c: cyan
+m: magenta
+y: yellow
+k: black
+w: white
+
+marker 
+"."	point
+","	pixel
+"o"	circle
+"v"	triangle_down
+"^"	triangle_up
+"<"	triangle_left
+">"	triangle_right
+"1"	tri_down
+"2"	tri_up
+"3"	tri_left
+"4"	tri_right
+"8"	octagon
+"s"	square
+"p"	pentagon
+"P"	plus (filled)
+"*"	star
+"h"	hexagon1
+"H"	hexagon2
+"+"	plus
+"x"	x
+"X"	x (filled)
+"D"	diamond
+"d"	thin_diamond
+"|"	vline
+"_"	hline
+
+
+也可以一次性创建所有子窗口
+fig,axes=plt.subplots(2,3)
+设置刻度
+axes[1,1].set_xlim(1,100)
+ax.set_xticks([1,10,20,30,50,70,90])
+ax.set_xticklabels(['a','b','c','d','e','f'])
+ax.set_xlabel('test')
+ax.set_title('hi')
+添加图例  
+ax.plot(y,x,'r.',label='one')
+ax.plot(y*-1,x,'r.',label='two')
+ax.legend(loc='best')
+添加文字
+ax.text(1,5,'hello')
+创建注解
+ax.annotate('local max', xy=(2, 1), xytext=(3, 1.5),
+            arrowprops=dict(facecolor='black', shrink=0.05),
+            )
+画一条直线
+ax.plot([1,1],[-2,1])             前面是 X 坐标 ，后面是 Y 坐标  (1,-2) (1,1)
+添加图形，先创建块对象，然后通过 ax.add_patch(块对象) 添加到 图形中
+plt.savefig('file.svg') 保存图形
+plt.savefig('file.svg',facecolor='b') 保存图形
+
+ax.spines['right'].set_color('none')  去掉右边框颜色
+ax.spines['top'].set_color('none')   去掉上边框颜色
+ax.xaxis.set_ticks_position('bottom')   x轴tick位置
+ax.spines['bottom'].set_position(('data',0))  X轴位置
+ax.yaxis.set_ticks_position('left')
+ax.spines['left'].set_position(('data',0))  Y轴位置
+画三维图
+fig = figure()
+ax = Axes3D(fig)
+X = np.arange(-4, 4, 0.25)
+Y = np.arange(-4, 4, 0.25)
+X, Y = np.meshgrid(X, Y)
+R = np.sqrt(X**2 + Y**2)
+Z = np.sin(R)
+ax.plot_surface(X, Y, Z, rstride=1, cstride=1, cmap='hot')
+
+show()
+
+
+
+设置全局属性
+plt.rc('figure',figsize=(10,10))
+
+Series和DataFrame都有绘图的方法
+s=Series(np.random.randn(10).cumsum(),index=np.arange(1,100,10))
+s.plot()
+df=DataFrame(np.random.randn(10,4).cumsum(0),index=np.arange(1,100,10),columns=['A','B','C','D'])
+df.plot()
+df.plot(kind='bar')
+df.plot(kind='kde') 密度概率分布图
+df.hist(bins=50)   直方图
+
+
+
+
+plt.plot([1,2,3,4])            #只有一个list，假设都是 y,x 自动从0开始
+plt.ylabel('some numbers')
 plt.show()
 
-plt.plot([1, 2, 3, 4], [1, 4, 9, 16])
+
+plt.plot([1, 2, 3, 4], [1, 4, 9, 16],'ro') #设置颜色
 plt.ylabel('some numbers')
-plt.axis([0, 6, 0, 20])    xmin, xmax, ymin, ymax
+plt.axis([0, 6, 0, 20])    # xmin, xmax, ymin, ymax
 plt.show()
 lines=plt.plot(x,y)
-plt.setp(lines, color='r', linewidth=2.0)   设置画图属性
+plt.setp(lines, color='r', linewidth=2.0)   #设置画图属性
+
+
+# evenly sampled time at 200ms intervals
+t = np.arange(0., 5., 0.2)
+# red dashes, blue squares and green triangles
+plt.plot(t, t, 'r--', t, t**2, 'bs', t, t**3, 'g^')
+
+
 
 plt.xlabel('Smarts')
 plt.ylabel('Probability')
@@ -488,6 +942,9 @@ plt.text(60, .025, r'$\mu=100,\ \sigma=15$')
 plt.axis([40, 160, 0, 0.03])
 plt.grid(True)
 plt.show()
+
+timeseries和dataframe都自带绘图功能，而且自动加 lable 
+
 
 
 Scipy ：  window安装不方便，建议直接下载 anaconda  打包好的环境
@@ -553,13 +1010,18 @@ $	匹配字符串的结束
 {n,}	重复n次或更多次
 {n,m}	重复n到m次
 
+import re
+
+pattern = re.compile(r'o')
+match = pattern.match('hello world!')
+
 在python的原始解释器CPython中存在着GIL（Global Interpreter Lock，全局解释器锁），因此在解释执行python代码时，会产生互斥锁来限制线程对共享资源的访问，直到解释器遇到I/O操作或者操作次数达到一定数目时才会释放GIL。
 可见，某个线程想要执行，必须先拿到GIL，我们可以把GIL看作是“通行证”，并且在一个python进程中，GIL只有一个。拿不到通行证的线程，就不允许进入CPU执行。每个进程有各自独立的GIL，互不干扰，这样就可以真正意义上的并行执行，所以在python中，多进程的执行效率优于多线程(仅仅针对多核CPU而言)。
 因为pypy有jit，而CPython标准版是不带的（就是你从官网下载的版本）
    1. 正确率 = 提取出的正确信息条数 /  提取出的信息条数     
-    2. 召回率 = 提取出的正确信息条数 /  样本中的信息条数    
+    2. 召回率 = 提取出的正确信息条数 /  样本中的正确信息条数    
 两者取值在0和1之间，数值越接近1，查准率或查全率就越高。   
-    3. F值  = 正确率 * 召回率 * 2 / (正确率 + 召回率) （F 值即为正确率和召回率的调和平均值）
+    3. F值  = 正确率 * 召回率 * 2 / (正确率 + 召回率) （F 值即为正确率和召回率的调和平均值） 越大越好，1为理想状态，此时precision为1，recall为1
 不妨举这样一个例子：某池塘有1400条鲤鱼，300只虾，300只鳖。现在以捕鲤鱼为目的。撒一大网，逮着了700条鲤鱼，200只虾，100只鳖。那么，这些指标分别如下：
 正确率 = 700 / (700 + 200 + 100) = 70%
 召回率 = 700 / 1400 = 50%

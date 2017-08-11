@@ -18,6 +18,7 @@ iptables -I  INPUT -p tcp --dport 9996 -j ACCEPT
 iptables -I  INPUT -p tcp --dport 9997 -j ACCEPT
 iptables -I  INPUT -p tcp --dport 8080 -j ACCEPT
 iptables -I  INPUT -p tcp --dport 8009 -j ACCEPT
+
 需要打开 web  server的端口
 
 iptables -I  INPUT -p tcp --dport 8081 -j ACCEPT
@@ -360,13 +361,70 @@ public static void main(String args[]) throws java.lang.Exception
 
 20151219
 jvm 每个线程使用自己的buffer来分配，避免冲突 Thread-Local Allocation Buffers
-CMS适合response time敏感的程序，不做compact 同时使用在old/eden上
+CMS适合response time敏感的程序，同时使用在old/eden上 
+
 -XX:+UseParallelOldGC 适用于 Old gen ,
 -XX:+UseParallelGC 实用与 Eden
 Maximum Pause Time Goal  -XX:MaxGCPauseMillis=n
 -XX:GCTimeRatio=n  The ratio of garbage collection time to application time is 1 / (1 + n)
 
-G1虽然保留了CMS关于代的概念，但是代已经不是物理上连续区域，而是一个逻辑的概念。在标记过程中，每个区域的对象活性都被计算，在回收时候，就可以根据用户设置的停顿时间，选择活性较低的区域收集，这样既能保证垃圾回收，又能保证停顿时间，而且也不会降低太多的吞吐量。Remark阶段新算法的运用，以及收集过程中的压缩，都弥补了CMS不足
+CMS用在 old genaration 上，如果用在eden，和parallel gc算法一样 ，缺省不做compact ,    缺省只有full gc才做 compact 
+(1) Initial Mark (Stop the World Event)   Objects in old generation are “marked” as reachable including those objects which may be reachable from young generation. Pause times are typically short in duration relative to minor collection pause times.
+(2) Concurrent Marking        Traverse the tenured generation object graph for reachable objects concurrently while Java application threads are executing. Starts scanning from marked objects and transitively marks all objects reachable from the roots. The mutators are executing during the concurrent phases 2, 3, and 5 and any objects allocated in the CMS generation during these phases (including promoted objects) are immediately marked as live.
+(3) Remark  (Stop the World Event)     Finds objects that were missed by the concurrent mark phase due to updates by Java application threads to objects after the concurrent collector had finished tracing that object.
+(4) Concurrent Sweep    Collects the objects identified as unreachable during marking phases. The collection of a dead object adds the space for the object to a free list for later allocation. Coalescing of dead objects may occur at this point. Note that live objects are not moved.
+(5) Resetting  Prepare for next concurrent collection by clearing data structures.
+
+G1 
+heap没有代的概念，变成一块块固定大小(1m-32m)的连续区域(region)，大约2000 个，  这些region被映射成逻辑的 Eden, Survivor, and old generation。
+还有一种 Humongous  region,用来保存大小超过50%块大小的对象  这些块连续在一起 H-obj直接分配到了old gen，防止了反复拷贝移动。
+这些region都是并行收集的(可以停止或者不停止应用) 
+young generation 算法
+The heap is a single memory space split into regions.
+Young generation memory is composed of a set of non-contiguous regions. This makes it easy to resize when needed.
+Young generation garbage collections, or young GCs, are stop the world events. All application threads are stopped for the operation.
+The young GC is done in parallel using multiple threads.
+Live objects are copied to new survivor or old generation regions.
+old generation算法 很像CMS
+(1) Initial Mark (Stop the World Event)  This is a stop the world event. With G1, it is piggybacked on a normal young GC. Mark survivor regions (root regions) which may have references to objects in old generation.
+2) Root Region Scanning  Scan survivor regions for references into the old generation. This happens while the application continues to run. The phase must be completed before a young GC can occur.
+(3) Concurrent Marking     	Find live objects over the entire heap. This happens while the application is running. This phase can be interrupted by young generation garbage collections.
+(4) Remark (Stop the World Event)        Completes the marking of live object in the heap. Uses an algorithm called snapshot-at-the-beginning (SATB) which is much faster than what was used in the CMS collector.
+(5) Cleanup  (Stop the World Event and Concurrent)   Performs accounting on live objects and completely free regions. (Stop the world)
+																						Scrubs the Remembered Sets. (Stop the world)
+																						Reset the empty regions and return them to the free list. (Concurrent)
+(*) Copying  (Stop the World Event)    These are the stop the world pauses to evacuate or copy live objects to new unused regions. This can be done with young generation regions which are logged as [GC pause (young)]. Or both young and old generation regions which are logged as [GC Pause (mixed)].
+
+Summary of Old Generation GC   In summary, there are a few key points we can make about the G1 garbage collection on the old generation.
+
+Concurrent Marking Phase   
+Liveness information is calculated concurrently while the application is running.
+This liveness information identifies which regions will be best to reclaim during an evacuation pause.
+There is no sweeping phase like in CMS.
+
+Remark Phase
+Uses the Snapshot-at-the-Beginning (SATB) algorithm which is much faster then what was used with CMS.
+Completely empty regions are reclaimed.
+
+Copying/Cleanup Phase
+Young generation and old generation are reclaimed at the same time.
+Old generation regions are selected based on their liveness.
+
+
+
+G1虽然保留了CMS关于代的概念，但是代已经不是物理上连续区域，而是一个逻辑的概念。在
+并行全局的标记过程中，每个区域的对象活性都被计算，在回收时候，就可以根据用户设置的停顿时间，
+选择活性较低的区域收集，这样既能保证垃圾回收，又能保证停顿时间，而且也不会降低太多的吞吐量。
+原来的cms不能compact,parallel需要stop the world，所以G1(garbage first)比较好 ,但是不是Realtime gc,不能保证pause time 
+Remark阶段新算法的运用，以及收集过程中的压缩，都弥补了CMS不足
+G1是一个有整理内存过程的垃圾收集器，不会产生很多内存碎片。
+G1的Stop The World(STW)更可控，G1在停顿时间上添加了预测机制，用户可以指定期望停顿时间。
+设置G1GC注意事项
+Do not Set Young Generation Size    no  -Xmn
+一个Region的大小可以通过参数-XX:G1HeapRegionSize
+
+
+
 
 实测 replay mdf data 1G左右，产生3000多万MQ消息
 用JDK 1.8 32G 内存

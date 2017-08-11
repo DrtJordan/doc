@@ -37,7 +37,7 @@ github’Àªß≈‰÷√
 git config --global user.name "wzy25"
 git config --global user.email "wzy964@gmaill.com"
 ¥Ê¥¢”√ªß√˚√‹¬Î
-git config --global credential.helper 'store --file /d/wzy/wzy/.my-git_credentials'
+git config --global credential.helper 'store --file  /c/Users/wanzy001/.ssh/id_rsa.'
 
 git config --list £®~/.gitconfig £©
 ≤‚ ‘

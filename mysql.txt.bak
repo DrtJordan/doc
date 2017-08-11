@@ -86,7 +86,7 @@ TinyDbRouter
 
 这些做sharding的产品一般分为三个层次，我来简单说下：1. proxy sharding，目前由cobar，mycat，drds，atlas修改，这几个产品的起源一般是mysqlproxy 或 ameoba，特点是mysql协议基本兼容，业务不需要做太多修改，缺点是分库分表的算法很烂，业务要自己做大堆配置2. jdbc中间件sharding，这个和协议差不多，就是把服务实现为了一个中间件，好处是协议损失时间可以补回来，坏处是只有java可以使用，开源的有当当的jdbc sharding3.mysql的ndbcluster和fabric，这是mysql 引擎层面做的sharding，直接用mysql的协议层和计划生成，这个做的好处是原生的协议层都是百分百支持，事务用mysql xa支持也算马马虎虎，坏处是单机引擎，不能支持大数据的sql这3种，被统称为“share-nothing”的数据库sharing模式，share-nothing很容易理解，就是每个被sharding的数据库之间没有共享任何数据。这种模式的缺点，主要就是：1. sharding的时候必须带sharding key，或者不带sharding key就全表扫描2. 必须预设sharding key，但是sharding key设计是很考验架构师对体系了解的，比如这里的sharding key 会和事务息息相关3. 对事务的支持仅限于单库，跨库事务要走二阶段，不支持read repeated和串行事务4. 扩容意味着sharding key计算方式改变，需要停写5. 调度角度来看，proxy部分cpu是很浪费的，流量大的时候容易变成瓶颈，流量小的时候cpu都浪费了 
 
-1. proxySQL  percona公司的，支持MGR 
+1. proxySQL  percona公司的，支持MGR
 2. maxscale 
 
 

@@ -1,3 +1,21 @@
+sparkÓ²¼þÅäÖÃ
+½¨ÒéºÍhdfs datanode ·ÅÒ»Æð
+½¨Òé4-8¸öÓ²ÅÌ£¬no raid   ,mount with noatime option 
+JVM²»Ö§³Ö³¬¹ý 200 GB of RAM£¬´óÄÚ´æ£¬ÐèÒª¶à¸öjvm £¬Áô 75%µÄ¸ø spark
+
+
+map
+mapÊÇ¶ÔRDDÖÐµÄÃ¿¸öÔªËØ¶¼Ö´ÐÐÒ»¸öÖ¸¶¨µÄº¯ÊýÀ´²úÉúÒ»¸öÐÂµÄRDD¡£ÈÎºÎÔ­RDDÖÐµÄÔªËØÔÚÐÂRDDÖÐ¶¼ÓÐÇÒÖ»ÓÐÒ»¸öÔªËØÓëÖ®¶ÔÓ¦¡£
+mapPartitions
+mapPartitionsÊÇmapµÄÒ»¸ö±äÖÖ¡£mapµÄÊäÈëº¯ÊýÊÇÓ¦ÓÃÓÚRDDÖÐÃ¿¸öÔªËØ£¬¶ømapPartitionsµÄÊäÈëº¯ÊýÊÇÓ¦ÓÃÓÚÃ¿¸ö·ÖÇø£¬Ò²¾ÍÊÇ°ÑÃ¿¸ö·ÖÇøÖÐµÄÄÚÈÝ×÷ÎªÕûÌåÀ´´¦ÀíµÄ¡£
+mapValues
+mapValues¹ËÃûË¼Òå¾ÍÊÇÊäÈëº¯ÊýÓ¦ÓÃÓÚRDDÖÐKev-ValueµÄValue£¬Ô­RDDÖÐµÄKey±£³Ö²»±ä£¬ÓëÐÂµÄValueÒ»Æð×é³ÉÐÂµÄRDDÖÐµÄÔªËØ¡£Òò´Ë£¬¸Ãº¯ÊýÖ»ÊÊÓÃÓÚÔªËØÎªKV¶ÔµÄRDD¡£
+flatMap
+ÓëmapÀàËÆ£¬Çø±ðÊÇÔ­RDDÖÐµÄÔªËØ¾­map´¦ÀíºóÖ»ÄÜÉú³ÉÒ»¸öÔªËØ£¬¶øÔ­RDDÖÐµÄÔªËØ¾­flatmap´¦Àíºó¿ÉÉú³É¶à¸öÔªËØÀ´¹¹½¨ÐÂRDD¡£ 
+reduce
+reduce½«RDDÖÐÔªËØÁ½Á½´«µÝ¸øÊäÈëº¯Êý£¬Í¬Ê±²úÉúÒ»¸öÐÂµÄÖµ£¬ÐÂ²úÉúµÄÖµÓëRDDÖÐÏÂÒ»¸öÔªËØÔÙ±»´«µÝ¸øÊäÈëº¯ÊýÖ±µ½×îºóÖ»ÓÐÒ»¸öÖµÎªÖ¹¡£
+
+
 spark Ö§³ÖÈçÏÂ»úÆ÷Ñ§Ñ§Ä£ÐÍ
 
 ·ÖÀà £ºÂß¼­»Ø¹é ¾ö²ßÊ÷ Ëæ»úÉ­ÁÖ ÆÓËØ±´Ò¶Ë¹ ¶à²ã¸ÐÖª(Éñ¾­ÍøÂç) µü´ú¾ö²ßÊ÷ (Gradient Boost Regression Tree)
@@ -5,17 +23,76 @@ spark Ö§³ÖÈçÏÂ»úÆ÷Ñ§Ñ§Ä£ÐÍ
 ¾ÛÀà£ºK-means  Ç±ÔÚµÒÀû¿ËÀ×·Ö²¼£¨atent Dirichlet allocation (LDA) £©,ÊÇÎÄ±¾ÓïÒå·ÖÎöÖÐ±È½ÏÖØÒªµÄÒ»¸öÄ£ÐÍ,L  ¸ßË¹»ìºÏÄ£ÐÍ Gaussian Mixture Model (GMM) 
 Ð­Í¬¹ýÂË£º ²ÉÓÃ ALS(Alternating Least Squares) ½»Ìæ×îÐ¡¶þ³Ë·¨ ÓÃÀ´²¹È«Êý¾Ý 
 
+Mahout »¹Ö§³Ö Òþ²ØÊ½Âí¿É·òÄ£ÐÍ (HMM)  ÆæÒìÖµ·Ö½â (SVD) 
+
 DAG directed acyclic graph ÓÐÏòÎÞ»·Í¼  £¬Èç¹ûÒ»¸öÓÐÏòÍ¼ÎÞ·¨´ÓÄ³¸ö¶¥µã³ö·¢¾­¹ýÈô¸É±ß»Øµ½¸Ãµã£¬¾ÍÊÇ DAG
 Ä¿Ç°hadoopÉúÌ¬ÖÐÓÐÁ½´óÁÐ´æ´¢¸ñÊ½£¬Ò»¸öÊÇÓÉHortonworksºÍMicrosoft¿ª·¢µÄORCFile£¬ÁíÒ»¸öÊÇÓÉClouderaºÍTwitter¿ª·¢µÄParquet¡£
-¶àÊý¾ÝÔ´²éÑ¯£ºPrestoÖ§³Ö´Ómysql£¬cassandra£¬ÉõÖÁkafkaÖÐÈ¥¶ÁÈ¡Êý¾Ý£¬Õâ¾Í´ó´ó¼õÉÙÁËÊý¾ÝÕûºÏÊ±¼ä£¬²»ÐèÒª·Åµ½HDFSÀï²ÅÄÜ²éÑ¯¡£ImpalaºÍHiveÒ²Ö§³Ö²éÑ¯hbase¡£Spark SQLÒ²ÔÚ1.2°æ±¾¿ªÊ¼Ö§³ÖExternal Datasource¡£¹úÄÚÒ²ÓÐÀàËÆµÄ¹¤×÷£¬ÈçÃëÕë¸ÄÔìImpalaÊ¹Ö®ÄÜ²éÑ¯postgres¡£
-Impala¶ÔÄÚ´æÏûºÄ¹ý¸ß£¬ÔÚ½øÐÐÒ»Ð©´ó±íµÄJoinÊ±
+¶àÊý¾ÝÔ´²éÑ¯£ºPrestoÖ§³Ö´Ómysql£¬cassandra£¬ÉõÖÁkafkaÖÐÈ¥¶ÁÈ¡Êý¾Ý£¬Õâ¾Í´ó´ó¼õÉÙÁËÊý¾ÝÕûºÏÊ±¼ä£¬²»ÐèÒª·Åµ½HDFSÀï²ÅÄÜ²éÑ¯¡£
+ImpalaºÍHiveÒ²Ö§³Ö²éÑ¯hbase¡£Spark SQLÒ²ÔÚ1.2°æ±¾¿ªÊ¼Ö§³ÖExternal Datasource¡£¹úÄÚÒ²ÓÐÀàËÆµÄ¹¤×÷£¬ÈçÃëÕë¸ÄÔìImpalaÊ¹Ö®ÄÜ²éÑ¯postgres¡£
+Impala¶ÔÄÚ´æÏûºÄ¹ý¸ß£¬ÔÚ½øÐÐÒ»Ð©´ó±íµÄJoinÊ±ÈÝÒ×crash 
 Presto£¬ÊÇÄ¿Ç°¿ªÔ´½ç×î½Ó½üRedShiftµÄ·½°¸
 HAWQÊÇGreenPlum½«²éÑ¯ÓÅ»¯²ã¶ÀÁ¢³öÀ´£¬²¢ÇÒÒÔHDFS×÷ÎªÊý¾ÝÔØÌåµÄOLAP·½°¸¡£GreenPlumµÄÊý¾Ý¿â²ãÔÚHAWQÀïÖ»×÷ÎªÖ´ÐÐÒýÇæ£¬¶ø²»ÔÙ¸ºÔð´æ´¢£¬Òò´Ë¿ÉÒÔ·½±ãµÃÒýÈëGreenPlumµÄÆäËûÌØÐÔ£¬±ÈÈç±ê×¼SQL£¬ACIDÊÂÎñ£¬ÒÔ¼°²éÑ¯ÓÅ»¯Æ÷¡£GreenPlumµÄ¸ºÔðÈËÈÔÈ»¹«¿ªÐû³ÆHAWQ±ÈGreenPlumÂý£¬µ«ÊÇÀûÓÃHDFS´æ´¢Êý¾ÝµÄÓÅÊÆ£¬¿ÉÒÔÈÃHAWQ¸üÊÊºÏ×÷ÎªÍ³Ò»Êý¾Ý·ÖÎöÆ½Ì¨µÄ»ù´¡×é¼þ¡£½ñÄêµÄ2ÔÂºÍ10ÔÂ£¬HAWQºÍGreenPlum·Ö±ðÏÈºó¿ªÔ´£¬Òò´ËÕâÊÇÒ»¸öÖµµÃÉîÈëÑÐ¾¿µÄÆ½Ì¨¡£
 ÏÂÃæ¿´¿´HAWQ/GreenPlumÐÔÄÜÓÅÊÆµÄ×îÖ÷Òª×é¼þ£º»ùÓÚ³É±¾Ä£ÐÍµÄ²¢ÐÐ²éÑ¯Ö´ÐÐ¼Æ»®Cost Based Parallel Query Optimizer and Planner[5]¡£
 
+kuduÊÇÒ»¸ö·Ö²¼Ê½´æ´¢ÒýÇæ£¬½éÓÚ hdfs(ÍêÈ«Åú´¦Àí)ºÍhbase(oltp)Ö®¼ä£¬ÊÊºÏÐ¡Êý¾ÝÁ¿µÄ¸ß²¢·¢´¦Àí(select,update) ,ÊÊºÏ20TÒÔÄÚµÄÊý¾Ý´¦Àí£¬ÔÙ¶àµ¼ÈëHDFS
+kuduÊÊºÏ²¢·¢¶È¸ß£¬Êý¾ÝÁ¿Ð¡µÄÐ¡×÷Òµ£¬Ê±ºòÊý¾Ý½øÀ´ºó»¹ÐèÒªÔÚÐÞ¸ÄµÄ£¬±ÈÈçÊµÊ±½»Ò×Êý¾Ý½øÀ´ºóÃæ»¹Òª¼ÌÐøÐÞ¸Ä
+ÊÊºÏ×öODS£¬±£´æÒ»ÌìµÄÊý¾Ý£¬ÍÚ¾òÍêºó£¬¼ÌÐø´æ´¢hdfs
+
+ETL ´ó²¿·Ö¿ÉÒÔÓÃhive sql¸ã¶¨£¬ÉÙ²¿·ÖÓÃ spark¸ã¶¨
+hbase¿ÉÒÔÓÃÀ´´æ·Å»­ÏñÐÅÏ¢£¬ÍêÈ«´òÉ¢µ½×îÏ¸Á£¶È±êÇ©°´ÁÐ´æ·Å
+
+mppÊÊºÏtb¼¶±ðÊý¾Ý£¬²»ÊÊºÏpb¼¶±ðÊý¾Ý
+
+ÕÐÐÐµÚÒ»ÆÚ50¸ö½Úµã£¬500TBÊý¾Ý£¬Íê³É´ÓterradataÊý²ÖµÄoff load etl£¬etlÖ®ºóµÄÊý¾Ý»Øµ½ terradata,³¤ÆÚ´æÁ¿Êý¾Ý»¹ÊÇ´æhdfs£¨5ÄêºóµÄ)
+Ã¿ÌìÔöÁ¿Ô¼5.3TÊý¾Ý
+
+
+
+
 prestoÖ§³ÖhdfsÉÏºÍÍâÃæµÄdata source, HAWQÖ»Ö§³ÖHDFS
 presto²»´æ´¢Êý¾Ý£¬Ö»ÊÇSQL engine  £¬²»ÊÇM/R¼Ü¹¹£¬ÊÇMPP¼Ü¹¹ È«ÄÚ´æ±£´æ´¢  ²»Ö§³Öcost based optimization
+impala(c++¿ª·¢£© ²»Ö§³ÖÍ¬Ê±join²»Í¬Êý¾ÝÔ´µÄ±í £¬prestoÖ§³Ö(java¿ª·¢)
+prestoÖ§³Ö´æ·ÅÔÚs3ÉÏµÄ£¬impala²»Ö§³Ö
 
+  spark sqlÖ§³Ö hive/parquet/json/cassandra/mysql/pgÀàÐÍ×÷Îª´æ´¢Ô´
+  spark sqlÖ÷ÒªÓÃÓÚÔÚspark pipelineÖÐ¹¤×÷£¬±ÈÈçºÍspark mlÒ»Æð¹¤×÷
+  hiveËãÍ¨ÓÃÐÔµÄsql on hadoop
+  ¿ÉÒÔÊ¹ÓÃ hive on tez ÌáËÙ
+  spark sql ²»ÊÇÌ«³ÉÊì
+  
+  impalaºÍspark sqlÊÊºÏÖÐÐ¡¹æÄ£Êý¾Ý·ÃÎÊ
+  presto ²¢ÐÐÐÔÄÜ¸üºÃ
+Airbnb ²ÉÓÃ Presto À´²éÑ¯ Hive ±í
+  
+  hiveÖ§³ÖÊÓÍ¼
+  
+  ¿á¹· ÀëÏß¼ÆËã ( Åú´¦Àí )£ºÍ¨¹ý spark£¬spark SQL ÊµÏÖ£¬ÕûÌåÐÔÄÜ±È hive Ìá¸ß 5¡ª10 ±¶£¬hive ½Å±¾¶¼ÔÚ×ª»»Îª Spark/Spark SQL
+  £»²¿·Ö¸´ÔÓµÄ×÷Òµ»¹ÊÇÍ¨¹ý Hive/Spark µÄ·½Ê½ÊµÏÖ  storm´¦ÀíµÄÊý¾ÝÈç¹ûÐ´ÈëHDFSÓÐÎÊÌâ£¬¿ÉÒÔÔÙ´ÎÐ´Èëkafka£¬È»ºóÂäÈëhdfs
+  
+  kafka´óÁ÷Á¿ÓÅ»¯
+  a)num.network.threads( ÍøÂç´¦ÀíÏß³ÌÊý ) ÖµÓ¦¸Ã±È cpu ÊýÂÔ´ó¡£
+b)num.io.threads( ½ÓÊÕÍøÂçÏß³ÌÇëÇó²¢´¦ÀíÏß³ÌÊý ) ÖµÌá¸ßÎª cpu ÊýÁ½±¶
+
+  
+  Impala as "SQL on HDFS" (mpp), while Hive is more "SQL on Hadoop".
+  impala²»Ìá¹©ÈÝ´í£¬Èç¹ûÊ§°Ü£¬¾ÍµÃÖØÀ´£¬µ«ÊÇ²éÑ¯ËÙ¶È¿ì£¬¿ÉÒÔÓÃÀ´×öad-hoc²éÑ¯ »¹²»ÊÇÌ«³ÉÊì£¬Êý¾ÝÁ¿´ó²»ÄÜfitµ½ÄÚ´æÈÝÒ×crash
+  if you need real time, ad-hoc queries over a subset of your data go for Impala. And if you have batch processing kinda needs over your Big Data go for Hive.
+   
+  
+
+Single huge table aggregations:
+Querying over  data stored as text format in HDFS : Impala is faster(3x faster)
+Querying over data stored in Parquet : Impala is faster(2x faster)
+Querying over data stored in ORC : Presto is faster(Impala has no support for ORC)
+
+Zeppelin ÊÇÒ»¸öÌá¹©½»»¥Êý¾Ý·ÖÎöÇÒ»ùÓÚWebµÄ±Ê¼Ç±¾¡£·½±ãÄã×ö³ö¿ÉÊý¾ÝÇý¶¯µÄ¡¢¿É½»»¥ÇÒ¿ÉÐ­×÷µÄ¾«ÃÀÎÄµµ£¬²¢ÇÒÖ§³Ö¶àÖÖÓïÑÔ£¬°üÀ¨ Scala(Ê¹ÓÃ Apache Spark)¡¢Python(Apache Spark)¡¢SparkSQL¡¢ Hive¡¢ Markdown¡¢ShellµÈµÈ¡£
+
+Amazon Redshift Ê¹ÓÃÁÐÊ½´æ´¢¡¢Êý¾ÝÑ¹Ëõ¼°ÇøÓòÓ³Éä£¬¿É½µµÍÖ´ÐÐ²éÑ¯ËùÐèµÄI/O ÊýÁ¿
+Amazon Redshift ²ÉÓÃ MPP ÌåÏµ½á¹¹£¬ÄÜ¹»ÒÔ²¢ÐÐµÄ·Ö²¼Ê½´¦Àí·½Ê½À´Ö´ÐÐ SQL²Ù×÷£¬´Ó¶øÀûÓÃËùÓÐ¿ÉÓÃ×ÊÔ´
+
+
+
+  
 hbaseÊý¾ÝÏÈÐ´µ½memstoreºÍwalÈ»µ½hfile    
 Ö§³Ö DDL(alter,create,describle,drop,enable,disable,exists,is_disabled,is_enabled,list) DML(count,delete,delete_all,get,get_counter,incr,put,scan,truncate)
 create  'Blog' ,{NAME=>'Info'},{NAME=>'address'}   Á½¸öcolumn family  InfoºÍ address 
@@ -27,6 +104,8 @@ count 'Blog' ,INTERVAL=>10 ,Ã¿10ÐÐÏÔÊ¾Ò»Ìõ¼ÇÂ¼
  scan 'Blog' ,{TIMERANGE=>[t1,t2]}  ²éÊ±¼ä·¶Î§
  put Èç¹ûrowidÒÑ¾­´æÔÚ£¬¾ÍÊÇÐÞ¸Ä£¬Ö±½Ó²åÈëÒ»¸öÐÂversionµÄ¼ÇÂ¼
  ÐèÒªÏÈdisable £¬È»ºódrop table 
+  
+
   
  
  HiVE
@@ -61,6 +140,30 @@ HBaseÊÇÁÐÊ½Êý¾Ý¿â£¬BigTableµÄÒ»ÖÖÊµÏÖ£¬Ä¿±êÊÇ¸ßÐ§´æ´¢´óÁ¿Êý¾Ý£¬Ö§³ÖÁÐÑ¹Ëõ£¬ÐÐÊÂÎ
  Spark +Hbase + Apache Phoenix + Kafka +ElasticSearch
   Phoenix is a JDBC driver for Hbase 
   MongodbÓÃÓÚ»º´æ£¬¿ÉÒÔÈÌÊÜ¶ªÊ§Êý¾ÝµÄ³¡¾°
+
+SQL±à¼­Æ÷£¬Ö§³ÖHive, Impala, MySQL, Oracle, PostgreSQL, SparkSQL, Solr SQL, Phoenix¡­
+ËÑË÷ÒýÇæSolrµÄ¸÷ÖÖÍ¼±í
+SparkºÍHadoopµÄÓÑºÃ½çÃæÖ§³Ö
+Ö§³Öµ÷¶ÈÏµÍ³Apache Oozie£¬¿É½øÐÐworkflowµÄ±à¼­¡¢²é¿´
+
+
+ ÔÚÆóÒµÖÐ£¬ÓÉÓÚÓÐÐ©Á÷Ë®±íÃ¿ÈÕÓÐ¼¸Ç§ÍòÌõ¼ÇÂ¼£¬Êý¾Ý²Ö¿â±£´æ5ÄêÊý¾ÝµÄ»°ºÜÈÝÒ×²»¿°ÖØ¸º£¬Òò´Ë¿ÉÒÔÊ¹ÓÃÀ­Á´±íµÄËã·¨À´½ÚÊ¡´æ´¢¿Õ¼ä¡£
+1.²É¼¯µ±ÈÕÈ«Á¿Êý¾Ý´æ´¢µ½ ND£¨µ±ÈÕ£© ±íÖÐ¡£ 
+2.¿É´ÓÀúÊ·±íÖÐÈ¡³ö×òÈÕÈ«Á¿Êý¾Ý´æ´¢µ½ OD£¨ÉÏÈÕÊý¾Ý£©±íÖÐ¡£
+3.ÓÃND£­OD£¨minus²î¼¯£©Îªµ±ÈÕÐÂÔöºÍ±ä»¯µÄÊý¾Ý£¨¼´ÈÕÔöÁ¿Êý¾Ý£©¡£
+
+Á½¸ö±í½øÐÐÈ«×Ö¶Î±È½Ï£¬½«½á¹û¼ÇÂ¼µ½tabel_I±íÖÐ
+4.ÓÃOD£­NDÎª×´Ì¬µ½´Ë½áÊøÐèÒª·âÁ´µÄÊý¾Ý¡£ (ÐèÒªÐÞ¸ÄEND_DATE)
+Á½¸ö±í½øÐÐÈ«×Ö¶Î±È½Ï£¬½«½á¹û¼ÇÂ¼µ½tabel_U±íÖÐ 
+5.ÀúÊ·±í£¨HIS£©±ÈND±íºÍOD±í¶àÁ½¸ö×Ö¶Î£¨START_DATE£¬END_DATE£© 
+6.½«tabel_I±íµÄÄÚÈÝÈ«²¿insert²åÈëµ½HIS±íÖÐ¡£START_DATE='µ±ÈÕ',END_DATE¿ÉÉèÎª'9999-12-31' 
+7.¸üÐÂ·âÁ´¼ÇÂ¼µÄEND_DATE
+ÀúÊ·±í£¨HIS£©ºÍtabel_U±í±È½Ï£¬START_DATE£¬END_DATE³ýÍâ£¬ÒÔtabel_U±íÎª×¼£¬Á½Õß½»¼¯£¨INTERSECT£©½«ÆäEND_DATE¸Ä³Éµ±ÈÕ£¬ËµÃ÷¸Ã¼ÇÂ¼Ê§Ð§¡£ 
+8¡£È¡Êý¾ÝÊ±¶ÔÈÕÆÚ½øÐÐÌõ¼þÑ¡Ôñ¼´¿É,Èç£ºÈ¡20100101ÈÕµÄÊý¾ÝÎª 
+(where START_DATE<='20100101' and END_DATE>='20100101' )
+
+
+
 spark
 
 °²×° 
